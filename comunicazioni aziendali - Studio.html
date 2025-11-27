@@ -1,0 +1,1714 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Comunicazioni Aziendali - Studio Completo</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap');
+
+        :root {
+            /* LIGHT MODE */
+            --bg-light: #f5f5f4;  /* Stone 100 */
+            --text-light: #292524; 
+            --text-light-secondary: #57534e; 
+            --card-bg-light: #ffffff;
+            --card-border-light: #e7e5e4; 
+            --accent-light: #d97706; 
+            --shadow-light: 0 4px 20px -2px rgba(28, 25, 23, 0.06);
+            --focus-ring-light: #f59e0b;
+            --highlight-light: #ffedd5; 
+            
+            /* Card Back Colors - Light */
+            --flip-front-bg-light: #fafaf9; 
+            --flip-back-bg-light: #e7e5e4; 
+            --flip-back-text-light: #292524;
+
+            /* Quiz Explanation Colors - Light */
+            --quiz-expl-bg-light: #f0fdf4;
+            --quiz-expl-border-light: #bbf7d0;
+            --quiz-expl-text-light: #14532d;
+
+            /* DARK MODE */
+            --bg-dark: #1c1917; /* Stone 900 */
+            --text-dark: #e7e5e4; 
+            --text-dark-secondary: #a8a29e; 
+            --card-bg-dark: #292524; 
+            --card-border-dark: #44403c; 
+            --accent-dark: #fb923c; 
+            --shadow-dark: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+            --focus-ring-dark: #fdba74;
+            
+            /* Card Back Colors - Dark */
+            --flip-front-bg-dark: #0f0e0d; 
+            --flip-back-bg-dark: #292524; 
+            --flip-back-text-dark: #e7e5e4;
+
+            /* Quiz Explanation Colors - Dark */
+            --quiz-expl-bg-dark: #14532d;
+            --quiz-expl-border-dark: #15803d;
+            --quiz-expl-text-dark: #f0fdf4;
+        }
+
+        [data-theme="light"] {
+            --bg-color: var(--bg-light); --text-color: var(--text-light); --text-secondary-color: var(--text-light-secondary); 
+            --card-bg-color: var(--card-bg-light); --accent-color: var(--accent-light);
+            --border-color: var(--card-border-light); --shadow-color: var(--shadow-light); 
+            --focus-ring-color: var(--focus-ring-light); --highlight-color: var(--highlight-light);
+            --highlight-text-color: var(--text-light);
+            --flip-front-bg: var(--flip-front-bg-light);
+            --flip-back-bg: var(--flip-back-bg-light);
+            --flip-back-text: var(--flip-back-text-light);
+            --quiz-expl-bg: var(--quiz-expl-bg-light);
+            --quiz-expl-border: var(--quiz-expl-border-light);
+            --quiz-expl-text: var(--quiz-expl-text-light);
+        }
+        [data-theme="dark"] {
+            --bg-color: var(--bg-dark); --text-color: var(--text-dark); --text-secondary-color: var(--text-dark-secondary);
+            --card-bg-color: var(--card-bg-dark); --accent-color: var(--accent-dark);
+            --border-color: var(--card-border-dark); --shadow-color: var(--shadow-dark); 
+            --focus-ring-color: var(--focus-ring-dark); --highlight-color: var(--highlight-dark);
+            --highlight-text-color: var(--highlight-text-dark);
+            --flip-front-bg: var(--flip-front-bg-dark);
+            --flip-back-bg: var(--flip-back-bg-dark);
+            --flip-back-text: var(--flip-back-text-dark);
+            --quiz-expl-bg: var(--quiz-expl-bg-dark);
+            --quiz-expl-border: var(--quiz-expl-border-dark);
+            --quiz-expl-text: var(--quiz-expl-text-dark);
+        }
+        
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html { font-size: 100%; -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+        
+        body {
+            font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color);
+            transition: background-color 0.4s ease, color 0.4s ease; -webkit-tap-highlight-color: transparent;
+            line-height: 1.8; overflow-x: hidden;
+        }
+        body.no-scroll { overflow: hidden; height: 100%; width: 100%; }
+
+        button { cursor: pointer; border: none; background: none; font-family: inherit; color: inherit; -webkit-tap-highlight-color: transparent; }
+        button:focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 2px; border-radius: 4px; }
+        button:active { transform: scale(0.98); }
+
+        .app-container { opacity: 0; transition: opacity 0.5s ease; }
+        .app-container.loaded { opacity: 1; }
+        
+        /* HEADER */
+        .header {
+            position: sticky; top: 0; z-index: 100;
+            background-color: rgba(245, 245, 244, 0.9);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid transparent;
+            transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), box-shadow 0.3s ease;
+            will-change: transform;
+        }
+        [data-theme="dark"] .header { background-color: rgba(28, 25, 23, 0.9); }
+        .header.hidden { transform: translateY(-100%); }
+        .header.scrolled { border-bottom-color: var(--border-color); box-shadow: var(--shadow-color); }
+
+        .header-content { padding: 0.75rem 1.5rem; display: flex; justify-content: space-between; align-items: center; min-height: 64px; }
+        .header-title { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1; text-align: left; margin-right: 1rem; }
+        
+        .controls { display: flex; align-items: center; gap: 0.75rem; }
+        
+        .icon-btn { display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 12px; transition: background-color 0.2s; }
+        .icon-btn:hover { background-color: var(--border-color); }
+        .icon-btn svg { width: 22px; height: 22px; color: var(--text-secondary-color); transition: color 0.3s; }
+        .icon-btn.active svg { color: var(--accent-color); }
+        
+        /* Nav Buttons Desktop */
+        .nav-buttons-desktop {
+            display: none;
+            position: fixed; bottom: 2rem; right: 2rem;
+            flex-direction: column; gap: 0.5rem;
+            z-index: 95;
+        }
+        .icon-btn.disabled { opacity: 0.3; pointer-events: none; cursor: default; }
+
+        #autoscroll-btn { display: none; }
+
+        .theme-switcher .sun-icon { display: none; } [data-theme="light"] .theme-switcher .sun-icon { display: block; }
+        .theme-switcher .moon-icon { display: none; } [data-theme="dark"] .theme-switcher .moon-icon { display: block; }
+
+        .mode-switcher { display: flex; background-color: var(--border-color); border-radius: 14px; padding: 4px; }
+        .mode-btn { font-size: 0.85rem; font-weight: 600; padding: 6px 16px; border-radius: 10px; color: var(--text-secondary-color); transition: all 0.2s ease; }
+        .mode-btn.active { background-color: var(--card-bg-color); color: var(--text-color); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .desktop-mode-switcher { display: none; }
+
+        /* TIMELINE MOBILE */
+        .progress-timeline-mobile { padding: 0 1.5rem 1rem 1.5rem; touch-action: none; }
+        .timeline-track { position: relative; width: 100%; height: 6px; background-color: var(--border-color); border-radius: 3px; cursor: pointer; }
+        .timeline-progress { position: absolute; top: 0; left: 0; height: 100%; background-color: var(--accent-color); border-radius: 3px; width: 0; transition: width 0.2s linear; will-change: width; }
+        .timeline-nodes { position: absolute; top: 50%; left: 0; width: 100%; display: flex; justify-content: space-between; pointer-events: none; }
+        .timeline-node-point {
+            width: 12px; height: 12px; border-radius: 50%; background-color: var(--border-color);
+            border: 2px solid var(--bg-color); transform: translateY(-50%); transition: transform 0.3s ease, background-color 0.3s ease;
+            pointer-events: auto;
+        }
+        .timeline-node-point.past, .timeline-node-point.active { background-color: var(--accent-color); }
+        .timeline-node-point.active { transform: translateY(-50%) scale(1.4); box-shadow: 0 0 0 4px var(--highlight-color); }
+
+        /* LAYOUT & CHAPTERS */
+        .main-layout { padding-top: 4rem; }
+        #story-panel { padding: 0 1.5rem; }
+        
+        .story-chapter {
+            min-height: 90vh; padding: 6rem 0;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0.5; transform: scale(0.98); filter: blur(1px);
+            transition: opacity 0.6s ease, transform 0.6s ease, filter 0.6s ease; 
+            border-bottom: 1px dashed var(--border-color);
+            /* NOTE: CSS Snap Removed for JS Logic */
+        }
+        .story-chapter:last-child { border-bottom: none; min-height: 80vh; }
+        .story-chapter.active { opacity: 1; transform: scale(1); filter: blur(0); }
+        
+        .chapter-content { max-width: 680px; width: 100%; }
+        .chapter-title { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 8vw, 3rem); color: var(--text-color); margin-bottom: 2rem; line-height: 1.15; letter-spacing: -0.02em; word-wrap: break-word;}
+        .chapter-body { font-size: 1.125rem; line-height: 2.1; color: var(--text-secondary-color); }
+        
+        .chapter-body p, .chapter-body ul, .chapter-body ol { margin-bottom: 1.5rem; }
+        .chapter-body ul, .chapter-body ol { padding-left: 1.2rem; }
+        .chapter-body li { margin-bottom: 0.75rem; padding-left: 0.5rem; }
+        .chapter-body li::marker { color: var(--accent-color); font-weight: 700; }
+        .chapter-body strong { font-weight: 700; color: var(--text-color); }
+        .chapter-body h4 { 
+            font-size: 0.95rem; margin: 2.5rem 0 1rem 0; color: var(--accent-color); 
+            text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700;
+            display: flex; align-items: center; gap: 0.5rem;
+            line-height: 1.4;
+        }
+        .chapter-body h4::after { content: ''; flex-grow: 1; height: 1px; background-color: var(--border-color); opacity: 0.5; }
+        
+        /* INTERACTIVE ELEMENTS */
+        .interactive-accordion { 
+            margin: 2rem 0; border: 1px solid var(--border-color); border-radius: 16px; 
+            overflow: hidden; background-color: var(--card-bg-color); box-shadow: var(--shadow-color);
+            width: 100%;
+        }
+        .acc-item { border-bottom: 1px solid var(--border-color); }
+        .acc-item:last-child { border-bottom: none; }
+        .acc-header {
+            width: 100%; padding: 1.25rem 1.5rem; text-align: left;
+            background-color: var(--card-bg-color); font-weight: 600; color: var(--text-color);
+            display: flex; justify-content: space-between; align-items: center;
+            transition: background-color 0.2s; font-size: 1rem; line-height: 1.4;
+        }
+        .acc-header:hover { background-color: var(--bg-color); }
+        .acc-header .acc-icon { 
+            width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+            color: var(--accent-color); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            flex-shrink: 0; margin-left: 12px;
+        }
+        .acc-item.open .acc-header .acc-icon { transform: rotate(135deg); }
+        .acc-body {
+            max-height: 0; overflow: hidden; transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            background-color: var(--bg-color);
+        }
+        .acc-content { padding: 1.25rem 1.5rem; font-size: 1rem; color: var(--text-secondary-color); border-top: 1px dashed var(--border-color); line-height: 1.6; }
+
+        /* FLIP CARDS */
+        .flip-container { 
+            margin: 2.5rem auto; 
+            perspective: 1000px; 
+            width: 100%; 
+            max-width: 500px; 
+            min-height: 300px; 
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+            cursor: pointer;
+            box-shadow: var(--shadow-color);
+            border-radius: 20px;
+            display: grid;
+            grid-template-areas: "card-face";
+        }
+        .flip-container.flipped .flip-card-inner { transform: rotateY(180deg); }
+        
+        .flip-front, .flip-back {
+            grid-area: card-face; 
+            width: 100%;
+            -webkit-backface-visibility: hidden; 
+            backface-visibility: hidden;
+            border-radius: 20px; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            justify-content: center; 
+            padding: 2rem;
+        }
+        
+        .flip-front { background-color: var(--flip-front-bg); border: 1px solid var(--border-color); }
+        .flip-back {
+            background-color: var(--flip-back-bg); color: var(--flip-back-text); transform: rotateY(180deg);
+        }
+        
+        .flip-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--text-color); line-height: 1.3; }
+        .flip-hint { 
+            font-size: 0.8rem; color: var(--accent-color); margin-top: 1.5rem; 
+            font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px;
+            opacity: 0.8; display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+        }
+        .flip-hint::after { content: '↻'; font-size: 1.2em; margin-top: -2.6px; }
+        
+        .flip-back p, .flip-back ul { color: var(--flip-back-text); font-size: 1.1rem; line-height: 1.6; margin: 0; font-weight: 500; width: 100%;}
+        .flip-back ul { text-align: left; padding-left: 1.5rem; margin-top: 0.5rem; }
+        .flip-back li { margin-bottom: 0.5rem; }
+        
+        [data-theme="light"] .flip-back li::marker { color: var(--accent-color); }
+        [data-theme="dark"] .flip-back li::marker { color: white; }
+
+        #timeline-desktop { display: none; }
+        #scroll-sentinel { position: absolute; top: 0; height: 1px; width: 1px; pointer-events: none; }
+
+        .app-footer {
+            position: fixed; bottom: 0; left: 0; width: 100%; z-index: 90;
+            display: flex; justify-content: center; 
+            padding: 1rem 1.5rem calc(1rem + env(safe-area-inset-bottom));
+            pointer-events: none;
+        }
+        .app-footer.hidden { transform: translateY(150%); }
+        .footer-mode-switcher { 
+            display: flex; pointer-events: auto;
+            background-color: rgba(255, 255, 255, 0.9); 
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); 
+            border-radius: 24px; padding: 6px; 
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        [data-theme="dark"] .footer-mode-switcher { background-color: rgba(28, 25, 23, 0.9); border-color: rgba(255,255,255,0.1); }
+
+        /* QUIZ MODE */
+        .quiz-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 200;
+            display: flex; align-items: center; justify-content: center; padding: 1rem;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            opacity: 0; transition: opacity 0.4s ease, visibility 0.4s; visibility: hidden;
+        }
+        .quiz-overlay.visible { opacity: 1; visibility: visible; }
+        .quiz-container {
+            background-color: var(--card-bg-color); border: 1px solid var(--border-color);
+            width: 96%; max-width: 600px; 
+            height: auto; max-height: 85vh;
+            border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            display: flex; flex-direction: column; overflow: hidden;
+            transform: scale(0.95) translateY(10px); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .quiz-overlay.visible .quiz-container { transform: scale(1) translateY(0); }
+        
+        .quiz-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; background-color: var(--bg-color); }
+        .quiz-title { font-weight: 600; color: var(--text-secondary-color); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .quiz-body { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; -webkit-overflow-scrolling: touch; }
+        #quiz-content-wrapper { padding: 1.5rem; display: flex; flex-direction: column; justify-content: center; min-height: 100%;}
+        
+        .quiz-slide { width: 100%; opacity: 0; transition: opacity 0.3s ease; }
+        .quiz-slide.active { opacity: 1; }
+        
+        .quiz-question-text { font-size: clamp(1.1rem, 4vw, 1.35rem); font-weight: 700; margin-bottom: 1.5rem; line-height: 1.4; color: var(--text-color); }
+        .quiz-answers { display: grid; gap: 0.75rem; }
+        .quiz-answer-btn {
+            width: 100%; padding: 1rem 1.25rem; text-align: left; background-color: var(--bg-color);
+            border: 2px solid transparent; border-radius: 16px; font-size: 1rem; font-weight: 500;
+            transition: all 0.2s ease; color: var(--text-color);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            word-break: break-word; hyphens: auto; line-height: 1.4;
+        }
+        .quiz-answer-btn:hover { background-color: var(--border-color); }
+        .quiz-answer-btn:active { transform: scale(0.98); }
+        .quiz-answer-btn.correct { background-color: #dcfce7; color: #14532d; border-color: #22c55e; }
+        [data-theme="dark"] .quiz-answer-btn.correct { background-color: #14532d; color: #f0fdf4; border-color: #22c55e; }
+        .quiz-answer-btn.incorrect { background-color: #fee2e2; color: #7f1d1d; border-color: #ef4444; }
+        [data-theme="dark"] .quiz-answer-btn.incorrect { background-color: #7f1d1d; color: #fef2f2; border-color: #ef4444; }
+        .quiz-answer-btn.disabled { opacity: 0.6; pointer-events: none; }
+        
+        .quiz-explanation {
+            margin-top: 1.5rem; padding: 1.25rem; border-radius: 12px; font-size: 1rem; line-height: 1.5;
+            background-color: var(--quiz-expl-bg); border: 1px solid var(--quiz-expl-border); color: var(--quiz-expl-text);
+            opacity: 0; transform: translateY(10px); transition: opacity 0.4s ease, transform 0.4s ease; display: none;
+        }
+        .quiz-explanation.visible { opacity: 1; transform: translateY(0); display: block; }
+
+        .quiz-footer { 
+            padding: 1.5rem; border-top: 1px solid var(--border-color); flex-shrink: 0; background-color: var(--bg-color);
+            padding-bottom: calc(1.5rem + env(safe-area-inset-bottom)/2);
+        }
+        .quiz-next-btn { width: 100%; background-color: var(--accent-color); color: white; padding: 1rem; border-radius: 14px; font-size: 1.1rem; font-weight: 600; transition: opacity 0.2s, transform 0.2s; }
+        .quiz-next-btn:active { transform: scale(0.98); }
+        .quiz-next-btn:disabled { background-color: var(--border-color); color: var(--text-secondary-color); cursor: not-allowed; transform: none; }
+
+        .quiz-results-wrapper { text-align: center; display: flex; flex-direction: column; justify-content: center; min-height: 100%; padding: 1.5rem; }
+        .quiz-results-title { font-family: 'Playfair Display', serif; font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .quiz-results-score { font-size: 3.5rem; font-weight: 800; color: var(--accent-color); line-height: 1; margin: 1rem 0; }
+        .quiz-results-text { font-size: 1.1rem; color: var(--text-secondary-color); margin-bottom: 2rem; }
+        .quiz-results-actions { display: flex; flex-direction: column; gap: 0.75rem; width: 100%; }
+        .quiz-results-actions .quiz-next-btn.secondary { background-color: transparent; border: 2px solid var(--border-color); color: var(--text-color); }
+        .quiz-results-actions .quiz-next-btn.secondary:hover { border-color: var(--text-secondary-color); }
+
+        /* DESKTOP OVERRIDES & RESPONSIVE FIXES */
+        @media (min-width: 960px) {
+            html.snap-enabled { /* CSS SNAP REMOVED - Handled by JS */ }
+
+            .progress-timeline-mobile { display: none; }
+            .app-footer { display: none; }
+            .desktop-mode-switcher { display: flex; }
+            #autoscroll-btn { display: flex; } 
+            
+            .nav-buttons-desktop { display: flex; }
+            
+            .main-layout { 
+                display: grid; 
+                grid-template-columns: 1fr minmax(0, 680px) 1fr; 
+                gap: 2rem; 
+                max-width: 100%; 
+                margin: 0; 
+                padding: 0 2rem; 
+            }
+            
+            #timeline-desktop {
+                grid-column: 1;
+                display: flex; 
+                position: sticky; top: 0; height: 100vh;
+                align-items: center; 
+                justify-content: flex-end;
+            }
+            
+            #story-panel { grid-column: 2; padding: 0; }
+
+            .timeline-desktop-container { 
+                position: relative; 
+                width: 220px; 
+                padding: 4rem 1rem 4rem 0; 
+                display: flex; justify-content: flex-end;
+            }
+            
+            .timeline-svg {
+                position: absolute; right: 0; 
+                top: 0; height: 100%; width: 2px; overflow: visible;
+                z-index: 0;
+                pointer-events: none; 
+            }
+            .timeline-svg-line { stroke: var(--border-color); stroke-width: 2px; fill: none; }
+            .timeline-svg-progress {
+                stroke: var(--accent-color); stroke-width: 2px; fill: none; transition: stroke-dashoffset 0.4s ease;
+            }
+
+            .timeline-desktop-nodes { 
+                display: flex; flex-direction: column; gap: 1.5rem; 
+                align-items: flex-end; text-align: right; width: 100%; 
+                z-index: 1; 
+            }
+            
+            .timeline-desktop-node {
+                display: flex; align-items: center; gap: 1.5rem; padding: 0.5rem 0;
+                position: relative; transition: opacity 0.3s; flex-direction: row-reverse; 
+                width: 140%; /* Increased width to prevent wrap */
+                cursor: pointer; padding-right: 15px;
+            }
+            .timeline-desktop-node:hover .node-label { color: var(--accent-color); }
+            .timeline-desktop-node .node-point {
+                width: 14px; height: 14px; border-radius: 50%; background-color: var(--border-color);
+                border: 3px solid var(--bg-color); transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); flex-shrink: 0; 
+                z-index: 2; position: relative;
+            }
+            .timeline-desktop-node::after {
+                content: ''; position: absolute; top: 0; right: -10px; bottom: 0; width: 100%; z-index: -1;
+            }
+
+            .timeline-desktop-node .node-label { 
+                font-size: 0.95rem; font-weight: 500; color: var(--text-secondary-color); 
+                transition: color 0.3s ease, transform 0.3s ease;
+                white-space: nowrap; /* Forces single line */
+            }
+
+            .timeline-desktop-node.active .node-point { background-color: var(--accent-color); transform: scale(1.3); box-shadow: 0 0 0 4px var(--highlight-color); }
+            .timeline-desktop-node.active .node-label { color: var(--text-color); font-weight: 700; transform: translateX(-5px); }
+            .timeline-desktop-node.past .node-point { background-color: var(--accent-color); border-color: var(--accent-color); }
+
+            .story-chapter { padding: 6rem 0; min-height: 85vh; }
+            .story-chapter:first-child { padding-top: 4rem; }
+        }
+        
+        @media (min-width: 1200px) {
+             .main-layout { gap: 4rem; }
+        }
+    </style>
+</head>
+<body>
+    <div id="scroll-sentinel"></div>
+    <div class="app-container" id="app">
+        <header class="header" id="header">
+            <div class="header-content">
+                <h1 class="header-title" id="header-title">Le Comunicazioni Aziendali</h1>
+                <div class="controls">
+                    <div class="mode-switcher desktop-mode-switcher">
+                        <button class="mode-btn" data-mode="study">Studio</button>
+                        <button class="mode-btn" data-mode="story">Storia</button>
+                    </div>
+                    
+                    <button class="icon-btn" id="autoscroll-btn" aria-label="Attiva/Disattiva Autoscroll">
+                         <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 20V7m0 13-4-4m4 4 4-4m4-12v13m0-13 4 4m-4-4-4 4"/>
+                        </svg>
+                    </button>
+
+                     <button class="icon-btn" id="quiz-btn" aria-label="Avvia Quiz">
+                        <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 3L1 9l11 6 9-4.5V12h2V9l-11-6zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+                    </button>
+                    <button class="icon-btn theme-switcher" aria-label="Cambia Tema">
+                        <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                        <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="progress-timeline-mobile">
+                <div class="timeline-track" id="timeline-track-mobile">
+                    <div class="timeline-progress" id="timeline-progress-mobile"></div>
+                    <div class="timeline-nodes" id="timeline-nodes-mobile"></div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- DESKTOP NAV BUTTONS -->
+        <div class="nav-buttons-desktop">
+            <button class="icon-btn" id="prev-chapter-btn" aria-label="Capitolo precedente">
+                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                  <path fill-rule="evenodd" d="M5.575 13.729C4.501 15.033 5.43 17 7.12 17h9.762c1.69 0 2.618-1.967 1.544-3.271l-4.881-5.927a2 2 0 0 0-3.088 0l-4.88 5.927Z" clip-rule="evenodd"/>
+                </svg>
+            </button>
+            <button class="icon-btn" id="next-chapter-btn" aria-label="Capitolo successivo">
+                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                  <path fill-rule="evenodd" d="M18.425 10.271C19.499 8.967 18.57 7 16.88 7H7.12c-1.69 0-2.618 1.967-1.544 3.271l4.881 5.927a2 2 0 0 0 3.088 0l4.88-5.927Z" clip-rule="evenodd"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="main-layout">
+            <aside id="timeline-desktop">
+                <div class="timeline-desktop-container">
+                    <svg class="timeline-svg">
+                        <line class="timeline-svg-line" x1="1" y1="0" x2="1" y2="100%"></line>
+                        <line class="timeline-svg-progress" id="timeline-progress-desktop" x1="1" y1="0" x2="1" y2="100%"></line>
+                    </svg>
+                    <div class="timeline-desktop-nodes" id="timeline-nodes-desktop"></div>
+                </div>
+            </aside>
+            <main id="story-panel"></main>
+        </div>
+
+        <footer class="app-footer" id="app-footer">
+            <div class="mode-switcher footer-mode-switcher">
+                <button class="mode-btn" data-mode="study">Studio</button>
+                <button class="mode-btn" data-mode="story">Storia</button>
+            </div>
+        </footer>
+    </div>
+    
+    <div class="quiz-overlay" id="quiz-overlay">
+        <div class="quiz-container" id="quiz-container"></div>
+    </div>
+
+    <script>
+        const learningContent = {
+            title: "Le Comunicazioni Aziendali",
+            chapters: [
+                /* (Contenuto identico a prima per brevità) */
+                {
+                    id: 'struttura-organizzativa',
+                    title: 'Definizione e Struttura',
+                    description: `<h4>Cos'è l'Organizzazione?</h4><p>Secondo Bernardi, l'organizzazione è un gruppo organizzato di persone che lavorano insieme per raggiungere uno <strong>scopo unitario</strong> (un obiettivo comune), dividendosi i compiti secondo regole precise e adattandosi continuamente a ciò che succede fuori.</p><h4>I principali modi per organizzarsi</h4><p>Esistono diversi modi per distribuire il potere e le responsabilità:</p><div class="interactive-accordion"><div class="acc-item"><button class="acc-header">Gerarchico (Elementare) <span class="acc-icon">+</span></button><div class="acc-body"><div class="acc-content">Tipico delle piccole aziende. Il potere scende dall'alto verso il basso (linee verticali). Ogni persona risponde a un <strong>unico capo</strong>. È chiaro e veloce, ma un po' rigido.</div></div></div><div class="acc-item"><button class="acc-header">Funzionale <span class="acc-icon">+</span></button><div class="acc-body"><div class="acc-content">Si basa sulla specializzazione. Si creano reparti specifici (come Marketing, Finanza, Produzione). Un dipendente può ricevere ordini da diversi esperti (capi specializzati), non solo da uno. L'organizzazione si allarga in orizzontale.</div></div></div><div class="acc-item"><button class="acc-header">Gerarchico-Funzionale <span class="acc-icon">+</span></button><div class="acc-body"><div class="acc-content">Un mix dei due. C'è la <strong>Linea</strong> (i capi che decidono) e lo <strong>Staff</strong> (gli aiutanti esperti che danno consigli e supporto, ma non comandano direttamente).</div></div></div><div class="acc-item"><button class="acc-header">A Matrice <span class="acc-icon">+</span></button><div class="acc-body"><div class="acc-content">Usata da chi lavora per <strong>progetti</strong>. È particolare perché ogni dipendente ha due capi: uno per la sua competenza tecnica (Funzione) e uno per il lavoro pratico da svolgere (Progetto).</div></div></div></div><h4>L'Organigramma</h4><p>È semplicemente la mappa visiva di come è fatta l'azienda. Mostra chi comanda chi e come sono divisi i reparti.</p>`,
+                    storyDescription: `<p>Per funzionare, un gruppo di persone deve darsi delle regole. Come in una squadra sportiva, serve capire chi fa cosa.</p><p>Nelle piccole imprese (struttura <strong>elementare</strong>) decide tutto il proprietario. Quando si cresce, servono gli specialisti (struttura <strong>funzionale</strong>). Le aziende più complesse, che gestiscono grandi progetti, usano la struttura <strong>a matrice</strong>, dove ogni dipendente ha due riferimenti: il capo tecnico e il capo progetto.</p><p>Tutto questo viene disegnato in una mappa chiamata <strong>organigramma</strong>.</p>`
+                },
+                {
+                    id: 'cultura-organizzativa',
+                    title: 'Cultura Organizzativa',
+                    description: `<h4>L'identità interna</h4><p>La cultura organizzativa non è scritta nei regolamenti, ma è l'aria che si respira in ufficio. Secondo Avallone (1997), comprende:</p><ul><li><strong>Valori dominanti:</strong> Le cose in cui l'azienda crede davvero.</li><li><strong>Norme:</strong> Le regole non scritte che nascono lavorando insieme.</li><li><strong>Modelli di comportamento:</strong> Le cose che si fanno spesso e volentieri.</li><li><strong>Linguaggi e rituali:</strong> Modi di dire e abitudini che capisce solo chi lavora lì.</li></ul><p>È quello che un nuovo arrivato deve imparare in fretta per non sentirsi un pesce fuor d'acqua.</p>`,
+                    storyDescription: `<p>Ogni azienda ha una "personalità". Non si vede, ma si sente. È il modo in cui le persone si salutano, come vestono, come affrontano i problemi.</p><p>Questa è la <strong>cultura organizzativa</strong>: un insieme invisibile di valori e abitudini che definisce chi è "dentro" e chi è "fuori". Per un nuovo arrivato, capire questa cultura è fondamentale per integrarsi.</p>`
+                },
+                {
+                    id: 'comunicazione-vettori',
+                    title: 'Vettori della Comunicazione',
+                    description: `<h4>Il Sistema Nervoso dell'Impresa</h4><p>La comunicazione è un flusso a doppio senso (<strong>bidirezionale</strong>) vitale per l'azienda. Si muove lungo 4 strade principali:</p><div class="interactive-accordion"><div class="acc-item"><button class="acc-header">1. DENTRO-DENTRO (Comunicazioni Interne) <span class="acc-icon">+</span></button><div class="acc-body"><div class="acc-content">È il sistema circolatorio interno: il capo parla ai dipendenti, i dipendenti parlano al capo. Serve a motivare, dare istruzioni e far sentire tutti una squadra.</div></div></div><div class="acc-item"><button class="acc-header">2. DENTRO-FUORI (Public Relations) <span class="acc-icon">+</span></button><div class="acc-body"><div class="acc-content">L'azienda prende il megafono e parla al mondo esterno (clienti, giornalisti, istituzioni). Serve a farsi conoscere e apprezzare.</div></div></div><div class="acc-item"><button class="acc-header">3. FUORI-DENTRO (Feedback) <span class="acc-icon">+</span></button><div class="acc-body"><div class="acc-content">L'azienda ascolta. Sono le risposte e i pareri che arrivano da fuori (dai clienti, dai soci) verso l'interno. Essenziale per capire se si sta facendo bene.</div></div></div><div class="acc-item"><button class="acc-header">4. FUORI-FUORI (Conversazioni Social) <span class="acc-icon">+</span></button><div class="acc-body"><div class="acc-content">La gente chiacchiera tra di sé. Clienti e utenti parlano dell'azienda sui social network (Digital PR). L'azienda non controlla cosa dicono, ma deve saperci stare in mezzo.</div></div></div></div><h4>Gli Interlocutori Chiave</h4><div class="flip-container" style="min-height: 220px;"><div class="flip-card-inner"><div class="flip-front"><div class="flip-title">Le 3 Macro-Aree</div><div style="color:var(--text-secondary-color)">Con chi comunica l'azienda?</div><div class="flip-hint">Clicca per scoprire</div></div><div class="flip-back"><ul style="text-align:left; padding-left:1.5rem; font-size:0.95rem"><li><strong>Mercato:</strong> Chi compra (Clienti).</li><li><strong>Stakeholders:</strong> Chi ha interessi nell'azienda (Banche, Soci, Partner).</li><li><strong>Collaboratori:</strong> Chi ci lavora dentro.</li></ul></div></div></div>`,
+                    storyDescription: `<p>La comunicazione non è una strada a senso unico. Immagina un incrocio trafficato.</p><p>C'è la strada <strong>Dentro-Dentro</strong>, dove i colleghi si parlano. C'è la strada <strong>Dentro-Fuori</strong>, dove l'azienda grida al mondo "Siamo qui!". C'è la strada di ritorno, <strong>Fuori-Dentro</strong>, dove il mondo risponde.</p><p>E poi c'è la piazza digitale, il <strong>Fuori-Fuori</strong>: qui la gente parla dell'azienda tra di loro, sui social, nel bene e nel male. Un'azienda intelligente presidia tutti e quattro questi vettori.</p>`
+                },
+                {
+                    id: 'greenwashing',
+                    title: 'Focus: Greenwashing',
+                    description: `<h4>Finti Ecologisti</h4><p>Il Greenwashing è un trucco di marketing: aziende che fanno finta di essere amiche dell'ambiente per coprire il fatto che inquinano. È considerata una <strong>pratica disonesta</strong> e una vera frode per chi compra.</p><h4>Le conseguenze</h4><p>Il rischio più grande è perdere la faccia. Se i clienti scoprono l'inganno, perdono <strong>fiducia</strong> nel marchio e recuperarla è difficilissimo.</p><h4>Come scoprirlo</h4><div class="interactive-accordion"><div class="acc-item"><button class="acc-header">Campanelli d'allarme <span class="acc-icon">+</span></button><div class="acc-body"><div class="acc-content"><ul><li>Parole vaghe ed esagerate ("amico della natura" senza spiegare come).</li><li>Nessuna prova concreta di quello che dicono.</li><li>Mancanza di certificazioni serie (come il <strong>Carbon Trust Standard</strong>).</li></ul></div></div></div></div>`,
+                    storyDescription: `<p>Oggi essere "green" va di moda. Alcune aziende, però, barano. Si "tingono di verde" senza cambiare nulla nella sostanza.</p><p>Questo è il <strong>Greenwashing</strong>. È pericoloso perché il consumatore moderno è attento: se scopre la bugia, si sente tradito. E un cliente tradito non torna più.</p>`
+                },
+                {
+                    id: 'comunicazioni-interne',
+                    title: 'Comunicazioni Interne (Dentro-Dentro)',
+                    description: `<h4>Il vettore Dentro-Dentro</h4><p>Sono i messaggi che restano in "famiglia". Servono a:</p><ul><li>Dare la carica e coinvolgere tutti.</li><li>Far sentire tutti parte dello stesso gruppo.</li><li>Spiegare le regole e dove sta andando l'azienda.</li><li>Dare sicurezza.</li></ul><h4>Gli strumenti del mestiere</h4><p>Oltre ai metodi classici, oggi si usa molto l'online:</p><ul><li><strong>Opuscoli di benvenuto:</strong> Per i nuovi arrivati (per non farli sentire persi).</li><li><strong>Organigramma:</strong> La mappa dei ruoli.</li><li><strong>Circolari:</strong> Gli avvisi ufficiali dei capi.</li><li><strong>Intranet/Chat:</strong> Per parlarsi velocemente.</li><li><strong>Questionari:</strong> Per chiedere ai dipendenti "Come va?".</li><li><strong>La Mission:</strong> Il documento che spiega il grande scopo dell'azienda.</li></ul>`,
+                    storyDescription: `<p>Prima di conquistare il mercato, un'azienda deve conquistare i suoi dipendenti. La <strong>comunicazione interna</strong> (vettore dentro-dentro) è il collante che tiene unita la squadra.</p><p>Non serve solo a dare ordini, ma a spiegare il "perché" delle cose, a far sentire le persone parte di qualcosa di più grande. Strumenti come la intranet o i meeting servono a ridurre le distanze tra vertice e base.</p>`
+                },
+                {
+                    id: 'public-relations',
+                    title: 'Public Relations (Dentro-Fuori)',
+                    description: `<h4>Il vettore Dentro-Fuori</h4><p>Le PR sono l'arte di farsi benvolere. L'azienda si rivolge all'esterno non per vendere subito, ma per crearsi una buona <strong>reputazione</strong>. Preparano il terreno per le vendite.</p><p><strong>Con chi parla?</strong> Clienti, Fornitori, Banche, Cittadini, Politici, Giornalisti, e anche i propri Dipendenti.</p><h4>Il modello P.E.N.C.I.L.S. (di Kotler)</h4><div class="interactive-accordion"><div class="acc-item"><button class="acc-header">P - Publications (Pubblicazioni) <span class="acc-icon">+</span></button><div class="acc-body"><div class="acc-content">Giornali aziendali, brochure, report annuali.</div></div></div><div class="acc-item"><button class="acc-header">E - Events (Eventi) <span class="acc-icon">+</span></button><div class="acc-body"><div class="acc-content">Sponsorizzare sport, fare mostre o fiere.</div></div></div><div class="acc-item"><button class="acc-header">N - News (Notizie) <span class="acc-icon">+</span></button><div class="acc-body"><div class="acc-content">Mandare notizie ai giornalisti (Ufficio Stampa).</div></div></div><div class="acc-item"><button class="acc-header">C - Community (Comunità) <span class="acc-icon">+</span></button><div class="acc-body"><div class="acc-content">Fare cose buone per il territorio dove si trova l'azienda.</div></div></div><div class="acc-item"><button class="acc-header">I - Identity (Identità) <span class="acc-icon">+</span></button><div class="acc-body"><div class="acc-content">Il logo, le divise, i biglietti da visita (farsi riconoscere).</div></div></div><div class="acc-item"><button class="acc-header">L - Lobbying (Relazioni) <span class="acc-icon">+</span></button><div class="acc-body"><div class="acc-content">Parlare con i politici per avere leggi favorevoli.</div></div></div><div class="acc-item"><button class="acc-header">S - Social (Sociale) <span class="acc-icon">+</span></button><div class="acc-body"><div class="acc-content">Fare beneficenza o aiutare l'ambiente.</div></div></div></div>`,
+                    storyDescription: `<p>Se il marketing serve a vendere, le <strong>Public Relations</strong> servono a farsi amare. È il tipico flusso <strong>Dentro-Fuori</strong>: l'azienda proietta la sua immagine migliore verso l'esterno.</p><p>Philip Kotler ha riassunto questi strumenti nell'acronimo PENCILS: dalle pubblicazioni agli eventi, fino alla responsabilità sociale.</p>`
+                },
+                {
+                    id: 'digital-pr',
+                    title: 'Digital PR (Fuori-Fuori)',
+                    description: `<h4>Il vettore Fuori-Fuori</h4><p>Le Digital PR si occupano di ciò che succede online. Qui il flusso è spesso <strong>tra gli utenti stessi</strong>. L'azienda cerca di inserirsi in queste chiacchiere digitali.</p><h4>Con chi si parla e come?</h4><p>Non più solo giornalisti, ma clienti diretti e <strong>Influencer</strong>.</p><ul><li><strong>WOM (Passaparola):</strong> Far sì che la gente parli bene di te ad altri.</li><li><strong>Conversazioni Social:</strong> Rispondere ai commenti e gestire i gruppi.</li><li><strong>Alert System (Fuori-Dentro):</strong> Un sistema che avvisa subito se qualcuno parla dell'azienda sul web.</li><li><strong>Campagne virali:</strong> Creare contenuti divertenti che la gente condivide da sola (es. spot "Alexa senza voce").</li></ul>`,
+                    storyDescription: `<p>Oggi la reputazione si gioca nella piazza digitale. Questo è il regno del <strong>Fuori-Fuori</strong>: utenti che parlano con altri utenti.</p><p>Le Digital PR cercano di inserirsi in queste conversazioni. L'obiettivo è generare un passaparola positivo (WOM) in modo che siano gli influencer e i clienti a parlare bene di te, non tu stesso.</p>`
+                },
+                {
+                    id: 'immagine-aziendale',
+                    title: 'Immagine Aziendale',
+                    description: `<h4>Ciò che sei vs. Ciò che sembri</h4><p>L'immagine aziendale non è quello che l'azienda <strong>dice</strong>, ma quello che la gente <strong>pensa</strong> di lei. È la somma di tutte le opinioni.</p><ul><li><strong>Corporate Image:</strong> L'immagine di tutta l'azienda.</li><li><strong>Brand Image:</strong> L'immagine di una marca specifica.</li><li><strong>Product Image:</strong> L'immagine di un solo prodotto.</li></ul><p>Per vincere, l'immagine deve essere <strong>Credibile</strong> e <strong>Riconoscibile</strong>.</p><p>Si forma tramite strade dirette (usando il prodotto) e indirette (sentendo cosa dicono gli altri o la pubblicità).</p>`,
+                    storyDescription: `<p>Non conta solo chi sei, ma come ti vedono gli altri. L'<strong>immagine aziendale</strong> è il riflesso dell'impresa nella mente dei consumatori.</p><p>Costruire un'immagine positiva richiede coerenza e tempo, ma basta un passo falso per distruggerla. È il risultato di tutto ciò che l'azienda fa e comunica.</p>`
+                },
+                {
+                    id: 'mission-e-brand',
+                    title: 'Mission e Brand',
+                    description: `<h4>La Mission</h4><p>È il motivo profondo per cui l'azienda esiste, il suo grande scopo finale (oltre ai soldi). Definisce chi siamo e dove vogliamo andare.</p><h4>Il Brand (Marca)</h4><p>Attenzione: non è il logo (quello è solo il disegno). Il Brand è l'anima: la storia, i valori e la fiducia che quel disegno evoca.</p><div class="flip-container" style="min-height: 250px;"><div class="flip-card-inner"><div class="flip-front"><div class="flip-title">Le 5 Dimensioni del Brand</div><div style="color:var(--text-secondary-color)">Cosa rende un marchio potente?</div><div class="flip-hint">Clicca per scoprire</div></div><div class="flip-back"><ul style="text-align:left; padding-left:1.5rem; font-size:0.95rem"><li><strong>Fiducia (Trust):</strong> Ci si può fidare?</li><li><strong>Coinvolgimento (Engagement):</strong> Emoziona?</li><li><strong>Impegno Sociale (Corporate Citizenship):</strong> Fa del bene?</li><li><strong>Innovazione (Leading edge):</strong> È moderno?</li><li><strong>Presenza (Presence):</strong> Si vede ovunque?</li></ul></div></div></div><p>Un buon logo deve essere semplice, unico e facile da ricordare.</p>`,
+                    storyDescription: `<p>Alla base di tutto c'è la <strong>Mission</strong>: perché esistiamo? Dove vogliamo andare?</p><p>Il <strong>Brand</strong> è il simbolo di questa promessa. È molto più di un logo disegnato bene; è un contenitore di emozioni e valori. Quando un consumatore sceglie un brand, sta scegliendo una storia e un'identità in cui si riconosce.</p>`
+                }
+            ]
+        };
+
+        const quizData = [
+            /* 1. DEFINIZIONE DI ORGANIZZAZIONE E STRUTTURE */
+            { 
+                question: "Secondo G. Bernardi, cos'è un'organizzazione?", 
+                options: ["Un sistema complesso di persone associate per uno scopo unitario", "Un gruppo di amici che si ritrova", "Un edificio costruito per lavorare", "Un sistema di computer collegati"], 
+                correctAnswer: "Un sistema complesso di persone associate per uno scopo unitario",
+                explanation: "Bernardi definisce l'organizzazione proprio così: un gruppo di persone che collaborano seguendo regole precise per un obiettivo comune." 
+            },
+            { 
+                question: "Quale elemento NON fa parte della definizione di organizzazione di Bernardi?", 
+                options: ["Divisione delle attività", "Scopo unitario", "Rapporto statico con l'ambiente", "Norme e ruoli"], 
+                correctAnswer: "Rapporto statico con l'ambiente",
+                explanation: "L'organizzazione ha un rapporto 'dinamico' (che cambia sempre) con l'ambiente esterno, non statico."
+            },
+            { 
+                question: "Come interagisce l'organizzazione con l'ambiente esterno secondo la definizione?", 
+                options: ["In modo dinamico", "In modo statico", "Non interagisce", "Solo tramite email"], 
+                correctAnswer: "In modo dinamico",
+                explanation: "L'azienda deve adattarsi continuamente al mercato e al mondo che la circonda, quindi il rapporto è dinamico."
+            },
+            { 
+                question: "Nell'ordinamento gerarchico, su cosa è incentrata la trasmissione del potere?", 
+                options: ["Su linee verticali", "Su linee orizzontali", "Su linee diagonali", "A caso"], 
+                correctAnswer: "Su linee verticali",
+                explanation: "Nell'ordinamento gerarchico, gli ordini scendono dall'alto (capo) verso il basso (dipendente), come in una piramide."
+            },
+            { 
+                question: "Nell'ordinamento gerarchico, a quanti superiori risponde un membro?", 
+                options: ["A un'unica posizione superiore", "A due capi", "A nessuno", "A tutto lo staff"], 
+                correctAnswer: "A un'unica posizione superiore",
+                explanation: "È la regola base della gerarchia semplice: ogni dipendente ha un solo capo diretto a cui rispondere."
+            },
+            { 
+                question: "Qual è la caratteristica principale dell'ordinamento funzionale?", 
+                options: ["È incentrato su specialisti di funzione", "C'è un solo capo per tutti", "Non ci sono regole", "È tipico delle piccole aziende"], 
+                correctAnswer: "È incentrato su specialisti di funzione",
+                explanation: "Qui il potere è diviso per competenza: c'è il capo del marketing, il capo della produzione, ecc. Sono specialisti."
+            },
+            { 
+                question: "Nell'ordinamento funzionale, un operatore può ricevere ordini da più capi?", 
+                options: ["Sì, da più capi specializzati", "No, solo da uno", "Solo il venerdì", "Mai"], 
+                correctAnswer: "Sì, da più capi specializzati",
+                explanation: "Sì, perché ogni capo ha competenza sul suo pezzo. Il dipendente ascolta l'esperto di quell'area specifica."
+            },
+            { 
+                question: "Nell'ordinamento gerarchico-funzionale, chi detiene il potere decisionale?", 
+                options: ["I capi gerarchici (Linea)", "Gli specialisti (Staff)", "I clienti", "I fornitori"], 
+                correctAnswer: "I capi gerarchici (Linea)",
+                explanation: "La 'Linea' comanda e decide. Lo 'Staff' aiuta solo con consigli ma non ha il potere di dare ordini diretti."
+            },
+            { 
+                question: "Qual è il ruolo degli specialisti (Staff) nell'ordinamento gerarchico-funzionale?", 
+                options: ["Funzione ausiliaria (consigli, assistenza)", "Dare ordini diretti", "Pulire l'ufficio", "Vendere i prodotti"], 
+                correctAnswer: "Funzione ausiliaria (consigli, assistenza)",
+                explanation: "Lo Staff supporta i manager con competenze specifiche (es. legali, informatici) ma non guida la produzione."
+            },
+            { 
+                question: "Cos'è l'organigramma?", 
+                options: ["La rappresentazione grafica degli organi e delle unità organizzative", "Il bilancio annuale", "Il logo dell'azienda", "La lista dei clienti"], 
+                correctAnswer: "La rappresentazione grafica degli organi e delle unità organizzative",
+                explanation: "È proprio il disegno (la mappa) che mostra tutte le caselle dei ruoli e le linee di comando dell'azienda."
+            },
+            { 
+                question: "Quale struttura è tipica delle aziende di piccole dimensioni?", 
+                options: ["Struttura elementare o semplice", "Struttura a matrice", "Struttura funzionale", "Multinazionale"], 
+                correctAnswer: "Struttura elementare o semplice",
+                explanation: "Le piccole aziende usano la struttura elementare perché basta un solo capo (l'imprenditore) per gestire tutto."
+            },
+            { 
+                question: "Nella struttura elementare, chi controlla l'organizzazione?", 
+                options: ["L'imprenditore/proprietario", "Un consiglio di amministrazione", "Lo staff esterno", "Il sindacato"], 
+                correctAnswer: "L'imprenditore/proprietario",
+                explanation: "Tutto ruota attorno al proprietario che accentra su di sé tutte le decisioni."
+            },
+            { 
+                question: "Perché nasce la struttura funzionale?", 
+                options: ["Perché l'imprenditore non riesce più a controllare tutto da solo", "Perché è più economica", "Perché va di moda", "Per caso"], 
+                correctAnswer: "Perché l'imprenditore non riesce più a controllare tutto da solo",
+                explanation: "Quando l'azienda cresce, una sola persona non basta più. Serve dividere i compiti e nominare responsabili di area."
+            },
+            { 
+                question: "Cosa sono le 'funzioni aziendali'?", 
+                options: ["Unità organizzative dotate di competenze comuni", "Feste aziendali", "I prodotti venduti", "I computer dell'ufficio"], 
+                correctAnswer: "Unità organizzative dotate di competenze comuni",
+                explanation: "Sono i reparti (Marketing, Vendite, Amministrazione) dove lavorano persone con le stesse capacità tecniche."
+            },
+            { 
+                question: "Quale dimensione sviluppa la struttura funzionale?", 
+                options: ["Orizzontale (funzioni) e verticale (gerarchia)", "Solo verticale", "Solo circolare", "Sferica"], 
+                correctAnswer: "Orizzontale (funzioni) e verticale (gerarchia)",
+                explanation: "Si espande in larghezza creando nuovi reparti (orizzontale) e in altezza aggiungendo livelli di manager (verticale)."
+            },
+            { 
+                question: "La struttura a matrice è tipica di quali organizzazioni?", 
+                options: ["Quelle che lavorano per progetti", "I piccoli negozi", "Le aziende agricole", "Le sole aziende pubbliche"], 
+                correctAnswer: "Quelle che lavorano per progetti",
+                explanation: "È perfetta per chi gestisce commesse complesse (es. edilizia, software house) dove servono team dedicati per ogni progetto."
+            },
+            { 
+                question: "Qual è la particolarità della responsabilità nella struttura a matrice?", 
+                options: ["È duplice: verso la funzione e verso il progetto", "È singola", "È tripla", "Non esiste responsabilità"], 
+                correctAnswer: "È duplice: verso la funzione e verso il progetto",
+                explanation: "Ogni dipendente ha due 'capi': il responsabile tecnico del suo mestiere e il project manager del lavoro che sta facendo."
+            },
+            { 
+                question: "Nella struttura a matrice, cosa rappresentano le 'funzioni'?", 
+                options: ["Il bacino di competenze", "Il coordinamento operativo", "I clienti", "I fornitori"], 
+                correctAnswer: "Il bacino di competenze",
+                explanation: "Le funzioni forniscono le risorse esperte (le persone capaci) da assegnare ai vari progetti."
+            },
+            { 
+                question: "Nella struttura a matrice, cosa rappresentano i 'progetti'?", 
+                options: ["Il coordinamento operativo", "Le ferie", "Gli stipendi", "La sede legale"], 
+                correctAnswer: "Il coordinamento operativo",
+                explanation: "I progetti si occupano di far accadere le cose praticamente, coordinando il lavoro quotidiano per raggiungere l'obiettivo."
+            },
+
+            /* 2. CULTURA ORGANIZZATIVA */
+            { 
+                question: "Cosa designa il concetto di cultura organizzativa?", 
+                options: ["Valori dominanti, norme e modelli di comportamento", "Lo stipendio medio", "Il livello di istruzione", "I libri in biblioteca"], 
+                correctAnswer: "Valori dominanti, norme e modelli di comportamento",
+                explanation: "È l'insieme invisibile di regole, valori e abitudini che definisce 'come si fanno le cose qui'."
+            },
+            { 
+                question: "Secondo Avallone (1997), cosa devono apprendere i nuovi assunti?", 
+                options: ["Le regole per orientarsi ed essere accettati", "Solo il codice fiscale", "Come usare la macchinetta del caffè", "La storia del fondatore"], 
+                correctAnswer: "Le regole per orientarsi ed essere accettati",
+                explanation: "Per non sentirsi esclusi, i nuovi arrivati devono capire velocemente le regole non scritte del gruppo."
+            },
+            { 
+                question: "Quale elemento NON fa parte della cultura organizzativa?", 
+                options: ["Il fatturato annuo", "I linguaggi e i rituali", "Le norme non scritte", "I valori dominanti"], 
+                correctAnswer: "Il fatturato annuo",
+                explanation: "Il fatturato è un numero economico. La cultura riguarda invece i comportamenti, i valori e le relazioni."
+            },
+            { 
+                question: "La cultura organizzativa definisce:", 
+                options: ["Quali comportamenti vengono considerati appropriati", "Chi deve essere licenziato", "Il prezzo dei prodotti", "L'orario di apertura"], 
+                correctAnswer: "Quali comportamenti vengono considerati appropriati",
+                explanation: "Stabilisce cosa è 'giusto' o 'sbagliato' fare all'interno di quell'ufficio o azienda."
+            },
+
+            /* 3. COMUNICAZIONE E VETTORI */
+            { 
+                question: "Come viene definita la comunicazione per un'impresa?", 
+                options: ["Il sistema nervoso", "Il sistema scheletrico", "Il sistema muscolare", "Il cuore"], 
+                correctAnswer: "Il sistema nervoso",
+                explanation: "Come i nervi trasmettono impulsi al corpo, la comunicazione trasmette informazioni vitali in tutta l'azienda."
+            },
+            { 
+                question: "Il vettore 'Dentro-Dentro' corrisponde a:", 
+                options: ["Comunicazioni dai Manager ai sottoposti (Comunicazione interna)", "Public Relations", "Digital PR", "Feedback clienti"], 
+                correctAnswer: "Comunicazioni dai Manager ai sottoposti (Comunicazione interna)",
+                explanation: "È il flusso che rimane all'interno delle mura aziendali, tra colleghi e capi. Serve a organizzare il lavoro."
+            },
+            { 
+                question: "Il vettore 'Dentro-Fuori' corrisponde a:", 
+                options: ["Public Relations (Dall'azienda al contesto)", "Intranet", "Conversazioni tra dipendenti", "Acquisti dei fornitori"], 
+                correctAnswer: "Public Relations (Dall'azienda al contesto)",
+                explanation: "È l'azienda che parla al mondo esterno (media, clienti, istituzioni) per farsi conoscere."
+            },
+            { 
+                question: "Il vettore 'Fuori-Dentro' riguarda:", 
+                options: ["I feedback dei consumatori/azionisti verso l'azienda", "Le direttive del capo", "La pubblicità in TV", "L'invio di newsletter"], 
+                correctAnswer: "I feedback dei consumatori/azionisti verso l'azienda",
+                explanation: "Sono le informazioni che rientrano in azienda dall'esterno, come le opinioni dei clienti. Fondamentali per migliorare."
+            },
+            { 
+                question: "Il vettore 'Fuori-Fuori' riguarda:", 
+                options: ["Conversazioni sui social tra utenti (Digital PR)", "Telefonate tra colleghi", "Riunioni del consiglio", "Cartelloni stradali"], 
+                correctAnswer: "Conversazioni sui social tra utenti (Digital PR)",
+                explanation: "È il passaparola digitale. Gli utenti parlano dell'azienda tra di loro, senza che l'azienda sia direttamente coinvolta nella conversazione."
+            },
+            { 
+                question: "Quale vettore descrive le 'Digital PR' dove gli utenti parlano tra loro?", 
+                options: ["Fuori-Fuori", "Dentro-Dentro", "Dentro-Fuori", "Nessuno"], 
+                correctAnswer: "Fuori-Fuori",
+                explanation: "Le Digital PR cercano di stimolare queste conversazioni esterne (tra utenti) per creare una buona reputazione online."
+            },
+            { 
+                question: "Un comunicato stampa inviato ai media è un esempio di vettore:", 
+                options: ["Dentro-Fuori", "Dentro-Dentro", "Fuori-Fuori", "Fuori-Dentro"], 
+                correctAnswer: "Dentro-Fuori",
+                explanation: "L'azienda (dentro) invia un messaggio ufficiale ai giornalisti (fuori)."
+            },
+            { 
+                question: "Una recensione negativa lasciata da un cliente su Google è un esempio di:", 
+                options: ["Fuori-Fuori (se letta da altri) o Fuori-Dentro (se letta dall'azienda)", "Dentro-Dentro", "Lobbying", "Mansionario"], 
+                correctAnswer: "Fuori-Fuori (se letta da altri) o Fuori-Dentro (se letta dall'azienda)",
+                explanation: "È 'Fuori-Fuori' perché influenza altri clienti che la leggono, ma anche 'Fuori-Dentro' perché l'azienda la legge come feedback."
+            },
+            
+            /* 4. INTERLOCUTORI */
+            { 
+                question: "Quali sono i tre macro-soggetti con cui comunica l'impresa?", 
+                options: ["Mercato, Stakeholders, Collaboratori", "Clienti, Fornitori, Banche", "Amici, Parenti, Vicini", "Politici, Giornalisti, Avvocati"], 
+                correctAnswer: "Mercato, Stakeholders, Collaboratori",
+                explanation: "Sono le tre grandi categorie: chi compra (Mercato), chi ha interessi (Stakeholders) e chi lavora (Collaboratori)."
+            },
+            { 
+                question: "Chi sono gli Stakeholders?", 
+                options: ["Soggetti che condividono interessi comuni con l'azienda", "Solo i clienti", "Solo i dipendenti", "I concorrenti"], 
+                correctAnswer: "Soggetti che condividono interessi comuni con l'azienda",
+                explanation: "Stakeholder significa 'portatore di interesse'. Sono banche, azionisti, partner, e la comunità locale."
+            },
+            { 
+                question: "Cosa prevede la relazione con il Mercato?", 
+                options: ["Attività di marketing e vendita", "Attività di beneficenza", "Attività sindacale", "Nulla"], 
+                correctAnswer: "Attività di marketing e vendita",
+                explanation: "Con il mercato (i clienti) si parla principalmente per vendere prodotti e promuovere il brand."
+            },
+
+            /* 5. GREENWASHING */
+            { 
+                question: "Cosa si intende per Greenwashing?", 
+                options: ["Fingere di essere ecosostenibili per marketing", "Lavare l'azienda con prodotti bio", "Piantare alberi", "Riciclare carta"], 
+                correctAnswer: "Fingere di essere ecosostenibili per marketing",
+                explanation: "È una 'lavata di verde' di facciata. L'azienda si finge ecologica per vendere di più, ma non lo è davvero."
+            },
+            { 
+                question: "Il Greenwashing è considerata una pratica:", 
+                options: ["Disonesta e fraudolenta", "Innovativa", "Necessaria", "Legale e consigliata"], 
+                correctAnswer: "Disonesta e fraudolenta",
+                explanation: "È un inganno ai danni del consumatore, che crede di fare una scelta etica e invece viene preso in giro."
+            },
+            { 
+                question: "Qual è uno dei rischi maggiori del Greenwashing?", 
+                options: ["Perdita di fiducia verso il brand", "Aumento delle tasse", "Troppi ordini", "Nessun rischio"], 
+                correctAnswer: "Perdita di fiducia verso il brand",
+                explanation: "Se vieni scoperto a mentire, i clienti smettono di fidarsi. E la fiducia persa è difficilissima da recuperare."
+            },
+            { 
+                question: "Come si può smascherare il Greenwashing?", 
+                options: ["Cercando prove e certificazioni affidabili", "Fidandosi ciecamente", "Guardando se il logo è verde", "Chiedendo al commesso"], 
+                correctAnswer: "Cercando prove e certificazioni affidabili",
+                explanation: "Non bastano le parole o i colori verdi. Servono dati, prove concrete e certificazioni ufficiali (come Carbon Trust)."
+            },
+            { 
+                question: "Quale linguaggio è tipico del Greenwashing?", 
+                options: ["Vago, con frasi ad effetto ed esagerato", "Chiaro e preciso", "Tecnico e scientifico", "Umile"], 
+                correctAnswer: "Vago, con frasi ad effetto ed esagerato",
+                explanation: "Usano termini generici come 'amico della natura' o 'verde' senza spiegare tecnicamente cosa fanno davvero."
+            },
+            { 
+                question: "Quale esempio di certificazione affidabile viene citato?", 
+                options: ["Carbon Trust Standard", "Bollino Verde Autoprodotto", "Amico della Natura", "Eco-Friendly 100%"], 
+                correctAnswer: "Carbon Trust Standard",
+                explanation: "Il Carbon Trust Standard è un ente terzo che verifica scientificamente le emissioni, quindi è affidabile."
+            },
+
+            /* 6. COMUNICAZIONI INTERNE */
+            { 
+                question: "Le comunicazioni interne corrispondono a quale vettore?", 
+                options: ["Dentro-Dentro", "Fuori-Fuori", "Dentro-Fuori", "Fuori-Dentro"], 
+                correctAnswer: "Dentro-Dentro",
+                explanation: "Perché avvengono interamente all'interno dell'organizzazione."
+            },
+            { 
+                question: "Qual è una finalità delle comunicazioni interne?", 
+                options: ["Sviluppare un clima favorevole alla collaborazione", "Vendere più prodotti", "Evitare le tasse", "Nascondere i problemi"], 
+                correctAnswer: "Sviluppare un clima favorevole alla collaborazione",
+                explanation: "Servono a far andare tutti d'accordo e a farli lavorare bene insieme verso lo stesso obiettivo."
+            },
+            { 
+                question: "La comunicazione interna serve a far conoscere:", 
+                options: ["Strategie, politiche e procedure ai dipendenti", "I segreti industriali ai concorrenti", "I prezzi ai clienti", "Il menu della mensa"], 
+                correctAnswer: "Strategie, politiche e procedure ai dipendenti",
+                explanation: "I dipendenti devono sapere dove sta andando l'azienda (strategia) e come comportarsi (procedure)."
+            },
+            { 
+                question: "Tra gli strumenti di comunicazione interna troviamo:", 
+                options: ["Opuscoli di accoglimento e organigramma", "Pubblicità televisiva", "Sconti per i clienti", "Cartelloni stradali"], 
+                correctAnswer: "Opuscoli di accoglimento e organigramma",
+                explanation: "Sono strumenti tipici per informare il personale sulle regole e sulla struttura dell'azienda."
+            },
+            { 
+                question: "Cosa sono le 'circolari'?", 
+                options: ["Disposizioni dei dirigenti per tutto il personale", "Giri in tondo", "Pubblicità rotonde", "Riunioni"], 
+                correctAnswer: "Disposizioni dei dirigenti per tutto il personale",
+                explanation: "Sono avvisi scritti ufficiali mandati dalla direzione a tutti i dipendenti per comunicare nuove regole o notizie."
+            },
+            { 
+                question: "Cos'è il 'mansionario'?", 
+                options: ["Mappa che descrive i compiti dei ruoli", "Una grande casa", "L'elenco dei dipendenti", "Il bilancio"], 
+                correctAnswer: "Mappa che descrive i compiti dei ruoli",
+                explanation: "È un documento che spiega esattamente quali sono i compiti e le responsabilità di ogni posizione lavorativa."
+            },
+            { 
+                question: "Quale strumento serve per ottenere feedback (fuori-dentro interno) dai collaboratori?", 
+                options: ["I questionari", "Le circolari", "L'organigramma", "Il logo"], 
+                correctAnswer: "I questionari",
+                explanation: "Con i questionari l'azienda chiede ai dipendenti cosa ne pensano, ricevendo un feedback prezioso."
+            },
+            { 
+                question: "A cosa servono i colloqui di supervisione?", 
+                options: ["Valutare l'andamento di un progetto/lavoro", "Licenziare le persone", "Chiacchierare", "Organizzare feste"], 
+                correctAnswer: "Valutare l'andamento di un progetto/lavoro",
+                explanation: "Sono momenti di confronto tra capo e collaboratore per capire come sta procedendo il lavoro."
+            },
+
+            /* 7. PUBLIC RELATIONS (PR) */
+            { 
+                question: "Le Public Relations corrispondono a quale vettore principale?", 
+                options: ["Dentro-Fuori", "Fuori-Fuori", "Dentro-Dentro", "Fuori-Dentro"], 
+                correctAnswer: "Dentro-Fuori",
+                explanation: "L'azienda comunica verso l'esterno per costruire la sua immagine pubblica."
+            },
+            { 
+                question: "Qual è la definizione di Public Relations?", 
+                options: ["Attività per procurarsi atteggiamenti favorevoli dai soggetti interagenti", "Vendita porta a porta", "Gestione del magazzino", "Attività di spionaggio"], 
+                correctAnswer: "Attività per procurarsi atteggiamenti favorevoli dai soggetti interagenti",
+                explanation: "Le PR non vendono direttamente, ma servono a farsi 'amici' tutti coloro con cui l'azienda ha a che fare."
+            },
+            { 
+                question: "Qual è la PRIMA finalità delle PR?", 
+                options: ["Creare un'immagine positiva dell'azienda", "Vendere subito", "Risparmiare", "Assumere"], 
+                correctAnswer: "Creare un'immagine positiva dell'azienda",
+                explanation: "Lo scopo principale è la reputazione: far sì che la gente pensi bene dell'azienda."
+            },
+            { 
+                question: "Chi NON è un destinatario tipico delle PR?", 
+                options: ["I macchinari", "I clienti", "I fornitori", "Le pubbliche autorità"], 
+                correctAnswer: "I macchinari",
+                explanation: "Le PR si rivolgono alle persone (stakeholders), non alle cose!"
+            },
+            { 
+                question: "I finanziatori (banche, azionisti) sono destinatari delle PR?", 
+                options: ["Sì", "No", "Solo se l'azienda è in crisi", "Mai"], 
+                correctAnswer: "Sì",
+                explanation: "Assolutamente sì. Bisogna mantenere buoni rapporti con chi mette i soldi nell'azienda."
+            },
+            { 
+                question: "Chi è l'autore dell'acronimo PENCILS?", 
+                options: ["Philip Kotler", "G. Bernardi", "Avallone", "Steve Jobs"], 
+                correctAnswer: "Philip Kotler",
+                explanation: "Kotler è un famoso esperto di marketing che ha inventato questo acronimo per ricordare gli strumenti delle PR."
+            },
+            { 
+                question: "Cosa sta per la 'P' di PENCILS?", 
+                options: ["Publications (Pubblicazioni)", "Public", "People", "Price"], 
+                correctAnswer: "Publications (Pubblicazioni)",
+                explanation: "Sono i materiali scritti dall'azienda: brochure, riviste aziendali, report."
+            },
+            { 
+                question: "Cosa sta per la 'E' di PENCILS?", 
+                options: ["Events (Eventi)", "Energy", "Economy", "Email"], 
+                correctAnswer: "Events (Eventi)",
+                explanation: "Sono le cose che l'azienda organizza o sponsorizza: fiere, mostre, gare sportive."
+            },
+            { 
+                question: "Cosa sta per la 'N' di PENCILS?", 
+                options: ["News (Notizie)", "Nature", "Name", "Number"], 
+                correctAnswer: "News (Notizie)",
+                explanation: "Sono le notizie sull'azienda inviate ai giornali tramite comunicati stampa."
+            },
+            { 
+                question: "Cosa sta per la 'C' di PENCILS?", 
+                options: ["Community (Comunità)", "Cost", "Cash", "Computer"], 
+                correctAnswer: "Community (Comunità)",
+                explanation: "Riguarda il rapporto con la comunità locale, il quartiere o la città dove l'azienda opera."
+            },
+            { 
+                question: "Cosa sta per la 'I' di PENCILS?", 
+                options: ["Identity (Identità)", "Internet", "Idea", "Image"], 
+                correctAnswer: "Identity (Identità)",
+                explanation: "Sono gli elementi visivi che rendono l'azienda riconoscibile: logo, divise, biglietti da visita."
+            },
+            { 
+                question: "Cosa sta per la 'L' di PENCILS?", 
+                options: ["Lobbying", "Law", "Logo", "Leader"], 
+                correctAnswer: "Lobbying",
+                explanation: "È l'attività di relazione con i politici per cercare di ottenere leggi favorevoli all'azienda."
+            },
+            { 
+                question: "Cosa sta per la 'S' di PENCILS?", 
+                options: ["Social (Responsabilità sociale)", "Strategy", "Sales", "System"], 
+                correctAnswer: "Social (Responsabilità sociale)",
+                explanation: "Sono le attività benefiche o etiche (CSR) che l'azienda fa per la società e l'ambiente."
+            },
+            { 
+                question: "Quale strumento PR rientra in 'News'?", 
+                options: ["Comunicati stampa e conferenze", "Volantini", "Sconti", "Cartelloni"], 
+                correctAnswer: "Comunicati stampa e conferenze",
+                explanation: "Questi sono i mezzi classici per dare notizie ai giornalisti."
+            },
+            { 
+                question: "Quale strumento PR rientra in 'Events'?", 
+                options: ["Sponsorizzazioni sportive o mostre", "Logo aziendale", "Sito web", "Bilancio"], 
+                correctAnswer: "Sponsorizzazioni sportive o mostre",
+                explanation: "Sponsorizzare una squadra o fare una mostra sono tipici 'Eventi' per farsi vedere."
+            },
+            { 
+                question: "Cosa si intende per Lobbying?", 
+                options: ["Relazioni con i centri di potere politico/legislativo", "Attesa nella hall", "Corruzione", "Pubblicità"], 
+                correctAnswer: "Relazioni con i centri di potere politico/legislativo",
+                explanation: "È un'attività legittima di pressione sui legislatori per rappresentare gli interessi dell'azienda."
+            },
+            { 
+                question: "La Responsabilità Sociale d'Impresa (CSR) rientra in quale lettera di PENCILS?", 
+                options: ["S (Social)", "P", "L", "C"], 
+                correctAnswer: "S (Social)",
+                explanation: "Rientra nella S di Social perché riguarda l'impatto sociale ed etico dell'impresa."
+            },
+            { 
+                question: "Il 'numero verde' è uno strumento di PR?", 
+                options: ["Sì", "No", "Solo per le emergenze", "È marketing"], 
+                correctAnswer: "Sì",
+                explanation: "Sì, perché offre un servizio di assistenza e ascolto, migliorando la relazione con il cliente."
+            },
+
+            /* 8. DIGITAL PR */
+            { 
+                question: "Le Digital PR si concentrano principalmente su quale vettore?", 
+                options: ["Fuori-Fuori (passaparola tra utenti) e Fuori-Dentro (ascolto)", "Dentro-Dentro", "Dentro-Fuori (solo invio)", "Nessuno"], 
+                correctAnswer: "Fuori-Fuori (passaparola tra utenti) e Fuori-Dentro (ascolto)",
+                explanation: "Lavorano sul passaparola online (utenti che parlano ad altri utenti) e sull'ascolto di ciò che si dice in rete."
+            },
+            { 
+                question: "Cosa sono le Digital PR?", 
+                options: ["Attività di PR che usano gli strumenti della rete", "PR fatte con le dita", "Programmazione software", "Vendita online"], 
+                correctAnswer: "Attività di PR che usano gli strumenti della rete",
+                explanation: "È semplicemente fare Pubbliche Relazioni usando internet, i social media e il web."
+            },
+            { 
+                question: "Quale nuova figura professionale gestisce le Digital PR?", 
+                options: ["Social Media Manager", "Il direttore generale", "Il magazziniere", "L'avvocato"], 
+                correctAnswer: "Social Media Manager",
+                explanation: "È lo specialista che si occupa di gestire i canali social e la reputazione online."
+            },
+            { 
+                question: "A chi si rivolgono direttamente le Digital PR?", 
+                options: ["Clienti e Influencer del settore", "Solo ai giornalisti", "Al governo", "Ai fornitori"], 
+                correctAnswer: "Clienti e Influencer del settore",
+                explanation: "Online si può parlare direttamente al pubblico e alle persone influenti (Influencer), saltando i giornalisti tradizionali."
+            },
+            { 
+                question: "Chi sono gli 'Opinion Leader' online?", 
+                options: ["Blogger, gestori di profili rilevanti, influencer", "I politici", "I capi azienda", "I tecnici"], 
+                correctAnswer: "Blogger, gestori di profili rilevanti, influencer",
+                explanation: "Sono persone che hanno un seguito online e la cui opinione influenza quella degli altri utenti."
+            },
+            { 
+                question: "Cosa garantiscono le Digital PR per un sito web?", 
+                options: ["Che sia accattivante e ben posizionato sui motori di ricerca", "Che sia costoso", "Che sia segreto", "Che sia lento"], 
+                correctAnswer: "Che sia accattivante e ben posizionato sui motori di ricerca",
+                explanation: "Un buon sito deve essere bello ma soprattutto facile da trovare su Google (SEO)."
+            },
+            { 
+                question: "Cosa significa WOM?", 
+                options: ["Word of Mouth (Passaparola)", "World of Music", "Waste of Money", "Web of Men"], 
+                correctAnswer: "Word of Mouth (Passaparola)",
+                explanation: "Letteralmente 'parola di bocca'. È quando la gente parla spontaneamente del tuo brand."
+            },
+            { 
+                question: "Qual è l'obiettivo delle campagne virali (vettore Fuori-Fuori)?", 
+                options: ["Creare intrattenimento condiviso spontaneamente dagli utenti", "Vendere subito", "Annoiarsi", "Nascondere il brand"], 
+                correctAnswer: "Creare intrattenimento condiviso spontaneamente dagli utenti",
+                explanation: "L'obiettivo è fare qualcosa di così divertente o interessante che gli utenti lo condividano da soli, facendolo girare ovunque."
+            },
+            { 
+                question: "L'esempio 'Alexa Has Lost Her Voice' è un caso di:", 
+                options: ["Viral marketing", "Greenwashing", "Crisi aziendale", "Lobbying"], 
+                correctAnswer: "Viral marketing",
+                explanation: "È stato uno spot molto divertente che è diventato virale perché la gente lo condivideva per ridere."
+            },
+            { 
+                question: "A cosa serve l'Alert System (vettore Fuori-Dentro)?", 
+                options: ["Informare l'azienda quando viene nominata sul web", "Svegliare i dipendenti", "Suonare l'allarme", "Bloccare i virus"], 
+                correctAnswer: "Informare l'azienda quando viene nominata sul web",
+                explanation: "È come un orecchio sempre teso: appena qualcuno scrive il nome dell'azienda online, arriva una notifica."
+            },
+            { 
+                question: "Il 'Canon Club' citato nelle slide è un esempio di:", 
+                options: ["Community dedicata (Digital PR)", "Greenwashing", "Lobbying", "Organigramma"], 
+                correctAnswer: "Community dedicata (Digital PR)",
+                explanation: "Creare uno spazio online dove gli appassionati possono incontrarsi è un tipico strumento di Digital PR."
+            },
+
+            /* 9. IMMAGINE AZIENDALE */
+            { 
+                question: "Cos'è l'immagine aziendale?", 
+                options: ["L'insieme delle opinioni che il pubblico ha dell'impresa", "Il logo", "La sede fisica", "Il catalogo prodotti"], 
+                correctAnswer: "L'insieme delle opinioni che il pubblico ha dell'impresa",
+                explanation: "Non è il logo, ma ciò che la gente *pensa* e *sente* quando sente nominare l'azienda."
+            },
+            { 
+                question: "La 'Corporate image' si riferisce a:", 
+                options: ["L'intera azienda", "Un singolo prodotto", "Una marca specifica", "Al direttore"], 
+                correctAnswer: "L'intera azienda",
+                explanation: "Corporate viene da 'Corporation'. È l'immagine dell'azienda nel suo complesso (es. Barilla come azienda)."
+            },
+            { 
+                question: "La 'Brand image' si riferisce a:", 
+                options: ["Una marca", "Tutta l'azienda", "Un prodotto anonimo", "Ai dipendenti"], 
+                correctAnswer: "Una marca",
+                explanation: "È l'immagine di una specifica marca posseduta dall'azienda (es. Mulino Bianco)."
+            },
+            { 
+                question: "La 'Product image' si riferisce a:", 
+                options: ["Un singolo prodotto", "La fabbrica", "Il logo", "Il sito web"], 
+                correctAnswer: "Un singolo prodotto",
+                explanation: "È l'opinione che la gente ha di uno specifico oggetto in vendita (es. i Pan di Stelle)."
+            },
+            { 
+                question: "Come si crea l'immagine attraverso 'vie dirette'?", 
+                options: ["Conoscenza diretta dei prodotti/servizi acquistati", "Pubblicità", "Passaparola", "PR"], 
+                correctAnswer: "Conoscenza diretta dei prodotti/servizi acquistati",
+                explanation: "È l'esperienza personale: compro il prodotto, lo uso e mi faccio un'idea."
+            },
+            { 
+                question: "Come si crea l'immagine attraverso 'vie indirette'?", 
+                options: ["PR, pubblicità, giudizi opinion leader, social", "Uso del prodotto", "Acquisto", "Esperienza personale"], 
+                correctAnswer: "PR, pubblicità, giudizi opinion leader, social",
+                explanation: "È l'idea che mi faccio sentendo parlare del prodotto da altri o vedendo la pubblicità, senza averlo provato."
+            },
+            { 
+                question: "Per avere successo, un'azienda deve essere:", 
+                options: ["Credibile e ben riconoscibile", "Invisibile e misteriosa", "Costosa ed esclusiva", "Vecchia e lenta"], 
+                correctAnswer: "Credibile e ben riconoscibile",
+                explanation: "Deve farsi riconoscere tra mille altre e deve mantenere le promesse (credibilità)."
+            },
+            { 
+                question: "Cosa significa che l'azienda deve distinguersi dalla 'giungla'?", 
+                options: ["Deve essere riconoscibile rispetto alla concorrenza", "Deve avere piante in ufficio", "Deve essere aggressiva", "Deve chiudere"], 
+                correctAnswer: "Deve essere riconoscibile rispetto alla concorrenza",
+                explanation: "Il mercato è pieno di prodotti simili (una giungla). Per sopravvivere devi essere diverso e riconoscibile."
+            },
+
+            /* 10. MISSION E BRAND */
+            { 
+                question: "La Mission aziendale rappresenta:", 
+                options: ["Lo scopo ultimo e la giustificazione dell'esistenza", "Il profitto annuale", "Il piano ferie", "L'elenco clienti"], 
+                correctAnswer: "Lo scopo ultimo e la giustificazione dell'esistenza",
+                explanation: "La Mission risponde alla domanda: 'Perché esistiamo al di là del guadagno?'. È il cuore dell'azienda."
+            },
+            { 
+                question: "Quale domanda definisce lo 'Scopo' nella Mission?", 
+                options: ["Perché esiste la nostra azienda?", "Quanto guadagniamo?", "Chi assumiamo?", "Dove andiamo in vacanza?"], 
+                correctAnswer: "Perché esiste la nostra azienda?",
+                explanation: "È la domanda fondamentale che giustifica la presenza dell'azienda sul mercato."
+            },
+            { 
+                question: "Cosa sono i 'Valori' nella Mission?", 
+                options: ["Principi e convinzioni alla base della cultura aziendale", "Il prezzo delle azioni", "Gli sconti", "I beni materiali"], 
+                correctAnswer: "Principi e convinzioni alla base della cultura aziendale",
+                explanation: "Sono le credenze profonde che guidano il comportamento di tutti in azienda (es. onestà, innovazione)."
+            },
+            { 
+                question: "Cos'è il Brand?", 
+                options: ["Marchio che contiene aspetti distintivi, storia, valori e fiducia", "Solo il logo", "Solo il nome", "L'insegna del negozio"], 
+                correctAnswer: "Marchio che contiene aspetti distintivi, storia, valori e fiducia",
+                explanation: "Il Brand è molto più del disegno. È tutto il mondo di emozioni, storia e fiducia che quel marchio si porta dietro."
+            },
+            { 
+                question: "Dove risiede il Brand secondo la definizione?", 
+                options: ["Nella testa dei consumatori", "Sul foglio di carta", "Nel computer", "In banca"], 
+                correctAnswer: "Nella testa dei consumatori",
+                explanation: "Il Brand esiste davvero solo nella mente delle persone, come insieme di ricordi e sensazioni."
+            },
+            { 
+                question: "Qual è la differenza tra Brand e Logo?", 
+                options: ["Il Logo è il segno grafico, il Brand è l'anima/reputazione", "Sono identici", "Il Brand è il disegno, il Logo è la storia", "Nessuna"], 
+                correctAnswer: "Il Logo è il segno grafico, il Brand è l'anima/reputazione",
+                explanation: "Il logo è il disegno (la mela morsicata), il Brand è quello che provi quando lo vedi (tecnologia, design, status)."
+            },
+            { 
+                question: "Un logo 'buono' deve essere:", 
+                options: ["Semplice, memorabile, unico, coerente", "Complesso e colorato", "Copiato dagli altri", "Invisibile"], 
+                correctAnswer: "Semplice, memorabile, unico, coerente",
+                explanation: "Deve essere facile da ricordare, diverso dagli altri e non troppo incasinato."
+            },
+            { 
+                question: "Quante sono le dimensioni chiave dell'influenza di un brand?", 
+                options: ["5", "3", "10", "2"], 
+                correctAnswer: "5",
+                explanation: "Sono 5 pilastri fondamentali che rendono un brand forte."
+            },
+            { 
+                question: "Cosa indica la dimensione 'Trust'?", 
+                options: ["Fiducia e affidabilità", "Coinvolgimento", "Innovazione", "Visibilità"], 
+                correctAnswer: "Fiducia e affidabilità",
+                explanation: "Il consumatore deve potersi fidare che il brand mantenga le promesse."
+            },
+            { 
+                question: "Cosa indica la dimensione 'Engagement'?", 
+                options: ["Coinvolgimento del consumatore", "Fiducia", "Innovazione", "Ruolo sociale"], 
+                correctAnswer: "Coinvolgimento del consumatore",
+                explanation: "È quanto il brand riesce ad appassionare ed emozionare il cliente."
+            },
+            { 
+                question: "Cosa indica la dimensione 'Corporate Citizenship'?", 
+                options: ["Impegno e ruolo sociale dell'impresa", "Cittadinanza dei dipendenti", "Sede in centro città", "Tasse pagate"], 
+                correctAnswer: "Impegno e ruolo sociale dell'impresa",
+                explanation: "È il comportamento da 'buon cittadino' dell'azienda: aiuta la società? Rispetta l'ambiente?"
+            },
+            { 
+                question: "Cosa indica la dimensione 'Leading Edge'?", 
+                options: ["Capacità di fare innovazione e tendenza", "Essere leader di mercato", "Avere il prezzo più alto", "Essere vecchi"], 
+                correctAnswer: "Capacità di fare innovazione e tendenza",
+                explanation: "Significa essere all'avanguardia, dettare le mode e inventare cose nuove."
+            },
+            { 
+                question: "Cosa indica la dimensione 'Presence'?", 
+                options: ["Visibilità e presenza nel mercato", "Assenza ingiustificata", "Regali ai clienti", "Numero di dipendenti"], 
+                correctAnswer: "Visibilità e presenza nel mercato",
+                explanation: "È quanto il brand è visibile e presente nella vita di tutti i giorni."
+            }
+        ];
+
+        class ScrollytellingApp {
+            constructor(content) {
+                this.content = content;
+                this.lastScrollY = 0;
+                this.isDragging = false;
+                this.scrubTargetIndex = 0;
+                this.isSnapEnabled = localStorage.getItem('snapEnabled') !== 'false'; 
+                this.currentChapterIndex = 0;
+                this.isSnapping = false; // Prevents double snap triggers
+                
+                this.initDOMElements();
+                this.initEventListeners();
+                this.initTheme();
+                this.initSnapState();
+                
+                this.setMode(localStorage.getItem('template-mode') || 'study');
+                this.dom.appContainer.classList.add('loaded');
+            }
+            
+            initDOMElements() {
+                this.dom = {
+                    appContainer: document.getElementById('app'), header: document.getElementById('header'),
+                    headerTitle: document.getElementById('header-title'), 
+                    timelineNodesMobile: document.getElementById('timeline-nodes-mobile'),
+                    timelineProgressMobile: document.getElementById('timeline-progress-mobile'),
+                    timelineTrackMobile: document.getElementById('timeline-track-mobile'),
+                    timelineNodesDesktop: document.getElementById('timeline-nodes-desktop'),
+                    timelineProgressDesktop: document.getElementById('timeline-progress-desktop'),
+                    timelineDesktopContainer: document.querySelector('.timeline-desktop-container'),
+                    storyPanel: document.getElementById('story-panel'),
+                    themeSwitcher: document.querySelector('.theme-switcher'),
+                    scrollSentinel: document.getElementById('scroll-sentinel'),
+                    modeBtns: document.querySelectorAll('.mode-btn'),
+                    appFooter: document.getElementById('app-footer'),
+                    autoScrollBtn: document.getElementById('autoscroll-btn'),
+                    prevChapterBtn: document.getElementById('prev-chapter-btn'),
+                    nextChapterBtn: document.getElementById('next-chapter-btn')
+                };
+            }
+            
+            initSnapState() {
+                if (this.isSnapEnabled) {
+                    document.documentElement.classList.add('snap-enabled');
+                    this.dom.autoScrollBtn.classList.add('active');
+                }
+            }
+
+            initTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light'; 
+                this.applyTheme(savedTheme);
+                this.dom.themeSwitcher.addEventListener('click', () => {
+                    if (navigator.vibrate) navigator.vibrate(20);
+                    const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                    this.applyTheme(newTheme);
+                });
+            }
+            
+            applyTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem('theme', theme);
+            }
+            
+            initEventListeners() {
+                if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
+                window.scrollTo(0, 0);
+
+                this.dom.modeBtns.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        if (navigator.vibrate) navigator.vibrate(20);
+                        const newMode = btn.dataset.mode;
+                        this.setMode(newMode);
+                    });
+                });
+                
+                this.dom.autoScrollBtn.addEventListener('click', () => {
+                     this.isSnapEnabled = !this.isSnapEnabled;
+                     localStorage.setItem('snapEnabled', this.isSnapEnabled);
+                     document.documentElement.classList.toggle('snap-enabled');
+                     this.dom.autoScrollBtn.classList.toggle('active');
+                     if (navigator.vibrate) navigator.vibrate(10);
+                     
+                     if(this.isSnapEnabled) {
+                         this.dom.header.classList.remove('hidden');
+                         this.dom.appFooter.classList.remove('hidden');
+                     }
+                });
+
+                this.dom.prevChapterBtn.addEventListener('click', () => {
+                    if (this.currentChapterIndex > 0) {
+                        this.scrollToChapter(this.content.chapters[this.currentChapterIndex - 1].id);
+                    }
+                });
+
+                this.dom.nextChapterBtn.addEventListener('click', () => {
+                    if (this.currentChapterIndex < this.content.chapters.length - 1) {
+                        this.scrollToChapter(this.content.chapters[this.currentChapterIndex + 1].id);
+                    }
+                });
+
+                window.addEventListener('scroll', () => this.handleScroll(), { passive: true });
+                window.addEventListener('resize', () => this.handleResize());
+                this.initDraggableTimeline();
+            }
+            
+            handleScroll() {
+                const currentScrollY = window.scrollY;
+                const isMobile = window.innerWidth < 960;
+
+                // HEADER LOGIC: Always active now, removed the blocking condition
+                if (Math.abs(currentScrollY - this.lastScrollY) < 5) return;
+
+                if (currentScrollY > this.lastScrollY && currentScrollY > 80) {
+                    this.dom.header.classList.add('hidden');
+                    this.dom.appFooter.classList.add('hidden');
+                } else {
+                    this.dom.header.classList.remove('hidden');
+                    this.dom.appFooter.classList.remove('hidden');
+                }
+                
+                // CUSTOM SNAP LOGIC
+                if (this.isSnapEnabled && !isMobile && !this.isSnapping) {
+                    this.checkSnapTrigger();
+                }
+
+                this.lastScrollY = currentScrollY;
+            }
+
+            // NEW: Check if content bottom has passed the threshold
+            checkSnapTrigger() {
+                const chapters = document.querySelectorAll('.story-chapter');
+                const viewportHeight = window.innerHeight;
+                
+                chapters.forEach((chapter, index) => {
+                    const rect = chapter.getBoundingClientRect();
+                    // If the bottom of the chapter is above the middle of the screen
+                    // AND it's visible (bottom > 0)
+                    // AND it's not the last chapter
+                    if (rect.bottom < (viewportHeight / 1.5) && rect.bottom > 0 && index < chapters.length - 1) {
+                        // Trigger snap to next chapter
+                        this.isSnapping = true;
+                        const nextChapterId = chapters[index + 1].id;
+                        this.scrollToChapter(nextChapterId);
+                        
+                        // Reset snap lock after animation
+                        setTimeout(() => {
+                            this.isSnapping = false;
+                        }, 1000);
+                    }
+                });
+            }
+            
+            handleResize() {
+                document.querySelectorAll('.acc-item.open .acc-body').forEach(body => {
+                    body.style.maxHeight = body.scrollHeight + "px";
+                });
+                if(this.dom.timelineNodesDesktop.offsetHeight > 0) {
+                    this.setupDesktopTimelineSVG();
+                }
+            }
+            
+            initDraggableTimeline() {
+                const timeline = this.dom.timelineTrackMobile;
+                const handleDrag = (e) => {
+                    if (!this.isDragging) return;
+                    e.preventDefault();
+                    const clientX = e.clientX || e.touches[0].clientX;
+                    const rect = timeline.getBoundingClientRect();
+                    let progress = (clientX - rect.left) / rect.width;
+                    progress = Math.max(0, Math.min(1, progress));
+                    
+                    this.scrubTargetIndex = Math.round(progress * (this.content.chapters.length - 1));
+                    this.dom.headerTitle.textContent = this.content.chapters[this.scrubTargetIndex].title;
+                    
+                    document.querySelectorAll('.timeline-node-point').forEach((node, index) => {
+                        node.classList.toggle('active', index === this.scrubTargetIndex);
+                    });
+                    this.dom.timelineProgressMobile.style.width = `${progress * 100}%`;
+                };
+                const startDrag = (e) => {
+                    this.isDragging = true;
+                    handleDrag(e);
+                };
+                const endDrag = () => {
+                    if (!this.isDragging) return;
+                    this.isDragging = false;
+                    this.scrollToChapter(this.content.chapters[this.scrubTargetIndex].id);
+                };
+                timeline.addEventListener('mousedown', startDrag);
+                window.addEventListener('mousemove', handleDrag);
+                window.addEventListener('mouseup', endDrag);
+                timeline.addEventListener('touchstart', startDrag, { passive: false });
+                window.addEventListener('touchmove', handleDrag, { passive: false });
+                window.addEventListener('touchend', endDrag);
+            }
+            
+            setMode(mode) {
+                localStorage.setItem('template-mode', mode);
+                this.dom.modeBtns.forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+                const currentScrollRatio = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+                this.buildUI(mode);
+                this.initObservers(); 
+                const newScrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+                window.scrollTo(0, newScrollHeight * currentScrollRatio);
+            }
+            
+            buildUI(mode) {
+                document.querySelector('.header-title').textContent = this.content.title;
+
+                this.dom.storyPanel.innerHTML = '';
+                this.dom.timelineNodesMobile.innerHTML = '';
+                this.dom.timelineNodesDesktop.innerHTML = '';
+                
+                this.content.chapters.forEach(chapter => {
+                    const nodePointMobile = document.createElement('button');
+                    nodePointMobile.className = 'timeline-node-point';
+                    nodePointMobile.dataset.targetId = chapter.id;
+                    nodePointMobile.setAttribute('aria-label', `Vai al capitolo: ${chapter.title}`);
+                    nodePointMobile.onclick = (e) => {
+                        if(navigator.vibrate) navigator.vibrate(10);
+                        this.scrollToChapter(chapter.id);
+                    };
+                    this.dom.timelineNodesMobile.appendChild(nodePointMobile);
+
+                    const nodeDesktop = document.createElement('button');
+                    nodeDesktop.className = 'timeline-desktop-node';
+                    nodeDesktop.dataset.targetId = chapter.id;
+                    nodeDesktop.innerHTML = `<div class="node-point"></div><div class="node-label">${chapter.title}</div>`;
+                    nodeDesktop.onclick = () => this.scrollToChapter(chapter.id);
+                    this.dom.timelineNodesDesktop.appendChild(nodeDesktop);
+
+                    const section = document.createElement('section');
+                    section.className = 'story-chapter';
+                    section.id = chapter.id;
+                    const content = mode === 'story' ? chapter.storyDescription : chapter.description;
+                    section.innerHTML = `<div class="chapter-content"><h2 class="chapter-title">${chapter.title}</h2><div class="chapter-body">${content}</div></div>`;
+                    this.dom.storyPanel.appendChild(section);
+                });
+                
+                this.dom.storyPanel.querySelectorAll('.masked-term').forEach(term => {
+                    term.addEventListener('click', () => {
+                        if(!term.classList.contains('revealed')) {
+                            term.classList.add('revealed');
+                            if (navigator.vibrate) navigator.vibrate(10);
+                        }
+                    });
+                });
+
+                this.dom.storyPanel.querySelectorAll('.acc-header').forEach(header => {
+                    header.addEventListener('click', () => {
+                        const item = header.parentElement;
+                        const body = header.nextElementSibling;
+                        const isOpen = item.classList.contains('open');
+                        item.classList.toggle('open');
+                        if (!isOpen) {
+                            body.style.maxHeight = body.scrollHeight + "px";
+                        } else {
+                            body.style.maxHeight = null;
+                        }
+                    });
+                });
+
+                this.dom.storyPanel.querySelectorAll('.flip-container').forEach(container => {
+                    container.addEventListener('click', () => {
+                         const selection = window.getSelection();
+                         if (selection.toString().length === 0) {
+                             container.classList.toggle('flipped');
+                         }
+                    });
+                });
+                
+                this.setupDesktopTimelineSVG();
+            }
+            
+            setupDesktopTimelineSVG() {
+                const nodesHeight = this.dom.timelineNodesDesktop.offsetHeight;
+                const containerHeight = this.dom.timelineDesktopContainer.offsetHeight;
+                const startY = (containerHeight - nodesHeight) / 2;
+                const endY = startY + nodesHeight;
+
+                const line = this.dom.timelineProgressDesktop.previousElementSibling;
+                line.setAttribute('y1', startY);
+                line.setAttribute('y2', endY);
+                
+                const progressLine = this.dom.timelineProgressDesktop;
+                progressLine.setAttribute('y1', startY);
+                progressLine.setAttribute('y2', endY);
+
+                const pathLength = endY - startY;
+                progressLine.style.strokeDasharray = pathLength;
+                progressLine.style.strokeDashoffset = pathLength;
+            }
+
+            scrollToChapter(id) {
+                const targetElement = document.getElementById(id);
+                const headerOffset = 80;
+                const elementPosition = targetElement.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+            }
+            
+            updateNavButtonsState() {
+                if (this.currentChapterIndex <= 0) {
+                    this.dom.prevChapterBtn.classList.add('disabled');
+                } else {
+                    this.dom.prevChapterBtn.classList.remove('disabled');
+                }
+
+                if (this.currentChapterIndex >= this.content.chapters.length - 1) {
+                    this.dom.nextChapterBtn.classList.add('disabled');
+                } else {
+                    this.dom.nextChapterBtn.classList.remove('disabled');
+                }
+            }
+
+            initObservers() {
+                const chapterObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        const id = entry.target.id;
+                        const chapterIndex = this.content.chapters.findIndex(c => c.id === id);
+                        entry.target.classList.toggle('active', entry.isIntersecting);
+
+                        if (entry.isIntersecting) {
+                            this.currentChapterIndex = chapterIndex;
+                            this.updateNavButtonsState();
+
+                            if (!this.isDragging) {
+                                this.dom.headerTitle.textContent = this.content.chapters[chapterIndex].title;
+                            }
+                            document.querySelectorAll(`[data-target-id]`).forEach(node => {
+                                const isCurrent = node.dataset.targetId === id;
+                                const nodeIndex = this.content.chapters.findIndex(c => c.id === node.dataset.targetId);
+                                node.classList.toggle('active', isCurrent);
+                                node.classList.toggle('past', nodeIndex < chapterIndex);
+                            });
+                            
+                            const progress = (chapterIndex / (this.content.chapters.length - 1)) * 100;
+                            this.dom.timelineProgressMobile.style.width = `${progress}%`;
+
+                            const desktopLine = this.dom.timelineProgressDesktop;
+                            if (desktopLine) {
+                                const pathLength = parseFloat(desktopLine.style.strokeDasharray) || 0;
+                                const progressFraction = chapterIndex / (this.content.chapters.length - 1);
+                                desktopLine.style.strokeDashoffset = pathLength * (1 - progressFraction);
+                            }
+                        }
+                    });
+                }, { rootMargin: "-40% 0px -50% 0px", threshold: 0 });
+                
+                document.querySelectorAll('.story-chapter').forEach(chapter => chapterObserver.observe(chapter));
+
+                const headerObserver = new IntersectionObserver(([entry]) => {
+                    this.dom.header.classList.toggle('scrolled', !entry.isIntersecting);
+                }, { threshold: [1] });
+                
+                headerObserver.observe(this.dom.scrollSentinel);
+            }
+        }
+        
+        class Quiz {
+            constructor(questions) {
+                this.allQuestions = questions;
+                this.dom = {
+                    overlay: document.getElementById('quiz-overlay'),
+                    container: document.getElementById('quiz-container'),
+                };
+                this.state = {};
+                this.localStorageKey = 'templateQuizState';
+                this.wasSnapEnabled = false; 
+                this.savedScrollPosition = 0; 
+            }
+            start() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                const savedState = this.loadState();
+                if (savedState) { this.renderResumePrompt(); } 
+                else { this.beginNewQuiz(); }
+            }
+            resume() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.state = this.loadState();
+                this.openOverlay();
+                this.startQuizUI();
+                this.renderQuestion();
+            }
+            beginNewQuiz() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.state = {
+                    questions: this.shuffleArray([...this.allQuestions]),
+                    currentQuestionIndex: 0,
+                    score: 0,
+                    answered: false,
+                };
+                this.saveState();
+                this.openOverlay();
+                this.renderIntro();
+            }
+            openOverlay() {
+                this.savedScrollPosition = window.scrollY;
+                if (document.documentElement.classList.contains('snap-enabled')) {
+                    this.wasSnapEnabled = true;
+                    document.documentElement.classList.remove('snap-enabled');
+                } else {
+                    this.wasSnapEnabled = false;
+                }
+                this.dom.overlay.classList.add('visible');
+                document.body.classList.add('no-scroll');
+            }
+            close() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.dom.overlay.classList.remove('visible');
+                document.body.classList.remove('no-scroll');
+                if (this.wasSnapEnabled) {
+                    document.documentElement.classList.add('snap-enabled');
+                }
+                window.scrollTo(0, this.savedScrollPosition);
+            }
+            saveState() { localStorage.setItem(this.localStorageKey, JSON.stringify(this.state)); }
+            loadState() { const saved = localStorage.getItem(this.localStorageKey); return saved ? JSON.parse(saved) : null; }
+            clearState() { localStorage.removeItem(this.localStorageKey); }
+            
+            renderResumePrompt() {
+                this.openOverlay();
+                this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title">Quiz in Sospeso</span><button class="icon-btn quiz-close-btn" id="quiz-close-resume"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div><div class="quiz-body"><div class="quiz-results-wrapper"><h2 class="quiz-results-title">Bentornato!</h2><p class="quiz-results-text">Hai un quiz in sospeso. Vuoi continuare da dove avevi interrotto?</p><div class="quiz-results-actions"><button class="quiz-next-btn" id="resume-quiz-btn">Riprendi Quiz</button><button class="quiz-next-btn secondary" id="restart-quiz-btn">Inizia da Capo</button></div></div></div>`;
+                document.getElementById('resume-quiz-btn').onclick = () => this.resume();
+                document.getElementById('restart-quiz-btn').onclick = () => { this.clearState(); this.beginNewQuiz(); };
+                document.getElementById('quiz-close-resume').onclick = () => this.close();
+            }
+            renderIntro() {
+                 this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title">Test di Autovalutazione</span><button class="icon-btn quiz-close-btn" id="quiz-close-intro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div><div class="quiz-body"><div class="quiz-results-wrapper"><h2 class="quiz-results-title">Sei pronto?</h2><p class="quiz-results-text">Verifica la tua preparazione con ${this.state.questions.length} domande.</p><button class="quiz-next-btn" id="start-quiz-btn">Inizia il Quiz</button></div></div>`;
+                 document.getElementById('start-quiz-btn').onclick = () => { this.startQuizUI(); this.renderQuestion(); };
+                 document.getElementById('quiz-close-intro').onclick = () => this.close();
+            }
+            startQuizUI() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title" id="quiz-progress-text"></span><button class="icon-btn quiz-close-btn" id="quiz-close-main"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div><div class="quiz-body"><div id="quiz-content-wrapper"></div></div><div class="quiz-footer"><button class="quiz-next-btn" id="quiz-next-btn" disabled>Avanti</button></div>`;
+                document.getElementById('quiz-next-btn').onclick = () => this.nextQuestion();
+                document.getElementById('quiz-close-main').onclick = () => this.close();
+            }
+            renderQuestion() {
+                this.state.answered = false;
+                const question = this.state.questions[this.state.currentQuestionIndex];
+                const progressText = `Domanda ${this.state.currentQuestionIndex + 1} di ${this.state.questions.length}`;
+                document.getElementById('quiz-progress-text').textContent = progressText;
+                const answersHtml = this.shuffleArray(question.options).map(option => `<button class="quiz-answer-btn" data-answer="${option}">${option}</button>`).join('');
+                const contentWrapper = document.getElementById('quiz-content-wrapper');
+                const oldSlide = contentWrapper.querySelector('.quiz-slide');
+                if (oldSlide) {
+                    oldSlide.style.opacity = 0;
+                    setTimeout(() => {
+                        oldSlide.innerHTML = `<p class="quiz-question-text">${question.question}</p><div class="quiz-answers">${answersHtml}</div><div class="quiz-explanation"></div>`;
+                        oldSlide.style.opacity = 1;
+                        this.addAnswerListeners();
+                    }, 200);
+                } else {
+                    contentWrapper.innerHTML = `<div class="quiz-slide active"><p class="quiz-question-text">${question.question}</p><div class="quiz-answers">${answersHtml}</div><div class="quiz-explanation"></div></div>`;
+                    this.addAnswerListeners();
+                }
+                document.getElementById('quiz-next-btn').disabled = true;
+            }
+            addAnswerListeners() {
+                document.querySelectorAll('.quiz-answer-btn').forEach(btn => {
+                    btn.onclick = (e) => this.handleAnswer(e.target);
+                });
+            }
+            handleAnswer(selectedButton) {
+                if (this.state.answered) return;
+                this.state.answered = true;
+                if(navigator.vibrate) navigator.vibrate(20);
+                const selectedAnswer = selectedButton.dataset.answer;
+                const currentQ = this.state.questions[this.state.currentQuestionIndex];
+                const correctAnswer = currentQ.correctAnswer;
+                
+                if (selectedAnswer === correctAnswer) {
+                    this.state.score++;
+                    selectedButton.classList.add('correct');
+                } else {
+                    selectedButton.classList.add('incorrect');
+                    const correctBtn = Array.from(document.querySelectorAll('.quiz-answer-btn')).find(btn => btn.dataset.answer === correctAnswer);
+                    if (correctBtn) correctBtn.classList.add('correct');
+                }
+                
+                document.querySelectorAll('.quiz-answer-btn').forEach(btn => btn.classList.add('disabled'));
+                document.getElementById('quiz-next-btn').disabled = false;
+                
+                // Show explanation
+                const explanationEl = document.querySelector('.quiz-explanation');
+                if(explanationEl) {
+                    const explText = currentQ.explanation || ("La risposta corretta è: " + correctAnswer);
+                    explanationEl.innerHTML = "<strong>Spiegazione:</strong> " + explText;
+                    explanationEl.classList.add('visible');
+                }
+                
+                this.saveState();
+            }
+            nextQuestion() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.state.currentQuestionIndex++;
+                if (this.state.currentQuestionIndex < this.state.questions.length) {
+                    this.saveState();
+                    this.renderQuestion();
+                } else {
+                    this.renderResults();
+                }
+            }
+            renderResults() {
+                const score = this.state.score;
+                const total = this.state.questions.length;
+                const percentage = Math.round((score / total) * 100);
+                let message = "Puoi fare di meglio. Riprova!";
+                if (percentage >= 70) message = "Ottimo lavoro!";
+                if (percentage >= 90) message = "Eccellente!";
+                this.clearState();
+                this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title">Risultati</span></div><div class="quiz-body"><div class="quiz-results-wrapper"><h2 class="quiz-results-title">${message}</h2><div class="quiz-results-score">${score} / ${total}</div><p class="quiz-results-text">Hai risposto correttamente al ${percentage}% delle domande.</p><div class="quiz-results-actions"><button class="quiz-next-btn" id="retake-quiz-btn">Riprova il Quiz</button><button class="quiz-next-btn secondary" id="close-results-btn">Torna allo Studio</button></div></div></div>`;
+                document.getElementById('retake-quiz-btn').onclick = () => this.beginNewQuiz();
+                document.getElementById('close-results-btn').onclick = () => this.close();
+            }
+            shuffleArray(array) {
+                return array.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const app = new ScrollytellingApp(learningContent);
+            const quiz = new Quiz(quizData);
+            document.getElementById('quiz-btn').onclick = () => quiz.start();
+        });
+    </script>
+</body>
+</html>

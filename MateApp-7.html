@@ -1,0 +1,2486 @@
+<!DOCTYPE html>
+<html lang="it" class="antialiased">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
+    <title>L'Eserciziario Pro Ultimate</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;600&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['Fraunces', 'serif'],
+                        sans: ['Instrument Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        bgMain: 'var(--bg-main)',
+                        bgPanel: 'var(--bg-panel)',
+                        bgSurface: 'var(--bg-surface)',
+                        textMain: 'var(--text-main)',
+                        textMuted: 'var(--text-muted)',
+                        gold: 'var(--accent-gold)',
+                        step: 'var(--accent-step)',
+                        error: 'var(--accent-error)',
+                        success: 'var(--accent-success)',
+                        borderDim: 'var(--border-dim)',
+                        purple: 'var(--accent-purple)',
+                    },
+                    animation: {
+                        'shake': 'shake 0.4s cubic-bezier(.36,.07,.19,.97) both',
+                        'slide-up': 'slideUp 0.3s ease-out forwards',
+                        'pulse-blue': 'pulseBlue 0.5s ease-out',
+                        'bounce-in': 'bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+                        'fade-in': 'fadeIn 0.3s ease-out',
+                        'scale-in': 'scaleIn 0.2s ease-out',
+                    },
+                    keyframes: {
+                        shake: {
+                            '10%, 90%': { transform: 'translateX(-1px)' },
+                            '20%, 80%': { transform: 'translateX(2px)' },
+                            '30%, 50%, 70%': { transform: 'translateX(-4px)' },
+                            '40%, 60%': { transform: 'translateX(4px)' }
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' }
+                        },
+                        pulseBlue: {
+                            '0%': { boxShadow: '0 0 0 0 rgba(59, 130, 246, 0.7)' },
+                            '70%': { boxShadow: '0 0 0 10px rgba(59, 130, 246, 0)' },
+                            '100%': { boxShadow: '0 0 0 0 rgba(59, 130, 246, 0)' }
+                        },
+                        bounceIn: {
+                            '0%': { transform: 'scale(0)', opacity: '0' },
+                            '50%': { transform: 'scale(1.1)' },
+                            '100%': { transform: 'scale(1)', opacity: '1' }
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
+                        },
+                        scaleIn: {
+                            '0%': { transform: 'scale(0.9)', opacity: '0' },
+                            '100%': { transform: 'scale(1)', opacity: '1' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --bg-main: #0a0a0c;
+            --bg-panel: #131315;
+            --bg-surface: #1c1c1f;
+            --text-main: #ededed;
+            --text-muted: #6e6e73;
+            --border-dim: #27272a;
+            --accent-gold: #d4b483;
+            --accent-step: #3b82f6;
+            --accent-error: #ef4444;
+            --accent-success: #10b981;
+            --accent-purple: #8b5cf6;
+        }
+
+        :root[data-theme="light"] {
+            --bg-main: #f8f7f4;
+            --bg-panel: #ffffff;
+            --bg-surface: #f0efec;
+            --text-main: #18181b;
+            --text-muted: #71717a;
+            --border-dim: #e4e4e7;
+            --accent-gold: #b08d55;
+            --accent-step: #2563eb;
+            --accent-error: #dc2626;
+            --accent-success: #059669;
+            --accent-purple: #7c3aed;
+        }
+
+        html, body {
+            background-color: var(--bg-main);
+            height: 100%;
+            overflow: hidden;
+            overscroll-behavior: none;
+        }
+
+        body::after {
+            content: ""; position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 50; mix-blend-mode: overlay;
+        }
+
+        .glass-panel { 
+            box-shadow: 0 0 0 1px var(--border-dim), 0 8px 30px -10px rgba(0,0,0,0.5);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .katex-display { margin: 0 !important; }
+        .katex { font-size: 1.1em; }
+        .cursor-blink { animation: blink 1s step-end infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        .btn-press:active { transform: scale(0.94); transition: transform 0.05s; }
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom, 20px); }
+        
+        .gradient-gold { background: linear-gradient(135deg, var(--accent-gold), #e8c99b); }
+        
+        .xp-bar { 
+            background: linear-gradient(90deg, var(--accent-gold), #e8c99b);
+            box-shadow: 0 0 10px rgba(212, 180, 131, 0.5);
+        }
+        
+        .tab-active { 
+            background: var(--bg-surface); 
+            color: var(--text-main);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .achievement-locked { filter: grayscale(1) opacity(0.4); }
+        
+        .timer-warning { animation: pulse 1s ease-in-out infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        
+        input[type="range"] {
+            -webkit-appearance: none;
+            background: var(--border-dim);
+            border-radius: 4px;
+            height: 4px;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--accent-gold);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .formula-input {
+            background: var(--bg-surface);
+            border: 2px solid var(--border-dim);
+            border-radius: 8px;
+            padding: 8px 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 16px;
+            color: var(--text-main);
+            width: 60px;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.2s;
+            caret-color: transparent;
+        }
+        .formula-input.active {
+            border-color: var(--accent-gold);
+            background: rgba(212, 180, 131, 0.1);
+        }
+        .formula-input.correct {
+            border-color: var(--accent-success);
+            background: rgba(16, 185, 129, 0.1);
+        }
+        .formula-input.error {
+            border-color: var(--accent-error);
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
+        /* Canvas Scratchpad */
+        #scratchpad-canvas {
+            touch-action: none;
+            cursor: crosshair;
+        }
+        .canvas-active {
+            background: rgba(0,0,0,0.05);
+        }
+        :root[data-theme="dark"] .canvas-active {
+            background: rgba(255,255,255,0.02);
+        }
+        
+        @media (max-width: 640px) {
+            .katex { font-size: 1em; }
+        }
+    </style>
+</head>
+<body class="h-[100dvh] flex flex-col overflow-hidden font-sans pb-safe">
+
+    <!-- HEADER -->
+    <header class="h-14 md:h-16 flex justify-between items-center px-3 md:px-6 shrink-0 z-20 border-b border-borderDim/30">
+        <div class="flex items-center gap-2 md:gap-3 cursor-pointer select-none" onclick="app.exitSession()">
+            <div class="w-9 h-9 bg-textMain text-bgMain rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-transform">
+                <!-- Home Icon -->
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </div>
+            <div class="hidden sm:block">
+                <h1 class="font-serif text-base md:text-lg tracking-tight leading-none">L'Eserciziario</h1>
+                <p class="text-[10px] text-textMuted">Pro Ultimate</p>
+            </div>
+        </div>
+        
+        <!-- XP Bar & Level -->
+        <div id="xp-container" class="hidden flex-1 max-w-xs mx-4">
+            <div class="flex items-center gap-2">
+                <div class="flex items-center gap-1 bg-bgPanel px-2 py-1 rounded-lg border border-borderDim">
+                    <span class="text-gold text-xs font-bold">Lv.</span>
+                    <span id="level-display" class="text-xs font-mono font-bold">1</span>
+                </div>
+                <div class="flex-1 h-2 bg-bgSurface rounded-full overflow-hidden border border-borderDim">
+                    <div id="xp-bar" class="h-full xp-bar transition-all duration-500" style="width: 0%"></div>
+                </div>
+                <span id="xp-display" class="text-[10px] font-mono text-textMuted">0/100</span>
+            </div>
+        </div>
+        
+        <div class="flex items-center gap-1 md:gap-2">
+            <!-- Timer (for timed/exam mode) -->
+            <div id="timer-display" class="hidden items-center gap-1 px-2 py-1 rounded-lg bg-bgPanel border border-borderDim text-xs font-mono">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gold"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span id="timer-value">60</span>
+            </div>
+            
+            <!-- Streak -->
+            <div id="streak-badge" class="hidden items-center gap-1 px-2 py-1 rounded-lg bg-bgPanel border border-borderDim text-xs">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gold"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+                <span id="streak-count" class="font-mono font-bold">0</span>
+            </div>
+            
+            <!-- Stats Button -->
+            <button onclick="app.toggleStats()" class="p-2 rounded-full hover:bg-bgPanel text-textMuted hover:text-gold active:scale-95 transition-all" title="Statistiche">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
+            </button>
+            
+            <!-- Settings -->
+            <button onclick="app.toggleSettings()" class="p-2 rounded-full hover:bg-bgPanel text-textMuted hover:text-gold active:scale-95 transition-all" title="Impostazioni">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+            
+            <!-- Info -->
+            <button onclick="app.toggleInfo()" class="p-2 rounded-full hover:bg-bgPanel text-textMuted hover:text-gold active:scale-95 transition-all" title="Guida">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r="0.5" fill="currentColor" stroke="currentColor"/></svg>
+            </button>
+            
+            <!-- Theme Toggle -->
+            <button onclick="app.toggleTheme()" class="p-2 rounded-full hover:bg-bgPanel text-textMuted active:scale-95 transition-all" title="Tema">
+                <svg id="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+                <svg id="icon-sun" class="hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41m12.73-12.73 1.41-1.41"/></svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN -->
+    <main class="flex-1 w-full max-w-5xl mx-auto px-2 md:px-6 pt-3 md:pt-4 relative overflow-hidden flex flex-col">
+        
+        <!-- MENU VIEW -->
+        <div id="view-menu" class="w-full h-full flex flex-col overflow-y-auto no-scrollbar pb-32">
+            
+            <!-- Hero Section -->
+            <div class="mb-4 md:mb-6 text-center md:text-left mt-2 md:mt-4 px-2">
+                <h2 class="font-serif text-2xl md:text-5xl text-textMain mb-2">Atelier Matematico</h2>
+                <p class="text-textMuted text-sm md:text-lg max-w-xl mx-auto md:mx-0">
+                    Esercizi tratti dal libro di testo.
+                </p>
+            </div>
+            
+            <!-- Mode Selection Tabs -->
+            <div class="flex gap-2 mb-4 px-2">
+                <button onclick="app.setMode('practice')" id="mode-practice" class="flex-1 py-2 px-4 rounded-xl text-sm font-medium transition-all tab-active">
+                    Pratica
+                </button>
+                <button onclick="app.setMode('timed')" id="mode-timed" class="flex-1 py-2 px-4 rounded-xl text-sm font-medium transition-all text-textMuted hover:bg-bgSurface">
+                    Cronometro
+                </button>
+                <button onclick="app.setMode('challenge')" id="mode-challenge" class="flex-1 py-2 px-4 rounded-xl text-sm font-medium transition-all text-textMuted hover:bg-bgSurface">
+                    Sfida
+                </button>
+                <button onclick="app.setMode('exam')" id="mode-exam" class="flex-1 py-2 px-4 rounded-xl text-sm font-medium transition-all text-textMuted hover:bg-bgSurface border border-error/20 text-error/80">
+                    Verifica
+                </button>
+            </div>
+            
+            <!-- Difficulty Selection -->
+            <div class="flex gap-2 mb-4 px-2">
+                <button onclick="app.setDifficulty('easy')" id="diff-easy" class="flex-1 py-2 px-3 rounded-xl text-xs font-medium bg-success/10 text-success border border-success/30 transition-all">
+                    Facile
+                </button>
+                <button onclick="app.setDifficulty('medium')" id="diff-medium" class="flex-1 py-2 px-3 rounded-xl text-xs font-medium text-textMuted hover:bg-gold/10 border border-transparent transition-all">
+                    Medio
+                </button>
+                <button onclick="app.setDifficulty('hard')" id="diff-hard" class="flex-1 py-2 px-3 rounded-xl text-xs font-medium text-textMuted hover:bg-error/10 border border-transparent transition-all">
+                    Difficile
+                </button>
+            </div>
+            
+            <!-- Categories Grid (PRACTICE & TIMED) -->
+            <div id="categories-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 px-2">
+                <!-- Cards generated by JS -->
+            </div>
+
+            <!-- Challenge Start Card (CHALLENGE MODE ONLY) -->
+            <div id="challenge-start-view" class="hidden px-2">
+                <button onclick="app.startSession()" class="w-full h-48 rounded-3xl bg-bgPanel border border-borderDim flex flex-col items-center justify-center gap-4 group hover:border-gold/50 transition-all glass-panel">
+                    <div class="w-16 h-16 rounded-full bg-gold/10 text-gold flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    </div>
+                    <div class="text-center">
+                        <h3 class="font-serif text-2xl text-textMain">Avvia Sfida Mista</h3>
+                        <p class="text-textMuted text-sm mt-1">5 esercizi casuali di diverse categorie</p>
+                    </div>
+                </button>
+            </div>
+
+            <!-- Exam Start Card (EXAM MODE ONLY) -->
+            <div id="exam-start-view" class="hidden px-2">
+                <button onclick="app.startSession()" class="w-full h-48 rounded-3xl bg-bgPanel border border-borderDim flex flex-col items-center justify-center gap-4 group hover:border-error/50 transition-all glass-panel">
+                    <div class="w-16 h-16 rounded-full bg-error/10 text-error flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                    </div>
+                    <div class="text-center">
+                        <h3 class="font-serif text-2xl text-textMain">Avvia Verifica</h3>
+                        <p class="text-textMuted text-sm mt-1">10 domande, nessun aiuto, voto finale</p>
+                    </div>
+                </button>
+            </div>
+            
+            <!-- Recent Achievements -->
+            <div id="achievements-preview" class="mx-2 mt-4 p-4 bg-bgPanel rounded-2xl border border-borderDim">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-serif text-sm text-textMain">Traguardi</h3>
+                    <button onclick="app.toggleStats()" class="text-xs text-gold">Vedi tutti</button>
+                </div>
+                <div id="achievements-list" class="flex gap-2 overflow-x-auto no-scrollbar">
+                    <!-- Achievements rendered by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- EXERCISE VIEW -->
+        <div id="view-exercise" class="hidden h-full w-full flex-col gap-2 md:gap-3 pb-2">
+            
+            <!-- Progress Bar for Challenge/Exam Mode -->
+            <div id="challenge-progress" class="hidden h-2 bg-bgSurface rounded-full overflow-hidden mx-1">
+                <div id="challenge-bar" class="h-full gradient-gold transition-all duration-300" style="width: 0%"></div>
+            </div>
+            
+            <!-- Problem Panel -->
+            <div class="flex-1 min-h-0 bg-bgPanel rounded-2xl md:rounded-3xl glass-panel relative flex flex-col overflow-hidden animate-slide-up" id="problem-panel">
+                
+                <!-- Scratchpad Canvas Layer -->
+                <canvas id="scratchpad-canvas" class="absolute inset-0 z-10 pointer-events-none opacity-0 transition-opacity duration-200"></canvas>
+                
+                <div class="p-3 md:p-4 flex justify-between items-start border-b border-borderDim/50 shrink-0 relative z-20">
+                    <div class="flex items-center gap-2">
+                        <span id="problem-category" class="text-[10px] font-mono uppercase tracking-widest text-gold opacity-80"></span>
+                        <span id="problem-difficulty" class="text-[9px] px-2 py-0.5 rounded-full bg-bgSurface text-textMuted"></span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <span id="problem-xp" class="text-[10px] font-mono text-gold">+10 XP</span>
+                        
+                        <!-- Scratchpad Toggle -->
+                        <button onclick="CanvasManager.toggle()" id="btn-scratchpad" class="text-textMuted active:text-textMain p-1 ml-2" title="Lavagna">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+                        </button>
+                        
+                        <!-- Formula Helper Button -->
+                        <button id="formula-helper-btn" onclick="app.toggleFormulaHelper()" class="hidden text-textMuted active:text-purple p-1 ml-1" title="Assistente Formula">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M12 6v4"/><path d="M10 8h4"/></svg>
+                        </button>
+                        
+                        <button id="btn-hint" onclick="app.showHint()" class="text-textMuted active:text-gold p-1 ml-1" title="Suggerimento">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-1 1.5-2 1.5-3.5 0-3-2.3-5-5-5s-5 2-5 5c0 1.5.5 2.5 1.5 3.5.8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
+                        </button>
+                        
+                        <button id="btn-skip" onclick="app.skipProblem()" class="text-textMuted active:text-error p-1" title="Salta">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Scratchpad Tools (Hidden by default) -->
+                <div id="scratchpad-tools" class="absolute top-14 right-4 z-30 hidden flex-col gap-2 bg-bgPanel p-2 rounded-xl border border-borderDim shadow-xl animate-scale-in">
+                    <button onpointerdown="CanvasManager.setMode('pen'); event.preventDefault()" class="p-2 rounded-lg hover:bg-bgSurface text-textMain"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/></svg></button>
+                    <button onpointerdown="CanvasManager.setMode('eraser'); event.preventDefault()" class="p-2 rounded-lg hover:bg-bgSurface text-textMuted hover:text-error"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/><path d="m5 11 9 9"/></svg></button>
+                    <button onpointerdown="CanvasManager.clear(); event.preventDefault()" class="p-2 rounded-lg hover:bg-bgSurface text-textMuted hover:text-error"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>
+                </div>
+                
+                <div class="flex-1 overflow-y-auto flex flex-col items-center justify-center p-2 w-full relative z-0">
+                    <div class="w-full flex-1 flex flex-col items-center justify-center min-h-[80px]">
+                        <div id="latex-problem" class="text-xl md:text-3xl lg:text-4xl text-textMain font-mono text-center transition-all duration-300 px-4"></div>
+                        <!-- Formula display for eq2/diseq2 completa -->
+                        <div id="formula-display" class="hidden mt-4 text-center space-y-2">
+                            <div id="delta-formula" class="text-sm md:text-base text-textMuted font-mono"></div>
+                            <div id="quadratic-formula" class="text-sm md:text-base text-textMuted font-mono"></div>
+                        </div>
+                    </div>
+                    <div id="message-area" class="w-full text-center space-y-1 px-2 pb-2 min-h-[1.5em] shrink-0"></div>
+                </div>
+            </div>
+
+            <!-- Input & Keypad -->
+            <div class="shrink-0 flex flex-col gap-2 z-10 animate-slide-up">
+                
+                <div id="input-container" class="bg-bgPanel rounded-2xl h-14 md:h-20 shrink-0 glass-panel border-2 border-transparent transition-all relative flex items-center justify-center overflow-hidden">
+                    <div id="badge-correct" class="hidden absolute top-2 right-3 bg-success/10 text-success px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider items-center gap-1">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> OK
+                    </div>
+                    <div id="badge-step" class="hidden absolute top-2 right-3 bg-step/10 text-step px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider items-center gap-1">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Passaggio
+                    </div>
+
+                    <div id="scroll-wrapper" class="w-full overflow-x-auto overflow-y-hidden no-scrollbar px-4 flex items-center h-full scroll-smooth">
+                        <div class="flex items-center whitespace-nowrap min-w-full justify-center mx-auto">
+                            <span id="latex-input" class="text-xl md:text-2xl lg:text-3xl text-textMain font-mono px-1"></span>
+                            <div id="cursor" class="w-[2px] h-5 md:h-7 bg-gold cursor-blink ml-0.5"></div>
+                            <span id="placeholder" class="text-textMuted opacity-20 absolute left-1/2 -translate-x-1/2 text-sm md:text-base pointer-events-none select-none">Inserisci risposta...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="keypad" class="bg-bgPanel p-1.5 md:p-2 rounded-2xl border border-borderDim grid grid-cols-6 gap-1 shadow-2xl">
+                    <!-- Buttons injected via JS -->
+                </div>
+
+                <!-- Success Actions -->
+                <div id="next-actions" class="hidden flex-col gap-2">
+                    <div class="bg-bgSurface rounded-2xl p-3 md:p-4 border border-borderDim flex flex-col justify-center items-center text-center">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="text-[10px] uppercase tracking-widest text-textMuted">Risultato</span>
+                            <span id="earned-xp" class="text-xs font-bold text-gold animate-bounce-in">+10 XP</span>
+                        </div>
+                        <div id="latex-solution" class="text-base md:text-xl font-mono text-textMain"></div>
+                    </div>
+                    <button onclick="app.nextProblem()" class="w-full h-12 md:h-14 gradient-gold text-bgMain rounded-2xl font-serif font-bold text-sm md:text-base uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-transform shadow-lg">
+                        Continua <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- EXAM RESULTS VIEW -->
+        <div id="view-exam-results" class="hidden h-full w-full flex-col items-center justify-center p-4 animate-fade-in">
+            <div class="w-full max-w-md bg-bgPanel border border-borderDim rounded-3xl p-6 shadow-2xl text-center">
+                <h2 class="font-serif text-2xl text-textMain mb-2">Pagella Verifica</h2>
+                <div class="text-xs text-textMuted uppercase tracking-widest mb-6">Risultati Simulazione</div>
+                
+                <div class="relative w-32 h-32 mx-auto mb-6 flex items-center justify-center">
+                    <svg class="w-full h-full -rotate-90" viewBox="0 0 36 36">
+                        <path class="text-bgSurface" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3" />
+                        <path id="exam-score-circle" class="text-gold transition-all duration-1000" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3" />
+                    </svg>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center">
+                        <span id="exam-score-val" class="text-3xl font-bold font-mono">0</span>
+                        <span class="text-[10px] text-textMuted">VOTO</span>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="bg-bgSurface p-3 rounded-xl">
+                        <div class="text-xs text-textMuted">Corrette</div>
+                        <div id="exam-correct" class="text-xl font-bold text-success">0</div>
+                    </div>
+                    <div class="bg-bgSurface p-3 rounded-xl">
+                        <div class="text-xs text-textMuted">Errate</div>
+                        <div id="exam-wrong" class="text-xl font-bold text-error">0</div>
+                    </div>
+                </div>
+                
+                <button onclick="app.exitSession()" class="w-full py-3 gradient-gold text-bgMain rounded-xl font-bold uppercase tracking-wider">Torna al Menu</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- MODALS -->
+    
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-bgMain/90 backdrop-blur-md" onclick="app.toggleSettings()"></div>
+        <div class="relative bg-bgPanel border border-borderDim rounded-3xl w-full max-w-md overflow-hidden flex flex-col shadow-2xl animate-scale-in">
+            <div class="p-4 border-b border-borderDim/50 flex justify-between items-center">
+                <h3 class="font-serif text-lg text-textMain">Impostazioni</h3>
+                <button onclick="app.toggleSettings()" class="text-textMuted hover:text-textMain p-1"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+            </div>
+            <div class="p-4 space-y-4">
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-textMain">Suoni</span>
+                    <button id="sound-toggle" onclick="app.toggleSound()" class="w-10 h-6 rounded-full bg-bgSurface relative transition-colors"><div id="sound-knob" class="absolute top-1 left-1 w-4 h-4 rounded-full bg-textMuted transition-transform duration-200 translate-x-1"></div></button>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-textMain">Coriandoli</span>
+                    <button id="confetti-toggle" onclick="app.toggleConfetti()" class="w-10 h-6 rounded-full bg-bgSurface relative transition-colors"><div id="confetti-knob" class="absolute top-1 left-1 w-4 h-4 rounded-full bg-textMuted transition-transform duration-200 translate-x-1"></div></button>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-textMain">Mostra Formule</span>
+                    <button id="formulas-toggle" onclick="app.toggleShowFormulas()" class="w-10 h-6 rounded-full bg-bgSurface relative transition-colors"><div id="formulas-knob" class="absolute top-1 left-1 w-4 h-4 rounded-full bg-textMuted transition-transform duration-200 translate-x-1"></div></button>
+                </div>
+                <div class="pt-4 border-t border-borderDim/50">
+                    <label class="text-xs text-textMuted block mb-2">Durata Cronometro: <span id="timer-duration-label" class="text-gold">60s</span></label>
+                    <input type="range" min="30" max="180" step="10" value="60" class="w-full" oninput="app.updateTimerDuration(this.value)">
+                </div>
+                <div class="pt-2">
+                    <button onclick="app.resetProgress()" class="w-full py-3 text-error border border-error/30 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-error/10 transition-colors">Reset Dati</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Modal -->
+    <div id="stats-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-bgMain/90 backdrop-blur-md" onclick="app.toggleStats()"></div>
+        <div class="relative bg-bgPanel border border-borderDim rounded-3xl w-full max-w-md max-h-[85vh] overflow-hidden flex flex-col shadow-2xl animate-scale-in">
+            <div class="p-4 border-b border-borderDim/50 flex justify-between items-center">
+                <h3 class="font-serif text-lg text-textMain">Statistiche</h3>
+                <button onclick="app.toggleStats()" class="text-textMuted hover:text-textMain p-1"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+            </div>
+            <div class="p-4 overflow-y-auto no-scrollbar space-y-6">
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-bgSurface p-3 rounded-xl border border-borderDim text-center">
+                        <div class="text-xs text-textMuted uppercase tracking-wider mb-1">Completati</div>
+                        <div id="stat-total" class="text-2xl font-mono font-bold text-textMain">0</div>
+                    </div>
+                    <div class="bg-bgSurface p-3 rounded-xl border border-borderDim text-center">
+                        <div class="text-xs text-textMuted uppercase tracking-wider mb-1">Precisione</div>
+                        <div id="stat-accuracy" class="text-2xl font-mono font-bold text-success">0%</div>
+                    </div>
+                    <div class="bg-bgSurface p-3 rounded-xl border border-borderDim text-center">
+                        <div class="text-xs text-textMuted uppercase tracking-wider mb-1">Miglior Serie</div>
+                        <div id="stat-streak" class="text-2xl font-mono font-bold text-gold">0</div>
+                    </div>
+                    <div class="bg-bgSurface p-3 rounded-xl border border-borderDim text-center">
+                        <div class="text-xs text-textMuted uppercase tracking-wider mb-1">XP Totali</div>
+                        <div id="stat-xp" class="text-2xl font-mono font-bold text-step">0</div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold text-sm text-textMain mb-3">Per Categoria</h4>
+                    <div id="category-stats" class="space-y-2">
+                        <!-- Injected by JS -->
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold text-sm text-textMain mb-3">Traguardi</h4>
+                    <div id="all-achievements" class="grid grid-cols-4 gap-2">
+                        <!-- Injected by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Info Modal -->
+    <div id="info-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-bgMain/90 backdrop-blur-md" onclick="app.toggleInfo()"></div>
+        <div class="relative bg-bgPanel border border-borderDim rounded-3xl w-full max-w-md max-h-[85vh] overflow-hidden flex flex-col shadow-2xl animate-scale-in">
+            <div class="p-4 border-b border-borderDim/50 flex justify-between items-center">
+                <h3 class="font-serif text-lg text-textMain">Guida</h3>
+                <button onclick="app.toggleInfo()" class="text-textMuted hover:text-textMain p-1"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+            </div>
+            <div class="p-4 overflow-y-auto space-y-4 text-sm no-scrollbar">
+                
+                <!-- Modalità di gioco -->
+                <div class="space-y-3">
+                    <h4 class="font-bold text-textMain">Modalità di Gioco</h4>
+                    
+                    <div class="bg-bgSurface p-3 rounded-xl border border-borderDim">
+                        <h5 class="font-bold text-success text-sm mb-1">Pratica</h5>
+                        <p class="text-textMuted text-xs leading-relaxed">
+                            Modalità libera senza limiti di tempo. Ideale per imparare e fare pratica con calma. 
+                            Puoi fare quanti esercizi vuoi della categoria scelta e usare i suggerimenti senza penalità.
+                        </p>
+                    </div>
+                    
+                    <div class="bg-bgSurface p-3 rounded-xl border border-borderDim">
+                        <h5 class="font-bold text-gold text-sm mb-1">Cronometro</h5>
+                        <p class="text-textMuted text-xs leading-relaxed">
+                            Sfida contro il tempo! Hai un tempo limitato (configurabile nelle impostazioni da 30 a 180 secondi) 
+                            per completare quanti più esercizi possibile. Perfetto per allenare la velocità di calcolo.
+                        </p>
+                    </div>
+                    
+                    <div class="bg-bgSurface p-3 rounded-xl border border-borderDim">
+                        <h5 class="font-bold text-step text-sm mb-1">Sfida</h5>
+                        <p class="text-textMuted text-xs leading-relaxed">
+                            Completa 5 esercizi di categorie diverse scelte casualmente. Al termine ricevi un bonus di 50 XP extra. 
+                            Ottimo per testare le tue competenze su più argomenti.
+                        </p>
+                    </div>
+
+                    <div class="bg-bgSurface p-3 rounded-xl border border-error/30">
+                        <h5 class="font-bold text-error text-sm mb-1">Verifica</h5>
+                        <p class="text-textMuted text-xs leading-relaxed">
+                            Simulazione d'esame. 10 domande, nessun aiuto, nessun feedback immediato. Riceverai un voto in decimi alla fine.
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Livelli di difficoltà -->
+                <div class="space-y-3">
+                    <h4 class="font-bold text-textMain">Livelli di Difficoltà</h4>
+                    <div class="text-xs space-y-2 text-textMuted">
+                        <div class="flex items-start gap-2 border-b border-borderDim/50 pb-2">
+                            <span class="text-success font-bold shrink-0">Facile</span>
+                            <span>Numeri piccoli, operazioni semplici. Ottimo per iniziare o ripassare.</span>
+                        </div>
+                        <div class="flex items-start gap-2 border-b border-borderDim/50 pb-2">
+                            <span class="text-gold font-bold shrink-0">Medio</span>
+                            <span>Numeri più grandi, espressioni più complesse. XP maggiori.</span>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <span class="text-error font-bold shrink-0">Difficile</span>
+                            <span>Sfide impegnative con coefficienti alti e casi particolari. XP massimi.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-bgSurface p-3 rounded-xl border border-borderDim">
+                    <h4 class="font-bold text-step mb-2">Scorciatoie Tastiera</h4>
+                    <div class="grid grid-cols-2 gap-2 text-xs text-textMuted">
+                        <div><kbd class="bg-bgPanel px-1 rounded">Enter</kbd> Verifica</div>
+                        <div><kbd class="bg-bgPanel px-1 rounded">Backspace</kbd> Cancella</div>
+                        <div><kbd class="bg-bgPanel px-1 rounded">Esc</kbd> Menu</div>
+                        <div><kbd class="bg-bgPanel px-1 rounded">H</kbd> Suggerimento</div>
+                    </div>
+                </div>
+                
+                <div class="bg-bgSurface p-3 rounded-xl border border-borderDim">
+                    <h4 class="font-bold text-step mb-2">Sostituzione Dinamica</h4>
+                    <p class="text-textMuted text-xs leading-relaxed">
+                        Per equazioni e disequazioni, l'app riconosce passaggi intermedi validi. Scrivi un passaggio corretto e l'esercizio si aggiorna automaticamente!
+                    </p>
+                </div>
+                
+                <div class="bg-purple/10 p-3 rounded-xl border border-purple/30">
+                    <h4 class="font-bold text-purple mb-2">Assistente Formula Quadratica</h4>
+                    <p class="text-textMuted text-xs leading-relaxed">
+                        Per equazioni e disequazioni di 2° grado complete, premi l'icona del libro per aprire l'assistente. 
+                        Ti guiderà passo passo: identifica a, b, c, calcola il Delta (Δ = b² - 4ac), 
+                        poi usa la formula x = (-b ± √Δ) / 2a per trovare le soluzioni.
+                    </p>
+                </div>
+                
+                <div class="bg-gold/10 p-3 rounded-xl border border-gold/30">
+                    <h4 class="font-bold text-gold mb-2">Lavagna Digitale</h4>
+                    <p class="text-textMuted text-xs leading-relaxed">
+                        Premi l'icona della matita per attivare la lavagna. Puoi scrivere calcoli a mano libera direttamente sullo schermo.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Level Up Overlay -->
+    <div id="levelup-overlay" class="hidden fixed inset-0 z-[60] flex flex-col items-center justify-center bg-bgMain/95 backdrop-blur-xl animate-fade-in cursor-pointer" onclick="this.classList.add('hidden')">
+        <div class="text-gold text-6xl md:text-8xl font-serif font-bold mb-4 animate-bounce-in">LIVELLO <span id="levelup-num">2</span></div>
+        <p class="text-textMuted text-lg uppercase tracking-widest animate-slide-up">Nuovo livello raggiunto!</p>
+        <p class="text-textMuted text-xs mt-8 animate-pulse">Tocca per continuare</p>
+    </div>
+
+    <!-- Formula Helper Modal -->
+    <div id="formula-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-bgMain/90 backdrop-blur-md" onclick="app.toggleFormulaHelper()"></div>
+        <div class="relative bg-bgPanel border border-borderDim rounded-3xl w-full max-w-md max-h-[90vh] overflow-hidden flex flex-col shadow-2xl animate-scale-in">
+            <div class="p-4 border-b border-borderDim/50 flex justify-between items-center">
+                <h3 class="font-serif text-lg text-textMain">Assistente Formula Quadratica</h3>
+                <button onclick="app.toggleFormulaHelper()" class="text-textMuted hover:text-textMain p-1"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+            </div>
+            <div class="p-4 overflow-y-auto space-y-4 no-scrollbar relative pb-48">
+                
+                <!-- Current equation -->
+                <div class="bg-bgSurface p-4 rounded-xl border border-borderDim text-center">
+                    <p class="text-xs text-textMuted mb-2 uppercase tracking-wider">Equazione</p>
+                    <div id="formula-equation" class="text-xl font-mono text-textMain min-h-[2em] flex items-center justify-center"></div>
+                </div>
+                
+                <!-- Step 1: Coefficients -->
+                <div id="coeff-section" class="bg-bgSurface p-4 rounded-xl border border-borderDim">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="w-5 h-5 rounded-full bg-gold/20 text-gold text-xs flex items-center justify-center font-bold">1</span>
+                        <p class="text-xs text-textMuted uppercase tracking-wider">Identifica i coefficienti</p>
+                    </div>
+                    <div class="text-center mb-3">
+                        <span id="coeff-formula-display" class="text-sm font-mono text-textMuted"></span>
+                    </div>
+                    <div class="flex items-center justify-center gap-4 mb-2">
+                        <div class="text-center">
+                            <label class="text-xs text-textMuted block mb-1">a</label>
+                            <input type="text" id="coeff-a" class="formula-input" placeholder="?" readonly inputmode="none" onclick="ModalKeypad.focus(this)" oninput="app.checkCoefficients()">
+                        </div>
+                        <div class="text-center">
+                            <label class="text-xs text-textMuted block mb-1">b</label>
+                            <input type="text" id="coeff-b" class="formula-input" placeholder="?" readonly inputmode="none" onclick="ModalKeypad.focus(this)" oninput="app.checkCoefficients()">
+                        </div>
+                        <div class="text-center">
+                            <label class="text-xs text-textMuted block mb-1">c</label>
+                            <input type="text" id="coeff-c" class="formula-input" placeholder="?" readonly inputmode="none" onclick="ModalKeypad.focus(this)" oninput="app.checkCoefficients()">
+                        </div>
+                    </div>
+                    <p id="coeff-feedback" class="text-xs text-center mt-2"></p>
+                </div>
+                
+                <!-- Step 2: Delta calculation with intermediate steps -->
+                <div id="delta-section" class="bg-bgSurface p-4 rounded-xl border border-borderDim opacity-50 pointer-events-none transition-all">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="w-5 h-5 rounded-full bg-purple/20 text-purple text-xs flex items-center justify-center font-bold">2</span>
+                        <p class="text-xs text-textMuted uppercase tracking-wider">Calcola il Delta (Δ = b² - 4ac)</p>
+                    </div>
+                    
+                    <!-- Step 2a: Calculate b² -->
+                    <div id="step-b-squared" class="mb-3 p-3 bg-bgPanel rounded-lg border border-borderDim/50">
+                        <div class="flex items-center justify-between gap-2">
+                            <span id="b-squared-label" class="text-xs font-mono text-textMuted"></span>
+                            <div class="flex items-center gap-2">
+                                <span class="text-textMuted text-sm">b² =</span>
+                                <input type="text" id="b-squared-value" class="formula-input w-16" placeholder="?" readonly inputmode="none" onclick="ModalKeypad.focus(this)" oninput="app.checkBSquared()">
+                            </div>
+                        </div>
+                        <p id="b-squared-feedback" class="text-xs text-center mt-1"></p>
+                    </div>
+                    
+                    <!-- Step 2b: Calculate 4a -->
+                    <div id="step-4a" class="mb-3 p-3 bg-bgPanel rounded-lg border border-borderDim/50 opacity-50 pointer-events-none">
+                        <div class="flex items-center justify-between gap-2">
+                            <span id="four-a-label" class="text-xs font-mono text-textMuted"></span>
+                            <div class="flex items-center gap-2">
+                                <span class="text-textMuted text-sm">4a =</span>
+                                <input type="text" id="four-a-value" class="formula-input w-16" placeholder="?" readonly inputmode="none" onclick="ModalKeypad.focus(this)" oninput="app.checkFourA()">
+                            </div>
+                        </div>
+                        <p id="four-a-feedback" class="text-xs text-center mt-1"></p>
+                    </div>
+
+                    <!-- Step 2c: Calculate 4ac -->
+                    <div id="step-4ac" class="mb-3 p-3 bg-bgPanel rounded-lg border border-borderDim/50 opacity-50 pointer-events-none">
+                        <div class="flex items-center justify-between gap-2">
+                            <span id="four-ac-label" class="text-xs font-mono text-textMuted"></span>
+                            <div class="flex items-center gap-2">
+                                <span class="text-textMuted text-sm">4ac =</span>
+                                <input type="text" id="four-ac-value" class="formula-input w-16" placeholder="?" readonly inputmode="none" onclick="ModalKeypad.focus(this)" oninput="app.checkFourAC()">
+                            </div>
+                        </div>
+                        <p id="four-ac-feedback" class="text-xs text-center mt-1"></p>
+                    </div>
+                    
+                    <!-- Step 2d: Calculate Δ -->
+                    <div id="step-delta-final" class="p-3 bg-bgPanel rounded-lg border border-borderDim/50 opacity-50 pointer-events-none">
+                        <div class="flex items-center justify-between gap-2">
+                            <span id="delta-calc-label" class="text-xs font-mono text-textMuted"></span>
+                            <div class="flex items-center gap-2">
+                                <span class="text-textMuted text-sm">Δ =</span>
+                                <input type="text" id="delta-value" class="formula-input w-16" placeholder="?" readonly inputmode="none" onclick="ModalKeypad.focus(this)" oninput="app.checkDelta()">
+                            </div>
+                        </div>
+                        <p id="delta-feedback" class="text-xs text-center mt-1"></p>
+                    </div>
+                </div>
+                
+                <!-- Step 3: Solutions with intermediate steps -->
+                <div id="solutions-section" class="bg-bgSurface p-4 rounded-xl border border-borderDim opacity-50 pointer-events-none transition-all">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="w-5 h-5 rounded-full bg-step/20 text-step text-xs flex items-center justify-center font-bold">3</span>
+                        <p class="text-xs text-textMuted uppercase tracking-wider">Calcola le soluzioni</p>
+                    </div>
+                    <div class="text-center mb-3">
+                        <span id="solution-formula-display" class="text-sm font-mono text-textMuted"></span>
+                    </div>
+                    
+                    <!-- Step 3a: Calculate √Δ -->
+                    <div id="step-sqrt-delta" class="mb-3 p-3 bg-bgPanel rounded-lg border border-borderDim/50">
+                        <div class="flex items-center justify-between gap-2">
+                            <span id="sqrt-delta-label" class="text-xs font-mono text-textMuted"></span>
+                            <div class="flex items-center gap-2">
+                                <span class="text-textMuted text-sm">√Δ =</span>
+                                <input type="text" id="sqrt-delta-value" class="formula-input w-16" placeholder="?" readonly inputmode="none" onclick="ModalKeypad.focus(this)" oninput="app.checkSqrtDelta()">
+                            </div>
+                        </div>
+                        <p id="sqrt-delta-feedback" class="text-xs text-center mt-1"></p>
+                    </div>
+                    
+                    <!-- Step 3b: Calculate -b -->
+                    <div id="step-neg-b" class="mb-3 p-3 bg-bgPanel rounded-lg border border-borderDim/50 opacity-50 pointer-events-none">
+                        <div class="flex items-center justify-between gap-2">
+                            <span id="neg-b-label" class="text-xs font-mono text-textMuted"></span>
+                            <div class="flex items-center gap-2">
+                                <span class="text-textMuted text-sm">-b =</span>
+                                <input type="text" id="neg-b-value" class="formula-input w-16" placeholder="?" readonly inputmode="none" onclick="ModalKeypad.focus(this)" oninput="app.checkNegB()">
+                            </div>
+                        </div>
+                        <p id="neg-b-feedback" class="text-xs text-center mt-1"></p>
+                    </div>
+                    
+                    <!-- Step 3c: Calculate 2a -->
+                    <div id="step-two-a" class="mb-3 p-3 bg-bgPanel rounded-lg border border-borderDim/50 opacity-50 pointer-events-none">
+                        <div class="flex items-center justify-between gap-2">
+                            <span id="two-a-label" class="text-xs font-mono text-textMuted"></span>
+                            <div class="flex items-center gap-2">
+                                <span class="text-textMuted text-sm">2a =</span>
+                                <input type="text" id="two-a-value" class="formula-input w-16" placeholder="?" readonly inputmode="none" onclick="ModalKeypad.focus(this)" oninput="app.checkTwoA()">
+                            </div>
+                        </div>
+                        <p id="two-a-feedback" class="text-xs text-center mt-1"></p>
+                    </div>
+
+                    <!-- Step 3d: Calculate Numerators -->
+                    <div id="step-numerators" class="mb-3 p-3 bg-bgPanel rounded-lg border border-borderDim/50 opacity-50 pointer-events-none">
+                        <div class="text-center mb-2">
+                            <span class="text-xs font-mono text-textMuted">Calcola i numeratori (-b ± √Δ)</span>
+                        </div>
+                        <div class="flex items-center justify-center gap-4">
+                            <div class="text-center">
+                                <label id="num-1-label" class="text-xs text-textMuted block mb-1">N₁ (-)</label>
+                                <input type="text" id="num-1" class="formula-input" placeholder="?" readonly inputmode="none" onclick="ModalKeypad.focus(this)" oninput="app.checkNumerators()">
+                            </div>
+                            <div class="text-center">
+                                <label id="num-2-label" class="text-xs text-textMuted block mb-1">N₂ (+)</label>
+                                <input type="text" id="num-2" class="formula-input" placeholder="?" readonly inputmode="none" onclick="ModalKeypad.focus(this)" oninput="app.checkNumerators()">
+                            </div>
+                        </div>
+                        <p id="numerators-feedback" class="text-xs text-center mt-2"></p>
+                    </div>
+                    
+                    <!-- Step 3e: Final solutions -->
+                    <div id="step-final-solutions" class="p-3 bg-bgPanel rounded-lg border border-borderDim/50 opacity-50 pointer-events-none">
+                        <div class="text-center mb-2">
+                            <span id="final-calc-label" class="text-xs font-mono text-textMuted"></span>
+                        </div>
+                        <div class="flex items-center justify-center gap-4">
+                            <div class="text-center">
+                                <label class="text-xs text-textMuted block mb-1">x₁ = N₁ / 2a</label>
+                                <input type="text" id="solution-x1" class="formula-input" placeholder="?" readonly inputmode="none" onclick="ModalKeypad.focus(this)" oninput="app.checkSolutions()">
+                            </div>
+                            <div class="text-center">
+                                <label class="text-xs text-textMuted block mb-1">x₂ = N₂ / 2a</label>
+                                <input type="text" id="solution-x2" class="formula-input" placeholder="?" readonly inputmode="none" onclick="ModalKeypad.focus(this)" oninput="app.checkSolutions()">
+                            </div>
+                        </div>
+                        <p id="solutions-feedback" class="text-xs text-center mt-2"></p>
+                    </div>
+                </div>
+                
+                <!-- Apply button -->
+                <button id="apply-formula-btn" onclick="app.applyFormulaSolution()" class="hidden w-full py-3 gradient-gold text-bgMain rounded-xl font-bold text-sm uppercase tracking-wider active:scale-95 transition-transform">
+                    Usa questa soluzione
+                </button>
+                
+                <!-- Spacer for keypad -->
+                <div class="h-48"></div>
+            </div>
+            
+            <!-- Modal Keypad -->
+            <div id="modal-keypad" class="absolute bottom-0 left-0 right-0 bg-bgPanel border-t border-borderDim p-2 grid grid-cols-4 gap-1 z-50">
+                <button onclick="ModalKeypad.press('7')" class="h-10 rounded-lg bg-bgSurface text-textMain font-mono text-lg active:bg-borderDim">7</button>
+                <button onclick="ModalKeypad.press('8')" class="h-10 rounded-lg bg-bgSurface text-textMain font-mono text-lg active:bg-borderDim">8</button>
+                <button onclick="ModalKeypad.press('9')" class="h-10 rounded-lg bg-bgSurface text-textMain font-mono text-lg active:bg-borderDim">9</button>
+                <button onclick="ModalKeypad.press('DEL')" class="h-10 rounded-lg bg-bgSurface text-error font-mono text-sm active:bg-error/20">DEL</button>
+                
+                <button onclick="ModalKeypad.press('4')" class="h-10 rounded-lg bg-bgSurface text-textMain font-mono text-lg active:bg-borderDim">4</button>
+                <button onclick="ModalKeypad.press('5')" class="h-10 rounded-lg bg-bgSurface text-textMain font-mono text-lg active:bg-borderDim">5</button>
+                <button onclick="ModalKeypad.press('6')" class="h-10 rounded-lg bg-bgSurface text-textMain font-mono text-lg active:bg-borderDim">6</button>
+                <button onclick="ModalKeypad.press('-')" class="h-10 rounded-lg bg-bgPanel text-gold font-mono text-lg active:bg-bgSurface">-</button>
+                
+                <button onclick="ModalKeypad.press('1')" class="h-10 rounded-lg bg-bgSurface text-textMain font-mono text-lg active:bg-borderDim">1</button>
+                <button onclick="ModalKeypad.press('2')" class="h-10 rounded-lg bg-bgSurface text-textMain font-mono text-lg active:bg-borderDim">2</button>
+                <button onclick="ModalKeypad.press('3')" class="h-10 rounded-lg bg-bgSurface text-textMain font-mono text-lg active:bg-borderDim">3</button>
+                <button onclick="ModalKeypad.press('.')" class="h-10 rounded-lg bg-bgSurface text-textMain font-mono text-lg active:bg-borderDim">.</button>
+                
+                <button onclick="ModalKeypad.press('0')" class="col-span-4 h-10 rounded-lg bg-bgSurface text-textMain font-mono text-lg active:bg-borderDim">0</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Achievement Popup -->
+    <div id="achievement-popup" class="hidden fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-bgPanel border border-gold rounded-2xl p-4 shadow-2xl animate-bounce-in flex items-center gap-3 max-w-xs">
+        <div id="achievement-icon" class="w-10 h-10 rounded-full bg-gold/20 flex items-center justify-center">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gold"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+        </div>
+        <div>
+            <p class="text-xs text-gold uppercase tracking-wider">Traguardo Sbloccato</p>
+            <p id="achievement-name" class="font-bold text-sm"></p>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        // === HELPERS ===
+        const $ = (s) => document.querySelector(s);
+        const $$ = (s) => document.querySelectorAll(s);
+        const rnd = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+        const rndNZ = (range) => { let n = 0; while (n === 0) n = rnd(-range, range); return n; };
+        const shuffle = (a) => [...a].sort(() => Math.random() - 0.5);
+        
+        // === SOUND MANAGER ===
+        const SoundManager = {
+            ctx: null,
+            enabled: true,
+            
+            init() {
+                try {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                } catch (e) {}
+            },
+            
+            play(type) {
+                if (!this.enabled || !this.ctx) return;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                
+                if (type === 'success') {
+                    osc.frequency.setValueAtTime(523.25, this.ctx.currentTime);
+                    osc.frequency.setValueAtTime(659.25, this.ctx.currentTime + 0.1);
+                    osc.frequency.setValueAtTime(783.99, this.ctx.currentTime + 0.2);
+                    gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+                    osc.start(); osc.stop(this.ctx.currentTime + 0.4);
+                } else if (type === 'error') {
+                    osc.frequency.setValueAtTime(200, this.ctx.currentTime);
+                    gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+                    osc.start(); osc.stop(this.ctx.currentTime + 0.15);
+                } else if (type === 'click') {
+                    osc.frequency.setValueAtTime(800, this.ctx.currentTime);
+                    gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+                    osc.start(); osc.stop(this.ctx.currentTime + 0.05);
+                } else if (type === 'step') {
+                    osc.frequency.setValueAtTime(440, this.ctx.currentTime);
+                    osc.frequency.setValueAtTime(550, this.ctx.currentTime + 0.1);
+                    gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+                    osc.start(); osc.stop(this.ctx.currentTime + 0.2);
+                } else if (type === 'levelup') {
+                    [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+                        const o = this.ctx.createOscillator();
+                        const g = this.ctx.createGain();
+                        o.connect(g);
+                        g.connect(this.ctx.destination);
+                        o.frequency.value = freq;
+                        g.gain.setValueAtTime(0.2, this.ctx.currentTime + i*0.1);
+                        g.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + i*0.1 + 0.5);
+                        o.start(this.ctx.currentTime + i*0.1);
+                        o.stop(this.ctx.currentTime + i*0.1 + 0.5);
+                    });
+                }
+            }
+        };
+
+        // === CANVAS MANAGER (SCRATCHPAD) ===
+        const CanvasManager = {
+            canvas: null,
+            ctx: null,
+            isDrawing: false,
+            mode: 'pen', // pen, eraser
+            active: false,
+            
+            init() {
+                this.canvas = document.getElementById('scratchpad-canvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.resize();
+                window.addEventListener('resize', () => this.resize());
+                
+                // Events
+                const start = (e) => {
+                    if (!this.active) return;
+                    this.isDrawing = true;
+                    this.draw(e);
+                };
+                const move = (e) => {
+                    if (!this.active || !this.isDrawing) return;
+                    this.draw(e);
+                    e.preventDefault(); // Prevent scrolling
+                };
+                const end = () => {
+                    this.isDrawing = false;
+                    this.ctx.beginPath();
+                };
+                
+                this.canvas.addEventListener('mousedown', start);
+                this.canvas.addEventListener('mousemove', move);
+                this.canvas.addEventListener('mouseup', end);
+                this.canvas.addEventListener('mouseout', end);
+                
+                this.canvas.addEventListener('touchstart', (e) => start(e.touches[0]), {passive: false});
+                this.canvas.addEventListener('touchmove', (e) => move(e.touches[0]), {passive: false});
+                this.canvas.addEventListener('touchend', end);
+            },
+            
+            resize() {
+                if (!this.canvas) return;
+                // Save current content
+                const tempCanvas = document.createElement('canvas');
+                tempCanvas.width = this.canvas.width;
+                tempCanvas.height = this.canvas.height;
+                const tempCtx = tempCanvas.getContext('2d');
+                if (this.canvas.width > 0 && this.canvas.height > 0) {
+                    tempCtx.drawImage(this.canvas, 0, 0);
+                }
+
+                const rect = this.canvas.parentElement.getBoundingClientRect();
+                this.canvas.width = rect.width;
+                this.canvas.height = rect.height;
+                
+                // Restore content
+                if (tempCanvas.width > 0 && tempCanvas.height > 0) {
+                    this.ctx.drawImage(tempCanvas, 0, 0);
+                }
+            },
+            
+            toggle() {
+                this.active = !this.active;
+                const tools = document.getElementById('scratchpad-tools');
+                const btn = document.getElementById('btn-scratchpad');
+                
+                if (this.active) {
+                    this.canvas.classList.remove('pointer-events-none', 'opacity-0');
+                    this.canvas.classList.add('pointer-events-auto', 'opacity-100', 'canvas-active');
+                    tools.classList.remove('hidden');
+                    tools.classList.add('flex');
+                    btn.classList.add('text-gold');
+                    // Don't resize here to avoid clearing
+                    if (this.canvas.width === 0) this.resize();
+                } else {
+                    this.canvas.classList.add('pointer-events-none', 'opacity-0');
+                    this.canvas.classList.remove('pointer-events-auto', 'opacity-100', 'canvas-active');
+                    tools.classList.add('hidden');
+                    tools.classList.remove('flex');
+                    btn.classList.remove('text-gold');
+                }
+            },
+            
+            setMode(m) {
+                this.mode = m;
+            },
+            
+            clear() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            },
+            
+            draw(e) {
+                const rect = this.canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                this.ctx.lineWidth = this.mode === 'pen' ? 2 : 20;
+                this.ctx.lineCap = 'round';
+                this.ctx.strokeStyle = this.mode === 'pen' ? (app.state.theme === 'dark' ? '#d4b483' : '#b08d55') : 'rgba(0,0,0,1)';
+                this.ctx.globalCompositeOperation = this.mode === 'pen' ? 'source-over' : 'destination-out';
+                
+                this.ctx.lineTo(x, y);
+                this.ctx.stroke();
+                this.ctx.beginPath();
+                this.ctx.moveTo(x, y);
+            }
+        };
+
+        // === MODAL KEYPAD MANAGER ===
+        const ModalKeypad = {
+            activeInput: null,
+            
+            focus(el) {
+                // Remove active class from all inputs
+                document.querySelectorAll('.formula-input').forEach(i => i.classList.remove('active'));
+                // Set active
+                this.activeInput = el;
+                el.classList.add('active');
+                SoundManager.play('click');
+            },
+            
+            press(key) {
+                if (!this.activeInput) return;
+                
+                if (key === 'DEL') {
+                    this.activeInput.value = this.activeInput.value.slice(0, -1);
+                } else {
+                    this.activeInput.value += key;
+                }
+                
+                // Adjust font size based on length
+                this.adjustFontSize(this.activeInput);
+                
+                // Trigger input event for validation logic
+                this.activeInput.dispatchEvent(new Event('input', { bubbles: true }));
+                SoundManager.play('click');
+
+                // AUTO-ADVANCE LOGIC
+                if (this.activeInput.classList.contains('correct')) {
+                    setTimeout(() => this.next(), 200);
+                }
+            },
+            
+            adjustFontSize(el) {
+                const len = el.value.length;
+                if (len > 3) el.style.fontSize = '12px';
+                else if (len > 2) el.style.fontSize = '14px';
+                else el.style.fontSize = '16px';
+            },
+            
+            next() {
+                if (!this.activeInput) return;
+                
+                // Find next input
+                const inputs = Array.from(document.querySelectorAll('#formula-modal input:not([type="hidden"])'));
+                const idx = inputs.indexOf(this.activeInput);
+                if (idx > -1 && idx < inputs.length - 1) {
+                    this.focus(inputs[idx + 1]);
+                } else {
+                    this.activeInput.classList.remove('active');
+                    this.activeInput = null;
+                }
+            }
+        };
+
+        // === MATH EVALUATOR ===
+        const MathEvaluator = (() => {
+            const evaluate = (expr, xVal) => {
+                try {
+                    // 1. Clean string
+                    let safe = expr.toLowerCase().replace(/\s+/g, '');
+                    safe = safe.replace(/\\cdot/g, '*');
+                    
+                    // 2. Replace ^ with ** for powers
+                    safe = safe.replace(/\^/g, '**');
+                    
+                    // 3. Handle implicit multiplication
+                    // Digit followed by Letter or ( or Sqrt
+                    safe = safe.replace(/(\d)([a-z\(√])/g, '$1*$2');
+                    // Letter followed by Digit or ( or Sqrt
+                    safe = safe.replace(/([a-z])(\d|\(|√)/g, '$1*$2');
+                    // ) followed by Digit or Letter or ( or Sqrt
+                    safe = safe.replace(/(\))(\d|[a-z]|\(|√)/g, '$1*$2');
+                    
+                    // 4. Handle Sqrt
+                    safe = safe.replace(/√(\d+|\([^)]+\))/g, 'Math.sqrt($1)');
+                    
+                    // 5. Substitute variable x
+                    if (xVal !== undefined) {
+                        // Replace x with (val) to handle negatives correctly in powers
+                        safe = safe.replace(/x/g, `(${xVal})`);
+                    }
+                    
+                    return new Function(`return ${safe}`)();
+                } catch (e) { return NaN; }
+            };
+
+            const checkEquation = (input, root) => {
+                if (!input.includes('=')) return false;
+                const [lhs, rhs] = input.split('=');
+                const valL = evaluate(lhs, root);
+                const valR = evaluate(rhs, root);
+                return Math.abs(valL - valR) < 0.0001;
+            };
+
+            return { checkEquation, evaluate };
+        })();
+
+        // === MATH ENGINE (ADAPTIVE + TEXTBOOK) ===
+        const MathEngine = (() => {
+            const fmtTerm = (coeff, variable = '', isFirst = false) => {
+                if (coeff === 0) return '';
+                const absCoeff = Math.abs(coeff);
+                const showNumber = absCoeff !== 1 || variable === '';
+                const valString = showNumber ? absCoeff.toString() : '';
+                let sign = '';
+                if (coeff < 0) sign = '-';
+                else if (!isFirst && coeff > 0) sign = '+';
+                const prefix = !isFirst && sign ? `${sign}` : sign;
+                return `${prefix}${valString}${variable}`;
+            };
+
+            const normalize = (s) => {
+                let str = s.toLowerCase();
+                str = str.replace(/\\le/g, '<=').replace(/\\ge/g, '>=').replace(/≤/g, '<=').replace(/≥/g, '>=');
+                str = str.replace(/\s+/g, '');
+                str = str.replace(/\\cdot/g, '').replace(/x=/g, '')
+                    .replace(/v/g, ';').replace(/or/g, ';');
+                const parts = str.split(/[;,]/).filter(p => p.trim() !== '');
+                const normParts = parts.map(p => {
+                    return p.replace(/(^|[\+\-\=\(\<\>])([a-z])/g, '$11$2');
+                });
+                return normParts.sort().join(';');
+            };
+
+            const checkFinalAnswer = (input, keys) => {
+                if (!input) return false;
+                const normInput = normalize(input);
+                if (keys.some(k => normalize(k) === normInput)) return true;
+                
+                if (!input.includes('<') && !input.includes('>')) {
+                    try {
+                        const cleanInput = input.replace(',', '.').replace('^', '**');
+                        if (/^[\d\.\/\+\-\*\(\)]+$/.test(cleanInput)) {
+                            const userVal = eval(cleanInput);
+                            for (let k of keys) {
+                                const cleanKey = k.replace(',', '.').replace('^', '**');
+                                if (/^[\d\.\/\+\-\*\(\)]+$/.test(cleanKey)) {
+                                    const keyVal = eval(cleanKey);
+                                    if (Math.abs(userVal - keyVal) < 0.001) return true;
+                                }
+                            }
+                        }
+                    } catch(e) {}
+                }
+                return false;
+            };
+
+            const checkStep = (input, problem) => {
+                if (!input.includes('=')) return false;
+                const [userLHS, userRHS] = input.split('=');
+                const [probLHS, probRHS] = problem.latex.split('=');
+
+                // 1. Check specific roots (Test A)
+                let rootsToCheck = [];
+                if (problem.root !== undefined) rootsToCheck.push(problem.root);
+                if (problem.solutions) rootsToCheck.push(...problem.solutions);
+
+                if (rootsToCheck.length > 0) {
+                    const allRootsValid = rootsToCheck.every(r => {
+                        const valL = MathEvaluator.evaluate(userLHS, r);
+                        const valR = MathEvaluator.evaluate(userRHS, r);
+                        return Math.abs(valL - valR) < 0.01; // Increased tolerance
+                    });
+                    if (allRootsValid) return true;
+                }
+                
+                // 2. Algebraic Equivalence / Proportionality (Test B)
+                const randX = Math.random() * 10 + 1;
+                const origDiff = MathEvaluator.evaluate(probLHS, randX) - MathEvaluator.evaluate(probRHS, randX);
+                const userDiff = MathEvaluator.evaluate(userLHS, randX) - MathEvaluator.evaluate(userRHS, randX);
+                
+                if (Math.abs(userDiff) > 0.0001) {
+                    const ratio = origDiff / userDiff;
+                    const randX2 = Math.random() * 10 + 11;
+                    const origDiff2 = MathEvaluator.evaluate(probLHS, randX2) - MathEvaluator.evaluate(probRHS, randX2);
+                    const userDiff2 = MathEvaluator.evaluate(userLHS, randX2) - MathEvaluator.evaluate(userRHS, randX2);
+                    
+                    if (Math.abs(userDiff2) > 0.0001) {
+                        const ratio2 = origDiff2 / userDiff2;
+                        if (Math.abs(ratio - ratio2) < 0.01) return true;
+                    }
+                }
+
+                return false;
+            };
+
+            // === TEXTBOOK DATA ===
+            const TextbookData = [
+                { cat: 'eq2', lat: 'x^2-7x+12=0', ans: ['3;4', '4;3'], sol: 'x_1=3, x_2=4', cf: {a:1,b:-7,c:12,delta:1}, r: [3,4] },
+                { cat: 'eq2', lat: 'x^2-5x-6=0', ans: ['-1;6', '6;-1'], sol: 'x_1=-1, x_2=6', cf: {a:1,b:-5,c:-6,delta:49}, r: [-1,6] },
+                { cat: 'eq2', lat: 'x^2-6x+8=0', ans: ['2;4', '4;2'], sol: 'x_1=2, x_2=4', cf: {a:1,b:-6,c:8,delta:4}, r: [2,4] },
+                { cat: 'eq2', lat: 'x^2+9x+8=0', ans: ['-8;-1', '-1;-8'], sol: 'x_1=-8, x_2=-1', cf: {a:1,b:9,c:8,delta:49}, r: [-8,-1] },
+                { cat: 'eq2', lat: 'x^2+x-12=0', ans: ['-4;3', '3;-4'], sol: 'x_1=-4, x_2=3', cf: {a:1,b:1,c:-12,delta:49}, r: [-4,3] },
+                { cat: 'eq2', lat: 'x^2-5x+6=0', ans: ['2;3', '3;2'], sol: 'x_1=2, x_2=3', cf: {a:1,b:-5,c:6,delta:1}, r: [2,3] },
+                { cat: 'eq2', lat: 'x^2+10x+25=0', ans: ['-5'], sol: 'x=-5', cf: {a:1,b:10,c:25,delta:0}, r: [-5,-5] },
+                { cat: 'eq2', lat: 'x^2-8x+16=0', ans: ['4'], sol: 'x=4', cf: {a:1,b:-8,c:16,delta:0}, r: [4,4] },
+                { cat: 'eq2', lat: 'x^2+x+1=0', ans: ['impossibile', 'no'], sol: '\\emptyset', cf: {a:1,b:1,c:1,delta:-3}, r: [] },
+                { cat: 'eq2', lat: 'x^2-2x+3=0', ans: ['impossibile', 'no'], sol: '\\emptyset', cf: {a:1,b:-2,c:3,delta:-8}, r: [] },
+                { cat: 'eq2', lat: '2x^2+9x+9=0', ans: ['-3;-1.5', '-1.5;-3', '-3;-3/2'], sol: 'x_1=-3, x_2=-3/2', cf: {a:2,b:9,c:9,delta:9}, r: [-3,-1.5] },
+                { cat: 'eq2', lat: '12x^2-11x+2=0', ans: ['0.25;0.66', '1/4;2/3'], sol: 'x_1=1/4, x_2=2/3', cf: {a:12,b:-11,c:2,delta:25}, r: [0.25,0.666] },
+                { cat: 'eq2', lat: '7x^2+6x+4=0', ans: ['impossibile'], sol: '\\emptyset', cf: {a:7,b:6,c:4,delta:-76}, r: [] },
+                { cat: 'eq2', lat: '4x^2+3x+1=0', ans: ['impossibile'], sol: '\\emptyset', cf: {a:4,b:3,c:1,delta:-7}, r: [] },
+                { cat: 'eq2', lat: '4x^2-4x+1=0', ans: ['0.5', '1/2'], sol: 'x=1/2', cf: {a:4,b:-4,c:1,delta:0}, r: [0.5,0.5] },
+                { cat: 'eq2', lat: '4x^2-7x-2=0', ans: ['-0.25;2', '-1/4;2'], sol: 'x_1=-1/4, x_2=2', cf: {a:4,b:-7,c:-2,delta:81}, r: [-0.25,2] },
+                { cat: 'eq2', lat: '-2x^2+5x+7=0', ans: ['-1;3.5', '-1;7/2'], sol: 'x_1=-1, x_2=7/2', cf: {a:-2,b:5,c:7,delta:81}, r: [-1,3.5] },
+                { cat: 'eq2', lat: '-4x^2+x+14=0', ans: ['-1.75;2', '-7/4;2'], sol: 'x_1=-7/4, x_2=2', cf: {a:-4,b:1,c:14,delta:225}, r: [-1.75,2] },
+                { cat: 'eq2', lat: '-3x^2+7x-2=0', ans: ['0.33;2', '1/3;2'], sol: 'x_1=1/3, x_2=2', cf: {a:-3,b:7,c:-2,delta:25}, r: [0.333,2] },
+                { cat: 'eq2', lat: '-4x^2+20x-25=0', ans: ['2.5', '5/2'], sol: 'x=5/2', cf: {a:-4,b:20,c:-25,delta:0}, r: [2.5,2.5] },
+                
+                { cat: 'diseq1', lat: '3x-6>0', ans: ['x>2'], sol: 'x>2' },
+                { cat: 'diseq1', lat: '2x>x+2', ans: ['x>2'], sol: 'x>2' },
+                { cat: 'diseq1', lat: '-12x-18\\le0', ans: ['x>=-1.5', 'x>=-3/2'], sol: 'x \\ge -3/2' },
+                { cat: 'diseq1', lat: '4x-2\\le3x-2', ans: ['x<=0'], sol: 'x \\le 0' },
+                { cat: 'diseq1', lat: '-3x+15\\ge0', ans: ['x<=5'], sol: 'x \\le 5' },
+                { cat: 'diseq1', lat: '1-3x\\ge4x+8', ans: ['x<=-1'], sol: 'x \\le -1' },
+                { cat: 'diseq1', lat: 'x-7\\ge3', ans: ['x>=10'], sol: 'x \\ge 10' },
+                { cat: 'diseq1', lat: '1-4x\\ge2x+9', ans: ['x<=-4/3', 'x<=-1.33'], sol: 'x \\le -4/3' },
+                { cat: 'diseq1', lat: '5(x+1)\\ge5', ans: ['x>=0'], sol: 'x \\ge 0' },
+                { cat: 'diseq1', lat: '3x-16>-x', ans: ['x>4'], sol: 'x > 4' },
+                { cat: 'diseq1', lat: '3x-1>-10', ans: ['x>-3'], sol: 'x > -3' },
+                { cat: 'diseq1', lat: '4x>3x+1', ans: ['x>1'], sol: 'x > 1' },
+                { cat: 'diseq1', lat: '3x-3<x', ans: ['x<1.5', 'x<3/2'], sol: 'x < 3/2' },
+                { cat: 'diseq1', lat: 'x-3<2x-1', ans: ['x>-2'], sol: 'x > -2' },
+                { cat: 'diseq1', lat: '4x+1\\ge5x-3', ans: ['x<=4'], sol: 'x \\le 4' },
+
+                { cat: 'scomp', lat: '20x^5+30x^4-4x^3-6x^2', ans: ['2x^2(2x+3)(5x^2-1)'], sol: '2x^2(2x+3)(5x^2-1)' },
+                { cat: 'scomp', lat: '8a^5+12a^4-16a^2-24a', ans: ['4a(a^3-2)(2a+3)'], sol: '4a(a^3-2)(2a+3)' },
+                { cat: 'scomp', lat: '3x^2-27', ans: ['3(x-3)(x+3)', '3(x+3)(x-3)'], sol: '3(x-3)(x+3)' },
+                { cat: 'scomp', lat: '8x-2x^3', ans: ['2x(2+x)(2-x)'], sol: '2x(2+x)(2-x)' },
+                { cat: 'scomp', lat: '250-10t^4', ans: ['10(5-t^2)(5+t^2)'], sol: '10(5-t^2)(5+t^2)' },
+                { cat: 'scomp', lat: 'x^3+5x^2-x-5', ans: ['(x+1)(x-1)(x+5)'], sol: '(x+1)(x-1)(x+5)' },
+                { cat: 'scomp', lat: '36a^5b-9ab', ans: ['9ab(2a^2+1)(2a^2-1)'], sol: '9ab(2a^2+1)(2a^2-1)' },
+                { cat: 'scomp', lat: '75x^3-27xy^2', ans: ['3x(5x+3y)(5x-3y)'], sol: '3x(5x+3y)(5x-3y)' },
+                { cat: 'scomp', lat: '2a^3+3a^2-18a-27', ans: ['(a+3)(a-3)(2a+3)'], sol: '(a+3)(a-3)(2a+3)' },
+                { cat: 'scomp', lat: 'a^3-ab^2+a^2b-b^3', ans: ['(a-b)(a+b)^2'], sol: '(a-b)(a+b)^2' },
+
+                { cat: 'eq1', lat: '(2x)^2-(2x+3)^2=3(x+1)-(-x)', ans: ['-0.75', '-3/4'], sol: 'x=-3/4', root: -0.75 },
+                { cat: 'eq1', lat: '7x-(1+x)(1-x)=(x+3)^2-10', ans: ['0'], sol: 'x=0', root: 0 },
+                { cat: 'eq1', lat: '(x+2)(x-3)=(x-1)(x-6)', ans: ['2'], sol: 'x=2', root: 2 },
+                { cat: 'eq1', lat: '5(x-1)-(x-5)^2=x(15-x)', ans: ['impossibile'], sol: '\\emptyset' },
+                { cat: 'eq1', lat: '4x(x-1)-(2x-3)^2=3(x-3)', ans: ['0'], sol: 'x=0', root: 0 },
+                { cat: 'eq1', lat: '(2x+1)(2x-1)-2x(2x+3)=-(6x+1)', ans: ['indeterminata'], sol: 'Indeterminata' },
+                { cat: 'eq1', lat: '(3x-2)^2-(3x+1)(3x-1)=-4(3x+1)', ans: ['impossibile'], sol: '\\emptyset' },
+                { cat: 'eq1', lat: '13+2(x+1)^2=1+5(x+1)+2x(x-5)', ans: ['-1'], sol: 'x=-1', root: -1 },
+                { cat: 'eq1', lat: '(3x-2)^2-(3x+1)(3x-1)=-4(3x+1)', ans: ['impossibile'], sol: '\\emptyset' }
+            ];
+
+            const selectWeightedSubType = (options, masteryScores) => {
+                const weights = options.map(opt => {
+                    const score = masteryScores[opt.id] || 0.5; 
+                    return 2 - score; 
+                });
+                const totalWeight = weights.reduce((a, b) => a + b, 0);
+                let random = Math.random() * totalWeight;
+                for (let i = 0; i < options.length; i++) {
+                    if (random < weights[i]) return options[i];
+                    random -= weights[i];
+                }
+                return options[0];
+            };
+
+            const generateProblem = (category, difficulty = 'easy', masteryScores = {}) => {
+                const textbookOptions = TextbookData.filter(p => p.cat === category);
+                if (textbookOptions.length > 0 && Math.random() < 0.8) {
+                    const p = textbookOptions[Math.floor(Math.random() * textbookOptions.length)];
+                    let subType = 'Libro';
+                    let subTypeId = 'textbook';
+                    if (category === 'eq2' || category === 'diseq2') {
+                        if (p.cf) {
+                            if (p.cf.b === 0 && p.cf.c !== 0) subType = 'LIBRO - PURA';
+                            else if (p.cf.c === 0 && p.cf.b !== 0) subType = 'LIBRO - SPURIA';
+                            else if (p.cf.b !== 0 && p.cf.c !== 0) subType = 'LIBRO - COMPLETA';
+                            else subType = 'LIBRO - MONOMIA';
+                        }
+                    }
+                    return {
+                        category: p.cat, subType: subType, subTypeId: subTypeId, difficulty: 'medium',
+                        latex: p.lat, answerKeys: p.ans, displaySolution: p.sol,
+                        hints: ["Esercizio dal libro di testo.", "Controlla i segni."], xp: 20,
+                        coefficients: p.cf, solutions: p.r, root: p.root
+                    };
+                }
+
+                const diffMultiplier = { easy: 1, medium: 1.5, hard: 2 };
+                const range = Math.ceil(5 * diffMultiplier[difficulty]);
+                
+                if (category === 'eq1') {
+                    const subTypes = [{ id: 'eq1_linear', name: 'Lineare' }, { id: 'eq1_paren', name: 'Con Parentesi' }];
+                    const type = difficulty === 'easy' ? subTypes[0] : selectWeightedSubType(subTypes, masteryScores);
+                    if (type.id === 'eq1_linear') {
+                        const m = rnd(2, 5), sol = rndNZ(6), off = rndNZ(6);
+                        return { category, subType: 'Lineare', subTypeId: 'eq1_linear', difficulty, latex: `${fmtTerm(m, 'x', true)} ${fmtTerm(off, '', false)} = ${m * sol + off}`, root: sol, answerKeys: [`x=${sol}`, `${sol}`], displaySolution: `x = ${sol}`, hints: ["Isola la variabile x.", "Sposta i numeri a destra dell'uguale."], xp: 10 };
+                    } else {
+                        const a = rnd(2, 4), b = rndNZ(6), sol = rndNZ(4);
+                        return { category, subType: 'Con Parentesi', subTypeId: 'eq1_paren', difficulty, latex: `${a}(x ${fmtTerm(b, '')}) = ${a * (sol + b)}`, root: sol, answerKeys: [`x=${sol}`, `${sol}`], displaySolution: `x = ${sol}`, hints: ["Prima sviluppa le parentesi.", "Poi isola la x."], xp: 20 };
+                    }
+                }
+
+                if (category === 'eq2') {
+                    const subTypes = [{ id: 'eq2_pure', name: 'Pura' }, { id: 'eq2_spurious', name: 'Spuria' }, { id: 'eq2_complete', name: 'Completa' }];
+                    const type = selectWeightedSubType(subTypes, masteryScores);
+                    if (type.id === 'eq2_pure') {
+                        const r = rnd(2, 6 + (difficulty === 'hard' ? 4 : 0));
+                        return { category, subType: 'Pura', subTypeId: 'eq2_pure', difficulty, latex: `x^2 - ${r * r} = 0`, root: r, answerKeys: [`x=\\pm${r}`, `\\pm${r}`, `${r};-${r}`, `-${r};${r}`], displaySolution: `x = \\pm ${r}`, hints: ["Porta il numero a destra.", "Calcola la radice quadrata."], xp: 10 };
+                    }
+                    if (type.id === 'eq2_spurious') {
+                        const k = rndNZ(range);
+                        return { category, subType: 'Spuria', subTypeId: 'eq2_spurious', difficulty, latex: `x^2 ${fmtTerm(-k, 'x')} = 0`, root: k, answerKeys: [`0;${k}`, `${k};0`], displaySolution: `x_1 = 0, \\; x_2 = ${k}`, hints: ["Raccogli x a fattor comune.", "x(x - k) = 0"], xp: 12 };
+                    }
+                    const x1 = rndNZ(range), x2 = rndNZ(range);
+                    const a = 1, b = -(x1 + x2), c = x1 * x2, delta = b * b - 4 * a * c;
+                    return { category, subType: 'Completa', subTypeId: 'eq2_complete', difficulty, latex: `x^2 ${fmtTerm(b, 'x')} ${fmtTerm(c, '', false)} = 0`, root: x1, coefficients: { a, b, c, delta }, solutions: [Math.min(x1, x2), Math.max(x1, x2)], answerKeys: [`${Math.min(x1, x2)};${Math.max(x1, x2)}`, `${x1};${x2}`, `${x2};${x1}`], displaySolution: `x \\in \\{ ${Math.min(x1, x2)}, ${Math.max(x1, x2)} \\}`, hints: [`Coefficienti: a=1, b=${b}, c=${c}`, `Calcola Δ = b² - 4ac = ${b}² - 4(1)(${c})`, `Δ = ${delta}, poi x = (-b ± √Δ) / 2a`], xp: 15 };
+                }
+
+                if (category === 'diseq1') {
+                    const a = rndNZ(range), ops = ['>', '<', '\\ge', '\\le'], opsRev = ['<', '>', '\\le', '\\ge'];
+                    let b = rndNZ(range * 2); while ((b / a) % 1 !== 0) b = rndNZ(range * 2);
+                    const val = -b / a, opIdx = rnd(0, 3), op = ops[opIdx], solOp = a > 0 ? op : opsRev[opIdx], sol = `x${solOp}${val}`;
+                    return { category, subType: 'Lineare', subTypeId: 'diseq1_linear', difficulty, latex: `${fmtTerm(a, 'x', true)} ${fmtTerm(b, '', false)} ${op} 0`, answerKeys: [sol], displaySolution: sol.replace(/\\ge/g, '≥').replace(/\\le/g, '≤'), hints: [a < 0 ? "Dividi per negativo: inverti il verso!" : "Isola la x come un'equazione.", "Il verso rimane uguale se dividi per positivo."], xp: 12 };
+                }
+
+                if (category === 'diseq2') {
+                    const subTypes = [{ id: 'diseq2_pure', name: 'Pura 2°' }, { id: 'diseq2_spurious', name: 'Spuria 2°' }, { id: 'diseq2_complete', name: 'Completa 2°' }];
+                    const type = selectWeightedSubType(subTypes, masteryScores);
+                    const ops = ['>', '<', '\\ge', '\\le'], opIdx = rnd(0, 3), op = ops[opIdx], isInclusive = op.includes('e'), isExternal = op.includes('>');
+                    
+                    const formatInterval = (x1, x2, ext, incl) => {
+                        const min = Math.min(x1, x2), max = Math.max(x1, x2), symMin = incl ? '\\le' : '<', symMax = incl ? '\\ge' : '>';
+                        if (ext) {
+                            // External: x < min OR x > max
+                            const k1 = `x${symMin.replace('\\le','<=')}${min}`;
+                            const k2 = `x${symMax.replace('\\ge','>=')}${max}`;
+                            return { 
+                                key: `${k1};${k2}`, 
+                                disp: `x ${symMin} ${min} \\; \\lor \\; x ${symMax} ${max}` 
+                            };
+                        } else {
+                            // Internal: min < x < max
+                            // Also accept system format: x > min AND x < max
+                            const kCompact = `${min}${symMin.replace('\\le','<=')}x${symMin.replace('\\le','<=')}${max}`;
+                            const kSystem = `x${symMax.replace('\\ge','>=')}${min};x${symMin.replace('\\le','<=')}${max}`;
+                            return { 
+                                key: kCompact, 
+                                altKey: kSystem,
+                                disp: `${min} ${symMin} x ${symMin} ${max}` 
+                            };
+                        }
+                    };
+
+                    if (type.id === 'diseq2_pure') {
+                        const r = rnd(2, 6 + (difficulty === 'hard' ? 4 : 0)), solObj = formatInterval(-r, r, isExternal, isInclusive);
+                        const keys = [solObj.key, solObj.key.split(';').reverse().join(';')];
+                        if(solObj.altKey) keys.push(solObj.altKey, solObj.altKey.split(';').reverse().join(';'));
+                        return { category, subType: 'Pura 2°', subTypeId: 'diseq2_pure', difficulty, latex: `x^2 - ${r * r} ${op} 0`, answerKeys: keys, displaySolution: solObj.disp, hints: ["Equazione associata pura: x² = k", `Le radici sono ±${r}`, isExternal ? "Verso maggiore: intervalli esterni." : "Verso minore: intervallo interno."], xp: 12 };
+                    }
+                    if (type.id === 'diseq2_spurious') {
+                        const k = rndNZ(range), solObj = formatInterval(0, -k, isExternal, isInclusive);
+                        const keys = [solObj.key, solObj.key.split(';').reverse().join(';')];
+                        if(solObj.altKey) keys.push(solObj.altKey, solObj.altKey.split(';').reverse().join(';'));
+                        return { category, subType: 'Spuria 2°', subTypeId: 'diseq2_spurious', difficulty, latex: `x^2 ${fmtTerm(k, 'x')} ${op} 0`, answerKeys: keys, displaySolution: solObj.disp, hints: ["Equazione associata spuria: raccogli la x.", `Le radici sono 0 e ${-k}`, isExternal ? "Concordi (DICE): intervalli esterni." : "Discordi (DICE): intervallo interno."], xp: 14 };
+                    }
+                    const x1 = rndNZ(range), x2 = rndNZ(range); if (x1 === x2) x2++;
+                    const a = 1, b = -(x1 + x2), c = x1 * x2, delta = b * b - 4 * a * c, solObj = formatInterval(x1, x2, isExternal, isInclusive);
+                    const keys = [solObj.key, solObj.key.split(';').reverse().join(';')];
+                    if(solObj.altKey) keys.push(solObj.altKey, solObj.altKey.split(';').reverse().join(';'));
+                    return { category, subType: 'Completa 2°', subTypeId: 'diseq2_complete', difficulty, latex: `x^2 ${fmtTerm(b, 'x')} ${fmtTerm(c, '', false)} ${op} 0`, root: x1, coefficients: { a, b, c, delta }, solutions: [Math.min(x1, x2), Math.max(x1, x2)], answerKeys: keys, displaySolution: solObj.disp, hints: [`Trova le radici dell'equazione associata.`, `Coefficienti: a=1, b=${b}, c=${c}`, `Δ = ${delta}. Radici: ${Math.min(x1,x2)} e ${Math.max(x1,x2)}`, isExternal ? "Parabola verso l'alto, > 0: Esterni." : "Parabola verso l'alto, < 0: Interni."], xp: 18 };
+                }
+
+                if (category === 'scomp') {
+                    const type = rnd(1, 3);
+                    if (type === 1) { const k = rnd(2, 4), a = rnd(1, 3), b = rndNZ(4); return { category, subType: 'Raccoglimento', subTypeId: 'scomp_racc', difficulty, latex: `${fmtTerm(k * a, 'x^2', true)}${fmtTerm(k * b, 'x')}`, answerKeys: [`${k}x(${fmtTerm(a, 'x', true)}${fmtTerm(b, '', false)})`.replace(/\s/g, '')], displaySolution: `${k}x(${fmtTerm(a, 'x', true)}${fmtTerm(b, '', false)})`, hints: [`Trova il MCD: ${k}x`, "Raccogli a fattor comune."], xp: 10 }; }
+                    if (type === 2) { const a = rnd(1, 3), b = rnd(2, 5), tA = fmtTerm(a, 'x', true); return { category, subType: 'Differenza Quadrati', subTypeId: 'scomp_diff', difficulty, latex: `${fmtTerm(a * a, 'x^2', true)} - ${b * b}`, answerKeys: [`(${tA}-${b})(${tA}+${b})`.replace(/\s/g, ''), `(${tA}+${b})(${tA}-${b})`.replace(/\s/g, '')], displaySolution: `(${tA}-${b})(${tA}+${b})`, hints: ["Formula: A² - B² = (A-B)(A+B)", `A = ${a}x, B = ${b}`], xp: 12 }; }
+                    const x1 = rndNZ(4), x2 = rndNZ(4), S = x1 + x2, P = x1 * x2; return { category, subType: 'Trinomio', subTypeId: 'scomp_tri', difficulty, latex: `x^2 ${fmtTerm(S, 'x')} ${fmtTerm(P, '', false)}`, answerKeys: [`(x${fmtTerm(x1, '', false)})(x${fmtTerm(x2, '', false)})`.replace(/\s/g, ''), `(x${fmtTerm(x2, '', false)})(x${fmtTerm(x1, '', false)})`.replace(/\s/g, '')], displaySolution: `(x ${fmtTerm(x1, '', false)})(x ${fmtTerm(x2, '', false)})`, hints: [`Cerca due numeri: somma = ${S}, prodotto = ${P}`, `I numeri sono ${x1} e ${x2}`], xp: 15 };
+                }
+
+                if (category === 'prod') {
+                    const type = rnd(1, 3);
+                    if (type === 1) { const a = rnd(1, 3), b = rnd(1, 5); return { category, subType: 'Quadrato Somma', subTypeId: 'prod_qsum', difficulty, latex: `(${fmtTerm(a, 'x', true)}+${b})^2`, answerKeys: [`${a*a}x^2+${2*a*b}x+${b*b}`], displaySolution: `${a*a}x^2+${2*a*b}x+${b*b}`, hints: ["(A + B)² = A² + 2AB + B²"], xp: 10 }; }
+                    if (type === 2) { const a = rnd(1, 3), b = rnd(1, 5); return { category, subType: 'Quadrato Differenza', subTypeId: 'prod_qdiff', difficulty, latex: `(${fmtTerm(a, 'x', true)}-${b})^2`, answerKeys: [`${a*a}x^2-${2*a*b}x+${b*b}`], displaySolution: `${a*a}x^2-${2*a*b}x+${b*b}`, hints: ["(A - B)² = A² - 2AB + B²"], xp: 10 }; }
+                    const a = rnd(1, 2), b = rnd(1, 4); return { category, subType: 'Somma per Differenza', subTypeId: 'prod_sumdiff', difficulty, latex: `(${fmtTerm(a, 'x', true)}+${b})(${fmtTerm(a, 'x', true)}-${b})`, answerKeys: [`${a*a}x^2-${b*b}`], displaySolution: `${a*a}x^2 - ${b*b}`, hints: ["(A + B)(A - B) = A² - B²"], xp: 8 };
+                }
+
+                return { category: 'err', latex: 'Error', answerKeys: [], xp: 0 };
+            };
+
+            const deleteLastToken = (s) => {
+                const TOKENS = ['\\sqrt{', '^2', '^3', '^{', '}', '\\pm', '\\ge', '\\le', '\\emptyset', '\\frac{', '}{', '\\infty', '\\pi', '\\alpha', '\\beta', '\\log', '\\ln'];
+                for (const t of TOKENS) { if (s.endsWith(t)) return s.slice(0, -t.length); }
+                return s.slice(0, -1);
+            };
+
+            return { generateProblem, checkFinalAnswer, checkStep, deleteLastToken };
+        })();
+
+        // === ACHIEVEMENTS ===
+        const Achievements = {
+            list: [
+                { id: 'first_win', name: 'Prima Vittoria', desc: 'Completa il primo esercizio', check: (s) => s.totalCompleted >= 1 },
+                { id: 'streak_5', name: 'In Serie', desc: 'Serie di 5', check: (s) => s.bestStreak >= 5 },
+                { id: 'streak_10', name: 'Inarrestabile', desc: 'Serie di 10', check: (s) => s.bestStreak >= 10 },
+                { id: 'total_25', name: 'Studioso', desc: '25 esercizi', check: (s) => s.totalCompleted >= 25 },
+                { id: 'total_100', name: 'Esperto', desc: '100 esercizi', check: (s) => s.totalCompleted >= 100 },
+                { id: 'perfect_10', name: 'Perfezionista', desc: '10 senza errori', check: (s) => s.perfectRuns >= 10 },
+                { id: 'speed_demon', name: 'Velocista', desc: '5 in cronometro', check: (s) => s.timedCompleted >= 5 },
+                { id: 'level_5', name: 'Livello 5', desc: 'Raggiungi Lv.5', check: (s) => s.level >= 5 },
+                { id: 'level_10', name: 'Livello 10', desc: 'Raggiungi Lv.10', check: (s) => s.level >= 10 },
+                { id: 'all_cats', name: 'Tuttofare', desc: 'Tutte le categorie', check: (s) => Object.keys(s.categoryStats || {}).length >= 6 },
+                { id: 'hard_5', name: 'Coraggioso', desc: '5 difficili', check: (s) => s.hardCompleted >= 5 },
+            ],
+            
+            check(stats) {
+                const newUnlocks = [];
+                this.list.forEach(a => {
+                    if (!stats.achievements.includes(a.id) && a.check(stats)) {
+                        stats.achievements.push(a.id);
+                        newUnlocks.push(a);
+                    }
+                });
+                return newUnlocks;
+            }
+        };
+
+        // === MAIN APP ===
+        const app = {
+            state: {
+                problem: null,
+                input: "",
+                streak: 0,
+                hintsUsed: 0,
+                status: 'idle',
+                theme: 'dark',
+                mode: 'practice',
+                difficulty: 'easy',
+                timer: null,
+                timerValue: 60,
+                timerDuration: 60,
+                challengeCount: 0,
+                challengeTotal: 5,
+                formulaHelperOpen: false,
+                formulaHelperActiveForCurrentProblem: false,
+                exam: {
+                    active: false,
+                    questions: [],
+                    currentIndex: 0,
+                    answers: [], // { correct: bool, input: string }
+                },
+                settings: {
+                    sound: false,
+                    confetti: true,
+                    showFormulas: true
+                }
+            },
+            
+            stats: {
+                totalCompleted: 0,
+                totalAttempts: 0,
+                bestStreak: 0,
+                totalXP: 0,
+                level: 1,
+                xpToNext: 100,
+                currentXP: 0,
+                achievements: [],
+                categoryStats: {},
+                masteryScores: {}, // { subTypeId: 0.0-1.0 }
+                perfectRuns: 0,
+                timedCompleted: 0,
+                hardCompleted: 0
+            },
+
+            menuItems: [
+                { id: 'eq1', label: 'Equazioni 1°', desc: 'Lineari', color: 'gold' },
+                { id: 'eq2', label: 'Equazioni 2°', desc: 'Quadratiche', color: 'step' },
+                { id: 'diseq1', label: 'Disequazioni 1°', desc: 'Intervalli', color: 'purple' },
+                { id: 'diseq2', label: 'Disequazioni 2°', desc: 'Complete', color: 'error' },
+                { id: 'scomp', label: 'Scomposizioni', desc: 'Fattorizzare', color: 'success' },
+                { id: 'prod', label: 'Prodotti Notevoli', desc: 'Formule', color: 'gold' },
+            ],
+
+            init() {
+                this.loadData();
+                this.renderMenu();
+                this.renderAchievementsPreview();
+                this.applyTheme();
+                this.applySettings();
+                this.setupKeyboard();
+                SoundManager.init();
+                CanvasManager.init();
+            },
+            
+            loadData() {
+                try {
+                    const saved = localStorage.getItem('eserciziario_stats');
+                    if (saved) this.stats = { ...this.stats, ...JSON.parse(saved) };
+                    const settings = localStorage.getItem('eserciziario_settings');
+                    if (settings) this.state.settings = { ...this.state.settings, ...JSON.parse(settings) };
+                    const theme = localStorage.getItem('eserciziario_theme');
+                    if (theme) this.state.theme = theme;
+                } catch (e) {}
+            },
+            
+            saveData() {
+                try {
+                    localStorage.setItem('eserciziario_stats', JSON.stringify(this.stats));
+                    localStorage.setItem('eserciziario_settings', JSON.stringify(this.state.settings));
+                    localStorage.setItem('eserciziario_theme', this.state.theme);
+                } catch (e) {}
+            },
+            
+            setupKeyboard() {
+                document.addEventListener('keydown', (e) => {
+                    if (!$('#view-exercise').classList.contains('hidden') && !this.state.formulaHelperOpen) {
+                        if (e.key === 'Enter') { this.handleAction('sub'); e.preventDefault(); }
+                        else if (e.key === 'Backspace') { this.handleAction('del'); e.preventDefault(); }
+                        else if (e.key === 'Escape') { this.exitSession(); }
+                        else if (e.key.toLowerCase() === 'h') { this.showHint(); }
+                        else if (/^[0-9x+\-*/=()^<>;]$/.test(e.key)) { this.insert(e.key); }
+                    }
+                });
+            },
+
+            toggleTheme() {
+                this.state.theme = this.state.theme === 'dark' ? 'light' : 'dark';
+                this.applyTheme();
+                this.saveData();
+            },
+            
+            applyTheme() {
+                document.documentElement.setAttribute('data-theme', this.state.theme);
+                $('#icon-moon').style.display = this.state.theme === 'dark' ? 'block' : 'none';
+                $('#icon-sun').style.display = this.state.theme === 'light' ? 'block' : 'none';
+            },
+            
+            applySettings() {
+                SoundManager.enabled = this.state.settings.sound;
+                this.updateToggle('sound', this.state.settings.sound);
+                this.updateToggle('confetti', this.state.settings.confetti);
+                this.updateToggle('formulas', this.state.settings.showFormulas);
+            },
+            
+            updateToggle(name, value) {
+                const toggle = $(`#${name}-toggle`);
+                const knob = $(`#${name}-knob`);
+                if (toggle && knob) {
+                    if (value) {
+                        toggle.classList.remove('bg-bgSurface'); toggle.classList.add('bg-gold');
+                        knob.classList.remove('translate-x-1'); knob.classList.add('translate-x-5');
+                    } else {
+                        toggle.classList.add('bg-bgSurface'); toggle.classList.remove('bg-gold');
+                        knob.classList.add('translate-x-1'); knob.classList.remove('translate-x-5');
+                    }
+                }
+            },
+
+            toggleSound() { this.state.settings.sound = !this.state.settings.sound; SoundManager.enabled = this.state.settings.sound; this.updateToggle('sound', this.state.settings.sound); this.saveData(); },
+            toggleConfetti() { this.state.settings.confetti = !this.state.settings.confetti; this.updateToggle('confetti', this.state.settings.confetti); this.saveData(); },
+            toggleShowFormulas() { this.state.settings.showFormulas = !this.state.settings.showFormulas; this.updateToggle('formulas', this.state.settings.showFormulas); this.saveData(); },
+            
+            updateTimerDuration(val) { this.state.timerDuration = parseInt(val); $('#timer-duration-label').textContent = val + 's'; },
+
+            toggleInfo() { $('#info-modal').classList.toggle('hidden'); },
+            toggleSettings() { $('#settings-modal').classList.toggle('hidden'); },
+            toggleStats() { this.renderStats(); $('#stats-modal').classList.toggle('hidden'); },
+
+            setMode(mode) {
+                this.state.mode = mode;
+                $$('#mode-practice, #mode-timed, #mode-challenge, #mode-exam').forEach(b => { b.classList.remove('tab-active'); b.classList.add('text-textMuted'); });
+                $(`#mode-${mode}`).classList.add('tab-active'); $(`#mode-${mode}`).classList.remove('text-textMuted');
+                
+                // UI Logic for Mode Separation
+                const grid = $('#categories-grid');
+                const challengeView = $('#challenge-start-view');
+                const examView = $('#exam-start-view');
+                
+                grid.classList.add('hidden');
+                challengeView.classList.add('hidden');
+                examView.classList.add('hidden');
+                
+                if (mode === 'challenge') {
+                    challengeView.classList.remove('hidden');
+                } else if (mode === 'exam') {
+                    examView.classList.remove('hidden');
+                } else {
+                    grid.classList.remove('hidden');
+                }
+            },
+            
+            setDifficulty(diff) {
+                this.state.difficulty = diff;
+                $$('#diff-easy, #diff-medium, #diff-hard').forEach(b => {
+                    b.classList.remove('bg-success/10', 'text-success', 'border-success/30', 'bg-gold/10', 'text-gold', 'border-gold/30', 'bg-error/10', 'text-error', 'border-error/30');
+                    b.classList.add('text-textMuted', 'border-transparent');
+                });
+                const colors = { easy: 'success', medium: 'gold', hard: 'error' };
+                const c = colors[diff];
+                $(`#diff-${diff}`).classList.remove('text-textMuted', 'border-transparent');
+                $(`#diff-${diff}`).classList.add(`bg-${c}/10`, `text-${c}`, `border-${c}/30`);
+            },
+
+            startSession(cat) {
+                this.state.challengeCount = 0;
+                this.challengeCategories = null;
+                this.state.exam.active = false;
+                
+                if (this.state.mode === 'challenge') {
+                    this.challengeCategories = shuffle(this.menuItems.map(m => m.id)).slice(0, 5);
+                    this.state.problem = MathEngine.generateProblem(this.challengeCategories[0], this.state.difficulty, this.stats.masteryScores);
+                } else if (this.state.mode === 'exam') {
+                    this.startExam();
+                    return;
+                } else {
+                    this.state.problem = MathEngine.generateProblem(cat, this.state.difficulty, this.stats.masteryScores);
+                }
+                
+                this.resetExerciseState();
+                
+                $('#view-menu').classList.add('hidden');
+                $('#view-exercise').classList.remove('hidden');
+                $('#view-exercise').classList.add('flex');
+                $('#xp-container').classList.remove('hidden');
+                $('#xp-container').classList.add('flex');
+                
+                if (this.state.mode === 'timed') {
+                    this.startTimer();
+                } else if (this.state.mode === 'challenge') {
+                    $('#challenge-progress').classList.remove('hidden');
+                    this.updateChallengeProgress();
+                }
+                
+                this.renderKeypad();
+                this.renderProblem();
+                this.updateXPDisplay();
+            },
+            
+            startExam() {
+                this.state.exam.active = true;
+                this.state.exam.questions = [];
+                this.state.exam.answers = [];
+                this.state.exam.currentIndex = 0;
+                
+                // Generate 10 random questions from allowed categories
+                const cats = this.menuItems.map(m => m.id);
+                for(let i=0; i<10; i++) {
+                    const cat = cats[Math.floor(Math.random() * cats.length)];
+                    this.state.exam.questions.push(MathEngine.generateProblem(cat, this.state.difficulty, this.stats.masteryScores));
+                }
+                
+                this.state.problem = this.state.exam.questions[0];
+                
+                this.resetExerciseState();
+                $('#view-menu').classList.add('hidden');
+                $('#view-exercise').classList.remove('hidden');
+                $('#view-exercise').classList.add('flex');
+                $('#xp-container').classList.add('hidden'); // Hide XP in exam
+                $('#challenge-progress').classList.remove('hidden'); // Use bar for progress
+                $('#challenge-bar').style.width = '0%';
+                
+                // Hide helpers
+                $('#btn-hint').classList.add('hidden');
+                $('#btn-skip').classList.add('hidden');
+                $('#formula-helper-btn').classList.add('hidden');
+                
+                this.renderKeypad();
+                this.renderProblem();
+            },
+            
+            startTimer() {
+                this.state.timerValue = this.state.timerDuration;
+                $('#timer-display').classList.remove('hidden');
+                $('#timer-display').classList.add('flex');
+                $('#timer-value').textContent = this.state.timerValue;
+                
+                this.state.timer = setInterval(() => {
+                    this.state.timerValue--;
+                    $('#timer-value').textContent = this.state.timerValue;
+                    
+                    if (this.state.timerValue <= 10) {
+                        $('#timer-display').classList.add('timer-warning', 'text-error');
+                    }
+                    
+                    if (this.state.timerValue <= 0) {
+                        this.endTimedSession();
+                    }
+                }, 1000);
+            },
+            
+            endTimedSession() {
+                clearInterval(this.state.timer);
+                this.state.timer = null;
+                alert(`Tempo scaduto!\n\nEsercizi completati: ${this.state.streak}\nXP guadagnati: ${this.state.streak * 10}`);
+                this.exitSession();
+            },
+
+            exitSession() {
+                if (this.state.timer) { clearInterval(this.state.timer); this.state.timer = null; }
+                this.state.problem = null;
+                this.state.streak = 0;
+                if (CanvasManager.active) CanvasManager.toggle();
+                
+                $('#view-menu').classList.remove('hidden');
+                $('#view-exercise').classList.add('hidden');
+                $('#view-exercise').classList.remove('flex');
+                $('#view-exam-results').classList.add('hidden');
+                $('#view-exam-results').classList.remove('flex');
+                
+                $('#xp-container').classList.add('hidden');
+                $('#timer-display').classList.add('hidden');
+                $('#timer-display').classList.remove('flex', 'timer-warning', 'text-error');
+                $('#challenge-progress').classList.add('hidden');
+                $('#streak-badge').classList.add('hidden');
+                $('#formula-display').classList.add('hidden');
+                $('#formula-helper-btn').classList.add('hidden');
+                
+                // Restore buttons
+                $('#btn-hint').classList.remove('hidden');
+                $('#btn-skip').classList.remove('hidden');
+                
+                this.renderAchievementsPreview();
+            },
+
+            resetExerciseState() {
+                this.state.input = "";
+                this.state.status = "idle";
+                this.state.hintsUsed = 0;
+                this.state.formulaHelperActiveForCurrentProblem = false; // Reset helper state
+                this.updateInputDisplay();
+                $('#input-container').className = "bg-bgPanel rounded-2xl h-14 md:h-20 shrink-0 glass-panel border-2 border-transparent transition-all relative flex items-center justify-center overflow-hidden";
+                $('#badge-correct').classList.add('hidden');
+                $('#badge-step').classList.add('hidden');
+                $('#keypad').classList.remove('hidden');
+                $('#next-actions').classList.add('hidden');
+                $('#next-actions').classList.remove('flex');
+                $('#message-area').innerHTML = "";
+                $('#cursor').classList.remove('hidden');
+                $('#formula-display').classList.add('hidden');
+                $('#formula-helper-btn').classList.add('hidden');
+                CanvasManager.clear();
+            },
+
+            nextProblem() {
+                if (this.state.mode === 'challenge') {
+                    this.state.challengeCount++;
+                    if (this.state.challengeCount >= this.state.challengeTotal) {
+                        this.completeChallengeMode();
+                        return;
+                    }
+                    const cat = this.challengeCategories[this.state.challengeCount];
+                    this.state.problem = MathEngine.generateProblem(cat, this.state.difficulty, this.stats.masteryScores);
+                    this.updateChallengeProgress();
+                } else if (this.state.mode === 'exam') {
+                    // Handled in submitExamAnswer
+                } else {
+                    this.state.problem = MathEngine.generateProblem(this.state.problem.category, this.state.difficulty, this.stats.masteryScores);
+                }
+                this.resetExerciseState();
+                this.renderKeypad(); 
+                this.renderProblem();
+            },
+            
+            completeChallengeMode() {
+                this.addXP(50);
+                alert(`Sfida Completata!\n\n+50 XP Bonus!`);
+                this.saveData();
+                this.exitSession();
+            },
+            
+            updateChallengeProgress() {
+                const pct = (this.state.challengeCount / this.state.challengeTotal) * 100;
+                $('#challenge-bar').style.width = pct + '%';
+            },
+            
+            skipProblem() {
+                if (this.state.status === 'success') return;
+                this.state.streak = 0;
+                $('#streak-badge').classList.add('hidden');
+                this.nextProblem();
+            },
+
+            renderMenu() {
+                const container = $('#categories-grid');
+                container.innerHTML = this.menuItems.map((item, i) => {
+                    const catStats = this.stats.categoryStats[item.id] || { completed: 0 };
+                    return `
+                    <button onclick="app.startSession('${item.id}')" 
+                        class="group relative p-4 h-24 md:h-28 bg-bgPanel border border-borderDim rounded-2xl text-left btn-press overflow-hidden glass-panel flex flex-col justify-between hover:border-${item.color}/50 transition-all"
+                        style="animation: slideUp 0.3s ease-out forwards; animation-delay: ${i * 0.03}s; opacity: 0">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-serif text-base md:text-lg text-textMain">${item.label}</h3>
+                                <p class="text-xs text-textMuted">${item.desc}</p>
+                            </div>
+                        </div>
+                        <div class="self-end text-${item.color} opacity-50 group-hover:opacity-100 transition-opacity">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                        </div>
+                    </button>
+                `}).join('');
+            },
+            
+            renderAchievementsPreview() {
+                const container = $('#achievements-list');
+                const unlocked = Achievements.list.filter(a => this.stats.achievements.includes(a.id)).slice(-4);
+                const locked = Achievements.list.filter(a => !this.stats.achievements.includes(a.id)).slice(0, 4 - unlocked.length);
+                
+                container.innerHTML = [...unlocked, ...locked].map(a => `
+                    <div class="flex-shrink-0 w-12 h-12 rounded-xl bg-bgSurface border border-borderDim flex items-center justify-center ${this.stats.achievements.includes(a.id) ? '' : 'achievement-locked'}" title="${a.name}">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gold"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+                    </div>
+                `).join('');
+            },
+
+            renderKeypad() {
+                const grid = $('#keypad');
+                const cat = this.state.problem?.category || 'eq1';
+                
+                // Context-aware keys
+                let extraKeys = [];
+                if (cat.includes('diseq')) {
+                    extraKeys = [
+                        {l:'≤', v:'\\le', c:'op'}, {l:'≥', v:'\\ge', c:'op'}
+                    ];
+                } else {
+                    extraKeys = [
+                        {l:'≤', v:'\\le', c:'op'}, {l:'≥', v:'\\ge', c:'op'}
+                    ];
+                }
+                
+                const okLabel = this.state.mode === 'exam' ? 'NEXT' : 'OK';
+
+                const keys = [
+                    {l:'7', v:'7', c:'num'}, {l:'8', v:'8', c:'num'}, {l:'9', v:'9', c:'num'}, {l:'+', v:'+', c:'op'}, {l:'−', v:'-', c:'op'}, {l:'DEL', action:'del', c:'del'},
+                    {l:'4', v:'4', c:'num'}, {l:'5', v:'5', c:'num'}, {l:'6', v:'6', c:'num'}, {l:'×', v:'*', c:'op'}, {l:'÷', v:'/', c:'op'}, {l:'C', action:'clr', c:'dim'},
+                    {l:'1', v:'1', c:'num'}, {l:'2', v:'2', c:'num'}, {l:'3', v:'3', c:'num'}, {l:'(', v:'(', c:'op'}, {l:')', v:')', c:'op'}, {l:'x²', v:'^2', c:'op'},
+                    {l:'0', v:'0', c:'num'}, {l:'x', v:'x', c:'var'}, {l:'=', v:'=', c:'op'}, {l:'<', v:'<', c:'op'}, {l:'>', v:'>', c:'op'}, {l:'±', v:'\\pm', c:'op'},
+                    ...extraKeys, {l:';', v:';', c:'op'}, {l:'√', v:'\\sqrt{', c:'op'}, {l:'^', v:'^{', c:'op'}, {l:okLabel, action:'sub', c:'action'},
+                ];
+
+                grid.innerHTML = keys.map(k => {
+                    let cls = "btn-press relative rounded-lg font-mono text-sm md:text-base flex items-center justify-center select-none transition-all ";
+                    const baseH = "h-10 md:h-11";
+                    if (k.c === 'num') cls += `bg-bgSurface text-textMain hover:bg-borderDim ${baseH}`;
+                    if (k.c === 'op') cls += `bg-bgPanel text-gold hover:bg-bgSurface ${baseH}`;
+                    if (k.c === 'var') cls += `bg-bgPanel text-textMain font-serif italic hover:bg-bgSurface ${baseH}`;
+                    if (k.c === 'del') cls += `bg-bgSurface text-error hover:bg-error/20 ${baseH}`;
+                    if (k.c === 'dim') cls += `bg-bgSurface text-textMuted hover:bg-borderDim ${baseH}`;
+                    if (k.c === 'action') cls += `gradient-gold text-bgMain font-bold tracking-wider text-[10px] md:text-xs ${baseH}`;
+                    
+                    const content = k.l === 'DEL' ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>' : k.l;
+                    const action = k.action ? `app.handleAction('${k.action}')` : `app.insert('${k.v.replace(/\\/g, '\\\\')}')`;
+                    return `<button onclick="${action}" class="${cls}">${content}</button>`;
+                }).join('');
+            },
+
+            renderProblem() {
+                const p = this.state.problem;
+                $('#problem-category').textContent = p.subType ? p.subType.toUpperCase() : p.category.toUpperCase();
+                const diffLabels = { easy: 'Facile', medium: 'Medio', hard: 'Difficile' };
+                $('#problem-difficulty').textContent = diffLabels[p.difficulty] || '';
+                $('#problem-xp').textContent = `+${p.xp} XP`;
+                katex.render(p.latex, $('#latex-problem'), { throwOnError: false, displayMode: true });
+                
+                // Show formula for eq2 OR diseq2 completa (BUT NOT IN EXAM MODE)
+                if (this.state.mode !== 'exam' && p.coefficients) {
+                    const { a, b, c, delta } = p.coefficients;
+                    
+                    // Show formula helper button
+                    $('#formula-helper-btn').classList.remove('hidden');
+                    
+                    // Show formulas if enabled
+                    if (this.state.settings.showFormulas) {
+                        $('#formula-display').classList.remove('hidden');
+                        katex.render(`\\Delta = b^2 - 4ac`, $('#delta-formula'), { throwOnError: false });
+                        katex.render(`x_{1,2} = \\frac{-b \\pm \\sqrt{\\Delta}}{2a}`, $('#quadratic-formula'), { throwOnError: false });
+                    }
+                } else {
+                    $('#formula-display').classList.add('hidden');
+                    $('#formula-helper-btn').classList.add('hidden');
+                }
+                
+                if (this.state.status === 'idle') $('#message-area').innerHTML = "";
+            },
+
+            // ... (Formula Helper methods remain same as previous version) ...
+            toggleFormulaHelper() {
+                this.state.formulaHelperOpen = !this.state.formulaHelperOpen;
+                $('#formula-modal').classList.toggle('hidden');
+                if (this.state.formulaHelperOpen) this.initFormulaHelper();
+            },
+            initFormulaHelper() { 
+                const p = this.state.problem;
+                if (!p || !p.coefficients) return;
+                
+                // Check if already initialized for this problem
+                if (this.state.formulaHelperActiveForCurrentProblem) return;
+                this.state.formulaHelperActiveForCurrentProblem = true;
+
+                const labelEl = document.querySelector('#formula-modal p.uppercase');
+                const targetEl = document.getElementById('formula-equation');
+                const title = p.category.includes('diseq') ? "Equazione Associata" : "Equazione";
+                if (labelEl) labelEl.textContent = title.toUpperCase();
+                
+                // Reset inputs
+                document.querySelectorAll('#formula-modal input').forEach(el => {
+                    el.value = '';
+                    el.classList.remove('correct', 'error', 'active');
+                    el.style.fontSize = '16px';
+                });
+                
+                // Reset sections
+                const sections = ['delta-section', 'solutions-section', 'step-4ac', 'step-delta-final', 'step-neg-b', 'step-two-a', 'step-final-solutions', 'step-numerators', 'step-4a'];
+                sections.forEach(id => { const el = document.getElementById(id); if(el) el.classList.add('opacity-50', 'pointer-events-none'); });
+                
+                // Reset feedbacks
+                document.querySelectorAll('#formula-modal [id$="-feedback"]').forEach(el => el.textContent = '');
+                
+                const btn = document.getElementById('apply-formula-btn'); if(btn) btn.classList.add('hidden');
+                
+                const { a, b, c } = p.coefficients;
+                let mathStr = "";
+                if (a === 1) mathStr += "x^2";
+                else if (a === -1) mathStr += "-x^2";
+                else mathStr += `${a}x^2`;
+                if (b > 0) mathStr += `+${b === 1 ? '' : b}x`;
+                else if (b < 0) mathStr += `${b === -1 ? '-' : b}x`;
+                if (c > 0) mathStr += `+${c}`;
+                else if (c < 0) mathStr += `${c}`;
+                mathStr += "=0";
+                if (targetEl) targetEl.textContent = mathStr;
+                
+                // Set initial labels
+                $('#b-squared-label').textContent = `b² → (${b})² = ?`;
+                $('#four-a-label').textContent = `4a → 4 • (${a}) = ?`;
+                $('#neg-b-label').textContent = `-b → -(${b}) = ?`;
+                $('#two-a-label').textContent = `2a → 2 • (${a}) = ?`;
+                
+                requestAnimationFrame(() => { requestAnimationFrame(() => { if (targetEl) try { katex.render(mathStr, targetEl, { throwOnError: false, displayMode: true }); } catch(e) {} }); });
+            },
+            checkCoefficients() { 
+                const p = this.state.problem; const { a, b, c } = p.coefficients;
+                const inputA = parseInt($('#coeff-a').value); const inputB = parseInt($('#coeff-b').value); const inputC = parseInt($('#coeff-c').value);
+                const aCorrect = inputA === a; const bCorrect = inputB === b; const cCorrect = inputC === c;
+                $('#coeff-a').classList.toggle('correct', aCorrect); $('#coeff-b').classList.toggle('correct', bCorrect); $('#coeff-c').classList.toggle('correct', cCorrect);
+                if (aCorrect && bCorrect && cCorrect) { $('#coeff-feedback').innerHTML = '<span class="text-success">Corretto!</span>'; $('#delta-section').classList.remove('opacity-50', 'pointer-events-none'); }
+            },
+            checkBSquared() { 
+                const p = this.state.problem; const { b } = p.coefficients; const correct = parseInt($('#b-squared-value').value) === b*b;
+                $('#b-squared-value').classList.toggle('correct', correct); if(correct) $('#step-4a').classList.remove('opacity-50', 'pointer-events-none');
+            },
+            checkFourA() {
+                const p = this.state.problem; const { a } = p.coefficients; const correct = parseInt($('#four-a-value').value) === 4*a;
+                $('#four-a-value').classList.toggle('correct', correct); 
+                if(correct) {
+                    $('#step-4ac').classList.remove('opacity-50', 'pointer-events-none');
+                    // Update label for next step
+                    const val4a = parseInt($('#four-a-value').value);
+                    const c = p.coefficients.c;
+                    $('#four-ac-label').textContent = `4ac → ${val4a} • ${c} = ?`;
+                }
+            },
+            checkFourAC() { 
+                const p = this.state.problem; const { a, c } = p.coefficients; const correct = parseInt($('#four-ac-value').value) === 4*a*c;
+                $('#four-ac-value').classList.toggle('correct', correct); 
+                if(correct) {
+                    $('#step-delta-final').classList.remove('opacity-50', 'pointer-events-none');
+                    const b2 = parseInt($('#b-squared-value').value);
+                    const val4ac = parseInt($('#four-ac-value').value);
+                    $('#delta-calc-label').textContent = `Δ → ${b2} - ${val4ac} = ?`;
+                }
+            },
+            checkDelta() { 
+                const p = this.state.problem; const { delta } = p.coefficients; const correct = parseInt($('#delta-value').value) === delta;
+                $('#delta-value').classList.toggle('correct', correct); 
+                if(correct) {
+                    $('#solutions-section').classList.remove('opacity-50', 'pointer-events-none');
+                    $('#sqrt-delta-label').textContent = `√Δ → √${delta} = ?`;
+                }
+            },
+            checkSqrtDelta() { 
+                const p = this.state.problem; const { delta } = p.coefficients; const correct = Math.abs(parseFloat($('#sqrt-delta-value').value) - Math.sqrt(delta)) < 0.001;
+                $('#sqrt-delta-value').classList.toggle('correct', correct); if(correct) $('#step-neg-b').classList.remove('opacity-50', 'pointer-events-none');
+            },
+            checkNegB() { 
+                const p = this.state.problem; const { b } = p.coefficients; const correct = parseInt($('#neg-b-value').value) === -b;
+                $('#neg-b-value').classList.toggle('correct', correct); if(correct) $('#step-two-a').classList.remove('opacity-50', 'pointer-events-none');
+            },
+            checkTwoA() { 
+                const p = this.state.problem; const { a } = p.coefficients; const correct = parseInt($('#two-a-value').value) === 2*a;
+                $('#two-a-value').classList.toggle('correct', correct); 
+                if(correct) {
+                    $('#step-numerators').classList.remove('opacity-50', 'pointer-events-none');
+                    const negB = parseInt($('#neg-b-value').value);
+                    const sqrtDelta = parseFloat($('#sqrt-delta-value').value);
+                    $('#num-1-label').textContent = `N₁ → ${negB} - ${sqrtDelta} = ?`;
+                    $('#num-2-label').textContent = `N₂ → ${negB} + ${sqrtDelta} = ?`;
+                }
+            },
+            checkNumerators() {
+                const p = this.state.problem; const { b, delta } = p.coefficients;
+                const sqrtDelta = Math.sqrt(delta);
+                const num1 = -b - sqrtDelta;
+                const num2 = -b + sqrtDelta;
+                
+                const i1 = parseFloat($('#num-1').value);
+                const i2 = parseFloat($('#num-2').value);
+                
+                const c1 = Math.abs(i1 - num1) < 0.001;
+                const c2 = Math.abs(i2 - num2) < 0.001;
+                
+                $('#num-1').classList.toggle('correct', c1);
+                $('#num-2').classList.toggle('correct', c2);
+                
+                if (c1 && c2) {
+                    $('#numerators-feedback').innerHTML = '<span class="text-success">Corretto!</span>';
+                    $('#step-final-solutions').classList.remove('opacity-50', 'pointer-events-none');
+                }
+            },
+            checkSolutions() { 
+                const p = this.state.problem; 
+                if (!p || !p.solutions) return;
+                const [sol1, sol2] = p.solutions;
+                
+                const val1 = $('#solution-x1').value;
+                const val2 = $('#solution-x2').value;
+                const i1 = val1 ? parseFloat(val1) : NaN;
+                const i2 = val2 ? parseFloat(val2) : NaN;
+                
+                const c1 = (Math.abs(i1 - sol1) < 0.001 || Math.abs(i1 - sol2) < 0.001);
+                const c2 = (Math.abs(i2 - sol1) < 0.001 || Math.abs(i2 - sol2) < 0.001);
+                
+                $('#solution-x1').classList.toggle('correct', c1); 
+                $('#solution-x2').classList.toggle('correct', c2);
+                
+                let showButton = false;
+                if (c1 && c2) {
+                    // If roots are distinct, inputs must be distinct
+                    if (Math.abs(sol1 - sol2) > 0.001) {
+                        if (Math.abs(i1 - i2) > 0.001) showButton = true;
+                    } else {
+                        // Roots are coincident, just need both correct
+                        showButton = true;
+                    }
+                }
+                
+                const btn = $('#apply-formula-btn');
+                if (showButton) { 
+                    btn.classList.remove('hidden'); 
+                    setTimeout(() => btn.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+                } else {
+                    btn.classList.add('hidden');
+                }
+            },
+            applyFormulaSolution() { 
+                const p = this.state.problem; 
+                const [sol1, sol2] = p.solutions.sort((a,b) => a-b); // Ensure sorted
+
+                if (p.category.includes('diseq')) {
+                    // Logic for inequalities
+                    // 1. Find operator in latex
+                    let op = '';
+                    if (p.latex.includes('\\ge')) op = '\\ge';
+                    else if (p.latex.includes('\\le')) op = '\\le';
+                    else if (p.latex.includes('>')) op = '>';
+                    else if (p.latex.includes('<')) op = '<';
+
+                    const isInclusive = op.includes('e'); // \le or \ge
+                    // Determine if external or internal based on 'a' and operator
+                    // Assuming standard form ax^2 + bx + c >/< 0
+                    const a = p.coefficients.a;
+                    let isExternal = false;
+                    
+                    if (a > 0) {
+                        if (op.includes('>') || op.includes('\\ge')) isExternal = true;
+                    } else {
+                        if (op.includes('<') || op.includes('\\le')) isExternal = true;
+                    }
+
+                    const symMin = isInclusive ? '\\le' : '<';
+                    const symMax = isInclusive ? '\\ge' : '>';
+
+                    if (isExternal) {
+                        // x < min ; x > max
+                        this.state.input = `x ${symMin} ${sol1}; x ${symMax} ${sol2}`;
+                    } else {
+                        // min < x < max
+                        this.state.input = `${sol1} ${symMin} x ${symMin} ${sol2}`;
+                    }
+                } else {
+                    // Logic for equations
+                    this.state.input = `${sol1};${sol2}`;
+                }
+                
+                this.updateInputDisplay(); 
+                this.toggleFormulaHelper(); 
+                this.submit();
+            },
+
+            renderMath(str, el) {
+                let tex = str || "\\phantom{0}";
+                if (tex.endsWith('^') || tex.endsWith('_')) tex += "{\\phantom{2}}";
+                else if (tex.endsWith('\\frac{') || tex.endsWith('\\sqrt{') || tex.endsWith('{')) tex += "\\phantom{x}}";
+                if (tex.startsWith('^') || tex.startsWith('_')) tex = "{}" + tex;
+                katex.render(tex, el, { throwOnError: false });
+            },
+
+            updateInputDisplay() {
+                this.renderMath(this.state.input, $('#latex-input'));
+                $('#placeholder').classList.toggle('hidden', this.state.input.length > 0);
+                const wrapper = $('#scroll-wrapper');
+                setTimeout(() => wrapper.scrollLeft = wrapper.scrollWidth, 10);
+            },
+            
+            updateXPDisplay() {
+                $('#level-display').textContent = this.stats.level;
+                const pct = (this.stats.currentXP / this.stats.xpToNext) * 100;
+                $('#xp-bar').style.width = pct + '%';
+                $('#xp-display').textContent = `${this.stats.currentXP}/${this.stats.xpToNext}`;
+            },
+            
+            addXP(amount) {
+                this.stats.totalXP += amount;
+                this.stats.currentXP += amount;
+                
+                while (this.stats.currentXP >= this.stats.xpToNext) {
+                    this.stats.currentXP -= this.stats.xpToNext;
+                    this.stats.level++;
+                    this.stats.xpToNext = Math.floor(100 * Math.pow(1.2, this.stats.level - 1));
+                    this.showLevelUp();
+                }
+                
+                this.updateXPDisplay();
+                this.saveData();
+            },
+            
+            showLevelUp() {
+                const overlay = $('#levelup-overlay');
+                $('#levelup-num').textContent = this.stats.level;
+                overlay.classList.remove('hidden');
+                SoundManager.play('levelup');
+                if (this.state.settings.confetti) {
+                    confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 } });
+                }
+            },
+
+            insert(val) {
+                if (this.state.status === 'success') return;
+                if (this.state.status === 'error') this.clearError();
+                this.state.input += val;
+                this.updateInputDisplay();
+                SoundManager.play('click');
+            },
+
+            handleAction(type) {
+                if (this.state.status === 'success' && type !== 'sub') return;
+                if (type === 'del') {
+                    this.state.input = MathEngine.deleteLastToken(this.state.input);
+                    this.clearError();
+                } else if (type === 'clr') {
+                    this.state.input = "";
+                    this.clearError();
+                } else if (type === 'sub') {
+                    if (this.state.mode === 'exam') {
+                        this.submitExamAnswer();
+                    } else {
+                        if (this.state.status === 'success') {
+                            this.nextProblem();
+                            return;
+                        }
+                        this.submit();
+                    }
+                }
+                this.updateInputDisplay();
+            },
+
+            clearError() {
+                this.state.status = 'idle';
+                $('#input-container').classList.remove('border-error');
+                $('#input-container').classList.add('border-transparent');
+                $('#message-area').innerHTML = this.state.hintsUsed > 0 ? this.getHintsHTML() : "";
+            },
+
+            submit() {
+                if (!this.state.input) return;
+                this.stats.totalAttempts++;
+                const container = $('#input-container');
+                const subTypeId = this.state.problem.subTypeId;
+
+                if (MathEngine.checkFinalAnswer(this.state.input, this.state.problem.answerKeys)) {
+                    // Update Mastery: Increase
+                    if (subTypeId) {
+                        const current = this.stats.masteryScores[subTypeId] || 0.5;
+                        this.stats.masteryScores[subTypeId] = Math.min(1.0, current + 0.1);
+                    }
+                    this.triggerSuccess();
+                    return;
+                }
+                if (MathEngine.checkStep(this.state.input, this.state.problem)) {
+                    this.triggerStepSuccess();
+                    return;
+                }
+
+                // Update Mastery: Decrease
+                if (subTypeId) {
+                    const current = this.stats.masteryScores[subTypeId] || 0.5;
+                    this.stats.masteryScores[subTypeId] = Math.max(0.1, current - 0.05);
+                }
+
+                this.state.status = 'error';
+                this.state.streak = 0;
+                $('#streak-badge').classList.add('hidden');
+                container.classList.remove('border-transparent', 'border-step');
+                container.classList.add('border-error', 'animate-shake');
+                setTimeout(() => container.classList.remove('animate-shake'), 400);
+                $('#message-area').innerHTML = `${this.getHintsHTML()}<div class="text-xs text-error font-bold mt-2 animate-fade-in">Errato. Riprova.</div>`;
+                SoundManager.play('error');
+            },
+            
+            submitExamAnswer() {
+                const isCorrect = MathEngine.checkFinalAnswer(this.state.input, this.state.problem.answerKeys);
+                this.state.exam.answers.push({
+                    correct: isCorrect,
+                    input: this.state.input
+                });
+                
+                this.state.exam.currentIndex++;
+                const pct = (this.state.exam.currentIndex / 10) * 100;
+                $('#challenge-bar').style.width = pct + '%';
+                
+                if (this.state.exam.currentIndex >= 10) {
+                    this.finishExam();
+                } else {
+                    this.state.problem = this.state.exam.questions[this.state.exam.currentIndex];
+                    this.resetExerciseState();
+                    this.renderProblem();
+                }
+            },
+            
+            finishExam() {
+                const correctCount = this.state.exam.answers.filter(a => a.correct).length;
+                const score = correctCount; // /10
+                
+                $('#view-exercise').classList.add('hidden');
+                $('#view-exercise').classList.remove('flex');
+                $('#view-exam-results').classList.remove('hidden');
+                $('#view-exam-results').classList.add('flex');
+                
+                $('#exam-score-val').textContent = score;
+                $('#exam-correct').textContent = correctCount;
+                $('#exam-wrong').textContent = 10 - correctCount;
+                
+                // Animate circle
+                const circle = $('#exam-score-circle');
+                const circumference = 2 * Math.PI * 15.9155;
+                const offset = circumference - (score / 10) * circumference;
+                
+                // Reset first
+                circle.style.strokeDasharray = `${circumference} ${circumference}`;
+                circle.style.strokeDashoffset = circumference;
+                
+                setTimeout(() => {
+                    circle.style.strokeDashoffset = offset;
+                    circle.classList.toggle('text-success', score >= 6);
+                    circle.classList.toggle('text-error', score < 6);
+                }, 100);
+                
+                this.addXP(score * 15); // Big XP for exam
+            },
+
+            triggerStepSuccess() {
+                const container = $('#input-container');
+                const problemPanel = $('#problem-panel');
+                container.classList.add('border-step');
+                $('#badge-step').classList.remove('hidden');
+                $('#badge-step').classList.add('flex');
+                problemPanel.classList.add('animate-pulse-blue');
+                
+                setTimeout(() => {
+                    container.classList.remove('border-step');
+                    $('#badge-step').classList.add('hidden');
+                    $('#badge-step').classList.remove('flex');
+                    problemPanel.classList.remove('animate-pulse-blue');
+                }, 1500);
+
+                this.state.problem.latex = this.state.input;
+                this.state.input = "";
+                
+                this.renderProblem();
+                this.updateInputDisplay();
+                $('#message-area').innerHTML = `<div class="text-xs text-step font-bold mt-2 animate-slide-up">Passaggio corretto!</div>`;
+                SoundManager.play('step');
+            },
+
+            triggerSuccess() {
+                this.state.status = 'success';
+                this.state.streak++;
+                this.stats.totalCompleted++;
+                if (this.state.streak > this.stats.bestStreak) this.stats.bestStreak = this.state.streak;
+                if (this.state.hintsUsed === 0) this.stats.perfectRuns++;
+                if (this.state.mode === 'timed') this.stats.timedCompleted++;
+                if (this.state.difficulty === 'hard') this.stats.hardCompleted++;
+                
+                if (!this.stats.categoryStats[this.state.problem.category]) {
+                    this.stats.categoryStats[this.state.problem.category] = { completed: 0 };
+                }
+                this.stats.categoryStats[this.state.problem.category].completed++;
+                
+                let xp = this.state.problem.xp || 10;
+                if (this.state.hintsUsed === 0) xp = Math.floor(xp * 1.5);
+                if (this.state.streak >= 5) xp = Math.floor(xp * 1.2);
+                this.addXP(xp);
+                
+                const container = $('#input-container');
+                container.classList.remove('border-transparent', 'border-error');
+                container.classList.add('border-success');
+                $('#badge-correct').classList.remove('hidden');
+                $('#badge-correct').classList.add('flex');
+                $('#cursor').classList.add('hidden');
+                $('#streak-count').textContent = this.state.streak;
+                $('#streak-badge').classList.remove('hidden');
+                $('#streak-badge').classList.add('flex');
+                $('#keypad').classList.add('hidden');
+                $('#next-actions').classList.remove('hidden');
+                $('#next-actions').classList.add('flex');
+                $('#earned-xp').textContent = `+${xp} XP`;
+                katex.render(this.state.problem.displaySolution, $('#latex-solution'), { throwOnError: false });
+                
+                const newAchievements = Achievements.check(this.stats);
+                if (newAchievements.length > 0) {
+                    this.showAchievement(newAchievements[0]);
+                }
+                
+                if (this.state.settings.confetti) {
+                    confetti({ particleCount: 60, spread: 55, origin: { y: 0.7 }, colors: ['#d4b483', '#ffffff', '#10b981'], disableForReducedMotion: true });
+                }
+                SoundManager.play('success');
+                this.saveData();
+            },
+            
+            showAchievement(achievement) {
+                $('#achievement-name').textContent = achievement.name;
+                $('#achievement-popup').classList.remove('hidden');
+                setTimeout(() => $('#achievement-popup').classList.add('hidden'), 3000);
+            },
+
+            showHint() {
+                const hints = this.state.problem.hints || [];
+                if (this.state.hintsUsed < hints.length) {
+                    this.state.hintsUsed++;
+                    $('#message-area').innerHTML = this.getHintsHTML();
+                }
+            },
+
+            getHintsHTML() {
+                if (this.state.hintsUsed === 0) return "";
+                const hints = this.state.problem.hints || [];
+                return hints.slice(0, this.state.hintsUsed).map((h, i) => 
+                    `<div class="text-xs text-textMuted flex items-center justify-center gap-2 animate-fade-in"><span class="text-gold">*</span> ${h}</div>`
+                ).join('');
+            },
+            
+            renderStats() {
+                $('#stat-total').textContent = this.stats.totalCompleted;
+                const acc = this.stats.totalAttempts > 0 ? Math.round((this.stats.totalCompleted / this.stats.totalAttempts) * 100) : 0;
+                $('#stat-accuracy').textContent = acc + '%';
+                $('#stat-streak').textContent = this.stats.bestStreak;
+                $('#stat-xp').textContent = this.stats.totalXP;
+                
+                $('#category-stats').innerHTML = this.menuItems.map(m => {
+                    const s = this.stats.categoryStats[m.id] || { completed: 0 };
+                    return `
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="text-textMuted">${m.label}</span>
+                            <span class="font-mono">${s.completed}</span>
+                        </div>
+                    `;
+                }).join('');
+                
+                $('#all-achievements').innerHTML = Achievements.list.map(a => `
+                    <div class="w-full aspect-square rounded-xl bg-bgSurface border border-borderDim flex items-center justify-center ${this.stats.achievements.includes(a.id) ? '' : 'achievement-locked'}" title="${a.name}: ${a.desc}">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gold"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+                    </div>
+                `).join('');
+            },
+            
+            resetProgress() {
+                if (confirm('Sei sicuro di voler resettare tutti i progressi? Questa azione non può essere annullata.')) {
+                    localStorage.removeItem('eserciziario_stats');
+                    this.stats = {
+                        totalCompleted: 0, totalAttempts: 0, bestStreak: 0, totalXP: 0,
+                        level: 1, xpToNext: 100, currentXP: 0, achievements: [],
+                        categoryStats: {}, masteryScores: {}, perfectRuns: 0, timedCompleted: 0, hardCompleted: 0
+                    };
+                    this.saveData();
+                    this.renderMenu();
+                    this.renderAchievementsPreview();
+                    this.toggleSettings();
+                }
+            }
+        };
+
+        window.addEventListener('DOMContentLoaded', () => app.init());
+    </script>
+</body>
+</html>
