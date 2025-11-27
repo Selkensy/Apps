@@ -410,9 +410,11 @@
                     <button onpointerdown="CanvasManager.clear(); event.preventDefault()" class="p-2 rounded-lg hover:bg-bgSurface text-textMuted hover:text-error"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>
                 </div>
                 
-                <div class="flex-1 overflow-y-auto flex flex-col items-center justify-center p-2 w-full relative z-0">
-                    <div class="w-full flex-1 flex flex-col items-center justify-center min-h-[80px] overflow-x-auto no-scrollbar">
-                        <div id="latex-problem" class="text-xl md:text-3xl lg:text-4xl text-textMain font-mono text-center transition-all duration-300 px-4 whitespace-nowrap"></div>
+                <div class="flex-1 overflow-y-auto flex flex-col justify-center p-2 w-full relative z-0">
+                    <div class="w-full flex-1 flex flex-col justify-center min-h-[80px]">
+                        <div class="w-full overflow-x-auto no-scrollbar text-center px-4">
+                            <div id="latex-problem" class="text-xl md:text-3xl lg:text-4xl text-textMain font-mono inline-block whitespace-nowrap transition-all duration-300"></div>
+                        </div>
                         <!-- Formula display for eq2/diseq2 completa -->
                         <div id="formula-display" class="hidden mt-4 text-center space-y-2">
                             <div id="delta-formula" class="text-sm md:text-base text-textMuted font-mono"></div>
@@ -1253,10 +1255,6 @@
                 const origDiff = MathEvaluator.evaluate(probLHS, randX) - MathEvaluator.evaluate(probRHS, randX);
                 const userDiff = MathEvaluator.evaluate(userLHS, randX) - MathEvaluator.evaluate(userRHS, randX);
                 
-                // Check if the difference is preserved (equivalence)
-                if (Math.abs(origDiff - userDiff) < 0.01) return true;
-
-                // Check proportionality (for multiplications/divisions)
                 if (Math.abs(userDiff) > 0.0001) {
                     const ratio = origDiff / userDiff;
                     const randX2 = Math.random() * 10 + 11;
@@ -1920,7 +1918,7 @@
                     {l:'1', v:'1', c:'num'}, {l:'2', v:'2', c:'num'}, {l:'3', v:'3', c:'num'}, {l:'(', v:'(', c:'op'}, {l:')', v:')', c:'op'}, {l:'x²', v:'^2', c:'op'},
                     {l:'0', v:'0', c:'num'}, {l:'x', v:'x', c:'var'}, {l:'=', v:'=', c:'op'}, {l:'<', v:'<', c:'op'}, {l:'>', v:'>', c:'op'}, {l:'±', v:'\\pm', c:'op'},
                     ...extraKeys, {l:';', v:';', c:'op'}, {l:'√', v:'\\sqrt{', c:'op'}, {l:'^', v:'^{', c:'op'}, {l:okLabel, action:'sub', c:'action'},
-                    {l:'IMP.', v:'\\emptyset', c:'action-sm'}, {l:'INDET.', v:'Indeterminata', c:'action-sm'}
+                    {l:'IMPOSSIBILE', v:'\\emptyset', c:'action-sm'}, {l:'INDETERMINATA', v:'Indeterminata', c:'action-sm'}
                 ];
 
                 grid.innerHTML = keys.map(k => {
@@ -1934,7 +1932,7 @@
                     if (k.c === 'del') cls += `bg-bgSurface text-error hover:bg-error/20 ${baseH} text-sm md:text-base`;
                     if (k.c === 'dim') cls += `bg-bgSurface text-textMuted hover:bg-borderDim ${baseH} text-sm md:text-base`;
                     if (k.c === 'action') cls += `gradient-gold text-bgMain font-bold tracking-wider text-[10px] md:text-xs ${baseH}`;
-                    if (k.c === 'action-sm') cls += `bg-bgSurface text-textMuted hover:bg-borderDim text-[9px] md:text-[10px] font-bold uppercase tracking-wider ${baseH}`;
+                    if (k.c === 'action-sm') cls += `bg-bgSurface text-textMuted hover:bg-borderDim text-[9px] md:text-[10px] font-bold uppercase tracking-wider ${baseH} col-span-3`;
 
                     const content = k.l === 'DEL' ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>' : k.l;
                     const action = k.action ? `app.handleAction('${k.action}')` : `app.insert('${k.v.replace(/\\/g, '\\\\')}')`;
