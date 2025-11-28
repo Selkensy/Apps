@@ -111,12 +111,56 @@
             height: 100%;
             overflow: hidden;
             overscroll-behavior: none;
+            user-select: none; /* Prevent selection globally */
+            -webkit-user-select: none;
         }
 
         body::after {
             content: ""; position: fixed; inset: 0;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
             pointer-events: none; z-index: 50; mix-blend-mode: overlay;
+        }
+
+        /* Custom Math Blocks - TIGHT SPACING FIX */
+        .math-block {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;     /* No padding */
+            margin: 0;      /* No margin */
+            margin-right: 1px; /* Tiny separation */
+            border-radius: 2px;
+            cursor: pointer;
+            transition: background-color 0.1s;
+            position: relative;
+            color: var(--text-main);
+            
+            /* Uniform height logic */
+            height: 2.8rem; 
+            min-width: 0.6rem; /* Slightly narrower minimum */
+            vertical-align: middle;
+            line-height: 1; 
+        }
+        
+        .math-block:active {
+            transform: scale(0.95);
+        }
+        
+        .math-block.selected {
+            background-color: rgba(212, 180, 131, 0.25);
+            box-shadow: 0 0 0 1px var(--accent-gold);
+            z-index: 10;
+        }
+
+        /* Container Padding Fix */
+        #latex-problem-container {
+            user-select: none;
+            -webkit-user-select: none;
+            cursor: default;
+            padding-top: 12px;    
+            padding-bottom: 12px; 
+            line-height: 3rem;    
+            touch-action: none;   
         }
 
         .glass-panel { 
@@ -198,6 +242,32 @@
             background: rgba(255,255,255,0.02);
         }
         
+        /* Drag Handle */
+        #drag-handle {
+            cursor: grab;
+            touch-action: none; /* Critical for custom drag */
+            z-index: 100; /* Ensure it's above everything */
+        }
+        #drag-handle:active {
+            cursor: grabbing;
+        }
+
+        /* Drag Ghost */
+        .drag-ghost {
+            position: fixed;
+            pointer-events: none;
+            z-index: 100;
+            background: var(--bg-panel);
+            border: 1px solid var(--accent-gold);
+            color: var(--text-main);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            opacity: 0.9;
+            transform: translate(-50%, -50%);
+        }
+        
         @media (max-width: 640px) {
             .katex { font-size: 1em; }
         }
@@ -223,7 +293,7 @@
         
         <div class="flex items-center gap-1 md:gap-2">
             <!-- Timer (for timed/exam mode) -->
-            <div id="timer-display" class="hidden items-center gap-1 px-2 py-1 rounded-lg bg-bgPanel border border-borderDim text-xs font-mono">
+            <div id="timer-display" class="hidden items-center gap-1 px-2 py-1 rounded-lg bg-bgPanel border border-borderDim text-xs font-mono text-textMain">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gold"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 <span id="timer-value">60</span>
             </div>
@@ -231,13 +301,8 @@
             <!-- Streak -->
             <div id="streak-badge" class="hidden items-center gap-1 px-2 py-1 rounded-lg bg-bgPanel border border-borderDim text-xs">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gold"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
-                <span id="streak-count" class="font-mono font-bold">0</span>
+                <span id="streak-count" class="font-mono font-bold text-textMain">0</span>
             </div>
-            
-            <!-- Stats Button -->
-            <button onclick="app.toggleStats()" class="p-2 rounded-full hover:bg-bgPanel text-textMuted hover:text-gold active:scale-95 transition-all" title="Statistiche">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
-            </button>
             
             <!-- Settings -->
             <button onclick="app.toggleSettings()" class="p-2 rounded-full hover:bg-bgPanel text-textMuted hover:text-gold active:scale-95 transition-all" title="Impostazioni">
@@ -257,7 +322,10 @@
 
             <!-- Fullscreen Toggle -->
             <button onclick="app.toggleFullscreen()" class="p-2 rounded-full hover:bg-bgPanel text-textMuted active:scale-95 transition-all" title="Schermo Intero">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                <!-- Enter Fullscreen (Arrows Out) -->
+                <svg id="icon-enter-fs" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                <!-- Exit Fullscreen (Arrows In) -->
+                <svg id="icon-exit-fs" class="hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>
             </button>
         </div>
     </header>
@@ -272,7 +340,7 @@
             <div class="mb-4 md:mb-6 text-center md:text-left mt-2 md:mt-4 px-2">
                 <h2 class="font-serif text-2xl md:text-5xl text-textMain mb-2">Atelier Matematico</h2>
                 <p class="text-textMuted text-sm md:text-lg max-w-xl mx-auto md:mx-0">
-                    Esercizi tratti dal libro di testo.
+                    Esercizi di matematica per tutti i livelli.
                 </p>
             </div>
             
@@ -292,22 +360,17 @@
                 </button>
             </div>
             
-            <!-- Difficulty Selection -->
-            <div class="flex gap-2 mb-4 px-2">
-                <button onclick="app.setDifficulty('easy')" id="diff-easy" class="flex-1 py-2 px-3 rounded-xl text-xs font-medium bg-success/10 text-success border border-success/30 transition-all">
-                    Facile
-                </button>
-                <button onclick="app.setDifficulty('medium')" id="diff-medium" class="flex-1 py-2 px-3 rounded-xl text-xs font-medium text-textMuted hover:bg-gold/10 border border-transparent transition-all">
-                    Medio
-                </button>
-                <button onclick="app.setDifficulty('hard')" id="diff-hard" class="flex-1 py-2 px-3 rounded-xl text-xs font-medium text-textMuted hover:bg-error/10 border border-transparent transition-all">
-                    Difficile
-                </button>
-            </div>
-            
             <!-- Categories Grid (PRACTICE & TIMED) -->
             <div id="categories-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 px-2">
                 <!-- Cards generated by JS -->
+            </div>
+            
+            <!-- Custom Problem Button -->
+            <div id="custom-problem-btn" class="px-2 mt-3">
+                <button onclick="app.openCustomProblemModal()" class="w-full py-3 rounded-xl border border-dashed border-borderDim text-textMuted hover:text-gold hover:border-gold/50 transition-all flex items-center justify-center gap-2 text-sm">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    Crea Esercizio Personalizzato
+                </button>
             </div>
 
             <!-- Challenge Start Card (CHALLENGE MODE ONLY) -->
@@ -354,13 +417,13 @@
                 <div class="p-3 md:p-4 flex justify-between items-start border-b border-borderDim/50 shrink-0 relative z-20">
                     <div class="flex items-center gap-2">
                         <span id="problem-category" class="text-[10px] font-mono uppercase tracking-widest text-gold opacity-80"></span>
-                        <span id="problem-difficulty" class="text-[9px] px-2 py-0.5 rounded-full bg-bgSurface text-textMuted"></span>
                     </div>
                     <div class="flex items-center gap-1">
                         
                         <!-- Scratchpad Toggle -->
                         <button onclick="CanvasManager.toggle()" id="btn-scratchpad" class="text-textMuted active:text-textMain p-1 ml-2" title="Lavagna">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+                            <!-- Icon will be injected by JS -->
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
                         </button>
                         
                         <!-- Formula Helper Button -->
@@ -369,7 +432,12 @@
                         </button>
                         
                         <button id="btn-hint" onclick="app.showHint()" class="text-textMuted active:text-gold p-1 ml-1" title="Suggerimento">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-1 1.5-2 1.5-3.5 0-3-2.3-5-5-5s-5 2-5 5c0 1.5.5 2.5 1.5 3.5.8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
+                            <!-- Fixed Lightbulb Icon -->
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 18h6"/>
+                                <path d="M10 22h4"/>
+                                <path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"/>
+                            </svg>
                         </button>
                         
                         <button id="btn-skip" onclick="app.skipProblem()" class="text-textMuted active:text-error p-1" title="Salta">
@@ -378,8 +446,11 @@
                     </div>
                 </div>
                 
-                <!-- Scratchpad Tools (Hidden by default) -->
-                <div id="scratchpad-tools" class="absolute top-14 right-4 z-30 hidden flex-col gap-2 bg-bgPanel p-2 rounded-xl border border-borderDim shadow-xl animate-scale-in">
+                <!-- Scratchpad Tools (Draggable) -->
+                <div id="scratchpad-tools" class="absolute top-14 right-4 z-30 hidden flex-col gap-2 bg-bgPanel p-2 rounded-xl border border-borderDim shadow-xl animate-scale-in" style="touch-action: none;">
+                    <div id="tools-drag-handle" class="w-full h-4 bg-bgSurface rounded-t-lg mb-1 flex items-center justify-center cursor-grab active:cursor-grabbing" style="touch-action: none;">
+                        <div class="w-8 h-1 bg-borderDim rounded-full"></div>
+                    </div>
                     <button onpointerdown="CanvasManager.setMode('pen'); event.preventDefault()" class="p-2 rounded-lg hover:bg-bgSurface text-textMain"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/></svg></button>
                     <button onpointerdown="CanvasManager.setMode('eraser'); event.preventDefault()" class="p-2 rounded-lg hover:bg-bgSurface text-textMuted hover:text-error"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/><path d="m5 11 9 9"/></svg></button>
                     <button onpointerdown="CanvasManager.undo(); event.preventDefault()" class="p-2 rounded-lg hover:bg-bgSurface text-textMuted hover:text-gold"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/></svg></button>
@@ -387,10 +458,15 @@
                     <button onpointerdown="CanvasManager.clear(); event.preventDefault()" class="p-2 rounded-lg hover:bg-bgSurface text-textMuted hover:text-error"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>
                 </div>
                 
-                <div class="flex-1 overflow-y-auto flex flex-col justify-center p-2 w-full relative z-0">
+                <!-- Drag Handle (Hidden by default) -->
+                <div id="drag-handle" class="absolute z-40 hidden p-2 bg-gold text-bgMain rounded-full shadow-lg animate-bounce-in" style="touch-action: none;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 9l-3 3 3 3M9 5l3-3 3 3M19 9l3 3-3 3M9 19l3 3 3-3M2 12h20M12 2v20"/></svg>
+                </div>
+
+                <div class="flex-1 overflow-y-auto flex flex-col justify-center p-2 w-full relative z-0" onpointerdown="SelectionManager.clear()" style="touch-action: none;">
                     <div class="w-full flex-1 flex flex-col justify-center min-h-[80px]">
-                        <div class="w-full overflow-x-auto no-scrollbar text-center px-4">
-                            <div id="latex-problem" class="text-xl md:text-3xl lg:text-4xl text-textMain font-mono inline-block whitespace-nowrap transition-all duration-300"></div>
+                        <div class="w-full overflow-x-auto no-scrollbar text-center px-4 pb-4" id="latex-problem-container">
+                            <!-- Custom Block Rendering Here -->
                         </div>
                         <!-- Formula display for eq2/diseq2 completa -->
                         <div id="formula-display" class="hidden mt-4 text-center space-y-2">
@@ -444,6 +520,13 @@
                     </div>
                     <button onclick="app.nextProblem()" class="w-full h-12 md:h-14 gradient-gold text-bgMain rounded-2xl font-serif font-bold text-sm md:text-base uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-transform shadow-lg">
                         Continua <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </button>
+                </div>
+                
+                <!-- Retry Actions (Hidden by default) -->
+                <div id="retry-actions" class="hidden flex-col gap-2">
+                    <button onclick="app.continueSolving()" class="w-full h-10 bg-bgSurface text-textMain border border-borderDim rounded-xl font-bold text-sm uppercase tracking-widest active:scale-95 transition-transform">
+                        Ho capito, continuo
                     </button>
                 </div>
             </div>
@@ -860,9 +943,10 @@
                 <button onclick="ModalKeypad.press('1')" class="h-10 rounded-lg bg-bgSurface text-textMain font-mono text-lg active:bg-borderDim">1</button>
                 <button onclick="ModalKeypad.press('2')" class="h-10 rounded-lg bg-bgSurface text-textMain font-mono text-lg active:bg-borderDim">2</button>
                 <button onclick="ModalKeypad.press('3')" class="h-10 rounded-lg bg-bgSurface text-textMain font-mono text-lg active:bg-borderDim">3</button>
-                <button onclick="ModalKeypad.press('.')" class="h-10 rounded-lg bg-bgSurface text-textMain font-mono text-lg active:bg-borderDim">.</button>
+                <button onclick="ModalKeypad.press('/')" class="h-10 rounded-lg bg-bgPanel text-gold font-mono text-lg active:bg-bgSurface">/</button>
                 
-                <button onclick="ModalKeypad.press('0')" class="col-span-4 h-10 rounded-lg bg-bgSurface text-textMain font-mono text-lg active:bg-borderDim">0</button>
+                <button onclick="ModalKeypad.press('0')" class="col-span-2 h-10 rounded-lg bg-bgSurface text-textMain font-mono text-lg active:bg-borderDim">0</button>
+                <button onclick="ModalKeypad.press('.')" class="col-span-2 h-10 rounded-lg bg-bgSurface text-textMain font-mono text-lg active:bg-borderDim">.</button>
             </div>
         </div>
     </div>
@@ -872,12 +956,27 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <script>
+        // === CONFIGURATION ===
+        const TOOL_DRAG_OFFSET_Y = -70; // Adjust this value to move the tool panel up/down relative to finger
+
         // === HELPERS ===
         const $ = (s) => document.querySelector(s);
         const $$ = (s) => document.querySelectorAll(s);
         const rnd = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
         const rndNZ = (range) => { let n = 0; while (n === 0) n = rnd(-range, range); return n; };
         const shuffle = (a) => [...a].sort(() => Math.random() - 0.5);
+        
+        // Helper to evaluate fractions in input (e.g. "1/2" -> 0.5)
+        const evalInput = (s) => {
+            if (!s) return NaN;
+            try {
+                // Safe evaluation for numbers and simple fractions
+                if (/^[\d\.\/\-]+$/.test(s)) {
+                    return new Function('return ' + s)();
+                }
+                return parseFloat(s);
+            } catch (e) { return NaN; }
+        };
         
         // === SOUND MANAGER ===
         const SoundManager = {
@@ -963,6 +1062,48 @@
                 this.canvas.addEventListener('touchstart', (e) => start(e.touches[0]), {passive: false});
                 this.canvas.addEventListener('touchmove', (e) => move(e.touches[0]), {passive: false});
                 this.canvas.addEventListener('touchend', end);
+
+                // Draggable Tools Logic (Fixed for Mobile)
+                const tools = document.getElementById('scratchpad-tools');
+                const handle = document.getElementById('tools-drag-handle');
+                
+                handle.onpointerdown = function(event) {
+                    event.preventDefault();
+                    handle.setPointerCapture(event.pointerId);
+                    
+                    const rect = tools.getBoundingClientRect();
+                    const offsetX = event.clientX - rect.left;
+                    const offsetY = event.clientY - rect.top;
+                    
+                    function onPointerMove(event) {
+                        let newLeft = event.clientX - offsetX;
+                        let newTop = event.clientY - offsetY;
+                        
+                        // Apply User Configured Offset
+                        newTop += TOOL_DRAG_OFFSET_Y;
+
+                        // Boundary checks
+                        const maxX = window.innerWidth - rect.width;
+                        const maxY = window.innerHeight - rect.height;
+                        
+                        newLeft = Math.max(0, Math.min(newLeft, maxX));
+                        newTop = Math.max(0, Math.min(newTop, maxY));
+
+                        tools.style.left = newLeft + 'px';
+                        tools.style.top = newTop + 'px';
+                        tools.style.right = 'auto';
+                        tools.style.bottom = 'auto';
+                    }
+                    
+                    function onPointerUp(event) {
+                        handle.releasePointerCapture(event.pointerId);
+                        window.removeEventListener('pointermove', onPointerMove);
+                        window.removeEventListener('pointerup', onPointerUp);
+                    }
+                    
+                    window.addEventListener('pointermove', onPointerMove);
+                    window.addEventListener('pointerup', onPointerUp);
+                };
             },
             
             resize() {
@@ -997,6 +1138,13 @@
                     tools.classList.remove('hidden');
                     tools.classList.add('flex');
                     btn.classList.add('text-gold');
+                    // Change icon to X
+                    btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+                    
+                    // Reset position if off screen
+                    tools.style.top = '60px';
+                    tools.style.right = '16px';
+                    tools.style.left = 'auto';
                     // Don't resize here to avoid clearing
                     if (this.canvas.width === 0) this.resize();
                 } else {
@@ -1005,6 +1153,8 @@
                     tools.classList.add('hidden');
                     tools.classList.remove('flex');
                     btn.classList.remove('text-gold');
+                    // Change icon back to Pen
+                    btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>';
                 }
             },
             
@@ -1065,6 +1215,264 @@
                 this.ctx.stroke();
                 this.ctx.beginPath();
                 this.ctx.moveTo(x, y);
+            }
+        };
+
+        // === SELECTION MANAGER (CUSTOM BLOCK SELECTION) ===
+        const SelectionManager = {
+            selectedIndices: new Set(),
+            blocks: [],
+            isSelecting: false,
+            startIndex: -1,
+            
+            init(latex) {
+                const container = document.getElementById('latex-problem-container');
+                container.innerHTML = '';
+                this.selectedIndices.clear();
+                this.blocks = [];
+                
+                // Tokenize LaTeX into logical blocks (terms, operators)
+                const regex = /(\\[a-zA-Z]+(?:\{[^}]*\})?|[a-zA-Z]\^\{?[0-9]+\}?|[a-zA-Z]\^[0-9]|[\d\.]+|[+\-=<>()]|[a-zA-Z])/g;
+                const parts = latex.match(regex) || [];
+                
+                parts.forEach((part, index) => {
+                    if (!part.trim()) return;
+                    
+                    const span = document.createElement('span');
+                    span.className = 'math-block';
+                    span.dataset.index = index;
+                    span.dataset.content = part;
+                    
+                    // Render KaTeX inside the block
+                    try {
+                        katex.render(part, span, { throwOnError: false });
+                    } catch(e) {
+                        span.textContent = part;
+                    }
+                    
+                    container.appendChild(span);
+                    this.blocks.push({ el: span, content: part, index: index });
+                });
+                
+                // SWIPE SELECTION LOGIC
+                container.onpointerdown = (e) => {
+                    // Find closest block if not directly clicked
+                    let target = e.target.closest('.math-block');
+                    if(target) {
+                        this.isSelecting = true;
+                        this.startIndex = parseInt(target.dataset.index);
+                        this.selectRange(this.startIndex, this.startIndex);
+                        e.preventDefault(); // Prevent scroll
+                        e.stopPropagation();
+                        
+                        // HIDE DRAG HANDLE IMMEDIATELY TO PREVENT BLOCKING
+                        DragManager.handle.classList.add('hidden');
+                    }
+                };
+                
+                window.addEventListener('pointermove', (e) => {
+                    if(!this.isSelecting) return;
+                    e.preventDefault(); // Stop scrolling while selecting
+
+                    // MAGNETIC SELECTION LOGIC
+                    // Find the block closest to the pointer's X coordinate
+                    let closestBlock = null;
+                    let minDist = Infinity;
+                    
+                    // Only check blocks if pointer is somewhat near the container vertically
+                    const containerRect = document.getElementById('latex-problem-container').getBoundingClientRect();
+                    const verticalBuffer = 100; // px
+                    
+                    if (e.clientY >= containerRect.top - verticalBuffer && e.clientY <= containerRect.bottom + verticalBuffer) {
+                        this.blocks.forEach(block => {
+                            const rect = block.el.getBoundingClientRect();
+                            const centerX = rect.left + rect.width / 2;
+                            const dist = Math.abs(e.clientX - centerX);
+                            
+                            if (dist < minDist) {
+                                minDist = dist;
+                                closestBlock = block;
+                            }
+                        });
+                    }
+
+                    if(closestBlock) {
+                        const currentIndex = closestBlock.index;
+                        this.selectRange(this.startIndex, currentIndex);
+                    }
+                });
+
+                // GLOBAL POINTER UP TO CATCH END OF SELECTION ANYWHERE
+                window.addEventListener('pointerup', () => {
+                    if(this.isSelecting) {
+                        this.isSelecting = false;
+                        DragManager.updateHandle(); // SHOW HANDLE ONLY ON UP
+                    }
+                });
+                
+                DragManager.updateHandle();
+            },
+            
+            selectRange(start, end) {
+                this.selectedIndices.clear();
+                const low = Math.min(start, end);
+                const high = Math.max(start, end);
+                
+                // Select everything in between to ensure contiguity
+                for(let i=low; i<=high; i++) {
+                    // Check if index exists in blocks (some indices might be skipped due to empty splits)
+                    if(this.blocks.some(b => b.index === i)) {
+                        this.selectedIndices.add(i);
+                    }
+                }
+                this.updateVisuals();
+            },
+            
+            clear() {
+                this.selectedIndices.clear();
+                this.updateVisuals();
+                // FORCE HIDE HANDLE ON CLEAR
+                if(DragManager.handle) DragManager.handle.classList.add('hidden');
+            },
+            
+            updateVisuals() {
+                this.blocks.forEach(b => {
+                    if (this.selectedIndices.has(b.index)) {
+                        b.el.classList.add('selected');
+                    } else {
+                        b.el.classList.remove('selected');
+                    }
+                });
+                // Note: We do NOT update handle here during selection drag to avoid flickering/blocking
+            },
+            
+            getSelectedText() {
+                // Sort indices to maintain order
+                const sorted = Array.from(this.selectedIndices).sort((a,b) => a-b);
+                return sorted.map(i => this.blocks.find(b => b.index === i).content).join('');
+            }
+        };
+
+        // === DRAG MANAGER (NEW POINTER EVENTS IMPLEMENTATION) ===
+        const DragManager = {
+            handle: null,
+            inputContainer: null,
+            ghost: null,
+            dragText: '',
+            isDragging: false,
+
+            init() {
+                this.handle = document.getElementById('drag-handle');
+                this.inputContainer = document.getElementById('input-container');
+                
+                // Pointer Events for Dragging
+                this.handle.addEventListener('pointerdown', (e) => this.startDrag(e));
+            },
+            
+            updateHandle() {
+                if (SelectionManager.selectedIndices.size > 0) {
+                    // Find bounding box of selected blocks
+                    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+                    let found = false;
+                    
+                    SelectionManager.blocks.forEach(b => {
+                        if (SelectionManager.selectedIndices.has(b.index)) {
+                            const rect = b.el.getBoundingClientRect();
+                            minX = Math.min(minX, rect.left);
+                            minY = Math.min(minY, rect.top);
+                            maxX = Math.max(maxX, rect.right);
+                            maxY = Math.max(maxY, rect.bottom);
+                            found = true;
+                        }
+                    });
+                    
+                    if (found) {
+                        const centerX = minX + (maxX - minX) / 2;
+                        this.handle.style.top = (minY - 40) + 'px';
+                        this.handle.style.left = (centerX - 10) + 'px';
+                        this.handle.classList.remove('hidden');
+                    }
+                } else {
+                    this.handle.classList.add('hidden');
+                }
+            },
+
+            startDrag(e) {
+                e.preventDefault();
+                let selection = SelectionManager.getSelectedText();
+                if (!selection) return;
+
+                // CLEANING LOGIC
+                selection = selection.replace(/[\r\n\t]+/g, ' ').trim();
+                selection = selection.replace(/\s+/g, '');
+                selection = selection.replace(/−/g, '-');
+                // REMOVED THE EXPONENT HEURISTIC TO FIX BUG
+
+                this.dragText = selection;
+                this.isDragging = true;
+                this.handle.setPointerCapture(e.pointerId);
+                
+                // Immediate Visual Feedback
+                this.inputContainer.classList.add('border-gold');
+                
+                // Create Ghost
+                this.ghost = document.createElement('div');
+                this.ghost.className = 'drag-ghost';
+                this.ghost.textContent = this.dragText;
+                document.body.appendChild(this.ghost);
+                this.updateGhost(e.clientX, e.clientY);
+
+                // Add global listeners
+                const moveHandler = (ev) => this.onDragMove(ev);
+                const upHandler = (ev) => {
+                    this.onDragEnd(ev);
+                    window.removeEventListener('pointermove', moveHandler);
+                    window.removeEventListener('pointerup', upHandler);
+                };
+                window.addEventListener('pointermove', moveHandler);
+                window.addEventListener('pointerup', upHandler);
+            },
+
+            onDragMove(e) {
+                if (!this.isDragging) return;
+                this.updateGhost(e.clientX, e.clientY);
+
+                // Projected Cursor Logic
+                const rect = this.inputContainer.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const width = rect.width;
+                const effectiveWidth = width - 32; 
+                const effectiveX = Math.max(0, Math.min(effectiveWidth, x - 16));
+                const pct = effectiveX / effectiveWidth;
+                
+                const len = app.state.input.length;
+                const newPos = Math.round(len * pct);
+                
+                if (newPos !== app.state.cursorPos) {
+                    app.state.cursorPos = newPos;
+                    app.updateInputDisplay();
+                }
+            },
+
+            onDragEnd(e) {
+                this.isDragging = false;
+                this.handle.releasePointerCapture(e.pointerId);
+                if (this.ghost) {
+                    this.ghost.remove();
+                    this.ghost = null;
+                }
+                
+                app.insert(this.dragText);
+                SelectionManager.clear();
+                this.handle.classList.add('hidden');
+                this.inputContainer.classList.remove('border-gold');
+            },
+
+            updateGhost(x, y) {
+                if (this.ghost) {
+                    this.ghost.style.left = x + 'px';
+                    this.ghost.style.top = (y - 40) + 'px';
+                }
             }
         };
 
@@ -1282,8 +1690,9 @@
                 return false;
             };
 
-            // === TEXTBOOK DATA ===
-            const TextbookData = [
+            // === STATIC EXERCISES (EXPANDED) ===
+            const StaticExercises = [
+                // EQ2 - Complete
                 { cat: 'eq2', lat: 'x^2-7x+12=0', ans: ['3;4', '4;3'], sol: 'x_1=3, x_2=4', cf: {a:1,b:-7,c:12,delta:1}, r: [3,4] },
                 { cat: 'eq2', lat: 'x^2-5x-6=0', ans: ['-1;6', '6;-1'], sol: 'x_1=-1, x_2=6', cf: {a:1,b:-5,c:-6,delta:49}, r: [-1,6] },
                 { cat: 'eq2', lat: 'x^2-6x+8=0', ans: ['2;4', '4;2'], sol: 'x_1=2, x_2=4', cf: {a:1,b:-6,c:8,delta:4}, r: [2,4] },
@@ -1304,7 +1713,20 @@
                 { cat: 'eq2', lat: '-4x^2+x+14=0', ans: ['-1.75;2', '-7/4;2'], sol: 'x_1=-7/4, x_2=2', cf: {a:-4,b:1,c:14,delta:225}, r: [-1.75,2] },
                 { cat: 'eq2', lat: '-3x^2+7x-2=0', ans: ['0.33;2', '1/3;2'], sol: 'x_1=1/3, x_2=2', cf: {a:-3,b:7,c:-2,delta:25}, r: [0.333,2] },
                 { cat: 'eq2', lat: '-4x^2+20x-25=0', ans: ['2.5', '5/2'], sol: 'x=5/2', cf: {a:-4,b:20,c:-25,delta:0}, r: [2.5,2.5] },
+                { cat: 'eq2', lat: 'x^2-3x-10=0', ans: ['-2;5', '5;-2'], sol: 'x_1=-2, x_2=5', cf: {a:1,b:-3,c:-10,delta:49}, r: [-2,5] },
+                { cat: 'eq2', lat: 'x^2+4x-21=0', ans: ['-7;3', '3;-7'], sol: 'x_1=-7, x_2=3', cf: {a:1,b:4,c:-21,delta:100}, r: [-7,3] },
+                { cat: 'eq2', lat: 'x^2-11x+30=0', ans: ['5;6', '6;5'], sol: 'x_1=5, x_2=6', cf: {a:1,b:-11,c:30,delta:1}, r: [5,6] },
+                { cat: 'eq2', lat: '2x^2-3x-2=0', ans: ['-0.5;2', '-1/2;2'], sol: 'x_1=-1/2, x_2=2', cf: {a:2,b:-3,c:-2,delta:25}, r: [-0.5,2] },
                 
+                // EQ2 - Pure/Spurious
+                { cat: 'eq2', lat: 'x^2-25=0', ans: ['-5;5', '5;-5'], sol: 'x=\\pm 5', cf: {a:1,b:0,c:-25,delta:100}, r: [-5,5] },
+                { cat: 'eq2', lat: 'x^2-49=0', ans: ['-7;7', '7;-7'], sol: 'x=\\pm 7', cf: {a:1,b:0,c:-49,delta:196}, r: [-7,7] },
+                { cat: 'eq2', lat: '4x^2-9=0', ans: ['-1.5;1.5', '-3/2;3/2'], sol: 'x=\\pm 3/2', cf: {a:4,b:0,c:-9,delta:144}, r: [-1.5,1.5] },
+                { cat: 'eq2', lat: 'x^2-5x=0', ans: ['0;5', '5;0'], sol: 'x_1=0, x_2=5', cf: {a:1,b:-5,c:0,delta:25}, r: [0,5] },
+                { cat: 'eq2', lat: '3x^2+6x=0', ans: ['-2;0', '0;-2'], sol: 'x_1=-2, x_2=0', cf: {a:3,b:6,c:0,delta:36}, r: [-2,0] },
+                { cat: 'eq2', lat: 'x^2+4x=0', ans: ['-4;0', '0;-4'], sol: 'x_1=-4, x_2=0', cf: {a:1,b:4,c:0,delta:16}, r: [-4,0] },
+
+                // DISEQ1
                 { cat: 'diseq1', lat: '3x-6>0', ans: ['x>2'], sol: 'x>2' },
                 { cat: 'diseq1', lat: '2x>x+2', ans: ['x>2'], sol: 'x>2' },
                 { cat: 'diseq1', lat: '-12x-18\\le0', ans: ['x>=-1.5', 'x>=-3/2'], sol: 'x \\ge -3/2' },
@@ -1320,7 +1742,10 @@
                 { cat: 'diseq1', lat: '3x-3<x', ans: ['x<1.5', 'x<3/2'], sol: 'x < 3/2' },
                 { cat: 'diseq1', lat: 'x-3<2x-1', ans: ['x>-2'], sol: 'x > -2' },
                 { cat: 'diseq1', lat: '4x+1\\ge5x-3', ans: ['x<=4'], sol: 'x \\le 4' },
+                { cat: 'diseq1', lat: '2(x-1)<4', ans: ['x<3'], sol: 'x < 3' },
+                { cat: 'diseq1', lat: '-x+5>2x-1', ans: ['x<2'], sol: 'x < 2' },
 
+                // SCOMP
                 { cat: 'scomp', lat: '20x^5+30x^4-4x^3-6x^2', ans: ['2x^2(2x+3)(5x^2-1)'], sol: '2x^2(2x+3)(5x^2-1)' },
                 { cat: 'scomp', lat: '8a^5+12a^4-16a^2-24a', ans: ['4a(a^3-2)(2a+3)'], sol: '4a(a^3-2)(2a+3)' },
                 { cat: 'scomp', lat: '3x^2-27', ans: ['3(x-3)(x+3)', '3(x+3)(x-3)'], sol: '3(x-3)(x+3)' },
@@ -1331,7 +1756,13 @@
                 { cat: 'scomp', lat: '75x^3-27xy^2', ans: ['3x(5x+3y)(5x-3y)'], sol: '3x(5x+3y)(5x-3y)' },
                 { cat: 'scomp', lat: '2a^3+3a^2-18a-27', ans: ['(a+3)(a-3)(2a+3)'], sol: '(a+3)(a-3)(2a+3)' },
                 { cat: 'scomp', lat: 'a^3-ab^2+a^2b-b^3', ans: ['(a-b)(a+b)^2'], sol: '(a-b)(a+b)^2' },
+                { cat: 'scomp', lat: 'x^2-4', ans: ['(x-2)(x+2)'], sol: '(x-2)(x+2)' },
+                { cat: 'scomp', lat: 'x^2-9', ans: ['(x-3)(x+3)'], sol: '(x-3)(x+3)' },
+                { cat: 'scomp', lat: 'x^2+6x+9', ans: ['(x+3)^2'], sol: '(x+3)^2' },
+                { cat: 'scomp', lat: 'x^2-10x+25', ans: ['(x-5)^2'], sol: '(x-5)^2' },
+                { cat: 'scomp', lat: 'x^2+5x+6', ans: ['(x+2)(x+3)'], sol: '(x+2)(x+3)' },
 
+                // EQ1
                 { cat: 'eq1', lat: '(2x)^2-(2x+3)^2=3(x+1)-(-x)', ans: ['-0.75', '-3/4'], sol: 'x=-3/4', root: -0.75 },
                 { cat: 'eq1', lat: '7x-(1+x)(1-x)=(x+3)^2-10', ans: ['0'], sol: 'x=0', root: 0 },
                 { cat: 'eq1', lat: '(x+2)(x-3)=(x-1)(x-6)', ans: ['2'], sol: 'x=2', root: 2 },
@@ -1340,7 +1771,9 @@
                 { cat: 'eq1', lat: '(2x+1)(2x-1)-2x(2x+3)=-(6x+1)', ans: ['indeterminata'], sol: 'Indeterminata' },
                 { cat: 'eq1', lat: '(3x-2)^2-(3x+1)(3x-1)=-4(3x+1)', ans: ['impossibile'], sol: '\\emptyset' },
                 { cat: 'eq1', lat: '13+2(x+1)^2=1+5(x+1)+2x(x-5)', ans: ['-1'], sol: 'x=-1', root: -1 },
-                { cat: 'eq1', lat: '(3x-2)^2-(3x+1)(3x-1)=-4(3x+1)', ans: ['impossibile'], sol: '\\emptyset' }
+                { cat: 'eq1', lat: '3x-5=x+7', ans: ['6'], sol: 'x=6', root: 6 },
+                { cat: 'eq1', lat: '2(x-3)=4', ans: ['5'], sol: 'x=5', root: 5 },
+                { cat: 'eq1', lat: '5x+2=2x-7', ans: ['-3'], sol: 'x=-3', root: -3 }
             ];
 
             const selectWeightedSubType = (options, masteryScores) => {
@@ -1357,40 +1790,53 @@
                 return options[0];
             };
 
-            const generateProblem = (category, difficulty = 'easy', masteryScores = {}) => {
-                const textbookOptions = TextbookData.filter(p => p.cat === category);
-                if (textbookOptions.length > 0 && Math.random() < 0.8) {
-                    const p = textbookOptions[Math.floor(Math.random() * textbookOptions.length)];
-                    let subType = 'Libro';
-                    let subTypeId = 'textbook';
+            const generateProblem = (category, difficulty = 'medium', masteryScores = {}) => {
+                const staticOptions = StaticExercises.filter(p => p.cat === category);
+                
+                // High chance to pick from static list for quality "textbook-like" problems
+                if (staticOptions.length > 0 && Math.random() < 0.7) {
+                    const p = staticOptions[Math.floor(Math.random() * staticOptions.length)];
+                    let subType = 'Standard';
+                    let subTypeId = 'standard';
+                    
+                    // Auto-detect subtype for display
                     if (category === 'eq2' || category === 'diseq2') {
                         if (p.cf) {
-                            if (p.cf.b === 0 && p.cf.c !== 0) subType = 'LIBRO - PURA';
-                            else if (p.cf.c === 0 && p.cf.b !== 0) subType = 'LIBRO - SPURIA';
-                            else if (p.cf.b !== 0 && p.cf.c !== 0) subType = 'LIBRO - COMPLETA';
-                            else subType = 'LIBRO - MONOMIA';
+                            if (p.cf.b === 0 && p.cf.c !== 0) subType = 'Pura';
+                            else if (p.cf.c === 0 && p.cf.b !== 0) subType = 'Spuria';
+                            else if (p.cf.b !== 0 && p.cf.c !== 0) subType = 'Completa';
+                            else subType = 'Monomia';
                         }
+                    } else if (category === 'eq1') {
+                        subType = p.lat.includes('(') ? 'Lineare' : 'Lineare'; // Simplified naming
+                    } else if (category === 'scomp') {
+                        if (p.lat.includes('^2') && p.lat.includes('-') && !p.lat.includes('x^')) subType = 'Diff. Quadrati';
+                        else if (p.lat.split('+').length + p.lat.split('-').length > 3) subType = 'Trinomio';
+                        else subType = 'Raccoglimento';
                     }
+
                     return {
                         category: p.cat, subType: subType, subTypeId: subTypeId, difficulty: 'medium',
-                        latex: p.lat, answerKeys: p.ans, displaySolution: p.sol,
-                        hints: ["Esercizio dal libro di testo.", "Controlla i segni."],
+                        latex: p.lat, originalLatex: p.lat, answerKeys: p.ans, displaySolution: p.sol,
+                        hints: ["Controlla i segni.", "Semplifica l'espressione."],
                         coefficients: p.cf, solutions: p.r, root: p.root
                     };
                 }
 
-                const diffMultiplier = { easy: 1, medium: 1.5, hard: 2 };
-                const range = Math.ceil(5 * diffMultiplier[difficulty]);
+                // Random range for mixed difficulty
+                const range = rnd(2, 15);
                 
                 if (category === 'eq1') {
-                    const subTypes = [{ id: 'eq1_linear', name: 'Lineare' }, { id: 'eq1_paren', name: 'Con Parentesi' }];
-                    const type = difficulty === 'easy' ? subTypes[0] : selectWeightedSubType(subTypes, masteryScores);
+                    const subTypes = [{ id: 'eq1_linear', name: 'Lineare' }, { id: 'eq1_paren', name: 'Lineare' }];
+                    const type = selectWeightedSubType(subTypes, masteryScores);
                     if (type.id === 'eq1_linear') {
-                        const m = rnd(2, 5), sol = rndNZ(6), off = rndNZ(6);
-                        return { category, subType: 'Lineare', subTypeId: 'eq1_linear', difficulty, latex: `${fmtTerm(m, 'x', true)} ${fmtTerm(off, '', false)} = ${m * sol + off}`, root: sol, answerKeys: [`x=${sol}`, `${sol}`], displaySolution: `x = ${sol}`, hints: ["Isola la variabile x.", "Sposta i numeri a destra dell'uguale."] };
+                        const m = rnd(2, 5), sol = rndNZ(range), off = rndNZ(range);
+                        const lat = `${fmtTerm(m, 'x', true)} ${fmtTerm(off, '', false)} = ${m * sol + off}`;
+                        return { category, subType: 'Lineare', subTypeId: 'eq1_linear', difficulty, latex: lat, originalLatex: lat, root: sol, answerKeys: [`x=${sol}`, `${sol}`], displaySolution: `x = ${sol}`, hints: [`Sposta il termine ${off > 0 ? '+'+off : off} a destra cambiandolo di segno.`, `Dividi tutto per ${m}.`] };
                     } else {
-                        const a = rnd(2, 4), b = rndNZ(6), sol = rndNZ(4);
-                        return { category, subType: 'Con Parentesi', subTypeId: 'eq1_paren', difficulty, latex: `${a}(x ${fmtTerm(b, '')}) = ${a * (sol + b)}`, root: sol, answerKeys: [`x=${sol}`, `${sol}`], displaySolution: `x = ${sol}`, hints: ["Prima sviluppa le parentesi.", "Poi isola la x."] };
+                        const a = rnd(2, 4), b = rndNZ(range), sol = rndNZ(range);
+                        const lat = `${a}(x ${fmtTerm(b, '')}) = ${a * (sol + b)}`;
+                        return { category, subType: 'Lineare', subTypeId: 'eq1_paren', difficulty, latex: lat, originalLatex: lat, root: sol, answerKeys: [`x=${sol}`, `${sol}`], displaySolution: `x = ${sol}`, hints: [`Moltiplica ${a} per x e per ${b} (${a}x ${fmtTerm(a*b, '')}).`, `Poi isola la x.`] };
                     }
                 }
 
@@ -1398,23 +1844,27 @@
                     const subTypes = [{ id: 'eq2_pure', name: 'Pura' }, { id: 'eq2_spurious', name: 'Spuria' }, { id: 'eq2_complete', name: 'Completa' }];
                     const type = selectWeightedSubType(subTypes, masteryScores);
                     if (type.id === 'eq2_pure') {
-                        const r = rnd(2, 6 + (difficulty === 'hard' ? 4 : 0));
-                        return { category, subType: 'Pura', subTypeId: 'eq2_pure', difficulty, latex: `x^2 - ${r * r} = 0`, root: r, answerKeys: [`x=\\pm${r}`, `\\pm${r}`, `${r};-${r}`, `-${r};${r}`], displaySolution: `x = \\pm ${r}`, hints: ["Porta il numero a destra.", "Calcola la radice quadrata."] };
+                        const r = rnd(2, 10);
+                        const lat = `x^2 - ${r * r} = 0`;
+                        return { category, subType: 'Pura', subTypeId: 'eq2_pure', difficulty, latex: lat, originalLatex: lat, root: r, answerKeys: [`x=\\pm${r}`, `\\pm${r}`, `${r};-${r}`, `-${r};${r}`], displaySolution: `x = \\pm ${r}`, hints: [`Porta ${r*r} a destra.`, `Calcola la radice quadrata di ${r*r}.`] };
                     }
                     if (type.id === 'eq2_spurious') {
                         const k = rndNZ(range);
-                        return { category, subType: 'Spuria', subTypeId: 'eq2_spurious', difficulty, latex: `x^2 ${fmtTerm(-k, 'x')} = 0`, root: k, answerKeys: [`0;${k}`, `${k};0`], displaySolution: `x_1 = 0, \\; x_2 = ${k}`, hints: ["Raccogli x a fattor comune.", "x(x - k) = 0"] };
+                        const lat = `x^2 ${fmtTerm(-k, 'x')} = 0`;
+                        return { category, subType: 'Spuria', subTypeId: 'eq2_spurious', difficulty, latex: lat, originalLatex: lat, root: k, answerKeys: [`0;${k}`, `${k};0`], displaySolution: `x_1 = 0, \\; x_2 = ${k}`, hints: ["Raccogli x a fattor comune.", `x(x - ${k}) = 0`] };
                     }
                     const x1 = rndNZ(range), x2 = rndNZ(range);
                     const a = 1, b = -(x1 + x2), c = x1 * x2, delta = b * b - 4 * a * c;
-                    return { category, subType: 'Completa', subTypeId: 'eq2_complete', difficulty, latex: `x^2 ${fmtTerm(b, 'x')} ${fmtTerm(c, '', false)} = 0`, root: x1, coefficients: { a, b, c, delta }, solutions: [Math.min(x1, x2), Math.max(x1, x2)], answerKeys: [`${Math.min(x1, x2)};${Math.max(x1, x2)}`, `${x1};${x2}`, `${x2};${x1}`], displaySolution: `x \\in \\{ ${Math.min(x1, x2)}, ${Math.max(x1, x2)} \\}`, hints: [`Coefficienti: a=1, b=${b}, c=${c}`, `Calcola Δ = b² - 4ac = ${b}² - 4(1)(${c})`, `Δ = ${delta}, poi x = (-b ± √Δ) / 2a`] };
+                    const lat = `x^2 ${fmtTerm(b, 'x')} ${fmtTerm(c, '', false)} = 0`;
+                    return { category, subType: 'Completa', subTypeId: 'eq2_complete', difficulty, latex: lat, originalLatex: lat, root: x1, coefficients: { a, b, c, delta }, solutions: [Math.min(x1, x2), Math.max(x1, x2)], answerKeys: [`${Math.min(x1, x2)};${Math.max(x1, x2)}`, `${x1};${x2}`, `${x2};${x1}`], displaySolution: `x \\in \\{ ${Math.min(x1, x2)}, ${Math.max(x1, x2)} \\}`, hints: [`Coefficienti: a=1, b=${b}, c=${c}`, `Calcola Δ = b² - 4ac = ${b}² - 4(1)(${c})`, `Δ = ${delta}, poi x = (-b ± √Δ) / 2a`] };
                 }
 
                 if (category === 'diseq1') {
                     const a = rndNZ(range), ops = ['>', '<', '\\ge', '\\le'], opsRev = ['<', '>', '\\le', '\\ge'];
                     let b = rndNZ(range * 2); while ((b / a) % 1 !== 0) b = rndNZ(range * 2);
                     const val = -b / a, opIdx = rnd(0, 3), op = ops[opIdx], solOp = a > 0 ? op : opsRev[opIdx], sol = `x${solOp}${val}`;
-                    return { category, subType: 'Lineare', subTypeId: 'diseq1_linear', difficulty, latex: `${fmtTerm(a, 'x', true)} ${fmtTerm(b, '', false)} ${op} 0`, answerKeys: [sol], displaySolution: sol.replace(/\\ge/g, '≥').replace(/\\le/g, '≤'), hints: [a < 0 ? "Dividi per negativo: inverti il verso!" : "Isola la x come un'equazione.", "Il verso rimane uguale se dividi per positivo."] };
+                    const lat = `${fmtTerm(a, 'x', true)} ${fmtTerm(b, '', false)} ${op} 0`;
+                    return { category, subType: 'Lineare', subTypeId: 'diseq1_linear', difficulty, latex: lat, originalLatex: lat, answerKeys: [sol], displaySolution: sol.replace(/\\ge/g, '≥').replace(/\\le/g, '≤'), hints: [a < 0 ? "Dividi per negativo: inverti il verso!" : "Isola la x come un'equazione.", "Il verso rimane uguale se dividi per positivo."] };
                 }
 
                 if (category === 'diseq2') {
@@ -1446,36 +1896,39 @@
                     };
 
                     if (type.id === 'diseq2_pure') {
-                        const r = rnd(2, 6 + (difficulty === 'hard' ? 4 : 0)), solObj = formatInterval(-r, r, isExternal, isInclusive);
+                        const r = rnd(2, 10), solObj = formatInterval(-r, r, isExternal, isInclusive);
                         const keys = [solObj.key, solObj.key.split(';').reverse().join(';')];
                         if(solObj.altKey) keys.push(solObj.altKey, solObj.altKey.split(';').reverse().join(';'));
-                        return { category, subType: 'Pura 2°', subTypeId: 'diseq2_pure', difficulty, latex: `x^2 - ${r * r} ${op} 0`, answerKeys: keys, displaySolution: solObj.disp, hints: ["Equazione associata pura: x² = k", `Le radici sono ±${r}`, isExternal ? "Verso maggiore: intervalli esterni." : "Verso minore: intervallo interno."] };
+                        const lat = `x^2 - ${r * r} ${op} 0`;
+                        return { category, subType: 'Pura 2°', subTypeId: 'diseq2_pure', difficulty, latex: lat, originalLatex: lat, answerKeys: keys, displaySolution: solObj.disp, hints: ["Equazione associata pura: x² = k", `Le radici sono ±${r}`, isExternal ? "Verso maggiore: intervalli esterni." : "Verso minore: intervallo interno."] };
                     }
                     if (type.id === 'diseq2_spurious') {
                         const k = rndNZ(range), solObj = formatInterval(0, -k, isExternal, isInclusive);
                         const keys = [solObj.key, solObj.key.split(';').reverse().join(';')];
                         if(solObj.altKey) keys.push(solObj.altKey, solObj.altKey.split(';').reverse().join(';'));
-                        return { category, subType: 'Spuria 2°', subTypeId: 'diseq2_spurious', difficulty, latex: `x^2 ${fmtTerm(k, 'x')} ${op} 0`, answerKeys: keys, displaySolution: solObj.disp, hints: ["Equazione associata spuria: raccogli la x.", `Le radici sono 0 e ${-k}`, isExternal ? "Concordi (DICE): intervalli esterni." : "Discordi (DICE): intervallo interno."] };
+                        const lat = `x^2 ${fmtTerm(k, 'x')} ${op} 0`;
+                        return { category, subType: 'Spuria 2°', subTypeId: 'diseq2_spurious', difficulty, latex: lat, originalLatex: lat, answerKeys: keys, displaySolution: solObj.disp, hints: ["Equazione associata spuria: raccogli la x.", `Le radici sono 0 e ${-k}`, isExternal ? "Concordi (DICE): intervalli esterni." : "Discordi (DICE): intervallo interno."] };
                     }
                     const x1 = rndNZ(range), x2 = rndNZ(range); if (x1 === x2) x2++;
                     const a = 1, b = -(x1 + x2), c = x1 * x2, delta = b * b - 4 * a * c, solObj = formatInterval(x1, x2, isExternal, isInclusive);
                     const keys = [solObj.key, solObj.key.split(';').reverse().join(';')];
                     if(solObj.altKey) keys.push(solObj.altKey, solObj.altKey.split(';').reverse().join(';'));
-                    return { category, subType: 'Completa 2°', subTypeId: 'diseq2_complete', difficulty, latex: `x^2 ${fmtTerm(b, 'x')} ${fmtTerm(c, '', false)} ${op} 0`, root: x1, coefficients: { a, b, c, delta }, solutions: [Math.min(x1, x2), Math.max(x1, x2)], answerKeys: keys, displaySolution: solObj.disp, hints: [`Trova le radici dell'equazione associata.`, `Coefficienti: a=1, b=${b}, c=${c}`, `Δ = ${delta}. Radici: ${Math.min(x1,x2)} e ${Math.max(x1,x2)}`, isExternal ? "Parabola verso l'alto, > 0: Esterni." : "Parabola verso l'alto, < 0: Interni."] };
+                    const lat = `x^2 ${fmtTerm(b, 'x')} ${fmtTerm(c, '', false)} ${op} 0`;
+                    return { category, subType: 'Completa 2°', subTypeId: 'diseq2_complete', difficulty, latex: lat, originalLatex: lat, root: x1, coefficients: { a, b, c, delta }, solutions: [Math.min(x1, x2), Math.max(x1, x2)], answerKeys: keys, displaySolution: solObj.disp, hints: [`Trova le radici dell'equazione associata.`, `Coefficienti: a=1, b=${b}, c=${c}`, `Δ = ${delta}. Radici: ${Math.min(x1,x2)} e ${Math.max(x1,x2)}`, isExternal ? "Parabola verso l'alto, > 0: Esterni." : "Parabola verso l'alto, < 0: Interni."] };
                 }
 
                 if (category === 'scomp') {
                     const type = rnd(1, 3);
-                    if (type === 1) { const k = rnd(2, 4), a = rnd(1, 3), b = rndNZ(4); return { category, subType: 'Raccoglimento', subTypeId: 'scomp_racc', difficulty, latex: `${fmtTerm(k * a, 'x^2', true)}${fmtTerm(k * b, 'x')}`, answerKeys: [`${k}x(${fmtTerm(a, 'x', true)}${fmtTerm(b, '', false)})`.replace(/\s/g, '')], displaySolution: `${k}x(${fmtTerm(a, 'x', true)}${fmtTerm(b, '', false)})`, hints: [`Trova il MCD: ${k}x`, "Raccogli a fattor comune."] }; }
-                    if (type === 2) { const a = rnd(1, 3), b = rnd(2, 5), tA = fmtTerm(a, 'x', true); return { category, subType: 'Differenza Quadrati', subTypeId: 'scomp_diff', difficulty, latex: `${fmtTerm(a * a, 'x^2', true)} - ${b * b}`, answerKeys: [`(${tA}-${b})(${tA}+${b})`.replace(/\s/g, ''), `(${tA}+${b})(${tA}-${b})`.replace(/\s/g, '')], displaySolution: `(${tA}-${b})(${tA}+${b})`, hints: ["Formula: A² - B² = (A-B)(A+B)", `A = ${a}x, B = ${b}`] }; }
-                    const x1 = rndNZ(4), x2 = rndNZ(4), S = x1 + x2, P = x1 * x2; return { category, subType: 'Trinomio', subTypeId: 'scomp_tri', difficulty, latex: `x^2 ${fmtTerm(S, 'x')} ${fmtTerm(P, '', false)}`, answerKeys: [`(x${fmtTerm(x1, '', false)})(x${fmtTerm(x2, '', false)})`.replace(/\s/g, ''), `(x${fmtTerm(x2, '', false)})(x${fmtTerm(x1, '', false)})`.replace(/\s/g, '')], displaySolution: `(x ${fmtTerm(x1, '', false)})(x ${fmtTerm(x2, '', false)})`, hints: [`Cerca due numeri: somma = ${S}, prodotto = ${P}`, `I numeri sono ${x1} e ${x2}`] };
+                    if (type === 1) { const k = rnd(2, 4), a = rnd(1, 3), b = rndNZ(4); const lat = `${fmtTerm(k * a, 'x^2', true)}${fmtTerm(k * b, 'x')}`; return { category, subType: 'Raccoglimento', subTypeId: 'scomp_racc', difficulty, latex: lat, originalLatex: lat, answerKeys: [`${k}x(${fmtTerm(a, 'x', true)}${fmtTerm(b, '', false)})`.replace(/\s/g, '')], displaySolution: `${k}x(${fmtTerm(a, 'x', true)}${fmtTerm(b, '', false)})`, hints: [`Trova il MCD: ${k}x`, "Raccogli a fattor comune."] }; }
+                    if (type === 2) { const a = rnd(1, 3), b = rnd(2, 5), tA = fmtTerm(a, 'x', true); const lat = `${fmtTerm(a * a, 'x^2', true)} - ${b * b}`; return { category, subType: 'Differenza Quadrati', subTypeId: 'scomp_diff', difficulty, latex: lat, originalLatex: lat, answerKeys: [`(${tA}-${b})(${tA}+${b})`.replace(/\s/g, ''), `(${tA}+${b})(${tA}-${b})`.replace(/\s/g, '')], displaySolution: `(${tA}-${b})(${tA}+${b})`, hints: ["Formula: A² - B² = (A-B)(A+B)", `A = ${a}x, B = ${b}`] }; }
+                    const x1 = rndNZ(4), x2 = rndNZ(4), S = x1 + x2, P = x1 * x2; const lat = `x^2 ${fmtTerm(S, 'x')} ${fmtTerm(P, '', false)}`; return { category, subType: 'Trinomio', subTypeId: 'scomp_tri', difficulty, latex: lat, originalLatex: lat, answerKeys: [`(x${fmtTerm(x1, '', false)})(x${fmtTerm(x2, '', false)})`.replace(/\s/g, ''), `(x${fmtTerm(x2, '', false)})(x${fmtTerm(x1, '', false)})`.replace(/\s/g, '')], displaySolution: `(x ${fmtTerm(x1, '', false)})(x ${fmtTerm(x2, '', false)})`, hints: [`Cerca due numeri: somma = ${S}, prodotto = ${P}`, `I numeri sono ${x1} e ${x2}`] };
                 }
 
                 if (category === 'prod') {
                     const type = rnd(1, 3);
-                    if (type === 1) { const a = rnd(1, 3), b = rnd(1, 5); return { category, subType: 'Quadrato Somma', subTypeId: 'prod_qsum', difficulty, latex: `(${fmtTerm(a, 'x', true)}+${b})^2`, answerKeys: [`${a*a}x^2+${2*a*b}x+${b*b}`], displaySolution: `${a*a}x^2+${2*a*b}x+${b*b}`, hints: ["(A + B)² = A² + 2AB + B²"] }; }
-                    if (type === 2) { const a = rnd(1, 3), b = rnd(1, 5); return { category, subType: 'Quadrato Differenza', subTypeId: 'prod_qdiff', difficulty, latex: `(${fmtTerm(a, 'x', true)}-${b})^2`, answerKeys: [`${a*a}x^2-${2*a*b}x+${b*b}`], displaySolution: `${a*a}x^2-${2*a*b}x+${b*b}`, hints: ["(A - B)² = A² - 2AB + B²"] }; }
-                    const a = rnd(1, 2), b = rnd(1, 4); return { category, subType: 'Somma per Differenza', subTypeId: 'prod_sumdiff', difficulty, latex: `(${fmtTerm(a, 'x', true)}+${b})(${fmtTerm(a, 'x', true)}-${b})`, answerKeys: [`${a*a}x^2-${b*b}`], displaySolution: `${a*a}x^2 - ${b*b}`, hints: ["(A + B)(A - B) = A² - B²"] };
+                    if (type === 1) { const a = rnd(1, 3), b = rnd(1, 5); const lat = `(${fmtTerm(a, 'x', true)}+${b})^2`; return { category, subType: 'Quadrato Somma', subTypeId: 'prod_qsum', difficulty, latex: lat, originalLatex: lat, answerKeys: [`${a*a}x^2+${2*a*b}x+${b*b}`], displaySolution: `${a*a}x^2+${2*a*b}x+${b*b}`, hints: ["(A + B)² = A² + 2AB + B²"] }; }
+                    if (type === 2) { const a = rnd(1, 3), b = rnd(1, 5); const lat = `(${fmtTerm(a, 'x', true)}-${b})^2`; return { category, subType: 'Quadrato Differenza', subTypeId: 'prod_qdiff', difficulty, latex: lat, originalLatex: lat, answerKeys: [`${a*a}x^2-${2*a*b}x+${b*b}`], displaySolution: `${a*a}x^2-${2*a*b}x+${b*b}`, hints: ["(A - B)² = A² - 2AB + B²"] }; }
+                    const a = rnd(1, 2), b = rnd(1, 4); const lat = `(${fmtTerm(a, 'x', true)}+${b})(${fmtTerm(a, 'x', true)}-${b})`; return { category, subType: 'Somma per Differenza', subTypeId: 'prod_sumdiff', difficulty, latex: lat, originalLatex: lat, answerKeys: [`${a*a}x^2-${b*b}`], displaySolution: `${a*a}x^2 - ${b*b}`, hints: ["(A + B)(A - B) = A² - B²"] };
                 }
 
                 return { category: 'err', latex: 'Error', answerKeys: [], xp: 0 };
@@ -1487,7 +1940,63 @@
                 return s.slice(0, -1);
             };
 
-            return { generateProblem, checkFinalAnswer, checkStep, deleteLastToken };
+            // Custom Solver Logic (Linear Approximation)
+            const solveCustomProblem = (latex) => {
+                try {
+                    // 1. Check for inequality
+                    if (latex.includes('<') || latex.includes('>')) return "Risolvi la disequazione";
+
+                    // 2. Split sides
+                    const parts = latex.split('=');
+                    if (parts.length !== 2) return "Espressione non valida";
+                    
+                    const lhs = parts[0];
+                    const rhs = parts[1];
+
+                    // 3. Define function f(x) = LHS - RHS
+                    const f = (x) => MathEvaluator.evaluate(lhs, x) - MathEvaluator.evaluate(rhs, x);
+
+                    // 4. Evaluate at two points to determine linearity
+                    const y0 = f(0);
+                    const y1 = f(1);
+
+                    // If y0 or y1 is NaN, syntax error
+                    if (isNaN(y0) || isNaN(y1)) return "Sintassi non valida";
+
+                    // 5. Calculate slope (m) and intercept (c) assuming linear: y = mx + c
+                    // y0 = c
+                    // y1 = m + c  => m = y1 - y0
+                    const m = y1 - y0;
+                    const c = y0;
+
+                    // 6. Solve for f(x) = 0 => mx + c = 0 => x = -c/m
+                    if (Math.abs(m) < 1e-9) {
+                        // Slope is 0. Either Identity or Impossible.
+                        if (Math.abs(c) < 1e-9) return "Indeterminata";
+                        else return "Impossibile";
+                    }
+
+                    const root = -c / m;
+                    
+                    // 7. Verify if it's actually linear by checking a 3rd point
+                    const y2 = f(2);
+                    const predictedY2 = m * 2 + c;
+                    
+                    if (Math.abs(y2 - predictedY2) > 1e-5) {
+                        // Non-linear (likely quadratic or higher)
+                        return "Soluzione non calcolabile (Non lineare)";
+                    }
+
+                    // Round to nice decimals if needed
+                    if (Number.isInteger(root)) return `x = ${root}`;
+                    return `x = ${parseFloat(root.toFixed(2))}`;
+
+                } catch (e) {
+                    return "Errore nel calcolo";
+                }
+            };
+
+            return { generateProblem, checkFinalAnswer, checkStep, deleteLastToken, solveCustomProblem };
         })();
 
         // === MAIN APP ===
@@ -1500,17 +2009,18 @@
                 status: 'idle',
                 theme: 'dark',
                 mode: 'practice',
-                difficulty: 'easy',
+                difficulty: 'medium',
                 timer: null,
                 timerValue: 60,
                 timerDuration: 60,
                 challengeCount: 0,
                 challengeTotal: 5,
                 formulaHelperOpen: false,
-                formulaHelperActiveForCurrentProblem: false,
+                formulaHelperInitialized: false, // NEW FLAG FOR PERSISTENCE
                 cursorPos: 0,
                 attempts: 0,
                 lastInput: "",
+                isSolutionShown: false,
                 exam: {
                     active: false,
                     questions: [],
@@ -1552,8 +2062,10 @@
                 this.applyTheme();
                 this.applySettings();
                 this.setupKeyboard();
+                this.setupFullscreenListener();
                 SoundManager.init();
                 CanvasManager.init();
+                DragManager.init(); // Initialize new Drag Manager
             },
             
             loadData() {
@@ -1608,6 +2120,19 @@
                     if (document.exitFullscreen) document.exitFullscreen();
                 }
             },
+
+            setupFullscreenListener() {
+                document.addEventListener('fullscreenchange', () => {
+                    const isFs = !!document.fullscreenElement;
+                    if (isFs) {
+                        $('#icon-enter-fs').classList.add('hidden');
+                        $('#icon-exit-fs').classList.remove('hidden');
+                    } else {
+                        $('#icon-enter-fs').classList.remove('hidden');
+                        $('#icon-exit-fs').classList.add('hidden');
+                    }
+                });
+            },
             
             applySettings() {
                 SoundManager.enabled = this.state.settings.sound;
@@ -1649,10 +2174,12 @@
                 const grid = $('#categories-grid');
                 const challengeView = $('#challenge-start-view');
                 const examView = $('#exam-start-view');
+                const customBtn = $('#custom-problem-btn');
                 
                 grid.classList.add('hidden');
                 challengeView.classList.add('hidden');
                 examView.classList.add('hidden');
+                customBtn.classList.add('hidden');
                 
                 if (mode === 'challenge') {
                     challengeView.classList.remove('hidden');
@@ -1660,19 +2187,42 @@
                     examView.classList.remove('hidden');
                 } else {
                     grid.classList.remove('hidden');
+                    customBtn.classList.remove('hidden');
                 }
             },
             
             setDifficulty(diff) {
                 this.state.difficulty = diff;
-                $$('#diff-easy, #diff-medium, #diff-hard').forEach(b => {
-                    b.classList.remove('bg-success/10', 'text-success', 'border-success/30', 'bg-gold/10', 'text-gold', 'border-gold/30', 'bg-error/10', 'text-error', 'border-error/30');
-                    b.classList.add('text-textMuted', 'border-transparent');
-                });
-                const colors = { easy: 'success', medium: 'gold', hard: 'error' };
-                const c = colors[diff];
-                $(`#diff-${diff}`).classList.remove('text-textMuted', 'border-transparent');
-                $(`#diff-${diff}`).classList.add(`bg-${c}/10`, `text-${c}`, `border-${c}/30`);
+            },
+
+            // Custom Problem Logic
+            openCustomProblemModal() { $('#custom-problem-modal').classList.remove('hidden'); $('#custom-problem-input').focus(); },
+            closeCustomProblemModal() { $('#custom-problem-modal').classList.add('hidden'); },
+            startCustomSession() {
+                const input = $('#custom-problem-input').value.trim();
+                if (!input) return;
+                
+                // Calculate solution immediately
+                const calculatedSolution = MathEngine.solveCustomProblem(input);
+
+                this.state.problem = {
+                    category: 'custom',
+                    subType: 'Personalizzato',
+                    difficulty: 'custom',
+                    latex: input,
+                    originalLatex: input,
+                    answerKeys: [], // No known answer for custom
+                    displaySolution: calculatedSolution,
+                    hints: ["Controlla l'equivalenza algebrica."]
+                };
+                
+                this.closeCustomProblemModal();
+                this.resetExerciseState();
+                $('#view-menu').classList.add('hidden');
+                $('#view-exercise').classList.remove('hidden');
+                $('#view-exercise').classList.add('flex');
+                this.renderKeypad();
+                this.renderProblem();
             },
 
             startSession(cat) {
@@ -1796,7 +2346,8 @@
                 this.state.cursorPos = 0;
                 this.state.attempts = 0;
                 this.state.lastInput = "";
-                this.state.formulaHelperActiveForCurrentProblem = false; // Reset helper state
+                this.state.isSolutionShown = false;
+                this.state.formulaHelperInitialized = false; // RESET FLAG ONLY ON NEW PROBLEM
                 this.updateInputDisplay();
                 $('#input-container').className = "bg-bgPanel rounded-2xl h-14 md:h-20 shrink-0 glass-panel border-2 border-transparent transition-all relative flex items-center justify-center overflow-hidden";
                 $('#badge-correct').classList.add('hidden');
@@ -1804,6 +2355,8 @@
                 $('#keypad').classList.remove('hidden');
                 $('#next-actions').classList.add('hidden');
                 $('#next-actions').classList.remove('flex');
+                $('#retry-actions').classList.add('hidden');
+                $('#retry-actions').classList.remove('flex');
                 $('#message-area').innerHTML = "";
                 $('#cursor').classList.remove('hidden');
                 $('#formula-display').classList.add('hidden');
@@ -1813,6 +2366,11 @@
             },
 
             nextProblem() {
+                if (this.state.problem.category === 'custom') {
+                    this.exitSession();
+                    return;
+                }
+
                 if (this.state.mode === 'challenge') {
                     this.state.challengeCount++;
                     if (this.state.challengeCount >= this.state.challengeTotal) {
@@ -1874,22 +2432,46 @@
             renderKeypad() {
                 const grid = $('#keypad');
                 const cat = this.state.problem?.category || 'eq1';
-                
                 const okLabel = this.state.mode === 'exam' ? 'NEXT' : 'OK';
+
+                // Logic for disabling ^ (exponent)
+                const openBraces = (this.state.input.match(/\{/g) || []).length;
+                const closeBraces = (this.state.input.match(/\}/g) || []).length;
+                const isInsideExponent = openBraces > closeBraces;
+
+                // Logic for disabling keys if Impossibile/Indeterminata is set
+                const isSpecialState = ['Impossibile', 'Indeterminata'].includes(this.state.input);
+                
+                // Logic for disabling IMP/IND if input is not empty
+                const hasInput = this.state.input.length > 0;
 
                 const keys = [
                     {l:'7', v:'7', c:'num'}, {l:'8', v:'8', c:'num'}, {l:'9', v:'9', c:'num'}, {l:'+', v:'+', c:'op-lg'}, {l:'−', v:'-', c:'op-lg'}, {l:'DEL', action:'del', c:'del'},
                     {l:'4', v:'4', c:'num'}, {l:'5', v:'5', c:'num'}, {l:'6', v:'6', c:'num'}, {l:'×', v:'*', c:'op-lg'}, {l:'/', v:'/', c:'op-lg'}, {l:'C', action:'clr', c:'dim'},
                     {l:'1', v:'1', c:'num'}, {l:'2', v:'2', c:'num'}, {l:'3', v:'3', c:'num'}, {l:'(', v:'(', c:'op'}, {l:')', v:')', c:'op'}, {l:'x²', v:'^2', c:'op'},
-                    {l:'0', v:'0', c:'num'}, {l:'.', v:'.', c:'num'}, {l:'x', v:'x', c:'var'}, {l:'=', v:'=', c:'op'}, {l:'^', v:'^{', c:'op'}, {l:'√', v:'\\sqrt{', c:'op'},
+                    {l:'0', v:'0', c:'num'}, {l:'.', v:'.', c:'num'}, {l:'x', v:'x', c:'var'}, {l:'=', v:'=', c:'op'}, {l:'^', v:'^{', c:'op', disabled: isInsideExponent}, {l:'√', v:'\\sqrt{', c:'op'},
                     {l:';', v:';', c:'op'}, {l:'±', v:'\\pm', c:'op'}, {l:'<', v:'<', c:'op'}, {l:'>', v:'>', c:'op'}, {l:'≤', v:'\\le', c:'op'}, {l:'≥', v:'\\ge', c:'op'},
-                    {l:'←', action:'left', c:'nav'}, {l:'→', action:'right', c:'nav'}, {l:'IMP', v:'Impossibile', c:'action-sm'}, {l:'IND', v:'Indeterminata', c:'action-sm'}, {l:okLabel, action:'sub', c:'action-full'}
+                    {l:'←', action:'left', c:'nav'}, {l:'→', action:'right', c:'nav'}, {l:'IMP', v:'Impossibile', c:'action-sm', disabled: hasInput}, {l:'IND', v:'Indeterminata', c:'action-sm', disabled: hasInput}, {l:okLabel, action:'sub', c:'action-full'}
                 ];
 
                 grid.innerHTML = keys.map(k => {
                     let cls = "btn-press relative rounded-lg font-mono flex items-center justify-center select-none transition-all ";
                     const baseH = "h-10 md:h-11";
                     
+                    // Disable logic
+                    let disabledAttr = "";
+                    let opacity = "";
+                    
+                    if (k.disabled) {
+                        disabledAttr = "disabled";
+                        opacity = "opacity-30 pointer-events-none";
+                    }
+                    
+                    if (isSpecialState && !['del', 'clr', 'sub'].includes(k.action)) {
+                        disabledAttr = "disabled";
+                        opacity = "opacity-30 pointer-events-none";
+                    }
+
                     if (k.c === 'num') cls += `bg-bgSurface text-textMain hover:bg-borderDim ${baseH} text-sm md:text-base`;
                     if (k.c === 'op') cls += `bg-bgPanel text-gold hover:bg-bgSurface ${baseH} text-sm md:text-base`;
                     if (k.c === 'op-lg') cls += `bg-bgPanel text-gold hover:bg-bgSurface ${baseH} text-xl md:text-2xl font-bold`; 
@@ -1899,7 +2481,7 @@
                     if (k.c === 'nav') cls += `bg-bgSurface text-textMuted hover:bg-borderDim ${baseH} text-sm md:text-base`;
                     if (k.c === 'action') cls += `gradient-gold text-bgMain font-bold tracking-wider text-[10px] md:text-xs ${baseH} col-span-2`;
                     if (k.c === 'action-sm') cls += `bg-bgSurface text-textMuted hover:bg-borderDim text-[9px] md:text-[10px] font-bold uppercase tracking-wider ${baseH} col-span-2`;
-                    if (k.c === 'action-full') cls += `gradient-gold text-bgMain font-bold tracking-wider text-sm md:text-base ${baseH} col-span-6 mt-1`; // Full width OK button
+                    if (k.c === 'action-full') cls += `gradient-gold text-bgMain font-bold tracking-wider text-sm md:text-base ${baseH} col-span-6 mt-1`; 
 
                     let action = "";
                     if (k.action === 'left') action = `app.moveCursor(-1)`;
@@ -1909,16 +2491,16 @@
 
                     const content = k.l === 'DEL' ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>' : k.l;
                     
-                    return `<button onclick="${action}" class="${cls}">${content}</button>`;
+                    return `<button onclick="${action}" class="${cls} ${opacity}" ${disabledAttr}>${content}</button>`;
                 }).join('');
             },
 
             renderProblem() {
                 const p = this.state.problem;
                 $('#problem-category').textContent = p.subType ? p.subType.toUpperCase() : p.category.toUpperCase();
-                const diffLabels = { easy: 'Facile', medium: 'Medio', hard: 'Difficile' };
-                $('#problem-difficulty').textContent = diffLabels[p.difficulty] || '';
-                katex.render(p.latex, $('#latex-problem'), { throwOnError: false, displayMode: true });
+                
+                // Use SelectionManager to render blocks instead of direct KaTeX
+                SelectionManager.init(p.latex);
                 
                 // Show formula for eq2 OR diseq2 completa (BUT NOT IN EXAM MODE)
                 if (this.state.mode !== 'exam' && p.coefficients) {
@@ -1952,8 +2534,8 @@
                 if (!p || !p.coefficients) return;
                 
                 // Check if already initialized for this problem
-                if (this.state.formulaHelperActiveForCurrentProblem) return;
-                this.state.formulaHelperActiveForCurrentProblem = true;
+                if (this.state.formulaHelperInitialized) return;
+                this.state.formulaHelperInitialized = true;
 
                 const labelEl = document.querySelector('#formula-modal p.uppercase');
                 const targetEl = document.getElementById('formula-equation');
@@ -1998,38 +2580,38 @@
             },
             checkCoefficients() { 
                 const p = this.state.problem; const { a, b, c } = p.coefficients;
-                const inputA = parseInt($('#coeff-a').value); const inputB = parseInt($('#coeff-b').value); const inputC = parseInt($('#coeff-c').value);
+                const inputA = evalInput($('#coeff-a').value); const inputB = evalInput($('#coeff-b').value); const inputC = evalInput($('#coeff-c').value);
                 const aCorrect = inputA === a; const bCorrect = inputB === b; const cCorrect = inputC === c;
                 $('#coeff-a').classList.toggle('correct', aCorrect); $('#coeff-b').classList.toggle('correct', bCorrect); $('#coeff-c').classList.toggle('correct', cCorrect);
                 if (aCorrect && bCorrect && cCorrect) { $('#coeff-feedback').innerHTML = '<span class="text-success">Corretto!</span>'; $('#delta-section').classList.remove('opacity-50', 'pointer-events-none'); }
             },
             checkBSquared() { 
-                const p = this.state.problem; const { b } = p.coefficients; const correct = parseInt($('#b-squared-value').value) === b*b;
+                const p = this.state.problem; const { b } = p.coefficients; const correct = evalInput($('#b-squared-value').value) === b*b;
                 $('#b-squared-value').classList.toggle('correct', correct); if(correct) $('#step-4a').classList.remove('opacity-50', 'pointer-events-none');
             },
             checkFourA() {
-                const p = this.state.problem; const { a } = p.coefficients; const correct = parseInt($('#four-a-value').value) === 4*a;
+                const p = this.state.problem; const { a } = p.coefficients; const correct = evalInput($('#four-a-value').value) === 4*a;
                 $('#four-a-value').classList.toggle('correct', correct); 
                 if(correct) {
                     $('#step-4ac').classList.remove('opacity-50', 'pointer-events-none');
                     // Update label for next step
-                    const val4a = parseInt($('#four-a-value').value);
+                    const val4a = evalInput($('#four-a-value').value);
                     const c = p.coefficients.c;
                     $('#four-ac-label').textContent = `4ac → ${val4a} • ${c} = ?`;
                 }
             },
             checkFourAC() { 
-                const p = this.state.problem; const { a, c } = p.coefficients; const correct = parseInt($('#four-ac-value').value) === 4*a*c;
+                const p = this.state.problem; const { a, c } = p.coefficients; const correct = evalInput($('#four-ac-value').value) === 4*a*c;
                 $('#four-ac-value').classList.toggle('correct', correct); 
                 if(correct) {
                     $('#step-delta-final').classList.remove('opacity-50', 'pointer-events-none');
-                    const b2 = parseInt($('#b-squared-value').value);
-                    const val4ac = parseInt($('#four-ac-value').value);
+                    const b2 = evalInput($('#b-squared-value').value);
+                    const val4ac = evalInput($('#four-ac-value').value);
                     $('#delta-calc-label').textContent = `Δ → ${b2} - ${val4ac} = ?`;
                 }
             },
             checkDelta() { 
-                const p = this.state.problem; const { delta } = p.coefficients; const correct = parseInt($('#delta-value').value) === delta;
+                const p = this.state.problem; const { delta } = p.coefficients; const correct = evalInput($('#delta-value').value) === delta;
                 $('#delta-value').classList.toggle('correct', correct); 
                 if(correct) {
                     $('#solutions-section').classList.remove('opacity-50', 'pointer-events-none');
@@ -2037,20 +2619,20 @@
                 }
             },
             checkSqrtDelta() { 
-                const p = this.state.problem; const { delta } = p.coefficients; const correct = Math.abs(parseFloat($('#sqrt-delta-value').value) - Math.sqrt(delta)) < 0.001;
+                const p = this.state.problem; const { delta } = p.coefficients; const correct = Math.abs(evalInput($('#sqrt-delta-value').value) - Math.sqrt(delta)) < 0.001;
                 $('#sqrt-delta-value').classList.toggle('correct', correct); if(correct) $('#step-neg-b').classList.remove('opacity-50', 'pointer-events-none');
             },
             checkNegB() { 
-                const p = this.state.problem; const { b } = p.coefficients; const correct = parseInt($('#neg-b-value').value) === -b;
+                const p = this.state.problem; const { b } = p.coefficients; const correct = evalInput($('#neg-b-value').value) === -b;
                 $('#neg-b-value').classList.toggle('correct', correct); if(correct) $('#step-two-a').classList.remove('opacity-50', 'pointer-events-none');
             },
             checkTwoA() { 
-                const p = this.state.problem; const { a } = p.coefficients; const correct = parseInt($('#two-a-value').value) === 2*a;
+                const p = this.state.problem; const { a } = p.coefficients; const correct = evalInput($('#two-a-value').value) === 2*a;
                 $('#two-a-value').classList.toggle('correct', correct); 
                 if(correct) {
                     $('#step-numerators').classList.remove('opacity-50', 'pointer-events-none');
-                    const negB = parseInt($('#neg-b-value').value);
-                    const sqrtDelta = parseFloat($('#sqrt-delta-value').value);
+                    const negB = evalInput($('#neg-b-value').value);
+                    const sqrtDelta = evalInput($('#sqrt-delta-value').value);
                     $('#num-1-label').textContent = `N₁ → ${negB} - ${sqrtDelta} = ?`;
                     $('#num-2-label').textContent = `N₂ → ${negB} + ${sqrtDelta} = ?`;
                 }
@@ -2061,8 +2643,8 @@
                 const num1 = -b - sqrtDelta;
                 const num2 = -b + sqrtDelta;
                 
-                const i1 = parseFloat($('#num-1').value);
-                const i2 = parseFloat($('#num-2').value);
+                const i1 = evalInput($('#num-1').value);
+                const i2 = evalInput($('#num-2').value);
                 
                 const c1 = Math.abs(i1 - num1) < 0.001;
                 const c2 = Math.abs(i2 - num2) < 0.001;
@@ -2082,8 +2664,8 @@
                 
                 const val1 = $('#solution-x1').value;
                 const val2 = $('#solution-x2').value;
-                const i1 = val1 ? parseFloat(val1) : NaN;
-                const i2 = val2 ? parseFloat(val2) : NaN;
+                const i1 = val1 ? evalInput(val1) : NaN;
+                const i2 = val2 ? evalInput(val2) : NaN;
                 
                 const c1 = (Math.abs(i1 - sol1) < 0.001 || Math.abs(i1 - sol2) < 0.001);
                 const c2 = (Math.abs(i2 - sol1) < 0.001 || Math.abs(i2 - sol2) < 0.001);
@@ -2110,88 +2692,61 @@
                     btn.classList.add('hidden');
                 }
             },
-            applyFormulaSolution() { 
-                const p = this.state.problem; 
-                const [sol1, sol2] = p.solutions.sort((a,b) => a-b); // Ensure sorted
-
-                if (p.category.includes('diseq')) {
-                    // Logic for inequalities
-                    // 1. Find operator in latex
-                    let op = '';
-                    if (p.latex.includes('\\ge')) op = '\\ge';
-                    else if (p.latex.includes('\\le')) op = '\\le';
-                    else if (p.latex.includes('>')) op = '>';
-                    else if (p.latex.includes('<')) op = '<';
-
-                    const isInclusive = op.includes('e'); // \le or \ge
-                    // Determine if external or internal based on 'a' and operator
-                    // Assuming standard form ax^2 + bx + c >/< 0
-                    const a = p.coefficients.a;
-                    let isExternal = false;
-                    
-                    if (a > 0) {
-                        if (op.includes('>') || op.includes('\\ge')) isExternal = true;
-                    } else {
-                        if (op.includes('<') || op.includes('\\le')) isExternal = true;
-                    }
-
-                    const symMin = isInclusive ? '\\le' : '<';
-                    const symMax = isInclusive ? '\\ge' : '>';
-
-                    if (isExternal) {
-                        // x < min ; x > max
-                        this.state.input = `x ${symMin} ${sol1}; x ${symMax} ${sol2}`;
-                    } else {
-                        // min < x < max
-                        this.state.input = `${sol1} ${symMin} x ${symMin} ${sol2}`;
-                    }
+            
+            applyFormulaSolution() {
+                const x1 = $('#solution-x1').value;
+                const x2 = $('#solution-x2').value;
+                
+                // Format solution string for main input
+                // Usually we want "x1;x2"
+                let solString = "";
+                if (x1 === x2) {
+                    solString = x1;
                 } else {
-                    // Logic for equations
-                    this.state.input = `${sol1};${sol2}`;
+                    // Try to sort numerically if possible for consistency
+                    const n1 = evalInput(x1);
+                    const n2 = evalInput(x2);
+                    if (!isNaN(n1) && !isNaN(n2) && n1 > n2) {
+                        solString = `${x2};${x1}`;
+                    } else {
+                        solString = `${x1};${x2}`;
+                    }
                 }
                 
-                this.updateInputDisplay(); 
-                this.toggleFormulaHelper(); 
-                this.submit();
+                this.state.input = solString;
+                this.state.cursorPos = solString.length;
+                this.updateInputDisplay();
+                this.toggleFormulaHelper();
             },
 
             renderMath(str, el) {
-                let tex = str || "\\phantom{0}";
+                // 1. Insert Placeholder
+                let safeStr = str || "";
+                const cursorPlaceholder = "@@CURSOR@@";
                 
-                // Inserimento cursore
-                if (this.state.cursorPos >= 0 && this.state.cursorPos <= (str || "").length) {
-                    const before = tex.substring(0, this.state.cursorPos);
-                    const after = tex.substring(this.state.cursorPos);
-                    // Cursore color oro
-                    const cursor = "{\\color{#d4b483}|}"; 
-                    
-                    tex = before + cursor + after;
-
-                    // FIX: Bilanciamento parentesi per KaTeX
-                    // Conta quante parentesi graffe sono aperte e quante chiuse
-                    const openBraces = (tex.match(/\{/g) || []).length;
-                    const closeBraces = (tex.match(/\}/g) || []).length;
-
-                    // Se ci sono più aperte che chiuse, chiudiamole fittiziamente per il rendering
-                    if (openBraces > closeBraces) {
-                        // Se siamo dentro una parentesi vuota (es. subito dopo aver premuto ^),
-                        // aggiungiamo un carattere fantasma per dare altezza corretta
-                        if (before.endsWith('{') && after === "") {
-                            tex += "\\phantom{x}";
-                        }
-                        // Chiudi tutte le parentesi mancanti
-                        tex += "}".repeat(openBraces - closeBraces);
-                    }
+                if (this.state.cursorPos >= 0 && this.state.cursorPos <= safeStr.length) {
+                    safeStr = safeStr.slice(0, this.state.cursorPos) + cursorPlaceholder + safeStr.slice(this.state.cursorPos);
                 }
-
-                // Fix visivo per input che iniziano con apice o pedice
-                if (tex.startsWith('^') || tex.startsWith('_')) tex = "{}" + tex;
+                
+                // 2. Balance Braces
+                const openCount = (safeStr.match(/\{/g) || []).length;
+                const closeCount = (safeStr.match(/\}/g) || []).length;
+                if (openCount > closeCount) {
+                    safeStr += "}".repeat(openCount - closeCount);
+                }
+                
+                // 3. Replace Placeholder with LaTeX Cursor
+                // Note: We use a pipe | inside a color block. 
+                // To prevent this specific block from messing up future logic if we were to re-parse, 
+                // we just render it now.
+                let finalTex = safeStr.replace(cursorPlaceholder, "{\\color{#d4b483}|}");
+                
+                // 4. Visual Fixes
+                if (finalTex.startsWith('^') || finalTex.startsWith('_')) finalTex = "{}" + finalTex;
                 
                 try {
-                    katex.render(tex, el, { throwOnError: false });
-                } catch(e) {
-                    el.textContent = str;
-                }
+                    katex.render(finalTex, el, { throwOnError: false });
+                } catch(e) { el.textContent = str; }
             },
 
             updateInputDisplay() {
@@ -2202,12 +2757,46 @@
                 if (this.state.cursorPos === this.state.input.length) {
                     setTimeout(() => wrapper.scrollLeft = wrapper.scrollWidth, 10);
                 }
+                
+                // Re-render keypad to update disabled states
+                this.renderKeypad();
             },
 
             insert(val) {
                 if (this.state.status === 'success') return;
                 if (this.state.status === 'error') this.clearError();
                 
+                // Check for special keywords constraint
+                if (['Impossibile', 'Indeterminata'].includes(val)) {
+                    if (this.state.input.length > 0) return; // Only allow if empty
+                }
+                
+                // Check if input is already special keyword
+                if (['Impossibile', 'Indeterminata'].includes(this.state.input)) return;
+
+                // FIX: Handle ^ specifically to avoid {}^^ issues
+                if (val === '^{') {
+                    // If user presses ^, insert ^{} and move cursor inside
+                    const left = this.state.input.slice(0, this.state.cursorPos);
+                    const right = this.state.input.slice(this.state.cursorPos);
+                    
+                    // Prevent double ^
+                    if (left.endsWith('^') || left.endsWith('^{')) return;
+
+                    this.state.input = left + '^{}' + right;
+                    this.state.cursorPos += 2; // Move past ^{
+                    this.updateInputDisplay();
+                    SoundManager.play('click');
+                    return;
+                }
+
+                // FIX: Handle x^2 button specifically
+                if (val === '^2') {
+                    const left = this.state.input.slice(0, this.state.cursorPos);
+                    // Prevent double ^
+                    if (left.endsWith('^') || left.endsWith('^{')) return;
+                }
+
                 const left = this.state.input.slice(0, this.state.cursorPos);
                 const right = this.state.input.slice(this.state.cursorPos);
                 this.state.input = left + val + right;
@@ -2218,9 +2807,33 @@
             },
             
             moveCursor(dir) {
-                this.state.cursorPos += dir;
-                if (this.state.cursorPos < 0) this.state.cursorPos = 0;
-                if (this.state.cursorPos > this.state.input.length) this.state.cursorPos = this.state.input.length;
+                // Token list to skip over
+                const tokens = ['\\le', '\\ge', '\\pm', '\\sqrt{', '^{', '}', '\\emptyset', 'Impossibile', 'Indeterminata'];
+                let newPos = this.state.cursorPos;
+
+                if (dir > 0) { // Moving Right
+                    if (newPos < this.state.input.length) {
+                        const remainder = this.state.input.slice(newPos);
+                        const token = tokens.find(t => remainder.startsWith(t));
+                        if (token) {
+                            newPos += token.length;
+                        } else {
+                            newPos += 1;
+                        }
+                    }
+                } else { // Moving Left
+                    if (newPos > 0) {
+                        const preceding = this.state.input.slice(0, newPos);
+                        const token = tokens.find(t => preceding.endsWith(t));
+                        if (token) {
+                            newPos -= token.length;
+                        } else {
+                            newPos -= 1;
+                        }
+                    }
+                }
+                
+                this.state.cursorPos = newPos;
                 this.updateInputDisplay();
             },
 
@@ -2233,9 +2846,26 @@
                         // Check if we are deleting a token like \le
                         let delLen = 1;
                         const before = this.state.input.slice(0, this.state.cursorPos);
+                        
+                        // FIX: Handle ^{} deletion to prevent artifacts
+                        if (before.endsWith('^{')) {
+                            // Check if next char is }
+                            if (this.state.input.slice(this.state.cursorPos).startsWith('}')) {
+                                // Delete ^{ and }
+                                const left = before.slice(0, -2);
+                                const right = this.state.input.slice(this.state.cursorPos + 1);
+                                this.state.input = left + right;
+                                this.state.cursorPos -= 2;
+                                this.clearError();
+                                this.updateInputDisplay();
+                                return;
+                            }
+                        }
+
                         if (before.endsWith('\\le') || before.endsWith('\\ge')) delLen = 3;
                         else if (before.endsWith('\\pm')) delLen = 3;
                         else if (before.endsWith('\\sqrt{')) delLen = 6;
+                        else if (before.endsWith('^{')) delLen = 2; // Delete opening brace of power
                         else if (before.endsWith('Impossibile')) delLen = 11;
                         else if (before.endsWith('Indeterminata')) delLen = 13;
                         
@@ -2286,18 +2916,33 @@
                 const container = $('#input-container');
                 const subTypeId = this.state.problem.subTypeId;
 
-                if (MathEngine.checkFinalAnswer(this.state.input, this.state.problem.answerKeys)) {
-                    // Update Mastery: Increase
-                    if (subTypeId) {
-                        const current = this.stats.masteryScores[subTypeId] || 0.5;
-                        this.stats.masteryScores[subTypeId] = Math.min(1.0, current + 0.1);
+                // CUSTOM MODE LOGIC
+                if (this.state.problem.category === 'custom') {
+                    if (MathEngine.checkStep(this.state.input, this.state.problem)) {
+                        // Check if it looks like a final answer (x=n or just n)
+                        // Regex checks for: x=number, x=-number, number, -number (integers or decimals)
+                        if (/^x\s*=\s*-?\d+(\.\d+)?$/.test(this.state.input) || /^-?\d+(\.\d+)?$/.test(this.state.input)) {
+                            this.triggerSuccess();
+                        } else {
+                            this.triggerStepSuccess();
+                        }
+                        return;
                     }
-                    this.triggerSuccess();
-                    return;
-                }
-                if (MathEngine.checkStep(this.state.input, this.state.problem)) {
-                    this.triggerStepSuccess();
-                    return;
+                } else {
+                    // STANDARD MODE LOGIC
+                    if (MathEngine.checkFinalAnswer(this.state.input, this.state.problem.answerKeys)) {
+                        // Update Mastery: Increase
+                        if (subTypeId) {
+                            const current = this.stats.masteryScores[subTypeId] || 0.5;
+                            this.stats.masteryScores[subTypeId] = Math.min(1.0, current + 0.1);
+                        }
+                        this.triggerSuccess();
+                        return;
+                    }
+                    if (MathEngine.checkStep(this.state.input, this.state.problem)) {
+                        this.triggerStepSuccess();
+                        return;
+                    }
                 }
 
                 // Update Mastery: Decrease
@@ -2310,6 +2955,7 @@
                 this.state.attempts++;
                 this.stats.totalWrong++;
                 
+                // Fail condition (skip for custom mode as we don't have the solution)
                 if (this.state.attempts >= 3) {
                     this.triggerFail();
                     return;
@@ -2325,18 +2971,39 @@
             },
             
             triggerFail() {
-                this.state.status = 'success'; // Treat as done
+                this.state.isSolutionShown = true;
                 const container = $('#input-container');
                 container.classList.remove('border-transparent', 'border-error');
                 container.classList.add('border-error'); // Keep red
                 
-                $('#keypad').classList.add('hidden');
+                // Show solution but keep keypad
                 $('#next-actions').classList.remove('hidden');
                 $('#next-actions').classList.add('flex');
+                
+                // Hide "Continua" button from next-actions, show "Retry" actions
+                $('#next-actions button').classList.add('hidden'); 
+                $('#retry-actions').classList.remove('hidden');
+                $('#retry-actions').classList.add('flex');
                 
                 katex.render(this.state.problem.displaySolution, $('#latex-solution'), { throwOnError: false });
                 $('#message-area').innerHTML = `<div class="text-xs text-error font-bold mt-2">Troppi errori. Ecco la soluzione.</div>`;
                 SoundManager.play('error');
+            },
+            
+            continueSolving() {
+                this.state.isSolutionShown = false;
+                this.state.status = 'idle';
+                this.state.attempts = 0; // Reset attempts to allow trying again
+                
+                $('#next-actions').classList.add('hidden');
+                $('#next-actions').classList.remove('flex');
+                $('#retry-actions').classList.add('hidden');
+                $('#retry-actions').classList.remove('flex');
+                $('#next-actions button').classList.remove('hidden'); // Restore for success
+                
+                $('#input-container').classList.remove('border-error');
+                $('#input-container').classList.add('border-transparent');
+                $('#message-area').innerHTML = "";
             },
             
             submitExamAnswer() {
@@ -2428,6 +3095,12 @@
                 }
                 this.stats.categoryStats[this.state.problem.category].completed++;
                 
+                // Restore original latex for display
+                if (this.state.problem.originalLatex) {
+                    this.state.problem.latex = this.state.problem.originalLatex;
+                    this.renderProblem();
+                }
+
                 const container = $('#input-container');
                 container.classList.remove('border-transparent', 'border-error');
                 container.classList.add('border-success');
