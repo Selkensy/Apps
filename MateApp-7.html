@@ -129,6 +129,7 @@
             padding: 0;     /* No padding */
             margin: 0;      /* No margin */
             margin-right: 1px; /* Tiny separation */
+            margin-bottom: 4px; /* Vertical separation for wrapping */
             border-radius: 2px;
             cursor: pointer;
             transition: background-color 0.1s;
@@ -160,8 +161,17 @@
             padding-top: 12px;    
             padding-bottom: 12px; 
             line-height: 3rem;    
-            touch-action: none;   
+            touch-action: none;
+            display: flex;
+            flex-wrap: wrap; /* Allow wrapping */
+            justify-content: center;
+            align-items: center;
         }
+        
+        /* Font Sizes for Equation Display */
+        .eq-size-small .katex { font-size: 1.2em; }
+        .eq-size-medium .katex { font-size: 1.6em; }
+        .eq-size-large .katex { font-size: 2.2em; }
 
         .glass-panel { 
             box-shadow: 0 0 0 1px var(--border-dim), 0 8px 30px -10px rgba(0,0,0,0.5);
@@ -296,12 +306,6 @@
             <div id="timer-display" class="hidden items-center gap-1 px-2 py-1 rounded-lg bg-bgPanel border border-borderDim text-xs font-mono text-textMain">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gold"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 <span id="timer-value">60</span>
-            </div>
-            
-            <!-- Streak -->
-            <div id="streak-badge" class="hidden items-center gap-1 px-2 py-1 rounded-lg bg-bgPanel border border-borderDim text-xs">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gold"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
-                <span id="streak-count" class="font-mono font-bold text-textMain">0</span>
             </div>
             
             <!-- Settings -->
@@ -465,7 +469,7 @@
 
                 <div class="flex-1 overflow-y-auto flex flex-col justify-center p-2 w-full relative z-0" onpointerdown="SelectionManager.clear()" style="touch-action: none;">
                     <div class="w-full flex-1 flex flex-col justify-center min-h-[80px]">
-                        <div class="w-full overflow-x-auto no-scrollbar text-center px-4 pb-4" id="latex-problem-container">
+                        <div class="w-full overflow-x-auto no-scrollbar text-center px-4 pb-4 eq-size-medium" id="latex-problem-container">
                             <!-- Custom Block Rendering Here -->
                         </div>
                         <!-- Formula display for eq2/diseq2 completa -->
@@ -567,6 +571,22 @@
 
     <!-- MODALS -->
     
+    <!-- Custom Problem Modal -->
+    <div id="custom-problem-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-bgMain/90 backdrop-blur-md" onclick="app.closeCustomProblemModal()"></div>
+        <div class="relative bg-bgPanel border border-borderDim rounded-3xl w-full max-w-md overflow-hidden flex flex-col shadow-2xl animate-scale-in">
+            <div class="p-4 border-b border-borderDim/50 flex justify-between items-center">
+                <h3 class="font-serif text-lg text-textMain">Esercizio Personalizzato</h3>
+                <button onclick="app.closeCustomProblemModal()" class="text-textMuted hover:text-textMain p-1"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+            </div>
+            <div class="p-6 space-y-4">
+                <p class="text-sm text-textMuted">Inserisci un'equazione o un'espressione da risolvere.</p>
+                <input type="text" id="custom-problem-input" class="w-full bg-bgSurface border border-borderDim rounded-xl p-3 text-textMain font-mono focus:border-gold outline-none" placeholder="Es: 2x + 5 = 15">
+                <button onclick="app.startCustomSession()" class="w-full py-3 gradient-gold text-bgMain rounded-xl font-bold uppercase tracking-wider">Crea Esercizio</button>
+            </div>
+        </div>
+    </div>
+    
     <!-- Settings Modal -->
     <div id="settings-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-bgMain/90 backdrop-blur-md" onclick="app.toggleSettings()"></div>
@@ -588,6 +608,17 @@
                     <span class="text-sm text-textMain">Mostra Formule</span>
                     <button id="formulas-toggle" onclick="app.toggleShowFormulas()" class="w-10 h-6 rounded-full bg-bgSurface relative transition-colors"><div id="formulas-knob" class="absolute top-1 left-1 w-4 h-4 rounded-full bg-textMuted transition-transform duration-200 translate-x-1"></div></button>
                 </div>
+                
+                <!-- Font Size Setting -->
+                <div class="pt-2">
+                    <label class="text-xs text-textMuted block mb-2">Visualizzazione Equazioni</label>
+                    <div class="flex gap-2">
+                        <button onclick="app.setFontSize('small')" id="fs-small" class="flex-1 py-2 rounded-lg bg-bgSurface border border-borderDim text-xs font-medium text-textMain hover:border-gold transition-colors">Piccolo</button>
+                        <button onclick="app.setFontSize('medium')" id="fs-medium" class="flex-1 py-2 rounded-lg bg-bgSurface border border-borderDim text-xs font-medium text-textMain hover:border-gold transition-colors">Medio</button>
+                        <button onclick="app.setFontSize('large')" id="fs-large" class="flex-1 py-2 rounded-lg bg-bgSurface border border-borderDim text-xs font-medium text-textMain hover:border-gold transition-colors">Grande</button>
+                    </div>
+                </div>
+
                 <div class="pt-4 border-t border-borderDim/50">
                     <label class="text-xs text-textMuted block mb-2">Durata Cronometro: <span id="timer-duration-label" class="text-gold">60s</span></label>
                     <input type="range" min="30" max="180" step="10" value="60" class="w-full" oninput="app.updateTimerDuration(this.value)">
@@ -1019,6 +1050,33 @@
             }
         };
 
+        // === TOUCH CURSOR MANAGER ===
+        const TouchCursor = {
+            init() {
+                const el = document.getElementById('input-container');
+                let startX = 0;
+                let startCursor = 0;
+                
+                el.addEventListener('touchstart', (e) => {
+                    startX = e.touches[0].clientX;
+                    startCursor = app.state.cursorPos;
+                }, {passive: true});
+
+                el.addEventListener('touchmove', (e) => {
+                    const delta = e.touches[0].clientX - startX;
+                    // Sensitivity: 1 char per 10px
+                    const charDelta = Math.round(delta / 10);
+                    let newPos = startCursor + charDelta;
+                    newPos = Math.max(0, Math.min(newPos, app.state.input.length));
+                    
+                    if (newPos !== app.state.cursorPos) {
+                        app.state.cursorPos = newPos;
+                        app.updateInputDisplay();
+                    }
+                }, {passive: true});
+            }
+        };
+
         // === CANVAS MANAGER (SCRATCHPAD) ===
         const CanvasManager = {
             canvas: null,
@@ -1232,7 +1290,8 @@
                 this.blocks = [];
                 
                 // Tokenize LaTeX into logical blocks (terms, operators)
-                const regex = /(\\[a-zA-Z]+(?:\{[^}]*\})?|[a-zA-Z]\^\{?[0-9]+\}?|[a-zA-Z]\^[0-9]|[\d\.]+|[+\-=<>()]|[a-zA-Z])/g;
+                // IMPROVED REGEX: Captures x^2 or (..)^2 as single blocks
+                const regex = /(\\[a-zA-Z]+(?:\{[^}]*\})?|[a-zA-Z0-9]+\^\{?[a-zA-Z0-9\+\-\.]+\}?|\([^\)]+\)\^\{?[0-9]+\}?|[\d\.]+|[+\-=<>()]|[a-zA-Z])/g;
                 const parts = latex.match(regex) || [];
                 
                 parts.forEach((part, index) => {
@@ -1274,20 +1333,23 @@
                     if(!this.isSelecting) return;
                     e.preventDefault(); // Stop scrolling while selecting
 
-                    // MAGNETIC SELECTION LOGIC
-                    // Find the block closest to the pointer's X coordinate
+                    // MAGNETIC SELECTION LOGIC (IMPROVED FOR MULTILINE)
+                    // Find the block closest to the pointer's coordinate (Euclidean distance)
                     let closestBlock = null;
                     let minDist = Infinity;
                     
                     // Only check blocks if pointer is somewhat near the container vertically
                     const containerRect = document.getElementById('latex-problem-container').getBoundingClientRect();
-                    const verticalBuffer = 100; // px
+                    const verticalBuffer = 150; // px
                     
                     if (e.clientY >= containerRect.top - verticalBuffer && e.clientY <= containerRect.bottom + verticalBuffer) {
                         this.blocks.forEach(block => {
                             const rect = block.el.getBoundingClientRect();
                             const centerX = rect.left + rect.width / 2;
-                            const dist = Math.abs(e.clientX - centerX);
+                            const centerY = rect.top + rect.height / 2;
+                            
+                            // Calculate 2D distance
+                            const dist = Math.hypot(e.clientX - centerX, e.clientY - centerY);
                             
                             if (dist < minDist) {
                                 minDist = dist;
@@ -1505,9 +1567,10 @@
                 this.activeInput.dispatchEvent(new Event('input', { bubbles: true }));
                 SoundManager.play('click');
 
-                // AUTO-ADVANCE LOGIC
+                // ROBUST AUTO-ADVANCE LOGIC
+                // Only advance if the input is marked as correct (green)
                 if (this.activeInput.classList.contains('correct')) {
-                    setTimeout(() => this.next(), 200);
+                    setTimeout(() => this.next(), 300);
                 }
             },
             
@@ -1648,7 +1711,23 @@
                 const userOp = getOp(input);
                 const probOp = getOp(problem.latex);
 
-                if (!userOp || !probOp) return false; // Not an equation/inequality
+                // NEW: Handle Expressions (no operators)
+                if (!probOp) {
+                    // It's an expression like (x^3+5)^2
+                    // Check if input evaluates to same value
+                    const val1 = MathEvaluator.evaluate(input, 5); // random x
+                    const val2 = MathEvaluator.evaluate(problem.latex, 5);
+                    // Check consistency with another x
+                    const val1b = MathEvaluator.evaluate(input, 12);
+                    const val2b = MathEvaluator.evaluate(problem.latex, 12);
+
+                    if (!isNaN(val1) && !isNaN(val2) && Math.abs(val1 - val2) < 0.001 && Math.abs(val1b - val2b) < 0.001) {
+                        return true; // It is equivalent
+                    }
+                    return false;
+                }
+
+                if (!userOp) return false; // Not an equation/inequality
 
                 // 2. Split into sides
                 const [uL, uR] = input.split(userOp);
@@ -1948,7 +2027,9 @@
 
                     // 2. Split sides
                     const parts = latex.split('=');
-                    if (parts.length !== 2) return "Espressione non valida";
+                    
+                    // NEW: If no equals sign, treat as expression to simplify/expand
+                    if (parts.length !== 2) return "\\text{Espressione equivalente}";
                     
                     const lhs = parts[0];
                     const rhs = parts[1];
@@ -2030,7 +2111,8 @@
                 settings: {
                     sound: false,
                     confetti: true,
-                    showFormulas: true
+                    showFormulas: true,
+                    fontSize: 'medium' // small, medium, large
                 }
             },
             
@@ -2066,6 +2148,7 @@
                 SoundManager.init();
                 CanvasManager.init();
                 DragManager.init(); // Initialize new Drag Manager
+                TouchCursor.init(); // Initialize Touch Cursor
             },
             
             loadData() {
@@ -2139,6 +2222,7 @@
                 this.updateToggle('sound', this.state.settings.sound);
                 this.updateToggle('confetti', this.state.settings.confetti);
                 this.updateToggle('formulas', this.state.settings.showFormulas);
+                this.setFontSize(this.state.settings.fontSize || 'medium');
             },
             
             updateToggle(name, value) {
@@ -2153,6 +2237,23 @@
                         knob.classList.add('translate-x-1'); knob.classList.remove('translate-x-5');
                     }
                 }
+            },
+            
+            setFontSize(size) {
+                this.state.settings.fontSize = size;
+                const container = $('#latex-problem-container');
+                container.classList.remove('eq-size-small', 'eq-size-medium', 'eq-size-large');
+                container.classList.add(`eq-size-${size}`);
+                
+                // Update buttons in settings
+                $$('#fs-small, #fs-medium, #fs-large').forEach(b => {
+                    b.classList.remove('bg-gold', 'text-bgMain');
+                    b.classList.add('bg-bgSurface', 'text-textMain');
+                });
+                $(`#fs-${size}`).classList.remove('bg-bgSurface', 'text-textMain');
+                $(`#fs-${size}`).classList.add('bg-gold', 'text-bgMain');
+                
+                this.saveData();
             },
 
             toggleSound() { this.state.settings.sound = !this.state.settings.sound; SoundManager.enabled = this.state.settings.sound; this.updateToggle('sound', this.state.settings.sound); this.saveData(); },
@@ -2330,7 +2431,6 @@
                 $('#timer-display').classList.add('hidden');
                 $('#timer-display').classList.remove('flex', 'timer-warning', 'text-error');
                 $('#challenge-progress').classList.add('hidden');
-                $('#streak-badge').classList.add('hidden');
                 $('#formula-display').classList.add('hidden');
                 $('#formula-helper-btn').classList.add('hidden');
                 
@@ -2404,7 +2504,6 @@
             skipProblem() {
                 if (this.state.status === 'success') return;
                 this.state.streak = 0;
-                $('#streak-badge').classList.add('hidden');
                 this.nextProblem();
             },
 
@@ -2577,6 +2676,9 @@
                 $('#two-a-label').textContent = `2a → 2 • (${a}) = ?`;
                 
                 requestAnimationFrame(() => { requestAnimationFrame(() => { if (targetEl) try { katex.render(mathStr, targetEl, { throwOnError: false, displayMode: true }); } catch(e) {} }); });
+
+                // AUTO FOCUS FIRST INPUT
+                setTimeout(() => ModalKeypad.focus($('#coeff-a')), 100);
             },
             checkCoefficients() { 
                 const p = this.state.problem; const { a, b, c } = p.coefficients;
@@ -2717,6 +2819,9 @@
                 this.state.cursorPos = solString.length;
                 this.updateInputDisplay();
                 this.toggleFormulaHelper();
+                
+                // Trigger full success immediately
+                this.submit();
             },
 
             renderMath(str, el) {
@@ -2924,7 +3029,9 @@
                         if (/^x\s*=\s*-?\d+(\.\d+)?$/.test(this.state.input) || /^-?\d+(\.\d+)?$/.test(this.state.input)) {
                             this.triggerSuccess();
                         } else {
-                            this.triggerStepSuccess();
+                            // NEW: For custom problems, if it's mathematically equivalent, treat as success
+                            // This fixes the issue where correct expansions were seen as just "steps"
+                            this.triggerSuccess();
                         }
                         return;
                     }
@@ -2962,7 +3069,6 @@
                 }
                 
                 this.state.streak = 0;
-                $('#streak-badge').classList.add('hidden');
                 container.classList.remove('border-transparent', 'border-step');
                 container.classList.add('border-error', 'animate-shake');
                 setTimeout(() => container.classList.remove('animate-shake'), 400);
@@ -3101,18 +3207,22 @@
                     this.renderProblem();
                 }
 
-                const container = $('#input-container');
-                container.classList.remove('border-transparent', 'border-error');
-                container.classList.add('border-success');
-                $('#badge-correct').classList.remove('hidden');
-                $('#badge-correct').classList.add('flex');
-                $('#cursor').classList.add('hidden');
-                $('#streak-count').textContent = this.state.streak;
-                $('#streak-badge').classList.remove('hidden');
-                $('#streak-badge').classList.add('flex');
+                // Disable scratchpad if active
+                if (CanvasManager.active) CanvasManager.toggle();
+
+                // UI Updates - HIDE KEYPAD FIRST to prevent stuck state
                 $('#keypad').classList.add('hidden');
                 $('#next-actions').classList.remove('hidden');
                 $('#next-actions').classList.add('flex');
+                $('#cursor').classList.add('hidden');
+                $('#badge-correct').classList.remove('hidden');
+                $('#badge-correct').classList.add('flex');
+                $('#streak-count').textContent = this.state.streak;
+
+                const container = $('#input-container');
+                container.classList.remove('border-transparent', 'border-error');
+                container.classList.add('border-success');
+                
                 katex.render(this.state.problem.displaySolution, $('#latex-solution'), { throwOnError: false });
                 
                 if (this.state.settings.confetti) {
