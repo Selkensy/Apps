@@ -1,0 +1,2443 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Photography 5.1 - Interactive Course</title> 
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap');
+
+        :root {
+            /* --- COLORI & TEMA --- */
+            
+            /* LIGHT MODE */
+            --bg-light: #f5f5f4;  /* Stone 100 */
+            --text-light: #292524; 
+            --text-light-secondary: #57534e; 
+            --card-bg-light: #ffffff;
+            --card-border-light: #e7e5e4; 
+            --accent-light: #d97706; /* Colore principale (Arancione/Ambra) */
+            --shadow-light: 0 4px 20px -2px rgba(28, 25, 23, 0.06);
+            --focus-ring-light: #f59e0b;
+            --highlight-light: #fef08a; /* Yellow highlight for vocab */
+            
+            /* Card Back Colors - Light */
+            --flip-front-bg-light: #fafaf9; 
+            --flip-back-bg-light: #e7e5e4; 
+            --flip-back-text-light: #292524;
+
+            /* Quiz Explanation Colors - Light */
+            --quiz-expl-bg-light: #f0fdf4;
+            --quiz-expl-border-light: #bbf7d0;
+            --quiz-expl-text-light: #14532d;
+
+            /* DARK MODE */
+            --bg-dark: #1c1917; /* Stone 900 */
+            --text-dark: #e7e5e4; 
+            --text-dark-secondary: #a8a29e; 
+            --card-bg-dark: #292524; 
+            --card-border-dark: #44403c; 
+            --accent-dark: #fb923c; 
+            --shadow-dark: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+            --focus-ring-dark: #fdba74;
+            --highlight-dark: #78350f; /* Darker amber for dark mode highlights */
+            
+            /* Card Back Colors - Dark */
+            --flip-front-bg-dark: #0f0e0d; 
+            --flip-back-bg-dark: #292524; 
+            --flip-back-text-dark: #e7e5e4;
+
+            /* Quiz Explanation Colors - Dark */
+            --quiz-expl-bg-dark: #14532d;
+            --quiz-expl-border-dark: #15803d;
+            --quiz-expl-text-dark: #f0fdf4;
+        }
+
+        [data-theme="light"] {
+            --bg-color: var(--bg-light); --text-color: var(--text-light); --text-secondary-color: var(--text-light-secondary); 
+            --card-bg-color: var(--card-bg-light); --accent-color: var(--accent-light);
+            --border-color: var(--card-border-light); --shadow-color: var(--shadow-light); 
+            --focus-ring-color: var(--focus-ring-light); --highlight-color: var(--highlight-light);
+            --highlight-text-color: var(--text-light);
+            --flip-front-bg: var(--flip-front-bg-light);
+            --flip-back-bg: var(--flip-back-bg-light);
+            --flip-back-text: var(--flip-back-text-light);
+            --quiz-expl-bg: var(--quiz-expl-bg-light);
+            --quiz-expl-border: var(--quiz-expl-border-light);
+            --quiz-expl-text: var(--quiz-expl-text-light);
+        }
+        [data-theme="dark"] {
+            --bg-color: var(--bg-dark); --text-color: var(--text-dark); --text-secondary-color: var(--text-dark-secondary);
+            --card-bg-color: var(--card-bg-dark); --accent-color: var(--accent-dark);
+            --border-color: var(--card-border-dark); --shadow-color: var(--shadow-dark); 
+            --focus-ring-color: var(--focus-ring-dark); --highlight-color: var(--highlight-dark);
+            --highlight-text-color: var(--text-dark);
+            --flip-front-bg: var(--flip-front-bg-dark);
+            --flip-back-bg: var(--flip-back-bg-dark);
+            --flip-back-text: var(--flip-back-text-dark);
+            --quiz-expl-bg: var(--quiz-expl-bg-dark);
+            --quiz-expl-border: var(--quiz-expl-border-dark);
+            --quiz-expl-text: var(--quiz-expl-text-dark);
+        }
+        
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html { font-size: 100%; -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+        
+        body {
+            font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color);
+            transition: background-color 0.4s ease, color 0.4s ease; -webkit-tap-highlight-color: transparent;
+            line-height: 1.8; overflow-x: hidden;
+        }
+        body.no-scroll { overflow: hidden; height: 100%; width: 100%; }
+
+        button { cursor: pointer; border: none; background: none; font-family: inherit; color: inherit; -webkit-tap-highlight-color: transparent; }
+        button:focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 2px; border-radius: 4px; }
+        button:active { transform: scale(0.98); }
+
+        .app-container { opacity: 0; transition: opacity 0.5s ease; }
+        .app-container.loaded { opacity: 1; }
+        
+        /* HEADER */
+        .header {
+            position: sticky; top: 0; z-index: 100;
+            background-color: rgba(245, 245, 244, 0.9);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid transparent;
+            transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), box-shadow 0.3s ease;
+            will-change: transform;
+        }
+        [data-theme="dark"] .header { background-color: rgba(28, 25, 23, 0.9); }
+        .header.hidden { transform: translateY(-100%); }
+        .header.scrolled { border-bottom-color: var(--border-color); box-shadow: var(--shadow-color); }
+
+        .header-content { padding: 0.75rem 1.5rem; display: flex; justify-content: space-between; align-items: center; min-height: 64px; }
+        .header-title { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1; text-align: left; margin-right: 1rem; }
+        
+        .controls { display: flex; align-items: center; gap: 0.75rem; }
+        
+        .icon-btn { display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 12px; transition: background-color 0.2s; }
+        .icon-btn:hover { background-color: var(--border-color); }
+        .icon-btn svg { width: 22px; height: 22px; color: var(--text-secondary-color); transition: color 0.3s; }
+        .icon-btn.active svg { color: var(--accent-color); }
+        
+        /* Nav Buttons Desktop */
+        .nav-buttons-desktop {
+            display: none;
+            position: fixed; bottom: 2rem; right: 2rem;
+            flex-direction: column; gap: 0.5rem;
+            z-index: 95;
+        }
+        .icon-btn.disabled { opacity: 0.3; pointer-events: none; cursor: default; }
+
+        #autoscroll-btn { display: none; }
+
+        .theme-switcher .sun-icon { display: none; } [data-theme="light"] .theme-switcher .sun-icon { display: block; }
+        .theme-switcher .moon-icon { display: none; } [data-theme="dark"] .theme-switcher .moon-icon { display: block; }
+
+        .mode-switcher { display: flex; background-color: var(--border-color); border-radius: 14px; padding: 4px; }
+        .mode-btn { font-size: 0.85rem; font-weight: 600; padding: 6px 16px; border-radius: 10px; color: var(--text-secondary-color); transition: all 0.2s ease; }
+        .mode-btn.active { background-color: var(--card-bg-color); color: var(--text-color); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .desktop-mode-switcher { display: none; }
+
+        /* TIMELINE MOBILE */
+        .progress-timeline-mobile { padding: 0 1.5rem 1rem 1.5rem; touch-action: none; }
+        .timeline-track { position: relative; width: 100%; height: 6px; background-color: var(--border-color); border-radius: 3px; cursor: pointer; }
+        .timeline-progress { position: absolute; top: 0; left: 0; height: 100%; background-color: var(--accent-color); border-radius: 3px; width: 0; transition: width 0.2s linear; will-change: width; }
+        .timeline-nodes { position: absolute; top: 50%; left: 0; width: 100%; display: flex; justify-content: space-between; pointer-events: none; }
+        .timeline-node-point {
+            width: 12px; height: 12px; border-radius: 50%; background-color: var(--border-color);
+            border: 2px solid var(--bg-color); transform: translateY(-50%); transition: transform 0.3s ease, background-color 0.3s ease;
+            pointer-events: auto;
+        }
+        .timeline-node-point.past, .timeline-node-point.active { background-color: var(--accent-color); }
+        .timeline-node-point.active { transform: translateY(-50%) scale(1.4); box-shadow: 0 0 0 4px var(--highlight-color); }
+
+        /* LAYOUT & CHAPTERS */
+        .main-layout { padding-top: 4rem; }
+        #story-panel { padding: 0 1.5rem; }
+        
+        .story-chapter {
+            min-height: 90vh; padding: 6rem 0;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0.5; transform: scale(0.98); filter: blur(1px);
+            transition: opacity 0.6s ease, transform 0.6s ease, filter 0.6s ease; 
+            border-bottom: 1px dashed var(--border-color);
+        }
+        .story-chapter:last-child { border-bottom: none; min-height: 80vh; }
+        .story-chapter.active { opacity: 1; transform: scale(1); filter: blur(0); }
+        
+        .chapter-content { max-width: 680px; width: 100%; }
+        .chapter-title { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 8vw, 3rem); color: var(--text-color); margin-bottom: 2rem; line-height: 1.15; letter-spacing: -0.02em; word-wrap: break-word;}
+        .chapter-body { font-size: 1.125rem; line-height: 2.1; color: var(--text-secondary-color); }
+        
+        .chapter-body p, .chapter-body ul, .chapter-body ol { margin-bottom: 1.5rem; }
+        .chapter-body ul, .chapter-body ol { padding-left: 1.2rem; }
+        .chapter-body li { margin-bottom: 0.75rem; padding-left: 0.5rem; }
+        .chapter-body li::marker { color: var(--accent-color); font-weight: 700; }
+        .chapter-body strong { font-weight: 700; color: var(--text-color); }
+        .chapter-body h4 { 
+            font-size: 0.95rem; margin: 2.5rem 0 1rem 0; color: var(--accent-color); 
+            text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700;
+            display: flex; align-items: center; gap: 0.5rem;
+            line-height: 1.4;
+        }
+        .chapter-body h4::after { content: ''; flex-grow: 1; height: 1px; background-color: var(--border-color); opacity: 0.5; }
+        
+        /* Custom Highlight Class from PDF content */
+        .vocab-highlight {
+            background-color: var(--highlight-color);
+            color: var(--highlight-text-color);
+            padding: 0 4px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        /* Sidebar/Note styling */
+        .margin-note {
+            border-left: 3px solid var(--accent-color);
+            padding-left: 1rem;
+            margin: 1.5rem 0;
+            font-style: italic;
+            font-size: 0.95em;
+            color: var(--text-secondary-color);
+            background: linear-gradient(90deg, var(--bg-color) 0%, transparent 100%);
+        }
+
+        /* INTERACTIVE ELEMENTS */
+        .interactive-accordion { 
+            margin: 2rem 0; border: 1px solid var(--border-color); border-radius: 16px; 
+            overflow: hidden; background-color: var(--card-bg-color); box-shadow: var(--shadow-color);
+            width: 100%;
+        }
+        .acc-item { border-bottom: 1px solid var(--border-color); }
+        .acc-item:last-child { border-bottom: none; }
+        .acc-header {
+            width: 100%; padding: 1.25rem 1.5rem; text-align: left;
+            background-color: var(--card-bg-color); font-weight: 600; color: var(--text-color);
+            display: flex; justify-content: space-between; align-items: center;
+            transition: background-color 0.2s; font-size: 1rem; line-height: 1.4;
+        }
+        .acc-header:hover { background-color: var(--bg-color); }
+        .acc-header .acc-icon { 
+            width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+            color: var(--accent-color); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            flex-shrink: 0; margin-left: 12px;
+        }
+        .acc-item.open .acc-header .acc-icon { transform: rotate(135deg); }
+        .acc-body {
+            max-height: 0; overflow: hidden; transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            background-color: var(--bg-color);
+        }
+        .acc-content { padding: 1.25rem 1.5rem; font-size: 1rem; color: var(--text-secondary-color); border-top: 1px dashed var(--border-color); line-height: 1.6; }
+
+        /* FLIP CARDS (ADAPTIVE GRID) */
+        .flip-container { 
+            margin: 2.5rem auto; 
+            perspective: 1000px; 
+            width: 100%; 
+            max-width: 500px; 
+            min-height: 350px; /* Adjusted height for content */
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+            cursor: pointer;
+            box-shadow: var(--shadow-color);
+            border-radius: 20px;
+            display: grid;
+            grid-template-areas: "card-face";
+        }
+        .flip-container.flipped .flip-card-inner { transform: rotateY(180deg); }
+        
+        .flip-front, .flip-back {
+            grid-area: card-face; 
+            width: 100%;
+            -webkit-backface-visibility: hidden; 
+            backface-visibility: hidden;
+            border-radius: 20px; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            justify-content: center; 
+            padding: 2rem;
+        }
+        
+        .flip-front { background-color: var(--flip-front-bg); border: 1px solid var(--border-color); }
+        .flip-back {
+            background-color: var(--flip-back-bg); color: var(--flip-back-text); transform: rotateY(180deg);
+        }
+        
+        .flip-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--text-color); line-height: 1.3; text-align: center; }
+        .flip-hint { 
+            font-size: 0.8rem; color: var(--accent-color); margin-top: 1.5rem; 
+            font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px;
+            opacity: 0.8; display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+        }
+        .flip-hint::after { content: '↻'; font-size: 1.2em; margin-top: -2.6px; }
+        
+        .flip-back p, .flip-back ul { color: var(--flip-back-text); font-size: 1.1rem; line-height: 1.6; margin: 0; font-weight: 500; width: 100%;}
+        .flip-back ul { text-align: left; padding-left: 1.5rem; margin-top: 0.5rem; }
+        .flip-back li { margin-bottom: 0.5rem; }
+        
+        [data-theme="light"] .flip-back li::marker { color: var(--accent-color); }
+        [data-theme="dark"] .flip-back li::marker { color: white; }
+
+        #timeline-desktop { display: none; }
+        #scroll-sentinel { position: absolute; top: 0; height: 1px; width: 1px; pointer-events: none; }
+
+        .app-footer {
+            position: fixed; bottom: 0; left: 0; width: 100%; z-index: 90;
+            display: flex; justify-content: center; 
+            padding: 1rem 1.5rem calc(1rem + env(safe-area-inset-bottom));
+            pointer-events: none;
+        }
+        .app-footer.hidden { transform: translateY(150%); }
+        .footer-mode-switcher { 
+            display: flex; pointer-events: auto;
+            background-color: rgba(255, 255, 255, 0.9); 
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); 
+            border-radius: 24px; padding: 6px; 
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        [data-theme="dark"] .footer-mode-switcher { background-color: rgba(28, 25, 23, 0.9); border-color: rgba(255,255,255,0.1); }
+
+        /* QUIZ MODE */
+        .quiz-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 200;
+            display: flex; align-items: center; justify-content: center; padding: 1rem;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            opacity: 0; transition: opacity 0.4s ease, visibility 0.4s; visibility: hidden;
+        }
+        .quiz-overlay.visible { opacity: 1; visibility: visible; }
+        .quiz-container {
+            background-color: var(--card-bg-color); border: 1px solid var(--border-color);
+            width: 96%; max-width: 600px; 
+            height: auto; max-height: 85vh;
+            border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            display: flex; flex-direction: column; overflow: hidden;
+            transform: scale(0.95) translateY(10px); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .quiz-overlay.visible .quiz-container { transform: scale(1) translateY(0); }
+        
+        .quiz-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; background-color: var(--bg-color); }
+        .quiz-title { font-weight: 600; color: var(--text-secondary-color); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .quiz-body { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; -webkit-overflow-scrolling: touch; }
+        #quiz-content-wrapper { padding: 1.5rem; display: flex; flex-direction: column; justify-content: center; min-height: 100%;}
+        
+        .quiz-slide { width: 100%; opacity: 0; transition: opacity 0.3s ease; }
+        .quiz-slide.active { opacity: 1; }
+        
+        .quiz-question-text { font-size: clamp(1.1rem, 4vw, 1.35rem); font-weight: 700; margin-bottom: 1.5rem; line-height: 1.4; color: var(--text-color); }
+        .quiz-answers { display: grid; gap: 0.75rem; }
+        .quiz-answer-btn {
+            width: 100%; padding: 1rem 1.25rem; text-align: left; background-color: var(--bg-color);
+            border: 2px solid transparent; border-radius: 16px; font-size: 1rem; font-weight: 500;
+            transition: all 0.2s ease; color: var(--text-color);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            word-break: break-word; hyphens: auto; line-height: 1.4;
+        }
+        .quiz-answer-btn:hover { background-color: var(--border-color); }
+        .quiz-answer-btn:active { transform: scale(0.98); }
+        .quiz-answer-btn.correct { background-color: #dcfce7; color: #14532d; border-color: #22c55e; }
+        [data-theme="dark"] .quiz-answer-btn.correct { background-color: #14532d; color: #f0fdf4; border-color: #22c55e; }
+        .quiz-answer-btn.incorrect { background-color: #fee2e2; color: #7f1d1d; border-color: #ef4444; }
+        [data-theme="dark"] .quiz-answer-btn.incorrect { background-color: #7f1d1d; color: #fef2f2; border-color: #ef4444; }
+        .quiz-answer-btn.disabled { opacity: 0.6; pointer-events: none; }
+        
+        .quiz-explanation {
+            margin-top: 1.5rem; padding: 1.25rem; border-radius: 12px; font-size: 1rem; line-height: 1.5;
+            background-color: var(--quiz-expl-bg); border: 1px solid var(--quiz-expl-border); color: var(--quiz-expl-text);
+            opacity: 0; transform: translateY(10px); transition: opacity 0.4s ease, transform 0.4s ease; display: none;
+        }
+        .quiz-explanation.visible { opacity: 1; transform: translateY(0); display: block; }
+
+        .quiz-footer { 
+            padding: 1.5rem; border-top: 1px solid var(--border-color); flex-shrink: 0; background-color: var(--bg-color);
+            padding-bottom: calc(1.5rem + env(safe-area-inset-bottom)/2);
+        }
+        .quiz-next-btn { width: 100%; background-color: var(--accent-color); color: white; padding: 1rem; border-radius: 14px; font-size: 1.1rem; font-weight: 600; transition: opacity 0.2s, transform 0.2s; }
+        .quiz-next-btn:active { transform: scale(0.98); }
+        .quiz-next-btn:disabled { background-color: var(--border-color); color: var(--text-secondary-color); cursor: not-allowed; transform: none; }
+
+        .quiz-results-wrapper { text-align: center; display: flex; flex-direction: column; justify-content: center; min-height: 100%; padding: 1.5rem; }
+        .quiz-results-title { font-family: 'Playfair Display', serif; font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .quiz-results-score { font-size: 3.5rem; font-weight: 800; color: var(--accent-color); line-height: 1; margin: 1rem 0; }
+        .quiz-results-text { font-size: 1.1rem; color: var(--text-secondary-color); margin-bottom: 2rem; }
+        .quiz-results-actions { display: flex; flex-direction: column; gap: 0.75rem; width: 100%; }
+        .quiz-results-actions .quiz-next-btn.secondary { background-color: transparent; border: 2px solid var(--border-color); color: var(--text-color); }
+        .quiz-results-actions .quiz-next-btn.secondary:hover { border-color: var(--text-secondary-color); }
+
+        /* DESKTOP OVERRIDES & RESPONSIVE FIXES */
+        @media (min-width: 960px) {
+            html.snap-enabled { /* CSS Snap Removed - JS Logic used */ }
+
+            .progress-timeline-mobile { display: none; }
+            .app-footer { display: none; }
+            .desktop-mode-switcher { display: flex; }
+            #autoscroll-btn { display: flex; } 
+            
+            .nav-buttons-desktop { display: flex; }
+            
+            .main-layout { 
+                display: grid; 
+                grid-template-columns: 1fr minmax(0, 680px) 1fr; 
+                gap: 2rem; 
+                max-width: 100%; 
+                margin: 0; 
+                padding: 0 2rem; 
+            }
+            
+            #timeline-desktop {
+                grid-column: 1;
+                display: flex; 
+                position: sticky; top: 0; height: 100vh;
+                align-items: center; 
+                justify-content: flex-end;
+            }
+            
+            #story-panel { grid-column: 2; padding: 0; }
+
+            .timeline-desktop-container { 
+                position: relative; 
+                width: 220px; 
+                padding: 4rem 1rem 4rem 0; 
+                display: flex; justify-content: flex-end;
+            }
+            
+            .timeline-svg {
+                position: absolute; right: 0; 
+                top: 0; height: 100%; width: 2px; overflow: visible;
+                z-index: 0;
+                pointer-events: none; 
+            }
+            .timeline-svg-line { stroke: var(--border-color); stroke-width: 2px; fill: none; }
+            .timeline-svg-progress {
+                stroke: var(--accent-color); stroke-width: 2px; fill: none; transition: stroke-dashoffset 0.4s ease;
+            }
+
+            .timeline-desktop-nodes { 
+                display: flex; flex-direction: column; gap: 1.5rem; 
+                align-items: flex-end; text-align: right; width: 100%; 
+                z-index: 1; 
+            }
+            
+            .timeline-desktop-node {
+                display: flex; align-items: center; gap: 1.5rem; padding: 0.5rem 0;
+                position: relative; transition: opacity 0.3s; flex-direction: row-reverse; 
+                width: 140%; 
+                cursor: pointer; padding-right: 15px;
+            }
+            .timeline-desktop-node:hover .node-label { color: var(--accent-color); }
+            .timeline-desktop-node .node-point {
+                width: 14px; height: 14px; border-radius: 50%; background-color: var(--border-color);
+                border: 3px solid var(--bg-color); transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); flex-shrink: 0; 
+                z-index: 2; position: relative;
+            }
+            .timeline-desktop-node::after {
+                content: ''; position: absolute; top: 0; right: -10px; bottom: 0; width: 100%; z-index: -1;
+            }
+
+            .timeline-desktop-node .node-label { 
+                font-size: 0.95rem; font-weight: 500; color: var(--text-secondary-color); 
+                transition: color 0.3s ease, transform 0.3s ease;
+                white-space: nowrap; /* Prevent wrap */
+            }
+
+            .timeline-desktop-node.active .node-point { background-color: var(--accent-color); transform: scale(1.3); box-shadow: 0 0 0 4px var(--highlight-color); }
+            .timeline-desktop-node.active .node-label { color: var(--text-color); font-weight: 700; transform: translateX(-5px); }
+            .timeline-desktop-node.past .node-point { background-color: var(--accent-color); border-color: var(--accent-color); }
+
+            .story-chapter { padding: 6rem 0; min-height: 85vh; }
+            .story-chapter:first-child { padding-top: 4rem; }
+        }
+        
+        @media (min-width: 1200px) {
+             .main-layout { gap: 4rem; }
+        }
+    </style>
+</head>
+<body>
+    <div id="scroll-sentinel"></div>
+    <div class="app-container" id="app">
+        <header class="header" id="header">
+            <div class="header-content">
+                <h1 class="header-title" id="header-title">Photography 5.1</h1>
+                <div class="controls">
+                    <div class="mode-switcher desktop-mode-switcher">
+                        <button class="mode-btn" data-mode="study">Studio</button>
+                        <button class="mode-btn" data-mode="story">Storia</button>
+                    </div>
+                    
+                    <button class="icon-btn" id="autoscroll-btn" aria-label="Attiva/Disattiva Autoscroll">
+                         <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 20V7m0 13-4-4m4 4 4-4m4-12v13m0-13 4 4m-4-4-4 4"/>
+                        </svg>
+                    </button>
+
+                     <button class="icon-btn" id="quiz-btn" aria-label="Avvia Quiz">
+                        <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 3L1 9l11 6 9-4.5V12h2V9l-11-6zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+                    </button>
+                    <button class="icon-btn theme-switcher" aria-label="Cambia Tema">
+                        <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                        <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="progress-timeline-mobile">
+                <div class="timeline-track" id="timeline-track-mobile">
+                    <div class="timeline-progress" id="timeline-progress-mobile"></div>
+                    <div class="timeline-nodes" id="timeline-nodes-mobile"></div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- DESKTOP NAV BUTTONS -->
+        <div class="nav-buttons-desktop">
+            <button class="icon-btn" id="prev-chapter-btn" aria-label="Capitolo precedente">
+                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                  <path fill-rule="evenodd" d="M5.575 13.729C4.501 15.033 5.43 17 7.12 17h9.762c1.69 0 2.618-1.967 1.544-3.271l-4.881-5.927a2 2 0 0 0-3.088 0l-4.88 5.927Z" clip-rule="evenodd"/>
+                </svg>
+            </button>
+            <button class="icon-btn" id="next-chapter-btn" aria-label="Capitolo successivo">
+                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                  <path fill-rule="evenodd" d="M18.425 10.271C19.499 8.967 18.57 7 16.88 7H7.12c-1.69 0-2.618 1.967-1.544 3.271l4.881 5.927a2 2 0 0 0 3.088 0l4.88-5.927Z" clip-rule="evenodd"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="main-layout">
+            <aside id="timeline-desktop">
+                <div class="timeline-desktop-container">
+                    <svg class="timeline-svg">
+                        <line class="timeline-svg-line" x1="1" y1="0" x2="1" y2="100%"></line>
+                        <line class="timeline-svg-progress" id="timeline-progress-desktop" x1="1" y1="0" x2="1" y2="100%"></line>
+                    </svg>
+                    <div class="timeline-desktop-nodes" id="timeline-nodes-desktop"></div>
+                </div>
+            </aside>
+            <main id="story-panel"></main>
+        </div>
+
+        <footer class="app-footer" id="app-footer">
+            <div class="mode-switcher footer-mode-switcher">
+                <button class="mode-btn" data-mode="study">Studio</button>
+                <button class="mode-btn" data-mode="story">Storia</button>
+            </div>
+        </footer>
+    </div>
+    
+    <div class="quiz-overlay" id="quiz-overlay">
+        <div class="quiz-container" id="quiz-container"></div>
+    </div>
+
+    <script>
+        /* 
+           =================================================================
+           DATI DEL CORSO: PHOTOGRAPHY 5.1
+           =================================================================
+        */
+        const learningContent = {
+            title: "5.1 Photography",
+            chapters: [
+                {
+                    id: 'page-1',
+                    title: 'Communicating with Light',
+                    description: `
+                        <h4>What is light?</h4>
+                        <p>Visible light is the only type of electromagnetic energy that we can see with the <span class="vocab-highlight">naked</span> eye. The sun is our main source of visible light, but it can also be emitted by fire, light bulbs, and other devices. Light is what gives things their visible form, shape, texture, and colour, but, over the centuries, light has been used as a form of communication, too.</p>
+
+                        <h4>Light messages</h4>
+                        <p>In ancient times, light was used to convey messages through fire, and the Romans used polished metallic <span class="vocab-highlight">plates</span> for sunlight reflection to carry out long distance signalling. Later on, ships started using used signal lamps to transmit messages in Morse code.</p>
+
+                        <h4>Light in art</h4>
+                        <p>Light and <span class="vocab-highlight">shadow</span> have always been extremely important in art to communicate concepts and have viewers focus on specific details, too. For example, Caravaggio created dramatic paintings that showed the mass of the human form and the three-dimensional experience of space through the use of <em>chiaroscuro</em>, a strong contrast of light and darkness achieved by a single directional light source that <span class="vocab-highlight">shone</span> intensely on the main subject.</p>
+
+                        <h4>Light in medicine</h4>
+                        <p>The use of light in medicine produces successful results in the treatment of a variety of illnesses, and light is necessary to the human body to avoid diseases such as <span class="vocab-highlight">rickets</span> and depression. Also, medicine has found other ways to use light: x-rays, <span class="vocab-highlight">CAT</span> and <span class="vocab-highlight">MRI</span> <span class="vocab-highlight">scans</span>, for example, would be useless were there not contrasts of light and shadows to analyse.</p>
+
+                        <h4>Light in photography</h4>
+                        <p>One of the most modern forms of communicating using light is photography. In fact, <em>drawing with light</em> is a way of describing photography: without light, there could be no photography. Since its creation, the possibilities offered by the <span class="vocab-highlight">exploitation</span> of light in photography have evolved so much that its role as a crucial form of communication is now <span class="vocab-highlight">indisputable</span>.</p>
+
+                        <div class="interactive-accordion">
+                            <div class="acc-item">
+                                <button class="acc-header">Vocabulary & Notes <span class="acc-icon">+</span></button>
+                                <div class="acc-body">
+                                    <div class="acc-content">
+                                        <ul style="list-style-type: none; padding-left: 0;">
+                                            <li><strong>CAT (Computed Axial Tomography):</strong> <em>TAC</em></li>
+                                            <li><strong>Exploitation:</strong> <em>sfruttamento</em></li>
+                                            <li><strong>Indisputable:</strong> <em>incontestabile</em></li>
+                                            <li><strong>MRI (Magnetic Resonance Imagining):</strong> <em>Risonanza Magnetica</em></li>
+                                            <li><strong>Naked:</strong> <em>nudo</em></li>
+                                            <li><strong>Plate:</strong> <em>piastra</em></li>
+                                            <li><strong>Rickets:</strong> <em>rachitismo</em></li>
+                                            <li><strong>Scan:</strong> <em>scansione</em></li>
+                                            <li><strong>Shadow:</strong> <em>ombra</em></li>
+                                            <li><strong>To shine:</strong> <em>brillare</em></li>
+                                        </ul>
+                                        <hr style="margin: 1rem 0; border: 0; border-top: 1px dashed var(--border-color);">
+                                        <p><strong>Note:</strong> The word <em>photography</em> comes from two ancient Greek words: <em>photo</em> for light and <em>graph</em> for drawing.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `,
+                    storyDescription: `
+                        <p>Imagine a world without sight. Visible light is the only electromagnetic energy we can perceive with our <span class="vocab-highlight">naked</span> eye. While the sun is our primary source, fire and artificial devices also illuminate our world. Beyond giving form and texture to objects, light has been a powerful tool for communication throughout history.</p>
+                        <p>Think back to ancient times: civilizations communicated via fire signals. The Romans, ingenious as they were, polished metallic <span class="vocab-highlight">plates</span> to reflect sunlight for long-distance messages. Centuries later, ships at sea would flash signal lamps to speak in Morse code across the dark waters.</p>
+                        <p>In the realm of art, masters like Caravaggio (1571-1610) manipulated light and <span class="vocab-highlight">shadow</span> to direct the viewer's gaze. His technique of <em>chiaroscuro</em> used a single, intense light source to carve human forms out of darkness, creating dramatic three-dimensional spaces.</p>
+                        <p>Medicine, too, relies on light. It cures illnesses like <span class="vocab-highlight">rickets</span> and depression, and through modern technology like <span class="vocab-highlight">CAT</span> and <span class="vocab-highlight">MRI</span> scans, it uses the contrast of light and shadow to peer inside the human body.</p>
+                        <p>Ultimately, this leads us to photography—literally "drawing with light". It is the modern <span class="vocab-highlight">exploitation</span> of these principles. Without light, there is no photography. Its evolution has made it an <span class="vocab-highlight">indisputable</span> pillar of modern communication.</p>
+                    `
+                },
+                {
+                    id: 'page-2',
+                    title: 'The Importance of Light',
+                    description: `
+                        <h4>Importance of light</h4>
+                        <p>Proper lighting is crucial in photography because it underlines the real colours, dimensions and features of the subject, <span class="vocab-highlight">bringing out</span> a three-dimensional image.</p>
+
+                        <h4>Sources of light</h4>
+                        <p>The sources of light may be <strong>natural</strong> or <strong>artificial</strong> and can come from different angles:</p>
+                        <ul>
+                            <li><strong>Front lighting</strong> shows details and removes <span class="vocab-highlight">shadows</span>;</li>
+                            <li><strong>Side lighting</strong> creates shadows and depth;</li>
+                            <li><strong>Back lighting</strong> generates <span class="vocab-highlight">glowing</span>, silhouettes, or aura effects.</li>
+                        </ul>
+
+                        <h4>Natural and artificial lighting</h4>
+                        <p><strong>Natural light</strong> depends on the position of the sun. At midday, sunlight falls vertically and produces <span class="vocab-highlight">harsh</span> shadows and plenty of contrast, making images often <span class="vocab-highlight">overexposed</span> and <span class="vocab-highlight">blown out</span>. In the morning and at the end of the day, the sun is closer to the horizon, so photos taken at sunset or sunrise have softer shadows. Light is not very intense, therefore sometimes a long <span class="vocab-highlight">exposure</span> is necessary to capture it.</p>
+                        <p><strong>Artificial lighting</strong> is produced with special devices, such as a studio <span class="vocab-highlight">strobe</span>, LED light, a camera's flash, a streetlight or a lamp.</p>
+
+                        <h4>Magic hours</h4>
+                        <p>Photographers use <em>magic hours</em> to define the two times of the day when sunlight is particularly suitable for taking pictures.</p>
+
+                        <div class="flip-container">
+                            <div class="flip-card-inner">
+                                <div class="flip-front">
+                                    <div class="flip-title">Magic Hours Types</div>
+                                    <div class="flip-hint">Tap to reveal details</div>
+                                </div>
+                                <div class="flip-back">
+                                    <ul>
+                                        <li><strong>The Golden Hour:</strong> Starts 30-60 minutes before sunset (or after sunrise). Light is soft, diffused, and has a golden <span class="vocab-highlight">glow</span>.</li>
+                                        <li><strong>The Blue Hour:</strong> Occurs just after sunset (or before sunrise). Lasts max 60 mins. The sun is not in the sky, so nothing <span class="vocab-highlight">casts</span> a shadow. Images have cool, blue tones.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="interactive-accordion">
+                            <div class="acc-item">
+                                <button class="acc-header">Vocabulary <span class="acc-icon">+</span></button>
+                                <div class="acc-body">
+                                    <div class="acc-content">
+                                        <ul style="list-style-type: none; padding-left: 0;">
+                                            <li><strong>Blown out:</strong> <em>bruciata</em></li>
+                                            <li><strong>Bring out:</strong> <em>mettere in evidenza</em></li>
+                                            <li><strong>Cast:</strong> <em>proiettare</em></li>
+                                            <li><strong>Exposure:</strong> <em>esposizione</em></li>
+                                            <li><strong>Glow:</strong> <em>splendore</em></li>
+                                            <li><strong>Glowing:</strong> <em>effetto di luminosità</em></li>
+                                            <li><strong>Harsh:</strong> <em>duro, violento</em></li>
+                                            <li><strong>Overexposed:</strong> <em>sovraesposta</em></li>
+                                            <li><strong>Shadow:</strong> <em>ombra</em></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `,
+                    storyDescription: `
+                        <p>In the world of photography, light is not just illumination—it is the sculptor of reality. Proper lighting <span class="vocab-highlight">brings out</span> the three-dimensional nature of a subject, underlining its true colors and features.</p>
+                        <p>Photographers must choose their source wisely. <strong>Natural light</strong> is dictated by the sun. At midday, vertical rays create <span class="vocab-highlight">harsh</span> shadows, risking <span class="vocab-highlight">blown out</span> or <span class="vocab-highlight">overexposed</span> images. Conversely, <strong>artificial lighting</strong> allows for control through strobes and LEDs.</p>
+                        <p>The angle matters immensely: <em>front lighting</em> flattens by removing <span class="vocab-highlight">shadows</span>; <em>side lighting</em> adds drama and depth; while <em>back lighting</em> creates mysterious silhouettes and glowing auras.</p>
+                        <div class="margin-note">Note: A strobe is a device that uses a flashtube for high-speed illumination.</div>
+                        <p>But the true secret lies in the <strong>Magic Hours</strong>. The <em>Golden Hour</em>, framing sunrise and sunset, bathes the world in a soft, golden <span class="vocab-highlight">glow</span>. The <em>Blue Hour</em>, occurring when the sun is just below the horizon, casts no shadows at all, wrapping the scene in cool, melancholy blue tones.</p>
+                    `
+                },
+                {
+                    id: 'page-3',
+                    title: 'From Photojournalism to Activism',
+                    description: `
+                        <p>Photojournalism uses photographs to tell stories or to report on people and events. Some of the first photojournalists captured images that are still iconic today. They captured poverty, wars, and <span class="vocab-highlight">famine</span>, as well as victories and celebrations.</p>
+                        
+                        <h4>The beginning</h4>
+                        <p>Photojournalism has its <span class="vocab-highlight">roots</span> in war photography, with Roger Fenton pioneering the field during the Crimean War. His work was published in the <em>Illustrated London News</em>, bringing these images to a large <span class="vocab-highlight">audience</span> for the first time.</p>
+
+                        <h4>The Golden Age</h4>
+                        <p>From the 1930s through to the 1970s, photojournalism saw its "golden age". Innovations like the flash bulb and new cameras (like the Leica 35mm) made photography easier to handle, and important magazines employed staffs of photographers and used the <span class="vocab-highlight">photo-essay</span> as a means <span class="vocab-highlight">to spread</span> news.</p>
+                        <p>Women became well known in the field, too. Dorothea Lange was a pioneer in documentary photography.</p>
+                        
+                        <div class="flip-container">
+                            <div class="flip-card-inner">
+                                <div class="flip-front">
+                                    <div class="flip-title">Migrant Mother</div>
+                                    <div class="flip-hint">Reveal Significance</div>
+                                </div>
+                                <div class="flip-back">
+                                    <p>The <em>Migrant Mother</em> image by Dorothea Lange became an iconic representation of the Great Depression (1929-1939) in America.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h4>From reality to emotions</h4>
+                        <p>Whereas the photojournalists of the 1930s and 1940s <span class="vocab-highlight">sought</span> to capture an impartial image of daily life, modern photographers try to capture emotions: photos have become agents for transformation and political change, rather than objects for passive contemplation. They support social and environmental awareness and they have become powerful tools to denounce poverty, <span class="vocab-highlight">pollution</span>, criminality, or far-away wars and troubles of refugees and migrant workers.</p>
+
+                        <h4>Everybody is a photojournalist</h4>
+                        <p>With so many people having access to a camera nowadays, anyone can record what is going on in the world. Our photos can spread around the web in a few hours, so anyone who wants to change the world could start with photography.</p>
+
+                        <div class="interactive-accordion">
+                            <div class="acc-item">
+                                <button class="acc-header">Vocabulary <span class="acc-icon">+</span></button>
+                                <div class="acc-body">
+                                    <div class="acc-content">
+                                        <ul style="list-style-type: none; padding-left: 0;">
+                                            <li><strong>Audience:</strong> <em>pubblico</em></li>
+                                            <li><strong>Famine:</strong> <em>carestia</em></li>
+                                            <li><strong>Photo-essay:</strong> <em>foto reportage</em></li>
+                                            <li><strong>Pollution:</strong> <em>inquinamento</em></li>
+                                            <li><strong>Root:</strong> <em>radice</em></li>
+                                            <li><strong>To seek (sought, sought):</strong> <em>cercare</em></li>
+                                            <li><strong>To spread:</strong> <em>diffondere</em></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `,
+                    storyDescription: `
+                        <p>Photojournalism is the art of storytelling through the lens. It began with <span class="vocab-highlight">roots</span> in conflict, such as Roger Fenton's coverage of the Crimean War, bringing the reality of the battlefield to a civilian <span class="vocab-highlight">audience</span> via the <em>Illustrated London News</em>.</p>
+                        <p>The "Golden Age" (1930s-1970s) brought technological leaps. The flash bulb and compact 35mm cameras like the Leica allowed for dynamic, on-the-ground reporting. Magazines embraced the <span class="vocab-highlight">photo-essay</span> <span class="vocab-highlight">to spread</span> news globally. In 1947, legends like Robert Capa and Henri Cartier-Bresson founded the Magnum Photos Agency, cementing the role of the photojournalist.</p>
+                        <p>Among these pioneers was Dorothea Lange, whose haunting image <em>Migrant Mother</em> became the symbol of the Great Depression and <span class="vocab-highlight">famine</span> in America.</p>
+                        <p>Over time, the focus shifted. While early journalists <span class="vocab-highlight">sought</span> impartiality, modern photography embraces emotion and activism. It serves to denounce <span class="vocab-highlight">pollution</span>, poverty, and war. Today, with a camera in every pocket, everybody is a photojournalist, capable of sparking global change in an instant.</p>
+                    `
+                },
+                {
+                    id: 'page-4',
+                    title: 'The Art of Advertising Photography',
+                    description: `
+                        <h4>The purpose</h4>
+                        <p>The purpose of advertising photography is to show goods and services in the most attractive way so as to encourage customers to buy them. Advertising and marketing are vital parts of sales strategy, so photography is crucial: the right one allows consumers to see the <span class="vocab-highlight">features</span>, design and details of the item and can make all the difference.</p>
+
+                        <h4>How it works</h4>
+                        <p>The job of an advertising photographer is to tell an appealing story through the use of images, colours, lighting, <span class="vocab-highlight">framing</span> and location. They may be honest representations of a product or a model, or they may include complex graphics and use the latest post-production techniques. What is sure is that it takes thousands of shots to have the perfect picture that satisfies all requirements. In fact, copywriters may spend hours creating a <span class="vocab-highlight">striking</span> slogan that makes a product stand out, but it is the image that will first attract the potential customer.</p>
+                        
+                        <p>There are two types of images that a company usually needs to market their products:</p>
+                        <ul>
+                            <li><strong>Clean images</strong> on a white background, to use for online and e-commerce stores;</li>
+                            <li><strong>Lifestyle images</strong>, which show the product associated with the consumer's everyday life.</li>
+                        </ul>
+
+                        <h4>Professionals</h4>
+                        <p>In the field of advertising photography, the skills of a professional photographer make a big difference. Expert advertising photographers work with art directors and marketing managers to bring an ad campaign to life following precise steps:</p>
+                        <ul>
+                            <li>Analyse and plan the composition of photographs</li>
+                            <li>Use different photographic techniques and light equipment</li>
+                            <li>Use photo-processing software</li>
+                            <li>Market and advertise products to attract clients</li>
+                        </ul>
+                        <p>Extraordinary advertising photographs can make a product stay on the market for a long time and improve sales, while poor quality advertising photographs will soon lose their influence on consumers.</p>
+
+                        <div class="interactive-accordion">
+                            <div class="acc-item">
+                                <button class="acc-header">Vocabulary <span class="acc-icon">+</span></button>
+                                <div class="acc-body">
+                                    <div class="acc-content">
+                                        <ul style="list-style-type: none; padding-left: 0;">
+                                            <li><strong>Feature:</strong> <em>caratteristica</em></li>
+                                            <li><strong>Framing:</strong> <em>inquadratura</em></li>
+                                            <li><strong>Off-road car:</strong> <em>fuoristrada</em></li>
+                                            <li><strong>Sedan/saloon car:</strong> <em>berlina</em></li>
+                                            <li><strong>Striking:</strong> <em>sensazionale</em></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `,
+                    storyDescription: `
+                        <p>Advertising photography is not just about documenting an object; it is about seduction. Its purpose is to showcase goods in the most attractive way possible, encouraging the customer to buy. In a crowded marketplace, the right photo highlighting the specific <span class="vocab-highlight">features</span> and design of an item can be the deciding factor.</p>
+                        <p>An advertising photographer is a storyteller. Through careful <span class="vocab-highlight">framing</span>, lighting, and post-production, they create a narrative. While copywriters might labor over a <span class="vocab-highlight">striking</span> slogan, the visual image is what captures the eye first. It often takes thousands of shots to get that one perfect image.</p>
+                        <p>Companies typically require two styles: <strong>clean images</strong> (pure product on white for e-commerce) and <strong>lifestyle images</strong> (the product in a real-life context). This requires a team effort—photographers working alongside art directors and marketing managers to plan, shoot, and process campaigns that keep products on the market for years.</p>
+                    `
+                },
+                {
+                    id: 'page-5',
+                    title: 'Photography on the Screen',
+                    description: `
+                        <h4>Definition</h4>
+                        <p>Cinematography—the art of photography on the screen—is a fusion of science and art that uses a series of images to create a motion picture. In the cinema business, the person responsible for making artistic and technical decisions related to the image is the Director of Photography (DP).</p>
+                        <div class="margin-note">Note: The word cinematography comes from the ancient Greek <em>kinema</em> (movement) and <em>gráphein</em> (to write).</div>
+
+                        <h4>The process</h4>
+                        <p>This process involves different techniques such as: general composition of a scene; lighting of the set; choice of cameras, lenses and filters; angles and movements of the camera; integration of special effects. These elements create a visual <span class="vocab-highlight">environment</span> which helps the spectators to follow the plot of the story, to understand the personality of the character and to feel immersed in the story.</p>
+
+                        <h4>The crew</h4>
+                        <p>Cinematography needs the active collaboration of many professionals: the producer, the <span class="vocab-highlight">director</span>, the designer, the sound technicians, the camera crew, the actors, and the "grips".</p>
+
+                        <h4>Shooting techniques</h4>
+                        <p>Controlling what the spectator sees and how the image is presented by choosing the right <span class="vocab-highlight">shooting</span> technique is the main job of the DP. According to the emotional strength of the scene, there are different types of shooting:</p>
+
+                        <div class="interactive-accordion">
+                            <div class="acc-item">
+                                <button class="acc-header">Types of Shots <span class="acc-icon">+</span></button>
+                                <div class="acc-body">
+                                    <div class="acc-content">
+                                        <ul>
+                                            <li><strong>Bird's eye:</strong> shows a wide area of land from a very high angle.</li>
+                                            <li><strong>Extreme long shot:</strong> captures a very wide area to show the <span class="vocab-highlight">scale</span> of subjects in relation to their environment.</li>
+                                            <li><strong>Long shot:</strong> is closer to the area where viewers can have a better look of what is going on.</li>
+                                            <li><strong>Medium shot:</strong> shows a person from the <span class="vocab-highlight">waist</span> up, it is used for general group scenes.</li>
+                                            <li><strong>Close-up shot:</strong> features the entire <span class="vocab-highlight">head</span> of the character.</li>
+                                            <li><strong>Over-the-shoulder shot:</strong> shows an out-of-focus shoulder and head in the <span class="vocab-highlight">foreground</span> and another person or object in focus in the background.</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="interactive-accordion">
+                            <div class="acc-item">
+                                <button class="acc-header">Vocabulary <span class="acc-icon">+</span></button>
+                                <div class="acc-body">
+                                    <div class="acc-content">
+                                        <ul style="list-style-type: none; padding-left: 0;">
+                                            <li><strong>Director:</strong> <em>regista</em></li>
+                                            <li><strong>Environment:</strong> <em>ambiente</em></li>
+                                            <li><strong>Head:</strong> <em>testa</em></li>
+                                            <li><strong>Foreground:</strong> <em>primo piano</em></li>
+                                            <li><strong>Scale:</strong> <em>dimensione</em></li>
+                                            <li><strong>Shooting:</strong> <em>ripresa fotografica</em></li>
+                                            <li><strong>Waist:</strong> <em>punto vita</em></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `,
+                    storyDescription: `
+                        <p>Cinematography, derived from the Greek for "writing with movement", is the fusion of science and art to create motion pictures. The artistic captain of this visual ship is the Director of Photography (DP).</p>
+                        <p>The process is complex. It involves composing scenes, lighting sets, selecting lenses, and integrating special effects to build a visual <span class="vocab-highlight">environment</span> that immerses the spectator in the plot. It is a massive team effort involving the producer, <span class="vocab-highlight">director</span>, designers, and grips (who handle the equipment support).</p>
+                        <p>The DP controls the emotional impact of a scene through specific <span class="vocab-highlight">shooting</span> techniques. They might use a <strong>Bird's eye</strong> view for geography, or an <strong>Extreme long shot</strong> to show the massive <span class="vocab-highlight">scale</span> of an environment. As they move closer, a <strong>Medium shot</strong> (from the <span class="vocab-highlight">waist</span> up) captures interaction, while a <strong>Close-up</strong> focuses entirely on the <span class="vocab-highlight">head</span> to reveal character emotion. An <strong>Over-the-shoulder</strong> shot places the viewer right in the conversation, with the <span class="vocab-highlight">foreground</span> blurred to focus on the subject.</p>
+                    `
+                },
+                {
+                    id: 'page-6',
+                    title: 'Analysing a Photograph',
+                    description: `
+                        <h4>Purpose</h4>
+                        <p>Since the power of visual images is getting more and more evident, <span class="vocab-highlight">expertise</span> in analysing and understanding a photograph is essential to distinguish its quality and value. The genres of photography are many, but every photograph has a precise aim and, as a written text, its own "syntax rules".</p>
+
+                        <h4>Main elements</h4>
+                        <p>The main useful elements to analyse a photograph are:</p>
+                        <ul>
+                            <li><strong>Technical features:</strong> light, depth of field, camera angles, exposure, choice of lens;</li>
+                            <li><strong>Composition:</strong> focal point, symmetry and harmony between the elements of the image, the rule of the thirds, <span class="vocab-highlight">perspective</span>, <span class="vocab-highlight">background</span> and colours;</li>
+                            <li><strong>Context:</strong> social, historical, geographic;</li>
+                            <li><strong>Subject:</strong> the reason why the photographer has chosen that precise image and not another;</li>
+                            <li><strong>Meaning:</strong> emotions or thoughts that the image evokes.</li>
+                        </ul>
+
+                        <h4>An example: <em>Merilda</em> by Lewis Hine (1911)</h4>
+                        <div class="flip-container">
+                            <div class="flip-card-inner">
+                                <div class="flip-front">
+                                    <div class="flip-title">Analysis of "Merilda"</div>
+                                    <div class="flip-hint">Reveal Analysis</div>
+                                </div>
+                                <div class="flip-back">
+                                    <ul>
+                                        <li><strong>Subject:</strong> A little girl picking <span class="vocab-highlight">cranberries</span>.</li>
+                                        <li><strong>Lighting:</strong> Perpendicular (likely midday).</li>
+                                        <li><strong>Composition:</strong> Girl in foreground (focal point), subject in center, background <span class="vocab-highlight">blurred</span> (short depth of field). Asymmetrical.</li>
+                                        <li><strong>Meaning:</strong> Highlights child labor exploitation in early 20th century USA.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="interactive-accordion">
+                            <div class="acc-item">
+                                <button class="acc-header">Vocabulary <span class="acc-icon">+</span></button>
+                                <div class="acc-body">
+                                    <div class="acc-content">
+                                        <ul style="list-style-type: none; padding-left: 0;">
+                                            <li><strong>Background:</strong> <em>sfondo</em></li>
+                                            <li><strong>Blurred:</strong> <em>sfocato</em></li>
+                                            <li><strong>Cranberry:</strong> <em>mirtillo rosso</em></li>
+                                            <li><strong>Expertise:</strong> <em>abilità</em></li>
+                                            <li><strong>Perspective:</strong> <em>prospettiva</em></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `,
+                    storyDescription: `
+                        <p>In a world saturated with images, developing the <span class="vocab-highlight">expertise</span> to analyze photography is essential. Just like written text has grammar, photography has syntax.</p>
+                        <p>To analyze a photo, one must look at technical features (light, exposure), composition (symmetry, rule of thirds, <span class="vocab-highlight">perspective</span>), context, subject, and meaning.</p>
+                        <p>Consider the photo <em>Merilda</em> by Lewis Hine, taken in 1911. It depicts a young girl picking <span class="vocab-highlight">cranberries</span>. The black and white image uses perpendicular lighting, suggesting midday. The composition places the girl in the center <span class="vocab-highlight">foreground</span>, making her the focal point while the workers in the <span class="vocab-highlight">background</span> remain <span class="vocab-highlight">blurred</span> due to a short depth of field. This artistic choice wasn't just aesthetic; Hine's intention was to focus undeniable attention on the social deprivation and exploitation of child labor in the United States.</p>
+                    `
+                }
+            ]
+        };
+
+        /* 
+   =================================================================
+   DATI DEL QUIZ (MASSIVE EXPANSION)
+   =================================================================
+		*/
+		const quizData = [
+			// --- PAGE 1: WHAT IS LIGHT? ---
+			{
+				question: "What is the only type of electromagnetic energy visible to the naked eye?",
+				options: ["Visible light", "X-rays", "Radio waves", "Gamma rays"],
+				correctAnswer: "Visible light",
+				explanation: "Visible light is the only type of electromagnetic energy that we can see with the naked eye."
+			},
+			{
+				question: "What is the main source of visible light for Earth?",
+				options: ["The Sun", "Fire", "Light bulbs", "The Moon"],
+				correctAnswer: "The Sun",
+				explanation: "The sun is our main source of visible light."
+			},
+			{
+				question: "Can visible light be emitted by fire?",
+				options: ["Yes", "No", "Only if chemically treated", "Only at night"],
+				correctAnswer: "Yes",
+				explanation: "It can also be emitted by fire, light bulbs, and other devices."
+			},
+			{
+				question: "What gives things their visible form, shape, texture, and colour?",
+				options: ["Light", "Gravity", "The human eye", "Camera lenses"],
+				correctAnswer: "Light",
+				explanation: "Light is what gives things their visible form, shape, texture, and colour."
+			},
+			{
+				question: "Besides illumination, what has light been used for over the centuries?",
+				options: ["Communication", "Propulsion", "Cooking only", "Sound transmission"],
+				correctAnswer: "Communication",
+				explanation: "Over the centuries, light has been used as a form of communication, too."
+			},
+			// --- PAGE 1: LIGHT MESSAGES ---
+			{
+				question: "In ancient times, what was used to convey messages through light?",
+				options: ["Fire", "LEDs", "Lasers", "Glass mirrors"],
+				correctAnswer: "Fire",
+				explanation: "In ancient times, light was used to convey messages through fire."
+			},
+			{
+				question: "Which civilization used polished metallic plates for sunlight reflection?",
+				options: ["The Romans", "The Greeks", "The Egyptians", "The Mayans"],
+				correctAnswer: "The Romans",
+				explanation: "The Romans used polished metallic plates for sunlight reflection to carry out long distance signalling."
+			},
+			{
+				question: "What was the purpose of the Romans using polished metallic plates?",
+				options: ["Long distance signalling", "Lighting fires", "Blinding enemies", "Heating water"],
+				correctAnswer: "Long distance signalling",
+				explanation: "They used them to carry out long distance signalling."
+			},
+			{
+				question: "What did ships use to transmit messages later in history?",
+				options: ["Signal lamps", "Flares", "Radio only", "Flags only"],
+				correctAnswer: "Signal lamps",
+				explanation: "Later on, ships started using used signal lamps to transmit messages."
+			},
+			{
+				question: "What code was transmitted using signal lamps on ships?",
+				options: ["Morse code", "Binary code", "Enigma code", "ASCII"],
+				correctAnswer: "Morse code",
+				explanation: "Ships started using signal lamps to transmit messages in Morse code."
+			},
+			// --- PAGE 1: LIGHT IN ART ---
+			{
+				question: "Why have light and shadow been important in art?",
+				options: ["To communicate concepts and focus details", "To save paint", "To make canvas cheaper", "To hide mistakes"],
+				correctAnswer: "To communicate concepts and focus details",
+				explanation: "Light and shadow have always been extremely important in art to communicate concepts and have viewers focus on specific details."
+			},
+			{
+				question: "Who was Caravaggio?",
+				options: ["An Italian artist (1571-1610)", "A French photographer", "A Roman soldier", "A Greek philosopher"],
+				correctAnswer: "An Italian artist (1571-1610)",
+				explanation: "Caravaggio was an Italian artist (1571-1610)."
+			},
+			{
+				question: "What technique did Caravaggio use to create dramatic paintings?",
+				options: ["Chiaroscuro", "Pointillism", "Impressionism", "Surrealism"],
+				correctAnswer: "Chiaroscuro",
+				explanation: "Caravaggio created dramatic paintings... through the use of chiaroscuro."
+			},
+			{
+				question: "What is 'chiaroscuro'?",
+				options: ["A strong contrast of light and darkness", "A type of brush", "A colorful mosaic", "A painting of nature"],
+				correctAnswer: "A strong contrast of light and darkness",
+				explanation: "Chiaroscuro is a strong contrast of light and darkness achieved by a single directional light source."
+			},
+			{
+				question: "In Caravaggio's work, how was the light source described?",
+				options: ["Single directional and intense", "Soft and diffused", "Coming from everywhere", "Blue and cold"],
+				correctAnswer: "Single directional and intense",
+				explanation: "Achieved by a single directional light source that shone intensely on the main subject."
+			},
+			// --- PAGE 1: LIGHT IN MEDICINE ---
+			{
+				question: "Is light used in the treatment of illnesses?",
+				options: ["Yes, successfully", "No, it is dangerous", "Only for skin", "Only for eyes"],
+				correctAnswer: "Yes, successfully",
+				explanation: "The use of light in medicine produces successful results in the treatment of a variety of illnesses."
+			},
+			{
+				question: "Light is necessary to the human body to avoid which disease?",
+				options: ["Rickets", "Malaria", "Flu", "Diabetes"],
+				correctAnswer: "Rickets",
+				explanation: "Light is necessary to the human body to avoid diseases such as rickets and depression."
+			},
+			{
+				question: "Besides rickets, what other condition does light help avoid?",
+				options: ["Depression", "Anxiety", "Hypertension", "Insomnia"],
+				correctAnswer: "Depression",
+				explanation: "Light is necessary to the human body to avoid diseases such as rickets and depression."
+			},
+			{
+				question: "Which of these medical technologies relies on light and shadow contrasts?",
+				options: ["CAT and MRI scans", "Stethoscopes", "Blood pressure cuffs", "Scalpels"],
+				correctAnswer: "CAT and MRI scans",
+				explanation: "X-rays, CAT and MRI scans, for example, would be useless were there not contrasts of light and shadows to analyse."
+			},
+			// --- PAGE 1: LIGHT IN PHOTOGRAPHY ---
+			{
+				question: "What is considered one of the most modern forms of communicating using light?",
+				options: ["Photography", "Painting", "Sculpture", "Writing"],
+				correctAnswer: "Photography",
+				explanation: "One of the most modern forms of communicating using light is photography."
+			},
+			{
+				question: "How is photography sometimes described?",
+				options: ["Drawing with light", "Painting with numbers", "Capturing souls", "Freezing time"],
+				correctAnswer: "Drawing with light",
+				explanation: "In fact, drawing with light is a way of describing photography."
+			},
+			{
+				question: "Without light, can there be photography?",
+				options: ["No", "Yes, with high ISO", "Yes, with night vision", "Maybe"],
+				correctAnswer: "No",
+				explanation: "Without light, there could be no photography."
+			},
+			{
+				question: "The role of light in photography as a form of communication is now considered...",
+				options: ["Indisputable", "Debatable", "Irrelevant", "Minor"],
+				correctAnswer: "Indisputable",
+				explanation: "Its role as a crucial form of communication is now indisputable."
+			},
+			{
+				question: "What is the origin of the word 'photography'?",
+				options: ["Greek: photo (light) + graph (drawing)", "Latin: photo (picture) + graph (writing)", "Greek: photo (image) + graph (recording)", "Latin: photo (light) + graph (seeing)"],
+				correctAnswer: "Greek: photo (light) + graph (drawing)",
+				explanation: "The word photography comes from two ancient Greek words: photo for light and graph for drawing."
+			},
+			// --- PAGE 1: VOCABULARY MATCHING ---
+			{
+				question: "Translate: CAT (Computed Axial Tomography)",
+				options: ["TAC", "Risonanza", "Ecografia", "Lastra"],
+				correctAnswer: "TAC",
+				explanation: "CAT matches with TAC."
+			},
+			{
+				question: "Translate: Exploitation",
+				options: ["Sfruttamento", "Esplosione", "Esplorazione", "Esposizione"],
+				correctAnswer: "Sfruttamento",
+				explanation: "Exploitation means Sfruttamento."
+			},
+			{
+				question: "Translate: Indisputable",
+				options: ["Incontestabile", "Indispensabile", "Indistruttibile", "Invisibile"],
+				correctAnswer: "Incontestabile",
+				explanation: "Indisputable means Incontestabile."
+			},
+			{
+				question: "Translate: MRI",
+				options: ["Risonanza Magnetica", "Raggi X", "TAC", "Ecografia"],
+				correctAnswer: "Risonanza Magnetica",
+				explanation: "MRI means Risonanza Magnetica."
+			},
+			{
+				question: "Translate: Naked (eye)",
+				options: ["Nudo", "Aperto", "Attento", "Chiuso"],
+				correctAnswer: "Nudo",
+				explanation: "Naked means Nudo."
+			},
+			{
+				question: "Translate: Plate",
+				options: ["Piastra", "Piatto", "Piano", "Piazza"],
+				correctAnswer: "Piastra",
+				explanation: "Plate means Piastra."
+			},
+			{
+				question: "Translate: Rickets",
+				options: ["Rachitismo", "Ricchezza", "Rigidità", "Rischio"],
+				correctAnswer: "Rachitismo",
+				explanation: "Rickets means Rachitismo."
+			},
+			{
+				question: "Translate: Scan",
+				options: ["Scansione", "Scatto", "Scala", "Scena"],
+				correctAnswer: "Scansione",
+				explanation: "Scan means Scansione."
+			},
+			{
+				question: "Translate: Shadow",
+				options: ["Ombra", "Luce", "Sole", "Notte"],
+				correctAnswer: "Ombra",
+				explanation: "Shadow means Ombra."
+			},
+			{
+				question: "Translate: To shine",
+				options: ["Brillare", "Bruciare", "Spegnere", "Scurire"],
+				correctAnswer: "Brillare",
+				explanation: "To shine means Brillare."
+			},
+			// --- PAGE 2: IMPORTANCE OF LIGHT ---
+			{
+				question: "Why is proper lighting crucial in photography?",
+				options: ["It underlines real colours and dimensions", "It makes cameras cheaper", "It removes the subject", "It changes the subject's clothes"],
+				correctAnswer: "It underlines real colours and dimensions",
+				explanation: "It underlines the real colours, dimensions and features of the subject."
+			},
+			{
+				question: "What effect does proper lighting bring out?",
+				options: ["A three-dimensional image", "A flat image", "A black and white image", "A blurry image"],
+				correctAnswer: "A three-dimensional image",
+				explanation: "Bringing out a three-dimensional image."
+			},
+			// --- PAGE 2: SOURCES OF LIGHT ---
+			{
+				question: "What are the two main categories of light sources?",
+				options: ["Natural and Artificial", "Sun and Moon", "Fire and Electric", "Good and Bad"],
+				correctAnswer: "Natural and Artificial",
+				explanation: "The sources of light may be natural or artificial."
+			},
+			{
+				question: "What does front lighting do?",
+				options: ["Shows details and removes shadows", "Creates shadows and depth", "Generates silhouettes", "Makes the image blue"],
+				correctAnswer: "Shows details and removes shadows",
+				explanation: "Front lighting shows details and removes shadows."
+			},
+			{
+				question: "What does side lighting create?",
+				options: ["Shadows and depth", "Flatness", "Silhouettes", "Overexposure"],
+				correctAnswer: "Shadows and depth",
+				explanation: "Side lighting creates shadows and depth."
+			},
+			{
+				question: "What does back lighting generate?",
+				options: ["Glowing, silhouettes, or aura effects", "High details", "Removed shadows", "Flat colours"],
+				correctAnswer: "Glowing, silhouettes, or aura effects",
+				explanation: "Back lighting generates glowing, silhouettes, or aura effects."
+			},
+			{
+				question: "If you want to remove shadows, which lighting should you use?",
+				options: ["Front lighting", "Side lighting", "Back lighting", "No lighting"],
+				correctAnswer: "Front lighting",
+				explanation: "Front lighting shows details and removes shadows."
+			},
+			{
+				question: "If you want to create silhouettes, which lighting should you use?",
+				options: ["Back lighting", "Front lighting", "Side lighting", "Overhead lighting"],
+				correctAnswer: "Back lighting",
+				explanation: "Back lighting generates glowing, silhouettes, or aura effects."
+			},
+			// --- PAGE 2: NATURAL LIGHT ---
+			{
+				question: "What does natural light depend on?",
+				options: ["The position of the sun", "The moon phase", "The weather forecast", "The camera settings"],
+				correctAnswer: "The position of the sun",
+				explanation: "Natural light depends on the position of the sun."
+			},
+			{
+				question: "What kind of shadows does midday sunlight produce?",
+				options: ["Harsh shadows", "Soft shadows", "No shadows", "Blue shadows"],
+				correctAnswer: "Harsh shadows",
+				explanation: "At midday, sunlight falls vertically and produces harsh shadows."
+			},
+			{
+				question: "What is a risk of taking photos at midday?",
+				options: ["Images can be overexposed and blown out", "Images will be too dark", "The camera will overheat", "The subject will disappear"],
+				correctAnswer: "Images can be overexposed and blown out",
+				explanation: "Making images often overexposed and blown out."
+			},
+			{
+				question: "When is the sun closer to the horizon?",
+				options: ["In the morning and at the end of the day", "At midday", "At midnight", "It is never close to the horizon"],
+				correctAnswer: "In the morning and at the end of the day",
+				explanation: "In the morning and at the end of the day, the sun is closer to the horizon."
+			},
+			{
+				question: "How are shadows at sunset or sunrise compared to midday?",
+				options: ["Softer", "Harsh", "Non-existent", "Darker"],
+				correctAnswer: "Softer",
+				explanation: "Photos taken at sunset or sunrise have softer shadows."
+			},
+			{
+				question: "If light is not very intense at sunrise/sunset, what might be necessary?",
+				options: ["A long exposure", "A fast shutter speed", "A smaller aperture", "A darker lens"],
+				correctAnswer: "A long exposure",
+				explanation: "Light is not very intense, therefore sometimes a long exposure is necessary to capture it."
+			},
+			// --- PAGE 2: ARTIFICIAL LIGHT ---
+			{
+				question: "Which of the following is a source of artificial lighting?",
+				options: ["Studio strobe", "The Sun", "Moonlight", "Stars"],
+				correctAnswer: "Studio strobe",
+				explanation: "Artificial lighting is produced with special devices, such as a studio strobe."
+			},
+			{
+				question: "What is a strobe?",
+				options: ["A device using a flashtube for high-speed illumination", "A type of camera lens", "A tripod", "A computer software"],
+				correctAnswer: "A device using a flashtube for high-speed illumination",
+				explanation: "A strobe is a device that uses a flashtube for high-speed illumination."
+			},
+			{
+				question: "When is artificial lighting usually preferred?",
+				options: ["Commercial products and fashion photography", "Landscape photography", "Wildlife photography", "Sports photography"],
+				correctAnswer: "Commercial products and fashion photography",
+				explanation: "Artificial lighting is usually preferred for commercial products and fashion photography."
+			},
+			{
+				question: "What condition often accompanies the use of artificial lighting in commercial photography?",
+				options: ["A large budget", "A small budget", "No budget", "Natural settings"],
+				correctAnswer: "A large budget",
+				explanation: "Preferred... when there is a large budget to create the photo."
+			},
+			// --- PAGE 2: MAGIC HOURS ---
+			{
+				question: "What are 'magic hours'?",
+				options: ["Two times of day when sunlight is suitable for photos", "The time when ghosts appear", "Midnight", "Noon"],
+				correctAnswer: "Two times of day when sunlight is suitable for photos",
+				explanation: "Photographers use magic hours to define the two times of the day when sunlight is particularly suitable for taking pictures."
+			},
+			{
+				question: "When does the 'golden hour' start?",
+				options: ["30-60 minutes before sunset", "At noon", "After sunset", "At midnight"],
+				correctAnswer: "30-60 minutes before sunset",
+				explanation: "The golden hour starts 30-60 minutes before sunset."
+			},
+			{
+				question: "What characterizes the light during the golden hour?",
+				options: ["Soft, diffused, golden glow", "Harsh and white", "Blue and cold", "Dark and scary"],
+				correctAnswer: "Soft, diffused, golden glow",
+				explanation: "The light is soft and diffused and has a characteristic golden glow."
+			},
+			{
+				question: "When does the 'blue hour' occur?",
+				options: ["Just after sunset", "Before noon", "During the afternoon", "At sunrise only"],
+				correctAnswer: "Just after sunset",
+				explanation: "The blue hour occurs just after sunset."
+			},
+			{
+				question: "How long does the blue hour last?",
+				options: ["Maximum 60 minutes", "3 hours", "10 minutes", "All night"],
+				correctAnswer: "Maximum 60 minutes",
+				explanation: "Lasts for maximum 60 minutes."
+			},
+			{
+				question: "Does the blue hour cast shadows?",
+				options: ["No, nothing casts a shadow", "Yes, long shadows", "Yes, harsh shadows", "Only objects cast shadows"],
+				correctAnswer: "No, nothing casts a shadow",
+				explanation: "The sun is not in the sky anymore, so nothing casts a shadow."
+			},
+			{
+				question: "What tones characterize the blue hour?",
+				options: ["Cool, blue tones", "Warm, orange tones", "Black and white", "Green tones"],
+				correctAnswer: "Cool, blue tones",
+				explanation: "The images are soft and characterised by cool, blue tones."
+			},
+			{
+				question: "Do magic hours apply to sunrise?",
+				options: ["Yes, but in reverse", "No, only sunset", "Only golden hour applies", "Only blue hour applies"],
+				correctAnswer: "Yes, but in reverse",
+				explanation: "The same logic applies to the sunrise, but it works in reverse."
+			},
+			{
+				question: "At sunrise, which magic hour comes first?",
+				options: ["Blue hour", "Golden hour", "Magic hour", "Noon"],
+				correctAnswer: "Blue hour",
+				explanation: "The magic hours start with the blue hour and gradually move into the golden hour."
+			},
+			// --- PAGE 2: VOCABULARY MATCHING ---
+			{
+				question: "Translate: Blown out",
+				options: ["Bruciata", "Spenta", "Soffiata", "Blu"],
+				correctAnswer: "Bruciata",
+				explanation: "Blown out means Bruciata."
+			},
+			{
+				question: "Translate: Bring out",
+				options: ["Mettere in evidenza", "Portare fuori", "Nascondere", "Cancellare"],
+				correctAnswer: "Mettere in evidenza",
+				explanation: "Bring out means Mettere in evidenza."
+			},
+			{
+				question: "Translate: Cast",
+				options: ["Proiettare", "Castello", "Caso", "Cesto"],
+				correctAnswer: "Proiettare",
+				explanation: "Cast means Proiettare."
+			},
+			{
+				question: "Translate: Exposure",
+				options: ["Esposizione", "Esplosione", "Esportazione", "Esperimento"],
+				correctAnswer: "Esposizione",
+				explanation: "Exposure means Esposizione."
+			},
+			{
+				question: "Translate: Glow",
+				options: ["Splendore", "Globo", "Giallo", "Gloria"],
+				correctAnswer: "Splendore",
+				explanation: "Glow means Splendore."
+			},
+			{
+				question: "Translate: Glowing",
+				options: ["Effetto di luminosità", "Crescita", "Andando", "Guanto"],
+				correctAnswer: "Effetto di luminosità",
+				explanation: "Glowing means Effetto di luminosità."
+			},
+			{
+				question: "Translate: Harsh",
+				options: ["Duro, violento", "Morbido", "Allegro", "Caldo"],
+				correctAnswer: "Duro, violento",
+				explanation: "Harsh means Duro, violento."
+			},
+			{
+				question: "Translate: Overexposed",
+				options: ["Sovraesposta", "Sottoesposta", "Oscura", "Opaca"],
+				correctAnswer: "Sovraesposta",
+				explanation: "Overexposed means Sovraesposta."
+			},
+			// --- PAGE 3: PHOTOJOURNALISM INTRO ---
+			{
+				question: "What is the purpose of photojournalism?",
+				options: ["To tell stories or report on people/events", "To sell products", "To create abstract art", "To take selfies"],
+				correctAnswer: "To tell stories or report on people/events",
+				explanation: "Photojournalism uses photographs to tell stories or to report on people and events."
+			},
+			{
+				question: "What did early photojournalists capture?",
+				options: ["Poverty, wars, famine, victories", "Only landscapes", "Only wealthy people", "Only animals"],
+				correctAnswer: "Poverty, wars, famine, victories",
+				explanation: "They captured poverty, wars, and famine, as well as victories and celebrations."
+			},
+			{
+				question: "What does the 'Migrant Mother' image represent?",
+				options: ["The Great Depression in America", "The Civil War", "World War II", "The Gold Rush"],
+				correctAnswer: "The Great Depression in America",
+				explanation: "Migrant Mother image became an iconic representation of the Great Depression in America."
+			},
+			{
+				question: "Who founded Magnum Photos Agency?",
+				options: ["Robert Capa, David Seymour, Henri Cartier-Bresson", "Dorothea Lange, Lewis Hine", "Roger Fenton", "Ansel Adams"],
+				correctAnswer: "Robert Capa, David Seymour, Henri Cartier-Bresson",
+				explanation: "In 1947, photojournalists Robert Capa, David 'Chim' Seymour, and Henri Cartier-Bresson created Magnum Photos Agency."
+			},
+			{
+				question: "When was Magnum Photos Agency created?",
+				options: ["1947", "1929", "1939", "1955"],
+				correctAnswer: "1947",
+				explanation: "In 1947... created Magnum Photos Agency."
+			},
+			// --- PAGE 3: THE BEGINNING ---
+			{
+				question: "Where does photojournalism have its roots?",
+				options: ["In war photography", "In fashion photography", "In sports photography", "In landscape photography"],
+				correctAnswer: "In war photography",
+				explanation: "Photojournalism has its roots in war photography."
+			},
+			{
+				question: "Who pioneered photojournalism during the Crimean War?",
+				options: ["Roger Fenton", "Robert Capa", "Dorothea Lange", "Lewis Hine"],
+				correctAnswer: "Roger Fenton",
+				explanation: "With Roger Fenton pioneering the field during the Crimean War."
+			},
+			{
+				question: "Where was Roger Fenton's work published?",
+				options: ["Illustrated London News", "New York Times", "National Geographic", "Vogue"],
+				correctAnswer: "Illustrated London News",
+				explanation: "His work was published in the Illustrated London News."
+			},
+			{
+				question: "What was significant about Fenton's publication?",
+				options: ["It brought images to a large audience for the first time", "It was in color", "It was digital", "It was anonymous"],
+				correctAnswer: "It brought images to a large audience for the first time",
+				explanation: "Bringing these images to a large audience for the first time."
+			},
+			// --- PAGE 3: THE GOLDEN AGE ---
+			{
+				question: "When was the 'Golden Age' of photojournalism?",
+				options: ["1930s to 1970s", "1900 to 1920", "1980 to 2000", "2000 to present"],
+				correctAnswer: "1930s to 1970s",
+				explanation: "From the 1930s through to the 1970s, photojournalism saw its 'golden age'."
+			},
+			{
+				question: "What innovations helped photojournalism during the Golden Age?",
+				options: ["Flash bulb and new cameras", "Drones", "Digital sensors", "Photoshop"],
+				correctAnswer: "Flash bulb and new cameras",
+				explanation: "Innovations like the flash bulb and new cameras made photography easier to handle."
+			},
+			{
+				question: "What specific format did magazines use to spread news?",
+				options: ["The photo-essay", "The blog post", "The tweet", "The single photo"],
+				correctAnswer: "The photo-essay",
+				explanation: "Used the photo-essay as a means to spread news."
+			},
+			{
+				question: "Who was a pioneer in documentary photography mentioned in the text?",
+				options: ["Dorothea Lange", "Annie Leibovitz", "Vivian Maier", "Cindy Sherman"],
+				correctAnswer: "Dorothea Lange",
+				explanation: "Dorothea Lange was a pioneer in documentary photography."
+			},
+			{
+				question: "What was the Leica famous for?",
+				options: ["First compact camera for landscapes using 35mm film", "First digital camera", "First video camera", "First drone"],
+				correctAnswer: "First compact camera for landscapes using 35mm film",
+				explanation: "The Leica was the first compact camera for landscapes that used standard cinema 35 mm film."
+			},
+			{
+				question: "When was the Great Depression?",
+				options: ["1929-1939", "1914-1918", "1939-1945", "1950-1960"],
+				correctAnswer: "1929-1939",
+				explanation: "The Great Depression refers to the years between 1929 and 1939."
+			},
+			// --- PAGE 3: MODERN PHOTOGRAPHY & ACTIVISM ---
+			{
+				question: "What did photojournalists of the 1930s and 40s seek to capture?",
+				options: ["An impartial image of daily life", "Abstract emotions", "Staged realities", "Digital art"],
+				correctAnswer: "An impartial image of daily life",
+				explanation: "Sought to capture an impartial image of daily life."
+			},
+			{
+				question: "What do modern photographers try to capture?",
+				options: ["Emotions", "Facts only", "Black and white only", "Still life"],
+				correctAnswer: "Emotions",
+				explanation: "Modern photographers try to capture emotions."
+			},
+			{
+				question: "How have photos changed in their role?",
+				options: ["Agents for transformation and political change", "Passive objects", "Just decoration", "Irrelevant"],
+				correctAnswer: "Agents for transformation and political change",
+				explanation: "Photos have become agents for transformation and political change, rather than objects for passive contemplation."
+			},
+			{
+				question: "What do modern photos support?",
+				options: ["Social and environmental awareness", "Commercial sales only", "Government propaganda", "Nothing"],
+				correctAnswer: "Social and environmental awareness",
+				explanation: "They support social and environmental awareness."
+			},
+			{
+				question: "What are powerful tools to denounce poverty and pollution?",
+				options: ["Photos", "Paintings", "Radio", "Statues"],
+				correctAnswer: "Photos",
+				explanation: "They have become powerful tools to denounce poverty, pollution, criminality..."
+			},
+			{
+				question: "Why can 'everybody' be a photojournalist today?",
+				options: ["Many people have access to a camera", "Cameras are free", "You need a license", "Newspapers hire everyone"],
+				correctAnswer: "Many people have access to a camera",
+				explanation: "With so many people having access to a camera nowadays, anyone can record what is going on."
+			},
+			// --- PAGE 3: VOCABULARY MATCHING ---
+			{
+				question: "Translate: Audience",
+				options: ["Pubblico", "Audio", "Aula", "Attore"],
+				correctAnswer: "Pubblico",
+				explanation: "Audience means Pubblico."
+			},
+			{
+				question: "Translate: Famine",
+				options: ["Carestia", "Fame", "Famiglia", "Fantasma"],
+				correctAnswer: "Carestia",
+				explanation: "Famine means Carestia."
+			},
+			{
+				question: "Translate: Photo-essay",
+				options: ["Foto reportage", "Foto saggio", "Foto tessera", "Foto di gruppo"],
+				correctAnswer: "Foto reportage",
+				explanation: "Photo-essay means Foto reportage."
+			},
+			{
+				question: "Translate: Pollution",
+				options: ["Inquinamento", "Polizia", "Popolazione", "Polvere"],
+				correctAnswer: "Inquinamento",
+				explanation: "Pollution means Inquinamento."
+			},
+			{
+				question: "Translate: Root",
+				options: ["Radice", "Rotta", "Ruota", "Rosso"],
+				correctAnswer: "Radice",
+				explanation: "Root means Radice."
+			},
+			{
+				question: "Translate: To seek",
+				options: ["Cercare", "Vedere", "Sentire", "Seguire"],
+				correctAnswer: "Cercare",
+				explanation: "To seek means Cercare."
+			},
+			{
+				question: "Translate: To spread",
+				options: ["Diffondere", "Spendere", "Sprecare", "Spegnere"],
+				correctAnswer: "Diffondere",
+				explanation: "To spread means Diffondere."
+			},
+			// --- PAGE 4: ADVERTISING PHOTOGRAPHY PURPOSE ---
+			{
+				question: "What is the purpose of advertising photography?",
+				options: ["To show goods attractively to encourage buying", "To document history", "To make art", "To educate students"],
+				correctAnswer: "To show goods attractively to encourage buying",
+				explanation: "The purpose... is to show goods and services in the most attractive way so as to encourage customers to buy them."
+			},
+			{
+				question: "Why is photography crucial in sales strategy?",
+				options: ["It allows consumers to see features and design", "It is cheap", "It is easy", "It uses no words"],
+				correctAnswer: "It allows consumers to see features and design",
+				explanation: "The right one allows consumers to see the features, design and details of the item."
+			},
+			// --- PAGE 4: HOW IT WORKS ---
+			{
+				question: "What is the job of an advertising photographer?",
+				options: ["To tell an appealing story via images", "To write slogans", "To manage the shop", "To drive the truck"],
+				correctAnswer: "To tell an appealing story via images",
+				explanation: "The job of an advertising photographer is to tell an appealing story through the use of images..."
+			},
+			{
+				question: "What elements does an advertising photographer use?",
+				options: ["Images, colours, lighting, framing, location", "Words only", "Sound only", "Paint and canvas"],
+				correctAnswer: "Images, colours, lighting, framing, location",
+				explanation: "Through the use of images, colours, lighting, framing and location."
+			},
+			{
+				question: "Are advertising photos always honest representations?",
+				options: ["They may be honest or include complex graphics", "Yes, always", "No, never", "Only if black and white"],
+				correctAnswer: "They may be honest or include complex graphics",
+				explanation: "They may be honest representations... or they may include complex graphics."
+			},
+			{
+				question: "Does it take many shots to get the perfect advertising picture?",
+				options: ["Yes, thousands", "No, just one", "Usually ten", "Depends on the camera"],
+				correctAnswer: "Yes, thousands",
+				explanation: "It takes thousands of shots to have the perfect picture."
+			},
+			{
+				question: "What attracts a potential customer first?",
+				options: ["The image", "The slogan", "The price", "The logo"],
+				correctAnswer: "The image",
+				explanation: "It is the image that will first attract the potential customer."
+			},
+			{
+				question: "What are 'clean images' used for?",
+				options: ["Online and e-commerce stores", "Billboards", "Magazines", "TV ads"],
+				correctAnswer: "Online and e-commerce stores",
+				explanation: "Clean images on a white background, to use for online and e-commerce stores."
+			},
+			{
+				question: "What is the background of a 'clean image'?",
+				options: ["White", "Black", "Colorful", "Natural"],
+				correctAnswer: "White",
+				explanation: "Clean images on a white background."
+			},
+			{
+				question: "What are 'lifestyle images'?",
+				options: ["Images showing the product in everyday life", "Images of models only", "Images of landscapes", "Abstract images"],
+				correctAnswer: "Images showing the product in everyday life",
+				explanation: "Lifestyle images, which show the product associated with the consumer's everyday life."
+			},
+			// --- PAGE 4: PROFESSIONALS ---
+			{
+				question: "Who do expert advertising photographers work with?",
+				options: ["Art directors and marketing managers", "Doctors and nurses", "Teachers and students", "Engineers"],
+				correctAnswer: "Art directors and marketing managers",
+				explanation: "Work with art directors and marketing managers to bring an ad campaign to life."
+			},
+			{
+				question: "What is a step in an advertising campaign mentioned?",
+				options: ["Analyse and plan composition", "Build the camera", "Sell the camera", "Paint the studio"],
+				correctAnswer: "Analyse and plan composition",
+				explanation: "Analyse and plan the composition of photographs."
+			},
+			{
+				question: "What can extraordinary advertising photographs achieve?",
+				options: ["Make a product stay on the market for a long time", "Make the product cheaper", "Make the photographer famous only", "Nothing"],
+				correctAnswer: "Make a product stay on the market for a long time",
+				explanation: "Can make a product stay on the market for a long time and improve sales."
+			},
+			{
+				question: "What happens with poor quality advertising photographs?",
+				options: ["They lose influence on consumers", "They sell more", "They become art", "They win awards"],
+				correctAnswer: "They lose influence on consumers",
+				explanation: "Poor quality advertising photographs will soon lose their influence on consumers."
+			},
+			// --- PAGE 4: VOCABULARY MATCHING ---
+			{
+				question: "Translate: Feature",
+				options: ["Caratteristica", "Fattura", "Futuro", "Faccia"],
+				correctAnswer: "Caratteristica",
+				explanation: "Feature means Caratteristica."
+			},
+			{
+				question: "Translate: Framing",
+				options: ["Inquadratura", "Cornice", "Fermo", "Fuoco"],
+				correctAnswer: "Inquadratura",
+				explanation: "Framing means Inquadratura."
+			},
+			{
+				question: "Translate: Off-road car",
+				options: ["Fuoristrada", "Auto da corsa", "Camion", "Berlina"],
+				correctAnswer: "Fuoristrada",
+				explanation: "Off-road car means Fuoristrada."
+			},
+			{
+				question: "Translate: Sedan/saloon car",
+				options: ["Berlina", "Fuoristrada", "Utilitaria", "Sportiva"],
+				correctAnswer: "Berlina",
+				explanation: "Sedan/saloon car means Berlina."
+			},
+			{
+				question: "Translate: Striking",
+				options: ["Sensazionale", "Strano", "Stretto", "Sciopero"],
+				correctAnswer: "Sensazionale",
+				explanation: "Striking means Sensazionale."
+			},
+			// --- PAGE 5: CINEMATOGRAPHY DEFINITION ---
+			{
+				question: "What is cinematography?",
+				options: ["The art of photography on the screen", "Taking photos of cinemas", "Drawing on film", "Recording sound"],
+				correctAnswer: "The art of photography on the screen",
+				explanation: "Cinematography - the art of photography on the screen."
+			},
+			{
+				question: "Cinematography is a fusion of what?",
+				options: ["Science and art", "Light and dark", "Sound and vision", "Money and fame"],
+				correctAnswer: "Science and art",
+				explanation: "Is a fusion of science and art."
+			},
+			{
+				question: "Who is the DP?",
+				options: ["Director of Photography", "Director of Production", "Digital Photographer", "Design Professional"],
+				correctAnswer: "Director of Photography",
+				explanation: "The person responsible... is the director of photography (DP)."
+			},
+			{
+				question: "What is the DP responsible for?",
+				options: ["Artistic and technical decisions related to the image", "Casting actors", "Writing the script", "Selling tickets"],
+				correctAnswer: "Artistic and technical decisions related to the image",
+				explanation: "Responsible for making artistic and technical decisions related to the image."
+			},
+			{
+				question: "What does the Greek word 'kinema' mean?",
+				options: ["Movement", "Writing", "Light", "Picture"],
+				correctAnswer: "Movement",
+				explanation: "Kinema means movement."
+			},
+			{
+				question: "What does the Greek word 'gráphein' mean?",
+				options: ["To write", "To move", "To see", "To hear"],
+				correctAnswer: "To write",
+				explanation: "Gráphein means to write."
+			},
+			// --- PAGE 5: PROCESS & CREW ---
+			{
+				question: "Which of these is involved in the cinematography process?",
+				options: ["Choice of cameras, lenses and filters", "Choice of catering", "Choice of cinema seats", "Choice of movie posters"],
+				correctAnswer: "Choice of cameras, lenses and filters",
+				explanation: "This process involves... choice of cameras, lenses and filters."
+			},
+			{
+				question: "What do the elements of cinematography create?",
+				options: ["A visual environment", "A noisy environment", "A boring story", "A static image"],
+				correctAnswer: "A visual environment",
+				explanation: "These elements create a visual environment."
+			},
+			{
+				question: "What helps spectators follow the plot?",
+				options: ["The visual environment", "The subtitles only", "The popcorn", "The seats"],
+				correctAnswer: "The visual environment",
+				explanation: "Which helps the spectators to follow the plot of the story."
+			},
+			{
+				question: "Who is a 'grip'?",
+				options: ["A crew member responsible for equipment support/movement", "The director's assistant", "The cameraman", "The actor"],
+				correctAnswer: "A crew member responsible for equipment support/movement",
+				explanation: "The grip is a member of a camera crew responsible for building and maintaining all the equipment."
+			},
+			{
+				question: "Does cinematography require collaboration?",
+				options: ["Yes, active collaboration of many professionals", "No, it's a solo job", "Only between actors", "Only between director and producer"],
+				correctAnswer: "Yes, active collaboration of many professionals",
+				explanation: "Cinematography needs the active collaboration of many professionals."
+			},
+			// --- PAGE 5: SHOOTING TECHNIQUES ---
+			{
+				question: "What is a 'Bird's eye' shot?",
+				options: ["Shows a wide area of land from a very high angle", "Shows a bird", "Shows the sky only", "Shows eye level"],
+				correctAnswer: "Shows a wide area of land from a very high angle",
+				explanation: "A bird's eye shows a wide area of land from a very high angle."
+			},
+			{
+				question: "What does an 'extreme long shot' capture?",
+				options: ["A very wide area to show scale", "A face close up", "A medium area", "A bird"],
+				correctAnswer: "A very wide area to show scale",
+				explanation: "An extreme long shot captures a very wide area to show the scale of subjects."
+			},
+			{
+				question: "What is a 'medium shot'?",
+				options: ["Shows a person from the waist up", "Shows the whole body", "Shows only the head", "Shows the feet"],
+				correctAnswer: "Shows a person from the waist up",
+				explanation: "A medium shot shows a person from the waist up."
+			},
+			{
+				question: "When is a 'medium shot' often used?",
+				options: ["For general group scenes", "For landscapes", "For details", "For eyes"],
+				correctAnswer: "For general group scenes",
+				explanation: "It is used for general group scenes."
+			},
+			{
+				question: "What does a 'close-up shot' feature?",
+				options: ["The entire head of the character", "The waist up", "The full body", "The landscape"],
+				correctAnswer: "The entire head of the character",
+				explanation: "A close-up shot features the entire head of the character."
+			},
+			{
+				question: "What describes an 'over-the-shoulder shot'?",
+				options: ["Out-of-focus shoulder in foreground, subject in focus", "Shoulder in focus, subject blurred", "Both out of focus", "Both in focus"],
+				correctAnswer: "Out-of-focus shoulder in foreground, subject in focus",
+				explanation: "Shows an out-of-focus shoulder and head in the foreground and another person... in focus."
+			},
+			{
+				question: "What is a 'dolly shot'?",
+				options: ["When the entire camera is moved forwards/backwards on a track", "When the camera zooms", "When the camera pans", "When the camera flies"],
+				correctAnswer: "When the entire camera is moved forwards/backwards on a track",
+				explanation: "Dolly shot, when the entire camera is moved forwards and backwards, usually on some sort of track."
+			},
+			// --- PAGE 5: VOCABULARY MATCHING ---
+			{
+				question: "Translate: Director",
+				options: ["Regista", "Direttore", "Dritto", "Dirigente"],
+				correctAnswer: "Regista",
+				explanation: "Director means Regista."
+			},
+			{
+				question: "Translate: Environment",
+				options: ["Ambiente", "Esterno", "Entrata", "Elemento"],
+				correctAnswer: "Ambiente",
+				explanation: "Environment means Ambiente."
+			},
+			{
+				question: "Translate: Head",
+				options: ["Testa", "Alto", "Faccia", "Cappello"],
+				correctAnswer: "Testa",
+				explanation: "Head means Testa."
+			},
+			{
+				question: "Translate: Foreground",
+				options: ["Primo piano", "Sfondo", "Terreno", "Davanti"],
+				correctAnswer: "Primo piano",
+				explanation: "Foreground means Primo piano."
+			},
+			{
+				question: "Translate: Scale",
+				options: ["Dimensione", "Scala", "Scalata", "Scuola"],
+				correctAnswer: "Dimensione",
+				explanation: "Scale means Dimensione."
+			},
+			{
+				question: "Translate: Shooting",
+				options: ["Ripresa fotografica", "Sparatoria", "Salto", "Scatto"],
+				correctAnswer: "Ripresa fotografica",
+				explanation: "Shooting means Ripresa fotografica."
+			},
+			{
+				question: "Translate: Waist",
+				options: ["Punto vita", "Vasto", "Ovest", "Gamba"],
+				correctAnswer: "Punto vita",
+				explanation: "Waist means Punto vita."
+			},
+			// --- PAGE 6: ANALYSING A PHOTO ---
+			{
+				question: "Why is expertise in analysing photos essential?",
+				options: ["To distinguish quality and value", "To become rich", "To use Instagram", "To buy cameras"],
+				correctAnswer: "To distinguish quality and value",
+				explanation: "Expertise... is essential to distinguish its quality and value."
+			},
+			{
+				question: "Does every photograph have a precise aim?",
+				options: ["Yes", "No", "Only artistic ones", "Only news ones"],
+				correctAnswer: "Yes",
+				explanation: "Every photograph has a precise aim."
+			},
+			{
+				question: "What are 'technical features' in analysis?",
+				options: ["Light, depth of field, angles, exposure", "Subject and meaning", "History and geography", "Colors and shapes"],
+				correctAnswer: "Light, depth of field, angles, exposure",
+				explanation: "Technical features: light, depth of field, camera angles, exposure, choice of lens."
+			},
+			{
+				question: "What is 'depth of field'?",
+				options: ["The zone of acceptable sharpness in focus", "The distance to the subject", "The size of the lens", "The amount of light"],
+				correctAnswer: "The zone of acceptable sharpness in focus",
+				explanation: "Depth of field is the zone of acceptable sharpness within a photo that appears in focus."
+			},
+			{
+				question: "What defines 'composition' in analysis?",
+				options: ["Focal point, symmetry, rule of thirds, perspective", "Light and exposure", "Social context", "Emotions"],
+				correctAnswer: "Focal point, symmetry, rule of thirds, perspective",
+				explanation: "Composition: focal point, symmetry... rule of the thirds, perspective, background."
+			},
+			{
+				question: "What is the 'focal point'?",
+				options: ["Where the viewer's eye is drawn", "The center of the lens", "The brightest spot", "The darkest spot"],
+				correctAnswer: "Where the viewer's eye is drawn",
+				explanation: "The focal point is where the viewer's eye is drawn by lines, diagonals and shadows."
+			},
+			{
+				question: "What does 'context' refer to?",
+				options: ["Social, historical, geographic", "Light and shadow", "Colors", "Lens type"],
+				correctAnswer: "Social, historical, geographic",
+				explanation: "Context: social, historical, geographic."
+			},
+			{
+				question: "What is 'meaning' in analysis?",
+				options: ["Emotions or thoughts the image evokes", "The title of the photo", "The name of the photographer", "The price"],
+				correctAnswer: "Emotions or thoughts the image evokes",
+				explanation: "Meaning: emotions or thoughts that the image evokes."
+			},
+			// --- PAGE 6: EXAMPLE MERILDA ---
+			{
+				question: "Who took the photo 'Merilda'?",
+				options: ["Lewis Hine", "Dorothea Lange", "Robert Capa", "Ansel Adams"],
+				correctAnswer: "Lewis Hine",
+				explanation: "The photo Merilda by Lewis Hine."
+			},
+			{
+				question: "When was 'Merilda' taken?",
+				options: ["1911", "1930", "1947", "2000"],
+				correctAnswer: "1911",
+				explanation: "Was taken in 1911."
+			},
+			{
+				question: "What is the subject of 'Merilda' doing?",
+				options: ["Picking cranberries", "Picking apples", "Playing", "Crying"],
+				correctAnswer: "Picking cranberries",
+				explanation: "The subject is a little girl picking cranberries in the fields."
+			},
+			{
+				question: "Why is 'Merilda' in black and white?",
+				options: ["Colour was not yet used in photography", "Artistic choice", "Film was cheaper", "It was night"],
+				correctAnswer: "Colour was not yet used in photography",
+				explanation: "The image is in black and white because colour was not yet used in photography at that time."
+			},
+			{
+				question: "What suggests the lighting is perpendicular (midday) in 'Merilda'?",
+				options: ["The lighting description", "Long shadows", "The moon", "The sunset"],
+				correctAnswer: "The lighting description",
+				explanation: "The lighting is perpendicular, so it was probably midday."
+			},
+			{
+				question: "What is the focal point of 'Merilda'?",
+				options: ["The girl", "The buckets", "The background", "The sky"],
+				correctAnswer: "The girl",
+				explanation: "In this image we can see the girl (the focal point)."
+			},
+			{
+				question: "What does the composition of 'Merilda' underline?",
+				options: ["A short depth of field", "A long depth of field", "No focus", "Wide angle"],
+				correctAnswer: "A short depth of field",
+				explanation: "The composition underlines a short depth of field."
+			},
+			{
+				question: "Is the background of 'Merilda' sharp?",
+				options: ["No, it is blurred", "Yes, very sharp", "It is black", "It is white"],
+				correctAnswer: "No, it is blurred",
+				explanation: "Everything else is blurred."
+			},
+			{
+				question: "Is the Rule of Thirds used in 'Merilda'?",
+				options: ["No, the subject is in the centre", "Yes", "Maybe", "Only vertically"],
+				correctAnswer: "No, the subject is in the centre",
+				explanation: "The rule of thirds is not used because the subject is in the centre."
+			},
+			{
+				question: "What is the main theme of 'Merilda'?",
+				options: ["Children working in the US", "Farming techniques", "Nature", "Portraiture"],
+				correctAnswer: "Children working in the US",
+				explanation: "The main theme... is children working in the United States."
+			},
+			{
+				question: "What was the artist's intention with 'Merilda'?",
+				options: ["To focus attention on child work", "To sell cranberries", "To win a prize", "To practice focus"],
+				correctAnswer: "To focus attention on child work",
+				explanation: "The artist's intention was to focus attention on child work."
+			},
+			// --- PAGE 6: VOCABULARY MATCHING ---
+			{
+				question: "Translate: Background",
+				options: ["Sfondo", "Base", "Basso", "Barra"],
+				correctAnswer: "Sfondo",
+				explanation: "Background means Sfondo."
+			},
+			{
+				question: "Translate: Blurred",
+				options: ["Sfocato", "Blu", "Brutto", "Buio"],
+				correctAnswer: "Sfocato",
+				explanation: "Blurred means Sfocato."
+			},
+			{
+				question: "Translate: Cranberry",
+				options: ["Mirtillo rosso", "Ciliegia", "Fragola", "Lampone"],
+				correctAnswer: "Mirtillo rosso",
+				explanation: "Cranberry means Mirtillo rosso."
+			},
+			{
+				question: "Translate: Expertise",
+				options: ["Abilità", "Esperienza", "Esportazione", "Esperto"],
+				correctAnswer: "Abilità",
+				explanation: "Expertise means Abilità."
+			},
+			{
+				question: "Translate: Perspective",
+				options: ["Prospettiva", "Proposta", "Persona", "Progetto"],
+				correctAnswer: "Prospettiva",
+				explanation: "Perspective means Prospettiva."
+			}
+		];
+
+        /* ================================================================= */
+        /* LOGICA APPLICAZIONE */
+        /* ================================================================= */
+
+        class ScrollytellingApp {
+            constructor(content) {
+                this.content = content;
+                this.lastScrollY = 0;
+                this.isDragging = false;
+                this.scrubTargetIndex = 0;
+                this.isSnapEnabled = localStorage.getItem('snapEnabled') !== 'false'; 
+                this.currentChapterIndex = 0;
+                this.isSnapping = false; 
+                
+                this.initDOMElements();
+                this.initEventListeners();
+                this.initTheme();
+                this.initSnapState();
+                
+                this.setMode(localStorage.getItem('template-mode') || 'study');
+                this.dom.appContainer.classList.add('loaded');
+            }
+            
+            initDOMElements() {
+                this.dom = {
+                    appContainer: document.getElementById('app'), header: document.getElementById('header'),
+                    headerTitle: document.getElementById('header-title'), 
+                    timelineNodesMobile: document.getElementById('timeline-nodes-mobile'),
+                    timelineProgressMobile: document.getElementById('timeline-progress-mobile'),
+                    timelineTrackMobile: document.getElementById('timeline-track-mobile'),
+                    timelineNodesDesktop: document.getElementById('timeline-nodes-desktop'),
+                    timelineProgressDesktop: document.getElementById('timeline-progress-desktop'),
+                    timelineDesktopContainer: document.querySelector('.timeline-desktop-container'),
+                    storyPanel: document.getElementById('story-panel'),
+                    themeSwitcher: document.querySelector('.theme-switcher'),
+                    scrollSentinel: document.getElementById('scroll-sentinel'),
+                    modeBtns: document.querySelectorAll('.mode-btn'),
+                    appFooter: document.getElementById('app-footer'),
+                    autoScrollBtn: document.getElementById('autoscroll-btn'),
+                    prevChapterBtn: document.getElementById('prev-chapter-btn'),
+                    nextChapterBtn: document.getElementById('next-chapter-btn')
+                };
+            }
+            
+            initSnapState() {
+                if (this.isSnapEnabled) {
+                    document.documentElement.classList.add('snap-enabled');
+                    this.dom.autoScrollBtn.classList.add('active');
+                }
+            }
+
+            initTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light'; 
+                this.applyTheme(savedTheme);
+                this.dom.themeSwitcher.addEventListener('click', () => {
+                    if (navigator.vibrate) navigator.vibrate(20);
+                    const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                    this.applyTheme(newTheme);
+                });
+            }
+            
+            applyTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem('theme', theme);
+            }
+            
+            initEventListeners() {
+                if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
+                window.scrollTo(0, 0);
+
+                this.dom.modeBtns.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        if (navigator.vibrate) navigator.vibrate(20);
+                        const newMode = btn.dataset.mode;
+                        this.setMode(newMode);
+                    });
+                });
+                
+                this.dom.autoScrollBtn.addEventListener('click', () => {
+                     this.isSnapEnabled = !this.isSnapEnabled;
+                     localStorage.setItem('snapEnabled', this.isSnapEnabled);
+                     document.documentElement.classList.toggle('snap-enabled');
+                     this.dom.autoScrollBtn.classList.toggle('active');
+                     if (navigator.vibrate) navigator.vibrate(10);
+                     
+                     if(this.isSnapEnabled) {
+                         this.dom.header.classList.remove('hidden');
+                         this.dom.appFooter.classList.remove('hidden');
+                     }
+                });
+
+                this.dom.prevChapterBtn.addEventListener('click', () => {
+                    if (this.currentChapterIndex > 0) {
+                        this.scrollToChapter(this.content.chapters[this.currentChapterIndex - 1].id);
+                    }
+                });
+
+                this.dom.nextChapterBtn.addEventListener('click', () => {
+                    if (this.currentChapterIndex < this.content.chapters.length - 1) {
+                        this.scrollToChapter(this.content.chapters[this.currentChapterIndex + 1].id);
+                    }
+                });
+
+                window.addEventListener('scroll', () => this.handleScroll(), { passive: true });
+                window.addEventListener('resize', () => this.handleResize());
+                this.initDraggableTimeline();
+            }
+            
+            handleScroll() {
+                const currentScrollY = window.scrollY;
+                const isMobile = window.innerWidth < 960;
+
+                // Header Logic: Always allow hiding/showing
+                if (Math.abs(currentScrollY - this.lastScrollY) > 5) {
+                    if (currentScrollY > this.lastScrollY && currentScrollY > 80) {
+                        this.dom.header.classList.add('hidden');
+                        this.dom.appFooter.classList.add('hidden');
+                    } else {
+                        this.dom.header.classList.remove('hidden');
+                        this.dom.appFooter.classList.remove('hidden');
+                    }
+                }
+                
+                // Custom JS Snap Logic
+                if (this.isSnapEnabled && !isMobile && !this.isSnapping) {
+                    this.checkSnapTrigger();
+                }
+
+                this.lastScrollY = currentScrollY;
+            }
+
+            checkSnapTrigger() {
+                const chapters = document.querySelectorAll('.story-chapter');
+                const viewportHeight = window.innerHeight;
+                const triggerPoint = viewportHeight / 1.5; 
+                
+                chapters.forEach((chapter, index) => {
+                    const rect = chapter.getBoundingClientRect();
+                    
+                    if (rect.bottom < triggerPoint && rect.bottom > 0 && index < chapters.length - 1) {
+                        this.isSnapping = true;
+                        const nextChapterId = chapters[index + 1].id;
+                        this.scrollToChapter(nextChapterId);
+                        
+                        setTimeout(() => {
+                            this.isSnapping = false;
+                        }, 1000);
+                    }
+                });
+            }
+            
+            handleResize() {
+                document.querySelectorAll('.acc-item.open .acc-body').forEach(body => {
+                    body.style.maxHeight = body.scrollHeight + "px";
+                });
+                if(this.dom.timelineNodesDesktop.offsetHeight > 0) {
+                    this.setupDesktopTimelineSVG();
+                }
+            }
+            
+            initDraggableTimeline() {
+                const timeline = this.dom.timelineTrackMobile;
+                const handleDrag = (e) => {
+                    if (!this.isDragging) return;
+                    e.preventDefault();
+                    const clientX = e.clientX || e.touches[0].clientX;
+                    const rect = timeline.getBoundingClientRect();
+                    let progress = (clientX - rect.left) / rect.width;
+                    progress = Math.max(0, Math.min(1, progress));
+                    
+                    this.scrubTargetIndex = Math.round(progress * (this.content.chapters.length - 1));
+                    this.dom.headerTitle.textContent = this.content.chapters[this.scrubTargetIndex].title;
+                    
+                    document.querySelectorAll('.timeline-node-point').forEach((node, index) => {
+                        node.classList.toggle('active', index === this.scrubTargetIndex);
+                    });
+                    this.dom.timelineProgressMobile.style.width = `${progress * 100}%`;
+                };
+                const startDrag = (e) => {
+                    this.isDragging = true;
+                    handleDrag(e);
+                };
+                const endDrag = () => {
+                    if (!this.isDragging) return;
+                    this.isDragging = false;
+                    this.scrollToChapter(this.content.chapters[this.scrubTargetIndex].id);
+                };
+                timeline.addEventListener('mousedown', startDrag);
+                window.addEventListener('mousemove', handleDrag);
+                window.addEventListener('mouseup', endDrag);
+                timeline.addEventListener('touchstart', startDrag, { passive: false });
+                window.addEventListener('touchmove', handleDrag, { passive: false });
+                window.addEventListener('touchend', endDrag);
+            }
+            
+            setMode(mode) {
+                localStorage.setItem('template-mode', mode);
+                this.dom.modeBtns.forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+                const currentScrollRatio = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+                this.buildUI(mode);
+                this.initObservers(); 
+                const newScrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+                window.scrollTo(0, newScrollHeight * currentScrollRatio);
+            }
+            
+            buildUI(mode) {
+                document.querySelector('.header-title').textContent = this.content.title;
+
+                this.dom.storyPanel.innerHTML = '';
+                this.dom.timelineNodesMobile.innerHTML = '';
+                this.dom.timelineNodesDesktop.innerHTML = '';
+                
+                this.content.chapters.forEach(chapter => {
+                    const nodePointMobile = document.createElement('button');
+                    nodePointMobile.className = 'timeline-node-point';
+                    nodePointMobile.dataset.targetId = chapter.id;
+                    nodePointMobile.setAttribute('aria-label', `Vai al capitolo: ${chapter.title}`);
+                    nodePointMobile.onclick = (e) => {
+                        if(navigator.vibrate) navigator.vibrate(10);
+                        this.scrollToChapter(chapter.id);
+                    };
+                    this.dom.timelineNodesMobile.appendChild(nodePointMobile);
+
+                    const nodeDesktop = document.createElement('button');
+                    nodeDesktop.className = 'timeline-desktop-node';
+                    nodeDesktop.dataset.targetId = chapter.id;
+                    nodeDesktop.innerHTML = `<div class="node-point"></div><div class="node-label">${chapter.title}</div>`;
+                    nodeDesktop.onclick = () => this.scrollToChapter(chapter.id);
+                    this.dom.timelineNodesDesktop.appendChild(nodeDesktop);
+
+                    const section = document.createElement('section');
+                    section.className = 'story-chapter';
+                    section.id = chapter.id;
+                    const content = mode === 'story' ? chapter.storyDescription : chapter.description;
+                    section.innerHTML = `<div class="chapter-content"><h2 class="chapter-title">${chapter.title}</h2><div class="chapter-body">${content}</div></div>`;
+                    this.dom.storyPanel.appendChild(section);
+                });
+                
+                this.dom.storyPanel.querySelectorAll('.masked-term').forEach(term => {
+                    term.addEventListener('click', () => {
+                        if(!term.classList.contains('revealed')) {
+                            term.classList.add('revealed');
+                            if (navigator.vibrate) navigator.vibrate(10);
+                        }
+                    });
+                });
+
+                this.dom.storyPanel.querySelectorAll('.acc-header').forEach(header => {
+                    header.addEventListener('click', () => {
+                        const item = header.parentElement;
+                        const body = header.nextElementSibling;
+                        const isOpen = item.classList.contains('open');
+                        item.classList.toggle('open');
+                        if (!isOpen) {
+                            body.style.maxHeight = body.scrollHeight + "px";
+                        } else {
+                            body.style.maxHeight = null;
+                        }
+                    });
+                });
+
+                this.dom.storyPanel.querySelectorAll('.flip-container').forEach(container => {
+                    container.addEventListener('click', () => {
+                         const selection = window.getSelection();
+                         if (selection.toString().length === 0) {
+                             container.classList.toggle('flipped');
+                         }
+                    });
+                });
+                
+                this.setupDesktopTimelineSVG();
+            }
+            
+            setupDesktopTimelineSVG() {
+                const nodesHeight = this.dom.timelineNodesDesktop.offsetHeight;
+                const containerHeight = this.dom.timelineDesktopContainer.offsetHeight;
+                const startY = (containerHeight - nodesHeight) / 2;
+                const endY = startY + nodesHeight;
+
+                const line = this.dom.timelineProgressDesktop.previousElementSibling;
+                line.setAttribute('y1', startY);
+                line.setAttribute('y2', endY);
+                
+                const progressLine = this.dom.timelineProgressDesktop;
+                progressLine.setAttribute('y1', startY);
+                progressLine.setAttribute('y2', endY);
+
+                const pathLength = endY - startY;
+                progressLine.style.strokeDasharray = pathLength;
+                progressLine.style.strokeDashoffset = pathLength;
+            }
+
+            scrollToChapter(id) {
+                const targetElement = document.getElementById(id);
+                const headerOffset = 80;
+                const elementPosition = targetElement.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+            }
+            
+            updateNavButtonsState() {
+                if (this.currentChapterIndex <= 0) {
+                    this.dom.prevChapterBtn.classList.add('disabled');
+                } else {
+                    this.dom.prevChapterBtn.classList.remove('disabled');
+                }
+
+                if (this.currentChapterIndex >= this.content.chapters.length - 1) {
+                    this.dom.nextChapterBtn.classList.add('disabled');
+                } else {
+                    this.dom.nextChapterBtn.classList.remove('disabled');
+                }
+            }
+
+            initObservers() {
+                const chapterObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        const id = entry.target.id;
+                        const chapterIndex = this.content.chapters.findIndex(c => c.id === id);
+                        entry.target.classList.toggle('active', entry.isIntersecting);
+
+                        if (entry.isIntersecting) {
+                            this.currentChapterIndex = chapterIndex;
+                            this.updateNavButtonsState();
+
+                            if (!this.isDragging) {
+                                this.dom.headerTitle.textContent = this.content.chapters[chapterIndex].title;
+                            }
+                            document.querySelectorAll(`[data-target-id]`).forEach(node => {
+                                const isCurrent = node.dataset.targetId === id;
+                                const nodeIndex = this.content.chapters.findIndex(c => c.id === node.dataset.targetId);
+                                node.classList.toggle('active', isCurrent);
+                                node.classList.toggle('past', nodeIndex < chapterIndex);
+                            });
+                            
+                            const progress = (chapterIndex / (this.content.chapters.length - 1)) * 100;
+                            this.dom.timelineProgressMobile.style.width = `${progress}%`;
+
+                            const desktopLine = this.dom.timelineProgressDesktop;
+                            if (desktopLine) {
+                                const pathLength = parseFloat(desktopLine.style.strokeDasharray) || 0;
+                                const progressFraction = chapterIndex / (this.content.chapters.length - 1);
+                                desktopLine.style.strokeDashoffset = pathLength * (1 - progressFraction);
+                            }
+                        }
+                    });
+                }, { rootMargin: "-40% 0px -50% 0px", threshold: 0 });
+                
+                document.querySelectorAll('.story-chapter').forEach(chapter => chapterObserver.observe(chapter));
+
+                const headerObserver = new IntersectionObserver(([entry]) => {
+                    this.dom.header.classList.toggle('scrolled', !entry.isIntersecting);
+                }, { threshold: [1] });
+                
+                headerObserver.observe(this.dom.scrollSentinel);
+            }
+        }
+        
+        class Quiz {
+            constructor(questions) {
+                this.allQuestions = questions;
+                this.dom = {
+                    overlay: document.getElementById('quiz-overlay'),
+                    container: document.getElementById('quiz-container'),
+                };
+                this.state = {};
+                this.localStorageKey = 'templateQuizState';
+                this.wasSnapEnabled = false; 
+                this.savedScrollPosition = 0; 
+            }
+            start() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                const savedState = this.loadState();
+                if (savedState) { this.renderResumePrompt(); } 
+                else { this.beginNewQuiz(); }
+            }
+            resume() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.state = this.loadState();
+                this.openOverlay();
+                this.startQuizUI();
+                this.renderQuestion();
+            }
+            beginNewQuiz() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.state = {
+                    questions: this.shuffleArray([...this.allQuestions]),
+                    currentQuestionIndex: 0,
+                    score: 0,
+                    answered: false,
+                };
+                this.saveState();
+                this.openOverlay();
+                this.renderIntro();
+            }
+            openOverlay() {
+                this.savedScrollPosition = window.scrollY;
+                if (document.documentElement.classList.contains('snap-enabled')) {
+                    this.wasSnapEnabled = true;
+                    document.documentElement.classList.remove('snap-enabled');
+                } else {
+                    this.wasSnapEnabled = false;
+                }
+                this.dom.overlay.classList.add('visible');
+                document.body.classList.add('no-scroll');
+            }
+            close() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.dom.overlay.classList.remove('visible');
+                document.body.classList.remove('no-scroll');
+                if (this.wasSnapEnabled) {
+                    document.documentElement.classList.add('snap-enabled');
+                }
+                window.scrollTo(0, this.savedScrollPosition);
+            }
+            saveState() { localStorage.setItem(this.localStorageKey, JSON.stringify(this.state)); }
+            loadState() { const saved = localStorage.getItem(this.localStorageKey); return saved ? JSON.parse(saved) : null; }
+            clearState() { localStorage.removeItem(this.localStorageKey); }
+            
+            renderResumePrompt() {
+                this.openOverlay();
+                this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title">Quiz in Sospeso</span><button class="icon-btn quiz-close-btn" id="quiz-close-resume"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div><div class="quiz-body"><div class="quiz-results-wrapper"><h2 class="quiz-results-title">Bentornato!</h2><p class="quiz-results-text">Hai un quiz in sospeso. Vuoi continuare da dove avevi interrotto?</p><div class="quiz-results-actions"><button class="quiz-next-btn" id="resume-quiz-btn">Riprendi Quiz</button><button class="quiz-next-btn secondary" id="restart-quiz-btn">Inizia da Capo</button></div></div></div>`;
+                document.getElementById('resume-quiz-btn').onclick = () => this.resume();
+                document.getElementById('restart-quiz-btn').onclick = () => { this.clearState(); this.beginNewQuiz(); };
+                document.getElementById('quiz-close-resume').onclick = () => this.close();
+            }
+            renderIntro() {
+                 this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title">Test di Autovalutazione</span><button class="icon-btn quiz-close-btn" id="quiz-close-intro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div><div class="quiz-body"><div class="quiz-results-wrapper"><h2 class="quiz-results-title">Sei pronto?</h2><p class="quiz-results-text">Verifica la tua preparazione con ${this.state.questions.length} domande.</p><button class="quiz-next-btn" id="start-quiz-btn">Inizia il Quiz</button></div></div>`;
+                 document.getElementById('start-quiz-btn').onclick = () => { this.startQuizUI(); this.renderQuestion(); };
+                 document.getElementById('quiz-close-intro').onclick = () => this.close();
+            }
+            startQuizUI() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title" id="quiz-progress-text"></span><button class="icon-btn quiz-close-btn" id="quiz-close-main"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div><div class="quiz-body"><div id="quiz-content-wrapper"></div></div><div class="quiz-footer"><button class="quiz-next-btn" id="quiz-next-btn" disabled>Avanti</button></div>`;
+                document.getElementById('quiz-next-btn').onclick = () => this.nextQuestion();
+                document.getElementById('quiz-close-main').onclick = () => this.close();
+            }
+            renderQuestion() {
+                this.state.answered = false;
+                const question = this.state.questions[this.state.currentQuestionIndex];
+                const progressText = `Domanda ${this.state.currentQuestionIndex + 1} di ${this.state.questions.length}`;
+                document.getElementById('quiz-progress-text').textContent = progressText;
+                const answersHtml = this.shuffleArray(question.options).map(option => `<button class="quiz-answer-btn" data-answer="${option}">${option}</button>`).join('');
+                const contentWrapper = document.getElementById('quiz-content-wrapper');
+                const oldSlide = contentWrapper.querySelector('.quiz-slide');
+                if (oldSlide) {
+                    oldSlide.style.opacity = 0;
+                    setTimeout(() => {
+                        oldSlide.innerHTML = `<p class="quiz-question-text">${question.question}</p><div class="quiz-answers">${answersHtml}</div><div class="quiz-explanation"></div>`;
+                        oldSlide.style.opacity = 1;
+                        this.addAnswerListeners();
+                    }, 200);
+                } else {
+                    contentWrapper.innerHTML = `<div class="quiz-slide active"><p class="quiz-question-text">${question.question}</p><div class="quiz-answers">${answersHtml}</div><div class="quiz-explanation"></div></div>`;
+                    this.addAnswerListeners();
+                }
+                document.getElementById('quiz-next-btn').disabled = true;
+            }
+            addAnswerListeners() {
+                document.querySelectorAll('.quiz-answer-btn').forEach(btn => {
+                    btn.onclick = (e) => this.handleAnswer(e.target);
+                });
+            }
+            handleAnswer(selectedButton) {
+                if (this.state.answered) return;
+                this.state.answered = true;
+                if(navigator.vibrate) navigator.vibrate(20);
+                const selectedAnswer = selectedButton.dataset.answer;
+                const currentQ = this.state.questions[this.state.currentQuestionIndex];
+                const correctAnswer = currentQ.correctAnswer;
+                
+                if (selectedAnswer === correctAnswer) {
+                    this.state.score++;
+                    selectedButton.classList.add('correct');
+                } else {
+                    selectedButton.classList.add('incorrect');
+                    const correctBtn = Array.from(document.querySelectorAll('.quiz-answer-btn')).find(btn => btn.dataset.answer === correctAnswer);
+                    if (correctBtn) correctBtn.classList.add('correct');
+                }
+                
+                document.querySelectorAll('.quiz-answer-btn').forEach(btn => btn.classList.add('disabled'));
+                document.getElementById('quiz-next-btn').disabled = false;
+                
+                // Show explanation
+                const explanationEl = document.querySelector('.quiz-explanation');
+                if(explanationEl) {
+                    const explText = currentQ.explanation || ("La risposta corretta è: " + correctAnswer);
+                    explanationEl.innerHTML = "<strong>Spiegazione:</strong> " + explText;
+                    explanationEl.classList.add('visible');
+                }
+                
+                this.saveState();
+            }
+            nextQuestion() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.state.currentQuestionIndex++;
+                if (this.state.currentQuestionIndex < this.state.questions.length) {
+                    this.saveState();
+                    this.renderQuestion();
+                } else {
+                    this.renderResults();
+                }
+            }
+            renderResults() {
+                const score = this.state.score;
+                const total = this.state.questions.length;
+                const percentage = Math.round((score / total) * 100);
+                let message = "Puoi fare di meglio. Riprova!";
+                if (percentage >= 70) message = "Ottimo lavoro!";
+                if (percentage >= 90) message = "Eccellente!";
+                this.clearState();
+                this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title">Risultati</span></div><div class="quiz-body"><div class="quiz-results-wrapper"><h2 class="quiz-results-title">${message}</h2><div class="quiz-results-score">${score} / ${total}</div><p class="quiz-results-text">Hai risposto correttamente al ${percentage}% delle domande.</p><div class="quiz-results-actions"><button class="quiz-next-btn" id="retake-quiz-btn">Riprova il Quiz</button><button class="quiz-next-btn secondary" id="close-results-btn">Torna allo Studio</button></div></div></div>`;
+                document.getElementById('retake-quiz-btn').onclick = () => this.beginNewQuiz();
+                document.getElementById('close-results-btn').onclick = () => this.close();
+            }
+            shuffleArray(array) {
+                return array.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const app = new ScrollytellingApp(learningContent);
+            const quiz = new Quiz(quizData);
+            document.getElementById('quiz-btn').onclick = () => quiz.start();
+        });
+    </script>
+</body>
+</html>
