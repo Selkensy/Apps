@@ -1,0 +1,2713 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Microeconomia: Domanda, Offerta ed Equilibrio</title>
+    <!-- KaTeX for Math Rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap');
+
+        :root {
+            /* --- COLORI & TEMA --- */
+            
+            /* LIGHT MODE */
+            --bg-light: #f5f5f4;
+            --text-light: #292524; 
+            --text-light-secondary: #57534e; 
+            --card-bg-light: #ffffff;
+            --card-border-light: #e7e5e4; 
+            --accent-light: #0369a1;
+            --shadow-light: 0 4px 20px -2px rgba(28, 25, 23, 0.06);
+            --focus-ring-light: #0ea5e9;
+            --highlight-light: #e0f2fe; 
+            
+            /* Card Back Colors - Light */
+            --flip-front-bg-light: #fafaf9; 
+            --flip-back-bg-light: #f0f9ff; 
+            --flip-back-text-light: #0c4a6e;
+
+            /* Quiz Explanation Colors - Light */
+            --quiz-expl-bg-light: #f0fdf4;
+            --quiz-expl-border-light: #bbf7d0;
+            --quiz-expl-text-light: #14532d;
+
+            /* Formula Colors - Light */
+            --formula-bg-light: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            --formula-border-light: #0ea5e9;
+            --formula-text-light: #0c4a6e;
+
+            /* DARK MODE */
+            --bg-dark: #0f172a;
+            --text-dark: #e2e8f0; 
+            --text-dark-secondary: #94a3b8; 
+            --card-bg-dark: #1e293b; 
+            --card-border-dark: #334155; 
+            --accent-dark: #38bdf8; 
+            --shadow-dark: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+            --focus-ring-dark: #7dd3fc;
+            
+            /* Card Back Colors - Dark */
+            --flip-front-bg-dark: #020617; 
+            --flip-back-bg-dark: #1e293b; 
+            --flip-back-text-dark: #e2e8f0;
+
+            /* Quiz Explanation Colors - Dark */
+            --quiz-expl-bg-dark: #064e3b;
+            --quiz-expl-border-dark: #059669;
+            --quiz-expl-text-dark: #ecfdf5;
+
+            /* Formula Colors - Dark */
+            --formula-bg-dark: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%);
+            --formula-border-dark: #38bdf8;
+            --formula-text-dark: #e0f2fe;
+        }
+
+        [data-theme="light"] {
+            --bg-color: var(--bg-light); --text-color: var(--text-light); --text-secondary-color: var(--text-light-secondary); 
+            --card-bg-color: var(--card-bg-light); --accent-color: var(--accent-light);
+            --border-color: var(--card-border-light); --shadow-color: var(--shadow-light); 
+            --focus-ring-color: var(--focus-ring-light); --highlight-color: var(--highlight-light);
+            --highlight-text-color: var(--text-light);
+            --flip-front-bg: var(--flip-front-bg-light);
+            --flip-back-bg: var(--flip-back-bg-light);
+            --flip-back-text: var(--flip-back-text-light);
+            --quiz-expl-bg: var(--quiz-expl-bg-light);
+            --quiz-expl-border: var(--quiz-expl-border-light);
+            --quiz-expl-text: var(--quiz-expl-text-light);
+            --formula-bg: var(--formula-bg-light);
+            --formula-border: var(--formula-border-light);
+            --formula-text: var(--formula-text-light);
+        }
+        [data-theme="dark"] {
+            --bg-color: var(--bg-dark); --text-color: var(--text-dark); --text-secondary-color: var(--text-dark-secondary);
+            --card-bg-color: var(--card-bg-dark); --accent-color: var(--accent-dark);
+            --border-color: var(--card-border-dark); --shadow-color: var(--shadow-dark); 
+            --focus-ring-color: var(--focus-ring-dark); --highlight-color: var(--highlight-dark);
+            --highlight-text-color: var(--highlight-text-dark);
+            --flip-front-bg: var(--flip-front-bg-dark);
+            --flip-back-bg: var(--flip-back-bg-dark);
+            --flip-back-text: var(--flip-back-text-dark);
+            --quiz-expl-bg: var(--quiz-expl-bg-dark);
+            --quiz-expl-border: var(--quiz-expl-border-dark);
+            --quiz-expl-text: var(--quiz-expl-text-dark);
+            --formula-bg: var(--formula-bg-dark);
+            --formula-border: var(--formula-border-dark);
+            --formula-text: var(--formula-text-dark);
+        }
+        
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html { font-size: 100%; -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+        
+        body {
+            font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color);
+            transition: background-color 0.4s ease, color 0.4s ease; -webkit-tap-highlight-color: transparent;
+            line-height: 1.8; overflow-x: hidden;
+        }
+        body.no-scroll { overflow: hidden; height: 100%; width: 100%; }
+
+        button { cursor: pointer; border: none; background: none; font-family: inherit; color: inherit; -webkit-tap-highlight-color: transparent; }
+        button:focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 2px; border-radius: 4px; }
+        button:active { transform: scale(0.98); }
+
+        .app-container { opacity: 0; transition: opacity 0.5s ease; }
+        .app-container.loaded { opacity: 1; }
+        
+        /* HEADER */
+        .header {
+            position: sticky; top: 0; z-index: 100;
+            background-color: rgba(245, 245, 244, 0.9);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid transparent;
+            transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), box-shadow 0.3s ease;
+            will-change: transform;
+        }
+        [data-theme="dark"] .header { background-color: rgba(15, 23, 42, 0.9); }
+        .header.hidden { transform: translateY(-100%); }
+        .header.scrolled { border-bottom-color: var(--border-color); box-shadow: var(--shadow-color); }
+
+        .header-content { padding: 0.75rem 1.5rem; display: flex; justify-content: space-between; align-items: center; min-height: 64px; }
+        .header-title { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1; text-align: left; margin-right: 1rem; }
+        
+        .controls { display: flex; align-items: center; gap: 0.75rem; }
+        
+        .icon-btn { display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 12px; transition: background-color 0.2s; }
+        .icon-btn:hover { background-color: var(--border-color); }
+        .icon-btn svg { width: 22px; height: 22px; color: var(--text-secondary-color); transition: color 0.3s; }
+        .icon-btn.active svg { color: var(--accent-color); }
+        
+        /* Nav Buttons Desktop */
+        .nav-buttons-desktop {
+            display: none;
+            position: fixed; bottom: 2rem; right: 2rem;
+            flex-direction: column; gap: 0.5rem;
+            z-index: 95;
+        }
+        .icon-btn.disabled { opacity: 0.3; pointer-events: none; cursor: default; }
+
+        #autoscroll-btn { display: none; }
+
+        .theme-switcher .sun-icon { display: none; } [data-theme="light"] .theme-switcher .sun-icon { display: block; }
+        .theme-switcher .moon-icon { display: none; } [data-theme="dark"] .theme-switcher .moon-icon { display: block; }
+
+        .mode-switcher { display: flex; background-color: var(--border-color); border-radius: 14px; padding: 4px; }
+        .mode-btn { font-size: 0.85rem; font-weight: 600; padding: 6px 16px; border-radius: 10px; color: var(--text-secondary-color); transition: all 0.2s ease; }
+        .mode-btn.active { background-color: var(--card-bg-color); color: var(--text-color); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .desktop-mode-switcher { display: none; }
+
+        /* TIMELINE MOBILE */
+        .progress-timeline-mobile { padding: 0 1.5rem 1rem 1.5rem; touch-action: none; }
+        .timeline-track { position: relative; width: 100%; height: 6px; background-color: var(--border-color); border-radius: 3px; cursor: pointer; }
+        .timeline-progress { position: absolute; top: 0; left: 0; height: 100%; background-color: var(--accent-color); border-radius: 3px; width: 0; transition: width 0.2s linear; will-change: width; }
+        .timeline-nodes { position: absolute; top: 50%; left: 0; width: 100%; display: flex; justify-content: space-between; pointer-events: none; }
+        .timeline-node-point {
+            width: 12px; height: 12px; border-radius: 50%; background-color: var(--border-color);
+            border: 2px solid var(--bg-color); transform: translateY(-50%); transition: transform 0.3s ease, background-color 0.3s ease;
+            pointer-events: auto;
+        }
+        .timeline-node-point.past, .timeline-node-point.active { background-color: var(--accent-color); }
+        .timeline-node-point.active { transform: translateY(-50%) scale(1.4); box-shadow: 0 0 0 4px var(--highlight-color); }
+
+        /* LAYOUT & CHAPTERS */
+        .main-layout { padding-top: 4rem; }
+        #story-panel { padding: 0 1.5rem; }
+        
+        .story-chapter {
+            min-height: 90vh; padding: 6rem 0;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0.5; transform: scale(0.98); filter: blur(1px);
+            transition: opacity 0.6s ease, transform 0.6s ease, filter 0.6s ease; 
+            border-bottom: 1px dashed var(--border-color);
+        }
+        .story-chapter:last-child { border-bottom: none; min-height: 80vh; }
+        .story-chapter.active { opacity: 1; transform: scale(1); filter: blur(0); }
+        
+        .chapter-content { max-width: 680px; width: 100%; }
+        .chapter-title { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 8vw, 3rem); color: var(--text-color); margin-bottom: 2rem; line-height: 1.15; letter-spacing: -0.02em; word-wrap: break-word;}
+        .chapter-body { font-size: 1.125rem; line-height: 2.1; color: var(--text-secondary-color); }
+        
+        .chapter-body p, .chapter-body ul, .chapter-body ol { margin-bottom: 1.5rem; }
+        .chapter-body ul, .chapter-body ol { padding-left: 1.2rem; }
+        .chapter-body li { margin-bottom: 0.75rem; padding-left: 0.5rem; }
+        .chapter-body li::marker { color: var(--accent-color); font-weight: 700; }
+        .chapter-body strong { font-weight: 700; color: var(--text-color); }
+        
+        .chapter-body h3 {
+             font-family: 'Playfair Display', serif; font-size: 1.8rem; margin: 3rem 0 1.5rem 0; color: var(--text-color); line-height: 1.3;
+        }
+
+        .chapter-body h4 { 
+            font-size: 0.95rem; margin: 2.5rem 0 1rem 0; color: var(--accent-color); 
+            text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700;
+            display: flex; align-items: center; gap: 0.5rem;
+            line-height: 1.4;
+        }
+        .chapter-body h4::after { content: ''; flex-grow: 1; height: 1px; background-color: var(--border-color); opacity: 0.5; }
+        
+        /* ENHANCED FORMULA BOX */
+        .formula-box {
+            position: relative;
+            background: var(--formula-bg);
+            border: 2px solid var(--formula-border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2.5rem 0;
+            text-align: center;
+            box-shadow: var(--shadow-color), 0 0 40px -10px rgba(14, 165, 233, 0.15);
+            overflow: hidden;
+        }
+        .formula-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-color), #06b6d4, var(--accent-color));
+            background-size: 200% 100%;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+        @keyframes shimmer {
+            0%, 100% { background-position: 0% 0; }
+            50% { background-position: 100% 0; }
+        }
+        .formula-box .formula-label {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-color);
+            background: var(--card-bg-color);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-color);
+        }
+        .formula-box .katex { 
+            font-size: 1.6rem !important; 
+            color: var(--formula-text);
+        }
+        .formula-box .formula-description {
+            margin-top: 1.25rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary-color);
+            font-style: italic;
+        }
+
+        /* MATH CALCULATION STEPS */
+        .math-steps {
+            background: var(--card-bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .math-step {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px dashed var(--border-color);
+        }
+        .math-step:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        .math-step:first-child {
+            padding-top: 0;
+        }
+        .step-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            font-size: 0.8rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .step-content {
+            flex: 1;
+        }
+        .step-content .katex {
+            font-size: 1.1rem !important;
+        }
+        .step-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary-color);
+            margin-bottom: 0.25rem;
+        }
+
+        /* MATH RESULT HIGHLIGHT */
+        .math-result {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            padding: 0.75rem 1.25rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+            border: 2px solid #22c55e;
+        }
+        [data-theme="dark"] .math-result {
+            background: linear-gradient(135deg, #14532d 0%, #166534 100%);
+            border-color: #22c55e;
+        }
+        .math-result .katex {
+            font-size: 1.2rem !important;
+            color: #14532d;
+        }
+        [data-theme="dark"] .math-result .katex {
+            color: #dcfce7;
+        }
+        .math-result-icon {
+            font-size: 1.25rem;
+        }
+
+        /* INLINE MATH STYLING */
+        .inline-math {
+            background: rgba(14, 165, 233, 0.1);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            margin: 0 0.1rem;
+        }
+        [data-theme="dark"] .inline-math {
+            background: rgba(56, 189, 248, 0.15);
+        }
+
+        /* VARIABLE DEFINITION */
+        .var-definition {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 0.5rem 1rem;
+            background: var(--card-bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin: 1rem 0;
+        }
+        .var-symbol {
+            font-weight: 600;
+            color: var(--accent-color);
+        }
+        .var-symbol .katex {
+            font-size: 1rem !important;
+        }
+        .var-meaning {
+            color: var(--text-secondary-color);
+        }
+
+        /* INTERACTIVE ELEMENTS */
+        .interactive-accordion { 
+            margin: 2rem 0; border: 1px solid var(--border-color); border-radius: 16px; 
+            overflow: hidden; background-color: var(--card-bg-color); box-shadow: var(--shadow-color);
+            width: 100%;
+        }
+        .acc-item { border-bottom: 1px solid var(--border-color); }
+        .acc-item:last-child { border-bottom: none; }
+        .acc-header {
+            width: 100%; padding: 1.25rem 1.5rem; text-align: left;
+            background-color: var(--card-bg-color); font-weight: 600; color: var(--text-color);
+            display: flex; justify-content: space-between; align-items: center;
+            transition: background-color 0.2s; font-size: 1rem; line-height: 1.4;
+        }
+        .acc-header:hover { background-color: var(--bg-color); }
+        .acc-header .acc-icon { 
+            width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+            color: var(--accent-color); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            flex-shrink: 0; margin-left: 12px;
+        }
+        .acc-item.open .acc-header .acc-icon { transform: rotate(135deg); }
+        .acc-body {
+            max-height: 0; overflow: hidden; transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            background-color: var(--bg-color);
+        }
+        .acc-content { padding: 1.25rem 1.5rem; font-size: 1rem; color: var(--text-secondary-color); border-top: 1px dashed var(--border-color); line-height: 1.6; }
+
+        /* FLIP CARDS */
+        .flip-container { 
+            margin: 2.5rem auto; 
+            perspective: 1000px; 
+            width: 100%; 
+            max-width: 500px; 
+            min-height: 380px; 
+        }
+        .flip-card-inner {
+            position: relative; width: 100%; height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d; cursor: pointer;
+            box-shadow: var(--shadow-color); border-radius: 20px;
+            display: grid; grid-template-areas: "card-face";
+        }
+        .flip-container.flipped .flip-card-inner { transform: rotateY(180deg); }
+        
+        .flip-front, .flip-back {
+            grid-area: card-face; width: 100%;
+            -webkit-backface-visibility: hidden; backface-visibility: hidden;
+            border-radius: 20px; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; padding: 2rem;
+        }
+        
+        .flip-front { background-color: var(--flip-front-bg); border: 1px solid var(--border-color); }
+        .flip-back { background-color: var(--flip-back-bg); color: var(--flip-back-text); transform: rotateY(180deg); }
+        
+        .flip-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--text-color); line-height: 1.3; text-align: center; }
+        .flip-hint { 
+            font-size: 0.8rem; color: var(--accent-color); margin-top: 1.5rem; 
+            font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px;
+            opacity: 0.8; display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+        }
+        .flip-hint::after { content: '↻'; font-size: 1.2em; margin-top: -2.6px; }
+        
+        .flip-back p { color: var(--flip-back-text); font-size: 1.1rem; line-height: 1.6; margin: 0; font-weight: 500; text-align: center;}
+        .flip-back ul { 
+            text-align: left; 
+            padding-left: 0; 
+            list-style: none;
+            width: 100%;
+        }
+        .flip-back li {
+            padding: 0.75rem 0;
+            border-bottom: 1px dashed rgba(255,255,255,0.2);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .flip-back li:last-child {
+            border-bottom: none;
+        }
+        .flip-back .katex {
+            font-size: 1rem !important;
+        }
+
+        #timeline-desktop { display: none; }
+        #scroll-sentinel { position: absolute; top: 0; height: 1px; width: 1px; pointer-events: none; }
+
+        .app-footer {
+            position: fixed; bottom: 0; left: 0; width: 100%; z-index: 90;
+            display: flex; justify-content: center; 
+            padding: 1rem 1.5rem calc(1rem + env(safe-area-inset-bottom));
+            pointer-events: none;
+        }
+        .app-footer.hidden { transform: translateY(150%); }
+        .footer-mode-switcher { 
+            display: flex; pointer-events: auto;
+            background-color: rgba(255, 255, 255, 0.9); 
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); 
+            border-radius: 24px; padding: 6px; 
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        [data-theme="dark"] .footer-mode-switcher { background-color: rgba(28, 25, 23, 0.9); border-color: rgba(255,255,255,0.1); }
+
+        /* QUIZ MODE */
+        .quiz-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 200;
+            display: flex; align-items: center; justify-content: center; padding: 1rem;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            opacity: 0; transition: opacity 0.4s ease, visibility 0.4s; visibility: hidden;
+        }
+        .quiz-overlay.visible { opacity: 1; visibility: visible; }
+        .quiz-container {
+            background-color: var(--card-bg-color); border: 1px solid var(--border-color);
+            width: 96%; max-width: 600px; 
+            height: auto; max-height: 85vh;
+            border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            display: flex; flex-direction: column; overflow: hidden;
+            transform: scale(0.95) translateY(10px); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .quiz-overlay.visible .quiz-container { transform: scale(1) translateY(0); }
+        
+        .quiz-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; background-color: var(--bg-color); }
+        .quiz-title { font-weight: 600; color: var(--text-secondary-color); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .quiz-body { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; -webkit-overflow-scrolling: touch; }
+        #quiz-content-wrapper { padding: 1.5rem; display: flex; flex-direction: column; justify-content: center; min-height: 100%;}
+        
+        .quiz-slide { width: 100%; opacity: 0; transition: opacity 0.3s ease; }
+        .quiz-slide.active { opacity: 1; }
+        
+        .quiz-question-text { font-size: clamp(1.1rem, 4vw, 1.35rem); font-weight: 700; margin-bottom: 1.5rem; line-height: 1.4; color: var(--text-color); }
+        .quiz-answers { display: grid; gap: 0.75rem; }
+        .quiz-answer-btn {
+            width: 100%; padding: 1rem 1.25rem; text-align: left; background-color: var(--bg-color);
+            border: 2px solid transparent; border-radius: 16px; font-size: 1rem; font-weight: 500;
+            transition: all 0.2s ease; color: var(--text-color);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            word-break: break-word; hyphens: auto; line-height: 1.4;
+        }
+        .quiz-answer-btn:hover { background-color: var(--border-color); }
+        .quiz-answer-btn:active { transform: scale(0.98); }
+        .quiz-answer-btn.correct { background-color: #dcfce7; color: #14532d; border-color: #22c55e; }
+        [data-theme="dark"] .quiz-answer-btn.correct { background-color: #14532d; color: #f0fdf4; border-color: #22c55e; }
+        .quiz-answer-btn.incorrect { background-color: #fee2e2; color: #7f1d1d; border-color: #ef4444; }
+        [data-theme="dark"] .quiz-answer-btn.incorrect { background-color: #7f1d1d; color: #fef2f2; border-color: #ef4444; }
+        .quiz-answer-btn.disabled { opacity: 0.6; pointer-events: none; }
+        
+        .quiz-explanation {
+            margin-top: 1.5rem; padding: 1.25rem; border-radius: 12px; font-size: 1rem; line-height: 1.5;
+            background-color: var(--quiz-expl-bg); border: 1px solid var(--quiz-expl-border); color: var(--quiz-expl-text);
+            opacity: 0; transform: translateY(10px); transition: opacity 0.4s ease, transform 0.4s ease; display: none;
+        }
+        .quiz-explanation.visible { opacity: 1; transform: translateY(0); display: block; }
+
+        .quiz-footer { 
+            padding: 1.5rem; border-top: 1px solid var(--border-color); flex-shrink: 0; background-color: var(--bg-color);
+            padding-bottom: calc(1.5rem + env(safe-area-inset-bottom)/2);
+        }
+        .quiz-next-btn { width: 100%; background-color: var(--accent-color); color: white; padding: 1rem; border-radius: 14px; font-size: 1.1rem; font-weight: 600; transition: opacity 0.2s, transform 0.2s; }
+        .quiz-next-btn:active { transform: scale(0.98); }
+        .quiz-next-btn:disabled { background-color: var(--border-color); color: var(--text-secondary-color); cursor: not-allowed; transform: none; }
+
+        .quiz-results-wrapper { text-align: center; display: flex; flex-direction: column; justify-content: center; min-height: 100%; padding: 1.5rem; }
+        .quiz-results-title { font-family: 'Playfair Display', serif; font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .quiz-results-score { font-size: 3.5rem; font-weight: 800; color: var(--accent-color); line-height: 1; margin: 1rem 0; }
+        .quiz-results-text { font-size: 1.1rem; color: var(--text-secondary-color); margin-bottom: 2rem; }
+        .quiz-results-actions { display: flex; flex-direction: column; gap: 0.75rem; width: 100%; }
+        .quiz-results-actions .quiz-next-btn.secondary { background-color: transparent; border: 2px solid var(--border-color); color: var(--text-color); }
+        .quiz-results-actions .quiz-next-btn.secondary:hover { border-color: var(--text-secondary-color); }
+
+        /* DESKTOP OVERRIDES */
+        @media (min-width: 960px) {
+            .progress-timeline-mobile { display: none; }
+            .app-footer { display: none; }
+            .desktop-mode-switcher { display: flex; }
+            #autoscroll-btn { display: flex; } 
+            
+            .nav-buttons-desktop { display: flex; }
+            
+            .main-layout { 
+                display: grid; 
+                grid-template-columns: 1fr minmax(0, 680px) 1fr; 
+                gap: 2rem; 
+                max-width: 100%; 
+                margin: 0; 
+                padding: 0 2rem; 
+            }
+            
+            #timeline-desktop {
+                grid-column: 1;
+                display: flex; 
+                position: sticky; top: 0; height: 100vh;
+                align-items: center; 
+                justify-content: flex-end;
+            }
+            
+            #story-panel { grid-column: 2; padding: 0; }
+
+            .timeline-desktop-container { 
+                position: relative; 
+                width: 220px; 
+                padding: 4rem 1rem 4rem 0; 
+                display: flex; justify-content: flex-end;
+            }
+            
+            .timeline-svg {
+                position: absolute; right: 0; 
+                top: 0; height: 100%; width: 2px; overflow: visible;
+                z-index: 0;
+                pointer-events: none; 
+            }
+            .timeline-svg-line { stroke: var(--border-color); stroke-width: 2px; fill: none; }
+            .timeline-svg-progress {
+                stroke: var(--accent-color); stroke-width: 2px; fill: none; transition: stroke-dashoffset 0.4s ease;
+            }
+
+            .timeline-desktop-nodes { 
+                display: flex; flex-direction: column; gap: 1.5rem; 
+                align-items: flex-end; text-align: right; width: 100%; 
+                z-index: 1; 
+            }
+            
+            .timeline-desktop-node {
+                display: flex; align-items: center; gap: 1.5rem; padding: 0.5rem 0;
+                position: relative; transition: opacity 0.3s; flex-direction: row-reverse; 
+                width: 140%; 
+                cursor: pointer; padding-right: 15px;
+            }
+            .timeline-desktop-node:hover .node-label { color: var(--accent-color); }
+            .timeline-desktop-node .node-point {
+                width: 14px; height: 14px; border-radius: 50%; background-color: var(--border-color);
+                border: 3px solid var(--bg-color); transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); flex-shrink: 0; 
+                z-index: 2; position: relative;
+            }
+            .timeline-desktop-node::after {
+                content: ''; position: absolute; top: 0; right: -10px; bottom: 0; width: 100%; z-index: -1;
+            }
+
+            .timeline-desktop-node .node-label { 
+                font-size: 0.95rem; font-weight: 500; color: var(--text-secondary-color); 
+                transition: color 0.3s ease, transform 0.3s ease;
+                white-space: nowrap; 
+            }
+
+            .timeline-desktop-node.active .node-point { background-color: var(--accent-color); transform: scale(1.3); box-shadow: 0 0 0 4px var(--highlight-color); }
+            .timeline-desktop-node.active .node-label { color: var(--text-color); font-weight: 700; transform: translateX(-5px); }
+            .timeline-desktop-node.past .node-point { background-color: var(--accent-color); border-color: var(--accent-color); }
+
+            .story-chapter { padding: 6rem 0; min-height: 85vh; }
+            .story-chapter:first-child { padding-top: 4rem; }
+
+            .formula-box .katex { 
+                font-size: 1.8rem !important; 
+            }
+        }
+        
+        @media (min-width: 1200px) {
+             .main-layout { gap: 4rem; }
+        }
+    </style>
+</head>
+<body>
+    <div id="scroll-sentinel"></div>
+    <div class="app-container" id="app">
+        <header class="header" id="header">
+            <div class="header-content">
+                <h1 class="header-title" id="header-title">Microeconomia</h1>
+                <div class="controls">
+                    <div class="mode-switcher desktop-mode-switcher">
+                        <button class="mode-btn" data-mode="study">Studio</button>
+                        <button class="mode-btn" data-mode="story">Storia</button>
+                    </div>
+                    
+                    <button class="icon-btn" id="autoscroll-btn" aria-label="Attiva/Disattiva Autoscroll">
+                         <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 20V7m0 13-4-4m4 4 4-4m4-12v13m0-13 4 4m-4-4-4 4"/>
+                        </svg>
+                    </button>
+
+                     <button class="icon-btn" id="quiz-btn" aria-label="Avvia Quiz">
+                        <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 3L1 9l11 6 9-4.5V12h2V9l-11-6zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+                    </button>
+                    <button class="icon-btn theme-switcher" aria-label="Cambia Tema">
+                        <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                        <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="progress-timeline-mobile">
+                <div class="timeline-track" id="timeline-track-mobile">
+                    <div class="timeline-progress" id="timeline-progress-mobile"></div>
+                    <div class="timeline-nodes" id="timeline-nodes-mobile"></div>
+                </div>
+            </div>
+        </header>
+        
+        <div class="nav-buttons-desktop">
+            <button class="icon-btn" id="prev-chapter-btn" aria-label="Capitolo precedente">
+                <svg class="w-6 h-6 text-gray-800" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M5.575 13.729C4.501 15.033 5.43 17 7.12 17h9.762c1.69 0 2.618-1.967 1.544-3.271l-4.881-5.927a2 2 0 0 0-3.088 0l-4.88 5.927Z" clip-rule="evenodd"/></svg>
+            </button>
+            <button class="icon-btn" id="next-chapter-btn" aria-label="Capitolo successivo">
+                <svg class="w-6 h-6 text-gray-800" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M18.425 10.271C19.499 8.967 18.57 7 16.88 7H7.12c-1.69 0-2.618 1.967-1.544 3.271l4.881 5.927a2 2 0 0 0 3.088 0l4.88-5.927Z" clip-rule="evenodd"/></svg>
+            </button>
+        </div>
+
+        <div class="main-layout">
+            <aside id="timeline-desktop">
+                <div class="timeline-desktop-container">
+                    <svg class="timeline-svg">
+                        <line class="timeline-svg-line" x1="1" y1="0" x2="1" y2="100%"></line>
+                        <line class="timeline-svg-progress" id="timeline-progress-desktop" x1="1" y1="0" x2="1" y2="100%"></line>
+                    </svg>
+                    <div class="timeline-desktop-nodes" id="timeline-nodes-desktop"></div>
+                </div>
+            </aside>
+            <main id="story-panel"></main>
+        </div>
+
+        <footer class="app-footer" id="app-footer">
+            <div class="mode-switcher footer-mode-switcher">
+                <button class="mode-btn" data-mode="study">Studio</button>
+                <button class="mode-btn" data-mode="story">Storia</button>
+            </div>
+        </footer>
+    </div>
+    
+    <div class="quiz-overlay" id="quiz-overlay">
+        <div class="quiz-container" id="quiz-container"></div>
+    </div>
+
+    <script>
+        /* 
+           =================================================================
+           CONTENUTO DIDATTICO (CON FORMULE LATEX)
+           =================================================================
+        */
+        const learningContent = {
+            title: "Domanda e Offerta",
+            chapters: [
+                {
+                    id: 'capitolo-1',
+                    title: 'La Domanda di Mercato',
+                    description: `
+                        <p>La <strong>Domanda</strong> corrisponde alla quantità di beni o servizi che il consumatore è disposto ad acquistare in un certo mercato, in un certo momento e ad un determinato prezzo.</p>
+                        
+                        <h4>La Legge della Domanda</h4>
+                        <p>Esiste una <strong>relazione inversa</strong> tra prezzo e quantità domandata. La legge afferma che: all'aumentare del prezzo di un bene, la quantità domandata decresce (e viceversa). Se il prezzo scende, la domanda sale.</p>
+
+                        <div class="formula-box">
+                            <span class="formula-label">Legge della Domanda</span>
+                            <div class="formula-main">$$P \\uparrow \\;\\Rightarrow\\; Q_d \\downarrow \\quad \\text{e} \\quad P \\downarrow \\;\\Rightarrow\\; Q_d \\uparrow$$</div>
+                            <div class="formula-description">All'aumentare del prezzo, la quantità domandata diminuisce</div>
+                        </div>
+
+                        <div class="interactive-accordion">
+                            <div class="acc-item">
+                                <button class="acc-header">Fattori che influenzano la domanda <span class="acc-icon">+</span></button>
+                                <div class="acc-body"><div class="acc-content">
+                                    <ul>
+                                        <li><strong>Prezzo del bene:</strong> Il fattore principale (movimento lungo la curva).</li>
+                                        <li><strong>Reddito:</strong> Se aumenta il reddito, generalmente aumenta la domanda (tranne per i beni inferiori).</li>
+                                        <li><strong>Gusti personali:</strong> Preferenze soggettive.</li>
+                                        <li><strong>Pubblicità:</strong> Influenza i bisogni indotti.</li>
+                                        <li><strong>Prezzo di altri beni:</strong>
+                                            <ul>
+                                                <li><em>Beni Complementari:</em> Beni usati insieme (es. Auto e Benzina, Caffè e Zucchero). Se sale il prezzo dell'auto, scende la domanda di benzina.</li>
+                                                <li><em>Beni Succedanei (Sostituti):</em> Beni che possono sostituirsi l'uno all'altro (es. Burro e Margarina). Se sale il prezzo del burro, sale la domanda di margarina.</li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div></div>
+                            </div>
+                            <div class="acc-item">
+                                <button class="acc-header">Eccezioni alla regola (Beni Inferiori) <span class="acc-icon">+</span></button>
+                                <div class="acc-body"><div class="acc-content">
+                                    <p>Per i <strong>Beni Inferiori</strong> (beni di scarsa qualità, es. fagioli in scatola o margarina), un aumento del reddito può comportare una <strong>riduzione</strong> della domanda, perché il consumatore ora può permettersi beni di qualità superiore (es. carne o pesce).</p>
+                                    <p>Invece, per i <strong>Beni Completamente Soddisfatti</strong> (es. il sale), la domanda rimane stabile anche se il reddito aumenta (non userai più sale solo perché sei più ricco).</p>
+                                </div></div>
+                            </div>
+                        </div>
+                    `,
+                    storyDescription: `
+                        <p>Immagina di entrare in un supermercato. Sei il protagonista di questa storia: <strong>Il Consumatore</strong>.</p>
+                        <p>Hai un budget limitato (il tuo <em>Reddito</em>). Ti dirigi verso il reparto frutta. Vedi che le mele costano 1€ al kg. Ne metti 3 kg nel carrello. La settimana dopo, torni e scopri che il prezzo è salito a 2€ al kg. Cosa fai? Probabilmente ne comprerai meno, o forse nessuna, virando sulle pere (un <em>Bene Succedaneo</em>).</p>
+                        <p>Questa reazione istintiva è ciò che gli economisti chiamano <strong>Legge della Domanda</strong>: quando il prezzo sale, il tuo carrello si svuota di quel prodotto.</p>
+                        <p>Ma non è solo il prezzo a guidarti. Se il tuo capo ti dà un aumento di stipendio, potresti smettere di comprare la margarina (un <em>Bene Inferiore</em>) e iniziare a comprare burro artigianale. La tua domanda cambia non per il prezzo, ma per il tuo potere d'acquisto.</p>
+                    `
+                },
+                {
+                    id: 'capitolo-2',
+                    title: 'Elasticità della Domanda',
+                    description: `
+                        <p>L'<strong>Elasticità della domanda rispetto al prezzo</strong> <span class="inline-math">$E_{d,p}$</span> misura l'intensità con cui varia la quantità domandata al variare del prezzo. In altre parole: quanto sono sensibili i consumatori ai cambiamenti di prezzo?</p>
+                        
+                        <div class="formula-box">
+                            <span class="formula-label">Elasticità della Domanda</span>
+                            <div class="formula-main">$$E_{d,p} = \\frac{\\Delta\\% \\, Q}{\\Delta\\% \\, P} = \\frac{\\frac{\\Delta Q}{Q}}{\\frac{\\Delta P}{P}}$$</div>
+                            <div class="formula-description">Rapporto tra variazione percentuale della quantità e variazione percentuale del prezzo</div>
+                        </div>
+
+                        <h4>Esempio Pratico (Mercato delle Mele)</h4>
+                        
+                        <div class="var-definition">
+                            <span class="var-symbol">$P_1 = 1€$</span>
+                            <span class="var-meaning">Prezzo iniziale per kg</span>
+                            <span class="var-symbol">$Q_1 = 10 \\text{ kg}$</span>
+                            <span class="var-meaning">Quantità iniziale acquistata</span>
+                            <span class="var-symbol">$P_2 = 1{,}60€$</span>
+                            <span class="var-meaning">Nuovo prezzo per kg</span>
+                            <span class="var-symbol">$Q_2 = 7 \\text{ kg}$</span>
+                            <span class="var-meaning">Nuova quantità acquistata</span>
+                        </div>
+
+                        <div class="math-steps">
+                            <div class="math-step">
+                                <span class="step-number">1</span>
+                                <div class="step-content">
+                                    <div class="step-label">Variazione del prezzo</div>
+                                    $\\Delta P = P_2 - P_1 = 1{,}60 - 1 = +0{,}60€ \\;\\; (+60\\%)$
+                                </div>
+                            </div>
+                            <div class="math-step">
+                                <span class="step-number">2</span>
+                                <div class="step-content">
+                                    <div class="step-label">Variazione della quantità</div>
+                                    $\\Delta Q = Q_2 - Q_1 = 7 - 10 = -3 \\text{ kg} \\;\\; (-30\\%)$
+                                </div>
+                            </div>
+                            <div class="math-step">
+                                <span class="step-number">3</span>
+                                <div class="step-content">
+                                    <div class="step-label">Calcolo elasticità</div>
+                                    $E_{d,p} = \\frac{30\\%}{60\\%} = \\frac{0{,}30}{0{,}60} = 0{,}5$
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="math-result">
+                            <span class="math-result-icon">✓</span>
+                            <span>$E_{d,p} = 0{,}5 < 1$ → Domanda <strong>Anelastica</strong></span>
+                        </div>
+
+                        <div class="flip-container">
+                            <div class="flip-card-inner">
+                                <div class="flip-front">
+                                    <div class="flip-title">Tipi di Elasticità</div>
+                                    <div class="flip-hint">Tocca per scoprire i valori</div>
+                                </div>
+                                <div class="flip-back">
+                                    <ul>
+                                        <li><strong>Rigida</strong> $E = 0$ — La domanda non cambia mai (es. farmaci salvavita). Curva verticale.</li>
+                                        <li><strong>Anelastica</strong> $E < 1$ — Reazione debole (beni di prima necessità).</li>
+                                        <li><strong>Unitaria</strong> $E = 1$ — Variazione proporzionale.</li>
+                                        <li><strong>Elastica</strong> $E > 1$ — Forte reazione (beni di lusso).</li>
+                                        <li><strong>Infinitamente Elastica</strong> $E = \\infty$ — Curva orizzontale.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    `,
+                    storyDescription: `
+                        <p>Torniamo al supermercato. Abbiamo visto che compri meno mele se il prezzo sale. Ma <em>quanto</em> meno?</p>
+                        <p>Se il prezzo dell'insulina per un diabetico raddoppia, il paziente continuerà a comprarne esattamente la stessa quantità per sopravvivere. Questa è una domanda <strong>Rigida</strong>: il consumatore è ostaggio del bisogno.</p>
+                        <p>Se invece raddoppia il prezzo di un profumo di lusso, probabilmente smetterai del tutto di comprarlo. Questa è una domanda <strong>Elastica</strong>: puoi facilmente rinunciare o cambiare marca.</p>
+                        <p>Nel nostro esempio delle mele, il prezzo è aumentato molto (+60%), ma tu hai ridotto l'acquisto solo un po' (-30%). Ti piacciono troppo le mele per rinunciarvi del tutto. La tua domanda è <strong>Anelastica</strong>.</p>
+                    `
+                },
+                {
+                    id: 'capitolo-3',
+                    title: "L'Offerta di Mercato",
+                    description: `
+                        <p>L'<strong>Offerta</strong> è la quantità di beni o servizi che le imprese (produttori) sono disposte a vendere in un certo mercato a un certo prezzo.</p>
+                        
+                        <h4>La Legge dell'Offerta</h4>
+                        <p>Esiste una <strong>relazione diretta</strong> tra prezzo e quantità offerta. Se il prezzo di mercato aumenta, i produttori sono incentivati a produrre di più per guadagnare di più.</p>
+
+                        <div class="formula-box">
+                            <span class="formula-label">Legge dell'Offerta</span>
+                            <div class="formula-main">$$P \\uparrow \\;\\Rightarrow\\; Q_s \\uparrow \\quad \\text{e} \\quad P \\downarrow \\;\\Rightarrow\\; Q_s \\downarrow$$</div>
+                            <div class="formula-description">All'aumentare del prezzo, la quantità offerta aumenta</div>
+                        </div>
+
+                        <div class="interactive-accordion">
+                            <div class="acc-item">
+                                <button class="acc-header">Fattori che influenzano l'offerta <span class="acc-icon">+</span></button>
+                                <div class="acc-body"><div class="acc-content">
+                                    <ul>
+                                        <li><strong>Costi di produzione:</strong> Se aumentano i costi (materie prime, salari), l'offerta diminuisce (la curva si sposta a sinistra).</li>
+                                        <li><strong>Tecnologia:</strong> Nuove tecnologie riducono i costi e aumentano l'offerta.</li>
+                                        <li><strong>Clima:</strong> Fondamentale per l'agricoltura. Un clima favorevole aumenta l'offerta.</li>
+                                        <li><strong>Leggi e Tasse:</strong> Regolamentazioni o incentivi statali.</li>
+                                        <li><strong>Periodo:</strong>
+                                            <ul>
+                                                <li><em>Breve Periodo:</em> L'offerta è rigida (non si possono costruire nuove fabbriche in un giorno).</li>
+                                                <li><em>Lungo Periodo:</em> L'offerta è elastica (si possono ampliare gli impianti).</li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div></div>
+                            </div>
+                        </div>
+                    `,
+                    storyDescription: `
+                        <p>Cambiamo prospettiva. Ora non sei più chi compra, sei <strong>L'Imprenditore</strong>. Possiedi una fabbrica di scarpe.</p>
+                        <p>Se il prezzo delle scarpe sul mercato sale da 50€ a 100€, i tuoi occhi brillano. Vuoi vendere il più possibile! Assumi nuovi operai, fai straordinari, spingi le macchine al massimo. Ecco la <strong>Legge dell'Offerta</strong>: prezzo alto = più produzione.</p>
+                        <p>Ma attenzione agli ostacoli. Se il prezzo del cuoio (costo di produzione) raddoppia, i tuoi margini si riducono e sarai costretto a produrre meno. Se invece inventano un robot che cuce le scarpe in metà tempo (nuova tecnologia), potrai inondare il mercato di scarpe a basso costo.</p>
+                    `
+                },
+                {
+                    id: 'capitolo-4',
+                    title: "Elasticità dell'Offerta",
+                    description: `
+                        <p>Anche per l'offerta calcoliamo l'elasticità <span class="inline-math">$E_{o,p}$</span>, che misura la reattività dei produttori alle variazioni di prezzo.</p>
+                        
+                        <div class="formula-box">
+                            <span class="formula-label">Elasticità dell'Offerta</span>
+                            <div class="formula-main">$$E_{o,p} = \\frac{\\Delta\\% \\, Q_s}{\\Delta\\% \\, P}$$</div>
+                            <div class="formula-description">Rapporto tra variazione percentuale della quantità offerta e del prezzo</div>
+                        </div>
+
+                        <h4>Esempio Pratico (Pastificio)</h4>
+
+                        <div class="var-definition">
+                            <span class="var-symbol">$P_1 = 0{,}80€$</span>
+                            <span class="var-meaning">Prezzo iniziale per kg</span>
+                            <span class="var-symbol">$Q_1 = 20.000 \\text{ kg}$</span>
+                            <span class="var-meaning">Quantità prodotta iniziale</span>
+                            <span class="var-symbol">$P_2 = 1{,}00€$</span>
+                            <span class="var-meaning">Nuovo prezzo per kg</span>
+                            <span class="var-symbol">$Q_2 = 25.000 \\text{ kg}$</span>
+                            <span class="var-meaning">Nuova quantità prodotta</span>
+                        </div>
+
+                        <div class="math-steps">
+                            <div class="math-step">
+                                <span class="step-number">1</span>
+                                <div class="step-content">
+                                    <div class="step-label">Variazione percentuale del prezzo</div>
+                                    $\\Delta\\% P = \\frac{0{,}20}{0{,}80} \\times 100 = 25\\%$
+                                </div>
+                            </div>
+                            <div class="math-step">
+                                <span class="step-number">2</span>
+                                <div class="step-content">
+                                    <div class="step-label">Variazione percentuale della quantità</div>
+                                    $\\Delta\\% Q = \\frac{5.000}{20.000} \\times 100 = 25\\%$
+                                </div>
+                            </div>
+                            <div class="math-step">
+                                <span class="step-number">3</span>
+                                <div class="step-content">
+                                    <div class="step-label">Calcolo elasticità</div>
+                                    $E_{o,p} = \\frac{25\\%}{25\\%} = 1$
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="math-result">
+                            <span class="math-result-icon">✓</span>
+                            <span>$E_{o,p} = 1$ → Elasticità <strong>Unitaria</strong></span>
+                        </div>
+                    `,
+                    storyDescription: `
+                        <p>Torniamo alla tua fabbrica. Il prezzo delle scarpe sale del 25%. Tu quanto riesci ad aumentare la produzione?</p>
+                        <p>Se hai macchinari spenti pronti all'uso, potresti aumentare la produzione esattamente del 25%. In questo caso la tua reazione è perfettamente proporzionale (Elasticità Unitaria, come nell'esempio della pasta).</p>
+                        <p>Ma se la tua fabbrica è già al 100% della capacità, anche se il prezzo raddoppia, tu non puoi produrre una scarpa in più nell'immediato. Nel <strong>breve periodo</strong>, la tua offerta è rigida (anelastica). Ti serve tempo per costruire un nuovo capannone (lungo periodo) e rendere l'offerta elastica.</p>
+                    `
+                },
+                {
+                    id: 'capitolo-5',
+                    title: "Equilibrio di Mercato",
+                    description: `
+                        <p>Il mercato raggiunge l'<strong>Equilibrio</strong> quando la quantità domandata dai consumatori eguaglia la quantità offerta dai produttori.</p>
+                        
+                        <div class="formula-box">
+                            <span class="formula-label">Condizione di Equilibrio</span>
+                            <div class="formula-main">$$Q_d(P^*) = Q_s(P^*)$$</div>
+                            <div class="formula-description">Al prezzo di equilibrio P*, domanda e offerta si eguagliano</div>
+                        </div>
+
+                        <p>Graficamente, è il punto di intersezione tra la curva di domanda (decrescente) e la curva di offerta (crescente).</p>
+                        
+                        <div class="var-definition">
+                            <span class="var-symbol">$P^*$</span>
+                            <span class="var-meaning">Prezzo di equilibrio</span>
+                            <span class="var-symbol">$Q^*$</span>
+                            <span class="var-meaning">Quantità di equilibrio</span>
+                            <span class="var-symbol">$Q_d > Q_s$</span>
+                            <span class="var-meaning">Eccesso di domanda → il prezzo sale $\\uparrow$</span>
+                            <span class="var-symbol">$Q_d < Q_s$</span>
+                            <span class="var-meaning">Eccesso di offerta → il prezzo scende $\\downarrow$</span>
+                        </div>
+
+                        <ul>
+                            <li><strong>Prezzo di Equilibrio:</strong> Il prezzo in cui non c'è né eccesso di domanda (scaffali vuoti) né eccesso di offerta (magazzini pieni).</li>
+                            <li><strong>Eccesso di Offerta:</strong> Se il prezzo è troppo alto, i venditori vogliono vendere molto, ma i compratori scappano. Il prezzo dovrà scendere.</li>
+                            <li><strong>Eccesso di Domanda:</strong> Se il prezzo è troppo basso, tutti vogliono comprare, ma la merce finisce subito. Il prezzo tenderà a salire.</li>
+                        </ul>
+                        <p>Nel breve periodo i prezzi sono influenzati soprattutto dalla domanda, mentre nel lungo periodo sono influenzati anche dall'offerta.</p>
+                    `,
+                    storyDescription: `
+                        <p>Immagina un'asta silenziosa. Da una parte ci sono i compratori (Domanda) che vogliono spendere poco. Dall'altra i venditori (Offerta) che vogliono guadagnare tanto.</p>
+                        <p>Se il prezzo è troppo alto, i venditori portano tonnellate di merce, ma nessuno compra. La merce marcisce. Per liberarsene, devono abbassare il prezzo.</p>
+                        <p>Se il prezzo è troppo basso, la gente si accalca e la merce finisce in un'ora. Chi è rimasto senza è disposto a pagare di più pur di averla. Il prezzo sale.</p>
+                        <p>Alla fine, si arriva a un punto magico: l'<strong>Equilibrio</strong>. A quel prezzo preciso, tutto ciò che viene prodotto viene comprato. Nessuno resta insoddisfatto, niente viene sprecato. È la mano invisibile del mercato.</p>
+                    `
+                }
+            ]
+        };
+
+        /* 
+           =================================================================
+           QUIZ (Con formule LaTeX)
+           =================================================================
+        */
+        const quizData = [
+			{ 
+				question: "Qual è la definizione corretta di 'Domanda di mercato' secondo gli appunti?", 
+				options: ["La quantità di beni che i produttori vogliono vendere", "La quantità di beni e servizi che il consumatore è disposto ad acquistare in un certo mercato, tempo e prezzo", "Il prezzo massimo che un consumatore paga", "La somma dei costi di produzione"], 
+				correctAnswer: "La quantità di beni e servizi che il consumatore è disposto ad acquistare in un certo mercato, tempo e prezzo",
+				explanation: "La domanda è definita specificamente come la quantità di beni o servizi che i consumatori sono disposti (e in grado) di acquistare, date determinate condizioni di mercato, tempo e prezzo. Non riguarda i produttori." 
+			},
+			{ 
+				question: "Qual è la relazione fondamentale descritta dalla 'Legge della domanda'?", 
+				options: ["All'aumentare del prezzo, la domanda aumenta", "Al diminuire del prezzo, la domanda diminuisce", "All'aumentare del prezzo, la quantità domandata decresce", "Il prezzo non influenza la quantità domandata"], 
+				correctAnswer: "All'aumentare del prezzo, la quantità domandata decresce",
+				explanation: "La Legge della Domanda stabilisce una relazione inversa tra prezzo e quantità domandata: se il prezzo di un bene sale, i consumatori ne acquisteranno di meno, ceteris paribus."
+			},
+			{ 
+				question: "Quali sono i fattori principali che influenzano la domanda elencati nel materiale?", 
+				options: ["Solo il prezzo", "Prezzo, costi di produzione, clima", "Prezzo, reddito, gusti, pubblicità, prezzi di altri beni", "Tecnologia e leggi"], 
+				correctAnswer: "Prezzo, reddito, gusti, pubblicità, prezzi di altri beni",
+				explanation: "Gli appunti elencano specificamente: prezzo del bene, reddito del consumatore, gusti personali, pubblicità e il prezzo di beni complementari o succedanei."
+			},
+			{ 
+				question: "Cosa si intende per 'Beni succedanei'?", 
+				options: ["Beni che devono essere usati insieme", "Beni che hanno un sostituto o si può usare l'uno o l'altro", "Beni di lusso", "Beni inferiori"], 
+				correctAnswer: "Beni che hanno un sostituto o si può usare l'uno o l'altro",
+				explanation: "I beni succedanei sono quelli che possono sostituirsi a vicenda nel soddisfare un bisogno (es. burro e margarina). Se il prezzo di uno sale, la domanda dell'altro tende ad aumentare."
+			},
+			{ 
+				question: "Quale esempio viene fornito negli appunti per i 'Beni complementari'?", 
+				options: ["Burro e margarina", "Caffè e zucchero", "Auto e bicicletta", "Mele e pere"], 
+				correctAnswer: "Caffè e zucchero",
+				explanation: "Gli appunti citano esplicitamente 'caffè e zucchero' e 'auto e benzina' come esempi di beni complementari, ovvero beni che vengono consumati congiuntamente."
+			},
+			{ 
+				question: "Se il prezzo delle automobili aumenta drasticamente, cosa accade alla domanda di benzina (bene complementare)?", 
+				options: ["Aumenta", "Diminuisce", "Resta invariata", "Diventa rigida"], 
+				correctAnswer: "Diminuisce",
+				explanation: "Essendo beni complementari, l'aumento del prezzo dell'auto riduce l'acquisto di auto, e di conseguenza riduce l'utilizzo e la domanda di benzina necessaria per farle funzionare."
+			},
+			{ 
+				question: "Cosa indica l'elasticità della domanda rispetto al prezzo (Edp)?", 
+				options: ["La variazione del reddito", "L'intensità della variazione della quantità domandata al variare del prezzo", "La quantità offerta dai produttori", "Il punto di equilibrio"], 
+				correctAnswer: "L'intensità della variazione della quantità domandata al variare del prezzo",
+				explanation: "L'elasticità misura la reattività dei consumatori: quanto varia in percentuale la quantità acquistata rispetto a una variazione percentuale del prezzo."
+			},
+			{ 
+				question: "Qual è la formula corretta per calcolare l'elasticità della domanda (Edp)?", 
+				options: ["Variazione % Prezzo / Variazione % Quantità", "Variazione % Quantità / Variazione % Prezzo", "Prezzo finale - Prezzo iniziale", "Quantità finale * Prezzo finale"], 
+				correctAnswer: "Variazione % Quantità / Variazione % Prezzo",
+				explanation: "La formula riportata negli appunti è Edp = Δ%Q / Δ%P. Il numeratore è sempre la reazione (quantità), il denominatore è l'azione (prezzo)."
+			},
+			{ 
+				question: "Nel calcolo dell'elasticità delle mele presente negli appunti, qual era la variazione percentuale del prezzo?", 
+				options: ["30%", "60%", "100%", "25%"], 
+				correctAnswer: "60%",
+				explanation: "Il prezzo è passato da 1€ a 1,60€. L'aumento è di 0,60€. Rispetto all'originale 1€, è un aumento del 60%."
+			},
+			{ 
+				question: "Nel calcolo dell'elasticità delle mele, la quantità è scesa da 10kg a 7kg. Qual è la variazione percentuale della quantità?", 
+				options: ["10%", "20%", "30%", "40%"], 
+				correctAnswer: "30%",
+				explanation: "La differenza è 3kg su una base di 10kg. 3 su 10 corrisponde al 30%."
+			},
+			{ 
+				question: "Se Edp = 0,5 (come nell'esempio delle mele), come si definisce la domanda?", 
+				options: ["Elastica", "Anelastica (o rigida in senso lato)", "Unitaria", "Perfettamente elastica"], 
+				correctAnswer: "Anelastica (o rigida in senso lato)",
+				explanation: "Quando il coefficiente è minore di 1 (Edp < 1), la domanda è definita anelastica. La reazione della quantità è meno che proporzionale rispetto al prezzo."
+			},
+			{ 
+				question: "Quando la domanda si definisce 'Rigida'?", 
+				options: ["Quando Edp > 1", "Quando Edp = 1", "Quando Edp = 0", "Quando Edp = infinito"], 
+				correctAnswer: "Quando Edp = 0",
+				explanation: "Una domanda rigida (Edp=0) significa che la quantità domandata non cambia affatto al variare del prezzo (es. farmaci salvavita indispensabili)."
+			},
+			{ 
+				question: "Quale tipo di beni tende ad avere una domanda 'Infinitamente elastica'?", 
+				options: ["Beni di prima necessità", "Beni di lusso (secondo alcune interpretazioni grafiche estreme o teoriche)", "Beni inferiori", "Beni complementari"], 
+				correctAnswer: "Beni di lusso (secondo alcune interpretazioni grafiche estreme o teoriche)",
+				explanation: "Sebbene i beni di lusso siano generalmente 'elastici', il caso 'infinitamente elastico' è teorico o si applica a mercati perfetti; tuttavia, negli appunti è associato a una reattività estrema opposta ai beni di prima necessità."
+			},
+			{ 
+				question: "Cosa accade alla domanda dei 'Beni Inferiori' quando il reddito aumenta?", 
+				options: ["Aumenta", "Diminuisce", "Rimane costante", "Diventa infinita"], 
+				correctAnswer: "Diminuisce",
+				explanation: "I beni inferiori (es. cibo di scarsa qualità) vengono abbandonati dal consumatore non appena il suo reddito gli permette di acquistare beni migliori. Quindi la domanda cala all'aumentare del reddito."
+			},
+			{ 
+				question: "Come viene definita l'Offerta di mercato?", 
+				options: ["La quantità che i consumatori comprano", "La quantità di beni e servizi che le imprese sono disposte a vendere a un certo prezzo", "Il totale delle vendite effettuate", "La spesa pubblica"], 
+				correctAnswer: "La quantità di beni e servizi che le imprese sono disposte a vendere a un certo prezzo",
+				explanation: "L'offerta rappresenta la volontà dei produttori di immettere beni sul mercato in relazione al prezzo e ad altri fattori produttivi."
+			},
+			{ 
+				question: "Quali sono i fattori che influenzano l'offerta citati nelle slide?", 
+				options: ["Reddito e gusti", "Pubblicità e moda", "Costi dei fattori produttivi, nuove tecnologie, clima, leggi, prezzo", "Numero di consumatori"], 
+				correctAnswer: "Costi dei fattori produttivi, nuove tecnologie, clima, leggi, prezzo",
+				explanation: "Le slide elencano dettagliatamente: costi di produzione, introduzione di nuove tecnologie (che abbassano i costi), fattori climatici (per l'agricoltura), leggi e ovviamente il prezzo."
+			},
+			{ 
+				question: "Se i costi di produzione aumentano, cosa succede all'offerta a parità di prezzo?", 
+				options: ["Aumenta", "Si riduce", "Rimane invariata", "Diventa infinitamente elastica"], 
+				correctAnswer: "Si riduce",
+				explanation: "L'aumento dei costi riduce il margine di profitto dell'impresa. A parità di prezzo di vendita, l'impresa sarà disposta a produrre e offrire meno quantità."
+			},
+			{ 
+				question: "Qual è l'effetto dell'introduzione di 'nuove tecnologie' sull'offerta?", 
+				options: ["Permette di ridurre i costi e aumentare la quantità offerta", "Aumenta i costi e riduce l'offerta", "Non ha effetto", "Riduce la domanda"], 
+				correctAnswer: "Permette di ridurre i costi e aumentare la quantità offerta",
+				explanation: "Le slide specificano che le nuove tecnologie permettono di ottenere prodotti a costi più contenuti, spingendo le imprese ad aumentare le quantità offerte."
+			},
+			{ 
+				question: "Cosa afferma la 'Legge dell'Offerta'?", 
+				options: ["Se il prezzo aumenta, l'offerta diminuisce", "Se il prezzo aumenta, l'offerta aumenta", "L'offerta è sempre uguale alla domanda", "Il prezzo non influenza l'offerta"], 
+				correctAnswer: "Se il prezzo aumenta, l'offerta aumenta",
+				explanation: "Esiste una relazione diretta: prezzi più alti incentivano le imprese a produrre e vendere di più per massimizzare i profitti."
+			},
+			{ 
+				question: "Nell'esempio numerico dell'offerta (pasta), il prezzo passa da 0,80€ a 1€. Qual è la variazione percentuale del prezzo?", 
+				options: ["20%", "25%", "50%", "10%"], 
+				correctAnswer: "25%",
+				explanation: "L'incremento è di 0,20€. 0,20€ su 0,80€ è un quarto, ovvero il 25%. (Calcolo: 0,20 : 0,80 = x : 100 -> x = 25)."
+			},
+			{ 
+				question: "Nell'esempio dell'offerta, se la variazione del prezzo è 25% e la variazione della quantità offerta è anch'essa 25%, qual è il coefficiente di elasticità?", 
+				options: ["0", "0,5", "1", "2"], 
+				correctAnswer: "1",
+				explanation: "Il coefficiente è dato dal rapporto tra le variazioni percentuali: 25 / 25 = 1. Si tratta di elasticità unitaria."
+			},
+			{ 
+				question: "Nel breve periodo, come tende ad essere l'elasticità dell'offerta?", 
+				options: ["Molto elastica", "Rigida o anelastica", "Infinita", "Indefinita"], 
+				correctAnswer: "Rigida o anelastica",
+				explanation: "Nel breve periodo le imprese non possono adattare facilmente gli impianti e la capacità produttiva, quindi la reazione della quantità offerta a variazioni di prezzo è limitata (anelastica)."
+			},
+			{ 
+				question: "Nel lungo periodo, l'offerta tende ad essere:", 
+				options: ["Più rigida", "Più elastica", "Invariata", "Decrescente"], 
+				correctAnswer: "Più elastica",
+				explanation: "Nel lungo periodo le imprese possono acquistare nuovi macchinari, espandere fabbriche e assumere personale, rendendo la produzione molto più reattiva alle variazioni di prezzo."
+			},
+			{ 
+				question: "Cosa rappresenta il 'Prezzo di equilibrio'?", 
+				options: ["Il prezzo imposto dallo Stato", "Il prezzo che eguaglia la quantità offerta e la quantità di domanda", "Il prezzo più basso possibile", "Il prezzo più alto possibile"], 
+				correctAnswer: "Il prezzo che eguaglia la quantità offerta e la quantità di domanda",
+				explanation: "Graficamente è il punto di intersezione tra la curva di domanda e la curva di offerta. A quel prezzo, tutto ciò che viene prodotto viene acquistato."
+			},
+			{ 
+				question: "Se il prezzo di mercato è superiore al prezzo di equilibrio, cosa si verifica?", 
+				options: ["Eccesso di domanda", "Eccesso di offerta", "Equilibrio stabile", "Carenza di beni"], 
+				correctAnswer: "Eccesso di offerta",
+				explanation: "Se il prezzo è troppo alto, i produttori vogliono vendere molto ma i consumatori comprano poco. Si crea un'eccedenza (surplus) di beni invenduti."
+			},
+			{ 
+				question: "Se il prezzo di mercato è inferiore al prezzo di equilibrio, cosa si verifica?", 
+				options: ["Eccesso di domanda", "Eccesso di offerta", "Saturazione del mercato", "Nessuna reazione"], 
+				correctAnswer: "Eccesso di domanda",
+				explanation: "A un prezzo basso, i consumatori vorrebbero comprare molto, ma i produttori offrono poco. Si crea una penuria (scarcity) e i consumatori competono per i beni."
+			},
+			{ 
+				question: "Qual è il valore di elasticità per un'offerta definita 'Rigida'?", 
+				options: ["E = 0", "E < 1", "E = 1", "E > 1"], 
+				correctAnswer: "E = 0",
+				explanation: "L'offerta rigida ha un'elasticità pari a zero. La quantità offerta non cambia indipendentemente dal prezzo (linea verticale nel grafico)."
+			},
+			{ 
+				question: "Un esempio di offerta rigida citato potrebbe riguardare:", 
+				options: ["Prodotti agricoli deperibili nel brevissimo periodo", "Automobili", "Servizi bancari", "Elettricità nel lungo periodo"], 
+				correctAnswer: "Prodotti agricoli deperibili nel brevissimo periodo",
+				explanation: "Se la merce è già stata prodotta e deperisce (es. pesce al mercato), la quantità è quella e non può cambiare in risposta al prezzo immediato."
+			},
+			{ 
+				question: "Cosa succede alla curva di offerta se il clima è sfavorevole (in agricoltura)?", 
+				options: ["Si sposta verso destra (aumenta)", "La quantità offerta si riduce (spostamento verso sinistra/alto)", "Resta ferma", "Diventa orizzontale"], 
+				correctAnswer: "La quantità offerta si riduce (spostamento verso sinistra/alto)",
+				explanation: "Un clima sfavorevole distrugge i raccolti, riducendo la quantità disponibile per ogni livello di prezzo."
+			},
+			{ 
+				question: "Il reddito è un fattore che influenza direttamente:", 
+				options: ["L'offerta", "La tecnologia", "La domanda", "I costi di produzione"], 
+				correctAnswer: "La domanda",
+				explanation: "Il reddito determina il potere d'acquisto dei consumatori, spostando la curva di domanda. Non influenza direttamente la curva dei costi o l'offerta tecnologica."
+			},
+			{ 
+				question: "Qual è la rappresentazione grafica della curva di domanda?", 
+				options: ["Una linea crescente (pendenza positiva)", "Una linea decrescente (pendenza negativa)", "Una linea orizzontale fissa", "Una parabola a U"], 
+				correctAnswer: "Una linea decrescente (pendenza negativa)",
+				explanation: "Poiché prezzo e quantità domandata sono inversamente proporzionali, la curva scende da sinistra verso destra."
+			},
+			{ 
+				question: "Qual è la rappresentazione grafica della curva di offerta?", 
+				options: ["Una linea decrescente", "Una linea crescente (pendenza positiva)", "Una linea verticale sempre", "Un cerchio"], 
+				correctAnswer: "Una linea crescente (pendenza positiva)",
+				explanation: "Poiché prezzo e quantità offerta sono direttamente proporzionali (più alto il prezzo, più si produce), la curva sale da sinistra verso destra."
+			},
+			{ 
+				question: "Cosa si intende per 'Beni soddisfatti' o 'saturi' nelle eccezioni della domanda?", 
+				options: ["Beni la cui domanda non aumenta più anche se il reddito sale", "Beni che nessuno vuole", "Beni di lusso", "Beni tecnologici"], 
+				correctAnswer: "Beni la cui domanda non aumenta più anche se il reddito sale",
+				explanation: "Una volta soddisfatto completamente un bisogno (es. il sale da cucina), un ulteriore aumento di reddito non porta ad acquistarne di più. La domanda si stabilizza."
+			},
+			{ 
+				question: "Secondo gli appunti, la pubblicità influenza:", 
+				options: ["L'offerta", "I costi di trasporto", "I gusti e quindi la domanda", "Il clima"], 
+				correctAnswer: "I gusti e quindi la domanda",
+				explanation: "La pubblicità agisce sulle preferenze (gusti) dei consumatori, inducendo bisogni e spostando la curva di domanda."
+			},
+			{ 
+				question: "Come viene calcolato il coefficiente Edp se la variazione % della quantità è 10% e quella del prezzo è 10%?", 
+				options: ["0,1", "1", "10", "100"], 
+				correctAnswer: "1",
+				explanation: "10% diviso 10% è uguale a 1. Elasticità unitaria."
+			},
+			{ 
+				question: "Se l'elasticità della domanda è > 1, la domanda è:", 
+				options: ["Rigida", "Elastica", "Unitaria", "Nulla"], 
+				correctAnswer: "Elastica",
+				explanation: "Un valore superiore a 1 indica che la reazione della quantità è proporzionalmente maggiore della variazione del prezzo (alta sensibilità)."
+			},
+			{ 
+				question: "Quale dei seguenti è un esempio di bene a domanda rigida?", 
+				options: ["Profumo di lusso", "Benzina (nel breve periodo) o Farmaci salvavita", "Vacanza ai Caraibi", "Biscotti di una marca specifica"], 
+				correctAnswer: "Benzina (nel breve periodo) o Farmaci salvavita",
+				explanation: "I beni necessari con pochi sostituti tendono ad avere una domanda rigida: anche se il prezzo sale, bisogna comprarli comunque."
+			},
+			{ 
+				question: "La 'Legge che impone impianti di bonifica' citata nelle slide ha come effetto immediato:", 
+				options: ["L'aumento dell'offerta", "L'aumento dei costi e quindi la riduzione dell'offerta", "L'aumento della domanda", "La riduzione del prezzo"], 
+				correctAnswer: "L'aumento dei costi e quindi la riduzione dell'offerta",
+				explanation: "L'obbligo di nuovi impianti costosi aumenta i costi di produzione per le imprese, che a parità di prezzo ridurranno l'offerta."
+			},
+			{ 
+				question: "Nel grafico dell'equilibrio, il punto di incontro delle curve determina:", 
+				options: ["Solo il prezzo", "Solo la quantità", "Prezzo di equilibrio e Quantità di equilibrio", "Il profitto massimo"], 
+				correctAnswer: "Prezzo di equilibrio e Quantità di equilibrio",
+				explanation: "Il punto (E) fornisce le coordinate cartesiane sia per il prezzo (sull'asse Y) che per la quantità scambiata (sull'asse X)."
+			},
+			{ 
+				question: "Se il prezzo delle pere aumenta, la domanda di mele (bene succedaneo) tende a:", 
+				options: ["Diminuire", "Aumentare", "Restare uguale", "Crollare a zero"], 
+				correctAnswer: "Aumentare",
+				explanation: "I consumatori sostituiranno le pere (diventate care) con le mele (relativamente più economiche), aumentandone la domanda."
+			},
+			{ 
+				question: "L'elasticità incrociata misura:", 
+				options: ["La reazione della domanda di un bene al variare del prezzo di un altro bene", "La reazione dell'offerta ai costi", "La somma delle elasticità", "Il rapporto tra domanda e offerta"], 
+				correctAnswer: "La reazione della domanda di un bene al variare del prezzo di un altro bene",
+				explanation: "È definita come la variazione percentuale della domanda del bene A rispetto alla variazione percentuale del prezzo del bene B."
+			},
+			{ 
+				question: "Se l'elasticità incrociata è negativa, i beni sono:", 
+				options: ["Succedanei", "Complementari", "Indipendenti", "Inferiori"], 
+				correctAnswer: "Complementari",
+				explanation: "Se aumenta il prezzo di B e la domanda di A scende (segno meno), significa che i beni sono legati e consumati insieme (es. auto e benzina)."
+			},
+			{ 
+				question: "Se l'elasticità incrociata è positiva, i beni sono:", 
+				options: ["Succedanei", "Complementari", "Indipendenti", "Di lusso"], 
+				correctAnswer: "Succedanei",
+				explanation: "Se aumenta il prezzo di B e la domanda di A sale (segno più), significa che i consumatori stanno passando da B ad A (sostituzione)."
+			},
+			{ 
+				question: "Un'offerta infinitamente elastica è rappresentata graficamente da:", 
+				options: ["Una linea verticale", "Una linea orizzontale", "Una curva a 45 gradi", "Una parabola"], 
+				correctAnswer: "Una linea orizzontale",
+				explanation: "Significa che a un determinato prezzo l'offerta è potenzialmente infinita, ma basta una minima variazione di prezzo per azzerarla o cambiarla drasticamente. È una linea parallela all'asse delle quantità."
+			},
+			{ 
+				question: "Quale fattore NON sposta la curva di domanda?", 
+				options: ["Reddito", "Pubblicità", "Costi di produzione", "Moda"], 
+				correctAnswer: "Costi di produzione",
+				explanation: "I costi di produzione influenzano l'offerta, non la domanda. Gli altri fattori elencati agiscono sulla volontà del consumatore."
+			},
+			{ 
+				question: "Se il reddito di una famiglia povera aumenta, la domanda di fagioli (bene inferiore) nel grafico:", 
+				options: ["Cresce indefinitamente", "Prima cresce, poi decresce", "È sempre costante", "Non esiste"], 
+				correctAnswer: "Prima cresce, poi decresce",
+				explanation: "Inizialmente si comprano più fagioli, ma superata una soglia di reddito, si sostituiscono i fagioli con la carne, facendo calare la domanda dei primi."
+			},
+			{ 
+				question: "L'introduzione di sussidi statali per la produzione biologica provoca:", 
+				options: ["Una riduzione dell'offerta", "Un aumento dell'offerta", "Un aumento del prezzo di vendita", "Un calo della domanda"], 
+				correctAnswer: "Un aumento dell'offerta",
+				explanation: "I contributi riducono i costi effettivi per l'impresa, incentivando la produzione e spostando la curva di offerta verso destra (aumento)."
+			},
+			{ 
+				question: "L'elasticità unitaria grafica (iperbole equilatera per la domanda) implica che:", 
+				options: ["La spesa totale del consumatore rimane costante", "La quantità è fissa", "Il prezzo è fisso", "Non esiste relazione"], 
+				correctAnswer: "La spesa totale del consumatore rimane costante",
+				explanation: "Se il prezzo sale del 10% e la quantità scende del 10%, il prodotto P*Q (spesa totale) rimane invariato."
+			},
+			{ 
+				question: "Nell'esempio del burro e margarina, se il prezzo del burro sale:", 
+				options: ["La domanda di margarina sale", "La domanda di margarina scende", "L'offerta di burro scende", "Il prezzo della margarina scende"], 
+				correctAnswer: "La domanda di margarina sale",
+				explanation: "La margarina è un bene succedaneo del burro. Se il burro diventa caro, la gente compra più margarina."
+			},
+			{ 
+				question: "Cosa si intende per 'Mercato' in economia?", 
+				options: ["Solo il luogo fisico", "L'insieme delle contrattazioni tra acquirenti e venditori", "Un negozio specifico", "La borsa valori"], 
+				correctAnswer: "L'insieme delle contrattazioni tra acquirenti e venditori",
+				explanation: "Il mercato non è solo un luogo fisico, ma il contesto astratto o reale dove domanda e offerta si incontrano per determinare il prezzo."
+			},
+			{ 
+				question: "Se Edp = 2, una riduzione del prezzo del 10% porta a:", 
+				options: ["Un aumento della quantità del 20%", "Un aumento della quantità del 5%", "Una riduzione della quantità del 20%", "Nessun cambiamento"], 
+				correctAnswer: "Un aumento della quantità del 20%",
+				explanation: "Edp = Δ%Q / Δ%P -> 2 = X / 10 -> X = 20%. La relazione è inversa, quindi prezzo giù, quantità su."
+			},
+			{ 
+				question: "Se Edp = 0,5, un aumento del prezzo del 20% porta a:", 
+				options: ["Una riduzione della quantità del 10%", "Una riduzione della quantità del 40%", "Un aumento della quantità del 10%", "Stessa quantità"], 
+				correctAnswer: "Una riduzione della quantità del 10%",
+				explanation: "Edp = Δ%Q / Δ%P -> 0,5 = X / 20 -> X = 10%. Prezzo su, quantità giù."
+			},
+			{ 
+				question: "Qual è l'unità di misura dell'elasticità?", 
+				options: ["Euro", "Chilogrammi", "È un numero puro (adimensionale)", "Percentuale"], 
+				correctAnswer: "È un numero puro (adimensionale)",
+				explanation: "L'elasticità è un rapporto tra percentuali, quindi le unità si annullano. È un coefficiente numerico."
+			},
+			{ 
+				question: "Perché la curva di domanda ha pendenza negativa?", 
+				options: ["Per l'utilità marginale decrescente e l'effetto reddito/sostituzione", "Perché i produttori producono meno", "Perché lo Stato impone prezzi bassi", "Perché i costi aumentano"], 
+				correctAnswer: "Per l'utilità marginale decrescente e l'effetto reddito/sostituzione",
+				explanation: "Anche se gli appunti non lo esplicitano in dettaglio teorico, la logica inversa (prezzo su -> quantità giù) è alla base della pendenza negativa."
+			},
+			{ 
+				question: "Se l'offerta si sposta a destra e la domanda rimane ferma, il prezzo di equilibrio:", 
+				options: ["Aumenta", "Diminuisce", "Resta uguale", "Diventa negativo"], 
+				correctAnswer: "Diminuisce",
+				explanation: "Più merce disponibile sul mercato crea concorrenza tra venditori, abbassando il prezzo per smaltire l'offerta."
+			},
+			{ 
+				question: "Se la domanda si sposta a destra (aumenta) e l'offerta resta ferma, il prezzo di equilibrio:", 
+				options: ["Aumenta", "Diminuisce", "Resta uguale", "Oscilla"], 
+				correctAnswer: "Aumenta",
+				explanation: "Più gente vuole il bene, creando scarsità relativa e spingendo il prezzo verso l'alto."
+			},
+			{ 
+				question: "Quale variabile è posta sull'asse delle ascisse (X) nei grafici standard?", 
+				options: ["Prezzo", "Quantità", "Reddito", "Tempo"], 
+				correctAnswer: "Quantità",
+				explanation: "Per convenzione economica (anche se matematicamente inverso), la Quantità (Q) sta sulla X e il Prezzo (P) sulla Y."
+			},
+			{ 
+				question: "Quale variabile è posta sull'asse delle ordinate (Y) nei grafici standard?", 
+				options: ["Prezzo", "Quantità", "Costi", "Utilità"], 
+				correctAnswer: "Prezzo",
+				explanation: "L'asse verticale Y rappresenta il livello dei prezzi."
+			},
+			{ 
+				question: "Il punto P1, Q1 nel grafico rappresenta:", 
+				options: ["Una situazione iniziale", "Il punto finale", "L'equilibrio impossibile", "L'origine"], 
+				correctAnswer: "Una situazione iniziale",
+				explanation: "Solitamente i pedici '1' indicano lo stato di partenza prima di una variazione verso '2'."
+			},
+			{ 
+				question: "Nel calcolo Edp = Δ%Q / Δ%P, il simbolo Δ (Delta) significa:", 
+				options: ["Somma", "Variazione o differenza", "Moltiplicazione", "Divisione"], 
+				correctAnswer: "Variazione o differenza",
+				explanation: "Delta è la lettera greca utilizzata universalmente in matematica e fisica per indicare una variazione (Finale - Iniziale)."
+			},
+			{ 
+				question: "Un bene di lusso tende ad avere una domanda:", 
+				options: ["Rigida", "Molto elastica", "Inesistente", "Decrescente col reddito"], 
+				correctAnswer: "Molto elastica",
+				explanation: "Non essendo necessario, se il prezzo sale i consumatori possono facilmente rinunciare ad acquistarlo, rendendo la domanda molto sensibile (elastica)."
+			},
+			{ 
+				question: "Il sale da cucina è un classico esempio di bene a domanda:", 
+				options: ["Elastica", "Rigida", "Perfettamente elastica", "Anelastica"], 
+				correctAnswer: "Rigida",
+				explanation: "Costa poco e non ha sostituti. Se il prezzo raddoppia, si continua a comprarne la stessa quantità necessaria."
+			},
+			{ 
+				question: "Nel grafico dell'offerta rigida, la linea è:", 
+				options: ["Parallela all'asse Y (verticale)", "Parallela all'asse X (orizzontale)", "Obliqua a 45 gradi", "Curva"], 
+				correctAnswer: "Parallela all'asse Y (verticale)",
+				explanation: "La quantità (asse X) è fissa a un valore specifico, indipendentemente dall'altezza del prezzo (asse Y)."
+			},
+			{ 
+				question: "Se un'azienda opera nel 'lungo periodo', può:", 
+				options: ["Solo variare il prezzo", "Modificare la capacità produttiva e i macchinari", "Non fare nulla", "Vendere solo scorte"], 
+				correctAnswer: "Modificare la capacità produttiva e i macchinari",
+				explanation: "La distinzione chiave tra breve e lungo periodo è la possibilità di variare tutti i fattori produttivi, inclusi quelli fissi come gli impianti."
+			},
+			{ 
+				question: "L'aumento del prezzo del carburante per i trasporti agisce sull'offerta come:", 
+				options: ["Aumento dei costi -> Offerta diminuisce", "Riduzione dei costi -> Offerta aumenta", "Aumento della domanda", "Nessun effetto"], 
+				correctAnswer: "Aumento dei costi -> Offerta diminuisce",
+				explanation: "Il trasporto è un costo di produzione/distribuzione. Se aumenta, l'offerta si contrae (spostamento a sinistra)."
+			},
+			{ 
+				question: "In un mercato di concorrenza, il prezzo tende naturalmente verso:", 
+				options: ["Zero", "L'infinito", "L'equilibrio", "Il costo marginale"], 
+				correctAnswer: "L'equilibrio",
+				explanation: "Le forze di mercato (eccesso di domanda o offerta) spingono il prezzo verso il punto in cui Q_domanda = Q_offerta."
+			},
+			{ 
+				question: "La domanda 'Anelastica' è tipica di beni:", 
+				options: ["Voluttuari", "Di prima necessità", "Di lusso", "Succedanei perfetti"], 
+				correctAnswer: "Di prima necessità",
+				explanation: "I beni necessari (pane, latte, medicine) hanno pochi sostituti e non vi si può rinunciare facilmente, rendendo la domanda poco sensibile al prezzo."
+			},
+			{ 
+				question: "Se Edp = 1, la curva di domanda è geometricamente:", 
+				options: ["Una retta verticale", "Una retta orizzontale", "Un'iperbole equilatera", "Una retta a 45 gradi"], 
+				correctAnswer: "Un'iperbole equilatera",
+				explanation: "Matematicamente, elasticità unitaria costante lungo la curva corrisponde all'equazione P*Q = k, che è un'iperbole equilatera."
+			},
+			{ 
+				question: "Cosa significa 'Ceteris Paribus' nell'analisi della domanda?", 
+				options: ["A parità di tutte le altre condizioni", "Considerando solo il prezzo", "Tutto cambia", "Niente cambia"], 
+				correctAnswer: "A parità di tutte le altre condizioni",
+				explanation: "Quando analizziamo l'effetto del prezzo, assumiamo che reddito, gusti, ecc. rimangano fermi per isolare l'effetto."
+			},
+			{ 
+				question: "Se il prezzo di un bene aumenta e la spesa totale dei consumatori per quel bene aumenta, la domanda è:", 
+				options: ["Elastica", "Anelastica (Rigida)", "Unitaria", "Infinita"], 
+				correctAnswer: "Anelastica (Rigida)",
+				explanation: "Se la domanda è rigida, il calo di quantità è piccolo rispetto all'aumento di prezzo, quindi il ricavo totale (P*Q) sale."
+			},
+			{ 
+				question: "Se il prezzo di un bene aumenta e la spesa totale dei consumatori diminuisce, la domanda è:", 
+				options: ["Elastica", "Anelastica", "Unitaria", "Nulla"], 
+				correctAnswer: "Elastica",
+				explanation: "Se la domanda è elastica, la quantità crolla molto più dell'aumento di prezzo, facendo scendere il ricavo totale."
+			},
+			{ 
+				question: "L'elasticità dell'offerta dipende principalmente da:", 
+				options: ["Gusti dei consumatori", "Tempo e capacità produttiva", "Reddito", "Pubblicità"], 
+				correctAnswer: "Tempo e capacità produttiva",
+				explanation: "La flessibilità produttiva e l'orizzonte temporale (breve/lungo periodo) sono i determinanti principali della reattività dell'offerta."
+			},
+			{ 
+				question: "Un raccolto agricolo abbondante dovuto a ottimo clima causa:", 
+				options: ["Spostamento dell'offerta a destra e calo del prezzo", "Spostamento dell'offerta a sinistra e aumento del prezzo", "Aumento della domanda", "Aumento del prezzo"], 
+				correctAnswer: "Spostamento dell'offerta a destra e calo del prezzo",
+				explanation: "Più merce disponibile (aumento offerta) a parità di domanda fa scendere il prezzo di equilibrio."
+			},
+			{ 
+				question: "I beni 'Succedanei' sono anche detti:", 
+				options: ["Sostituti", "Complementari", "Indipendenti", "Giffen"], 
+				correctAnswer: "Sostituti",
+				explanation: "Succedaneo è sinonimo di sostituto: un bene che può prendere il posto di un altro."
+			},
+			{ 
+				question: "Se aumenta il prezzo del tè, la domanda di caffè (sostituto):", 
+				options: ["Aumenta", "Diminuisce", "Resta uguale", "Diventa zero"], 
+				correctAnswer: "Aumenta",
+				explanation: "La gente smette di bere tè costoso e passa al caffè, aumentandone la richiesta."
+			},
+			{ 
+				question: "Se aumenta il prezzo dello zucchero, la domanda di caffè (complementare):", 
+				options: ["Aumenta", "Diminuisce", "Resta uguale", "Diventa infinita"], 
+				correctAnswer: "Diminuisce",
+				explanation: "Bere caffè diventa complessivamente più costoso (caffè + zucchero), quindi se ne consuma meno."
+			},
+			{ 
+				question: "La 'Legge della Domanda' ha validità:", 
+				options: ["Sempre, senza eccezioni", "Generalmente, ma con eccezioni (es. beni inferiori, Giffen)", "Mai", "Solo per le aziende"], 
+				correctAnswer: "Generalmente, ma con eccezioni (es. beni inferiori, Giffen)",
+				explanation: "È una legge tendenziale; esistono eccezioni come i beni di Giffen o i beni Veblen (di status) e i beni inferiori in certe dinamiche di reddito."
+			},
+			{ 
+				question: "Il punto in cui la curva di domanda interseca l'asse del prezzo rappresenta:", 
+				options: ["Il prezzo massimo che i consumatori sono disposti a pagare (prezzo di riserva)", "La quantità massima", "Il prezzo zero", "L'elasticità unitaria"], 
+				correctAnswer: "Il prezzo massimo che i consumatori sono disposti a pagare (prezzo di riserva)",
+				explanation: "A quel livello di prezzo, la quantità domandata è zero. Nessuno compra a un prezzo superiore."
+			},
+			{ 
+				question: "Il punto in cui la curva di domanda interseca l'asse della quantità rappresenta:", 
+				options: ["La quantità domandata se il bene fosse gratis", "Il prezzo infinito", "L'offerta massima", "Il costo di produzione"], 
+				correctAnswer: "La quantità domandata se il bene fosse gratis",
+				explanation: "Se il prezzo è zero (asse X), quella è la quantità massima che verrebbe consumata (saturazione del bisogno)."
+			},
+			{ 
+				question: "Una variazione DELLA domanda (spostamento della curva) è diversa da una variazione DELLA QUANTITÀ DOMANDATA (movimento lungo la curva) perché:", 
+				options: ["La prima è causata da fattori diversi dal prezzo, la seconda dal prezzo", "Sono la stessa cosa", "La prima dipende dal prezzo, la seconda dal reddito", "La prima riguarda l'offerta"], 
+				correctAnswer: "La prima è causata da fattori diversi dal prezzo, la seconda dal prezzo",
+				explanation: "Se cambia il prezzo del bene, ci muoviamo LUNGO la curva. Se cambia il reddito o i gusti, l'INTERA curva si sposta."
+			},
+			{ 
+				question: "Se un'azienda prevede un aumento futuro dei prezzi, l'offerta presente potrebbe:", 
+				options: ["Diminuire (accumulo scorte)", "Aumentare subito", "Restare fissa", "Diventare rigida"], 
+				correctAnswer: "Diminuire (accumulo scorte)",
+				explanation: "I produttori potrebbero trattenere la merce oggi per venderla domani a prezzo più alto, riducendo l'offerta odierna."
+			},
+			{ 
+				question: "Il concetto di 'Packaging' negli appunti è collegato a:", 
+				options: ["Fattori che influenzano la domanda (marketing/gusti)", "Costi di produzione", "Leggi dello Stato", "Clima"], 
+				correctAnswer: "Fattori che influenzano la domanda (marketing/gusti)",
+				explanation: "Un packaging attraente è una forma di pubblicità/marketing che influenza i gusti e la percezione del consumatore, aumentando la domanda."
+			},
+			{ 
+				question: "Nella formula dell'elasticità, il segno del risultato per la domanda è solitamente:", 
+				options: ["Negativo (ma si considera il valore assoluto)", "Positivo", "Indifferente", "Immaginario"], 
+				correctAnswer: "Negativo (ma si considera il valore assoluto)",
+				explanation: "Poiché prezzo e quantità vanno in direzioni opposte, il rapporto matematico è negativo. In economia si usa spesso il valore assoluto per classificare l'elasticità."
+			},
+			{ 
+				question: "Se il prezzo delle mele sale del 50% e la domanda scende del 50%, Edp è:", 
+				options: ["1", "0", "0,5", "Infinite"], 
+				correctAnswer: "1",
+				explanation: "50/50 = 1. Elasticità unitaria."
+			},
+			{ 
+				question: "Se il prezzo sale del 10% e la domanda non cambia (0%), Edp è:", 
+				options: ["0", "1", "10", "Infinito"], 
+				correctAnswer: "0",
+				explanation: "0 / 10 = 0. Domanda perfettamente rigida."
+			},
+			{ 
+				question: "Se il prezzo non cambia ma la domanda aumenta all'infinito (teorico), Edp è:", 
+				options: ["Infinito", "0", "1", "Negativo"], 
+				correctAnswer: "Infinito",
+				explanation: "Divisione per zero variazione di prezzo -> infinito. Domanda perfettamente elastica."
+			},
+			{ 
+				question: "Quale grafico mostra una curva che parte dall'origine degli assi?", 
+				options: ["Nessuno, o teoricamente un'offerta con costo zero", "Curva di domanda", "Curva di offerta (spesso semplificata così)", "Curva dei beni inferiori"], 
+				correctAnswer: "Curva di offerta (spesso semplificata così)",
+				explanation: "Nei grafici degli appunti, la curva di offerta parte dall'origine o dall'asse Y, indicando che a prezzo zero l'offerta è zero (o negativa)."
+			},
+			{ 
+				question: "Quali beni hanno tipicamente un'offerta anelastica?", 
+				options: ["Beni industriali complessi nel breve periodo", "Beni digitali", "Servizi semplici", "Beni con scorte immense"], 
+				correctAnswer: "Beni industriali complessi nel breve periodo",
+				explanation: "Se serve tempo per costruire fabbriche (es. chip, aerei), l'offerta non può reagire subito al prezzo."
+			},
+			{ 
+				question: "Se viene imposta una tassa sulla produzione, la curva di offerta:", 
+				options: ["Si sposta a sinistra (diminuisce)", "Si sposta a destra (aumenta)", "Resta ferma", "Diventa orizzontale"], 
+				correctAnswer: "Si sposta a sinistra (diminuisce)",
+				explanation: "Una tassa è equivalente a un aumento dei costi di produzione: per ogni prezzo, l'impresa offre meno (o alza il prezzo per offrire la stessa quantità)."
+			},
+			{ 
+				question: "Un sussidio alla produzione ha l'effetto opposto di:", 
+				options: ["Una tassa", "Una nuova tecnologia", "Un clima favorevole", "Un aumento di prezzo"], 
+				correctAnswer: "Una tassa",
+				explanation: "Mentre la tassa aumenta i costi e riduce l'offerta, il sussidio riduce i costi e aumenta l'offerta."
+			},
+			{ 
+				question: "La 'Domanda individuale' è:", 
+				options: ["La domanda di un singolo consumatore", "La somma di tutte le domande", "La domanda dello Stato", "La domanda estera"], 
+				correctAnswer: "La domanda di un singolo consumatore",
+				explanation: "Si contrappone alla domanda di mercato, che è la somma aggregata di tutte le domande individuali."
+			},
+			{ 
+				question: "La 'Domanda di mercato' si ottiene:", 
+				options: ["Sommando orizzontalmente le curve di domanda individuali", "Facendo la media", "Sommando i prezzi", "Moltiplicando le quantità"], 
+				correctAnswer: "Sommando orizzontalmente le curve di domanda individuali",
+				explanation: "Per ogni livello di prezzo, si sommano le quantità desiderate da tutti i consumatori."
+			},
+			{ 
+				question: "Secondo gli appunti, nel 'breve periodo' i prezzi sono influenzati soprattutto da:", 
+				options: ["La domanda", "L'offerta", "I costi", "La tecnologia"], 
+				correctAnswer: "La domanda",
+				explanation: "Essendo l'offerta rigida nel breve periodo, le oscillazioni di prezzo dipendono quasi esclusivamente dalle variazioni della domanda."
+			},
+			{ 
+				question: "Secondo gli appunti, nel 'lungo periodo' i prezzi sono influenzati da:", 
+				options: ["Anche dall'offerta", "Solo dalla domanda", "Solo dallo Stato", "Dal clima"], 
+				correctAnswer: "Anche dall'offerta",
+				explanation: "Poiché l'offerta diventa elastica e può adattarsi, gioca un ruolo attivo nella determinazione del prezzo finale."
+			},
+			{ 
+				question: "Cosa succede se il prezzo di mercato viene fissato PER LEGGE sotto il prezzo di equilibrio (calmiere)?", 
+				options: ["Si crea scarsità (eccesso di domanda)", "Si crea surplus", "Il mercato è felice", "L'offerta aumenta"], 
+				correctAnswer: "Si crea scarsità (eccesso di domanda)",
+				explanation: "Prezzo basso -> Domanda alta, Offerta bassa -> Manca la merce (file, mercato nero)."
+			},
+			{ 
+				question: "Cosa succede se il prezzo minimo è fissato sopra l'equilibrio (es. prezzi agricoli garantiti)?", 
+				options: ["Si crea surplus (eccesso di offerta)", "Si crea scarsità", "La domanda aumenta", "Nessun effetto"], 
+				correctAnswer: "Si crea surplus (eccesso di offerta)",
+				explanation: "Prezzo alto -> Offerta alta, Domanda bassa -> Beni invenduti (eccedenze)."
+			},
+			{ 
+				question: "Quale di questi NON è un fattore produttivo che influenza i costi?", 
+				options: ["Gusti del consumatore", "Salari", "Costo materie prime", "Affitto impianti"], 
+				correctAnswer: "Gusti del consumatore",
+				explanation: "I gusti riguardano la domanda. Gli altri sono costi che l'impresa sostiene per produrre (lato offerta)."
+			},
+			{ 
+				question: "Se l'elasticità della domanda è pari a 0,8, la domanda è:", 
+				options: ["Rigida / Anelastica", "Elastica", "Unitaria", "Perfetta"], 
+				correctAnswer: "Rigida / Anelastica",
+				explanation: "Essendo minore di 1, indica scarsa reattività."
+			},
+			{ 
+				question: "Se l'elasticità della domanda è pari a 1,5, la domanda è:", 
+				options: ["Elastica", "Rigida", "Unitaria", "Nulla"], 
+				correctAnswer: "Elastica",
+				explanation: "Essendo maggiore di 1, indica alta reattività."
+			},
+			{ 
+				question: "Nei grafici presentati, la curva che ha una forma convessa verso l'origine (iperbole) è:", 
+				options: ["La curva di domanda a elasticità unitaria (o simile)", "L'offerta rigida", "L'offerta elastica", "La domanda rigida"], 
+				correctAnswer: "La curva di domanda a elasticità unitaria (o simile)",
+				explanation: "Spesso la domanda generica è disegnata come curva convessa decrescente."
+			},
+			{ 
+				question: "Se un bene ha molti sostituti validi, la sua domanda sarà probabilmente:", 
+				options: ["Molto elastica", "Molto rigida", "Unitaria", "Zero"], 
+				correctAnswer: "Molto elastica",
+				explanation: "Se il prezzo sale anche di poco, il consumatore 'tradisce' subito il prodotto per comprare il sostituto, causando un crollo della domanda."
+			},
+			{ 
+				question: "Se un bene NON ha sostituti (es. insulina per diabetici), la domanda è:", 
+				options: ["Rigida", "Elastica", "Infinita", "Variabile"], 
+				correctAnswer: "Rigida",
+				explanation: "Il consumatore è obbligato a comprare quel bene indipendentemente dal prezzo."
+			},
+			{ 
+				question: "Nel grafico dell'equilibrio, se ci troviamo nel punto esatto di incrocio:", 
+				options: ["Non ci sono pressioni per cambiare il prezzo", "Il prezzo tende a salire", "Il prezzo tende a scendere", "L'offerta supera la domanda"], 
+				correctAnswer: "Non ci sono pressioni per cambiare il prezzo",
+				explanation: "È uno stato di quiete (equilibrio stabile) dove i piani di acquirenti e venditori coincidono."
+			},
+			{ 
+				question: "L'aumento della popolazione (numero di consumatori) sposta la curva di domanda a:", 
+				options: ["Destra (aumento)", "Sinistra (diminuzione)", "Non la sposta", "Modifica solo l'offerta"], 
+				correctAnswer: "Destra (aumento)",
+				explanation: "Più persone significano più quantità domandata per ogni livello di prezzo."
+			},
+			{ 
+				question: "La stagionalità influenza:", 
+				options: ["Sia la domanda (es. gelati) che l'offerta (es. frutta)", "Solo i costi", "Nessuno dei due", "Solo le tasse"], 
+				correctAnswer: "Sia la domanda (es. gelati) che l'offerta (es. frutta)",
+				explanation: "I fattori climatici/stagionali agiscono sulla produzione agricola (offerta) e sui gusti momentanei (domanda di costumi da bagno o stufe)."
+			},
+			{ 
+				question: "Nel calcolo Edp = 30% / 60% = 0,5, il 30% rappresentava:", 
+				options: ["La diminuzione della quantità", "L'aumento del prezzo", "L'aumento della quantità", "Il reddito"], 
+				correctAnswer: "La diminuzione della quantità",
+				explanation: "Dall'esempio delle mele: prezzo su, quantità giù del 30%."
+			},
+			{ 
+				question: "Se il prezzo di un bene passa da 10 a 12 (+20%) e la quantità da 100 a 80 (-20%), l'elasticità è:", 
+				options: ["1 (Unitaria)", "2", "0,5", "0"], 
+				correctAnswer: "1 (Unitaria)",
+				explanation: "20% / 20% = 1."
+			},
+			{ 
+				question: "Se il prezzo passa da 5 a 6 (+20%) e la quantità da 100 a 90 (-10%), l'elasticità è:", 
+				options: ["0,5 (Anelastica)", "2 (Elastica)", "1", "10"], 
+				correctAnswer: "0,5 (Anelastica)",
+				explanation: "10% / 20% = 0,5."
+			},
+			{ 
+				question: "Se il prezzo passa da 10 a 11 (+10%) e la quantità da 100 a 50 (-50%), l'elasticità è:", 
+				options: ["5 (Molto elastica)", "0,2 (Rigida)", "1", "0"], 
+				correctAnswer: "5 (Molto elastica)",
+				explanation: "50% / 10% = 5. Reazione fortissima al prezzo."
+			},
+			{ 
+				question: "La pendenza della curva di domanda e l'elasticità sono:", 
+				options: ["Concetti legati ma matematicamente diversi", "La stessa cosa identica", "Non correlati", "L'elasticità è sempre costante sulla retta"], 
+				correctAnswer: "Concetti legati ma matematicamente diversi",
+				explanation: "La pendenza è ΔP/ΔQ (assoluta), l'elasticità è Δ%Q/Δ%P (relativa). Su una retta di domanda lineare, l'elasticità cambia in ogni punto."
+			},
+			{ 
+				question: "Una 'Domanda Perfettamente Elastica' è graficamente:", 
+				options: ["Orizzontale", "Verticale", "Obliqua", "A zig zag"], 
+				correctAnswer: "Orizzontale",
+				explanation: "Al prezzo P i consumatori comprano tutto, ma a P+epsilon comprano zero."
+			},
+			{ 
+				question: "Una 'Domanda Perfettamente Rigida' è graficamente:", 
+				options: ["Verticale", "Orizzontale", "Obliqua", "Circolare"], 
+				correctAnswer: "Verticale",
+				explanation: "La quantità è fissa sull'asse X, qualunque sia il prezzo."
+			},
+			{ 
+				question: "Se l'elasticità dell'offerta è infinita, il prezzo:", 
+				options: ["Non cambia al variare della quantità", "Cambia continuamente", "È zero", "È infinito"], 
+				correctAnswer: "Non cambia al variare della quantità",
+				explanation: "La curva è orizzontale: si offre qualsiasi quantità a quel determinato prezzo."
+			},
+			{ 
+				question: "Il 'Prezzo delle materie prime' rientra tra:", 
+				options: ["Costi dei fattori produttivi (Offerta)", "Fattori della Domanda", "Beni complementari", "Reddito"], 
+				correctAnswer: "Costi dei fattori produttivi (Offerta)",
+				explanation: "Influenza quanto costa produrre il bene, quindi sposta la curva di offerta."
+			},
+			{ 
+				question: "Il 'Clima favorevole' per l'agricoltura viene classificato come:", 
+				options: ["Fattore che aumenta l'offerta", "Fattore che aumenta la domanda", "Fattore di costo", "Fattore giuridico"], 
+				correctAnswer: "Fattore che aumenta l'offerta",
+				explanation: "A parità di lavoro e terra, si produce di più (resa maggiore)."
+			},
+			{ 
+				question: "L'equilibrio di mercato è una condizione:", 
+				options: ["Statica o dinamica verso cui tende il mercato", "Impossibile da raggiungere", "Dannosa per l'economia", "Decisa dal governo"], 
+				correctAnswer: "Statica o dinamica verso cui tende il mercato",
+				explanation: "È il punto di stabilità verso cui le forze di mercato convergono."
+			},
+			{ 
+				question: "Se il prezzo delle scarpe da ginnastica sale, la domanda di lacci per scarpe (complementare):", 
+				options: ["Diminuisce", "Aumenta", "Resta invariata", "Dipende dal colore"], 
+				correctAnswer: "Diminuisce",
+				explanation: "Meno scarpe vendute (perché care) -> meno lacci necessari."
+			},
+			{ 
+				question: "Se il prezzo del pollo sale, la domanda di tacchino (succedaneo):", 
+				options: ["Aumenta", "Diminuisce", "Crolla", "Resta uguale"], 
+				correctAnswer: "Aumenta",
+				explanation: "La gente mangia meno pollo e più tacchino."
+			},
+			{ 
+				question: "Quale frase descrive meglio i 'Beni di prima necessità'?", 
+				options: ["Hanno domanda rigida rispetto al prezzo e bassa elasticità al reddito (oltre un certo livello)", "Hanno domanda elastica", "Sono beni di lusso", "Sono beni inferiori"], 
+				correctAnswer: "Hanno domanda rigida rispetto al prezzo e bassa elasticità al reddito (oltre un certo livello)",
+				explanation: "Servono per vivere, quindi si comprano sempre (rigida), ma non se ne comprano quantità infinite se si diventa ricchi."
+			},
+			{ 
+				question: "Cosa accade alla curva di domanda di ombrelli se inizia a piovere tutti i giorni?", 
+				options: ["Si sposta a destra (aumenta per cambio gusti/bisogni)", "Si sposta a sinistra", "Movimento lungo la curva", "Resta ferma"], 
+				correctAnswer: "Si sposta a destra (aumenta per cambio gusti/bisogni)",
+				explanation: "Cambia il contesto (fattore climatico lato domanda/bisogno), quindi a parità di prezzo la gente ne vuole di più."
+			},
+			{ 
+				question: "Se l'offerta cala (sinistra) e la domanda aumenta (destra) contemporaneamente, cosa siamo certi che accada al prezzo?", 
+				options: ["Aumenta sicuramente", "Diminuisce", "Resta uguale", "Non si può dire"], 
+				correctAnswer: "Aumenta sicuramente",
+				explanation: "Meno merce disponibile + più gente che la vuole = esplosione del prezzo."
+			},
+			{ 
+				question: "Se l'offerta cala e la domanda aumenta, cosa accade alla QUANTITÀ scambiata?", 
+				options: ["Indeterminato (dipende dall'intensità degli spostamenti)", "Aumenta", "Diminuisce", "Resta uguale"], 
+				correctAnswer: "Indeterminato (dipende dall'intensità degli spostamenti)",
+				explanation: "Il calo dell'offerta riduce la quantità, l'aumento della domanda la alza. L'effetto netto dipende da quale forza prevale."
+			},
+			{ 
+				question: "L'elasticità dell'offerta nel lunghissimo periodo tende a:", 
+				options: ["Aumentare (diventare più elastica)", "Diminuire", "Diventare zero", "Oscillare"], 
+				correctAnswer: "Aumentare (diventare più elastica)",
+				explanation: "Con tempo infinito, le risorse possono essere completamente riconfigurate."
+			},
+			{ 
+				question: "La relazione tra Prezzo e Quantità nell'Offerta è:", 
+				options: ["Diretta", "Inversa", "Casuale", "Circolare"], 
+				correctAnswer: "Diretta",
+				explanation: "Entrambi salgono o entrambi scendono."
+			},
+			{ 
+				question: "La relazione tra Prezzo e Quantità nella Domanda è:", 
+				options: ["Inversa", "Diretta", "Esponenziale positiva", "Costante"], 
+				correctAnswer: "Inversa",
+				explanation: "Uno sale, l'altro scende."
+			},
+			{ 
+				question: "Il termine 'Elasticità unitaria' corrisponde numericamente a:", 
+				options: ["1", "0", "-1", "100"], 
+				correctAnswer: "1",
+				explanation: "Le variazioni percentuali sono identiche."
+			},
+			{ 
+				question: "Quale di questi beni ha probabilmente l'elasticità al prezzo più alta?", 
+				options: ["Biglietto per un viaggio alle Maldive (vacanza specifica)", "Acqua", "Pane", "Elettricità"], 
+				correctAnswer: "Biglietto per un viaggio alle Maldive (vacanza specifica)",
+				explanation: "È un lusso superfluo con molte alternative (altre mete turistiche). Se costa troppo, non ci vado."
+			},
+			{ 
+				question: "Se un venditore vuole massimizzare i ricavi e sa che la domanda del suo bene è RIGIDA, dovrebbe:", 
+				options: ["Aumentare il prezzo", "Diminuire il prezzo", "Lasciare il prezzo invariato", "Chiudere"], 
+				correctAnswer: "Aumentare il prezzo",
+				explanation: "Se alza il prezzo, perde pochissimi clienti (rigida), quindi incassa di più da ciascuno, aumentando il totale."
+			},
+			{ 
+				question: "Se un venditore vuole massimizzare i ricavi e sa che la domanda è ELASTICA, dovrebbe:", 
+				options: ["Diminuire il prezzo", "Aumentare il prezzo", "Non vendere", "Aumentare i costi"], 
+				correctAnswer: "Diminuire il prezzo",
+				explanation: "Abbassando il prezzo attira talmente tanti nuovi clienti (reazione forte) da compensare il minor incasso unitario."
+			},
+			{ 
+				question: "Negli appunti, l'esempio dell'offerta usa prezzi di 0,80€ e 1€. La differenza è:", 
+				options: ["20 centesimi", "10 centesimi", "30 centesimi", "50 centesimi"], 
+				correctAnswer: "20 centesimi",
+				explanation: "1,00 - 0,80 = 0,20."
+			},
+			{ 
+				question: "Negli appunti, l'esempio delle mele usa quantità di 10kg e 7kg. La differenza è:", 
+				options: ["3kg", "2kg", "4kg", "5kg"], 
+				correctAnswer: "3kg",
+				explanation: "10 - 7 = 3."
+			},
+			{ 
+				question: "Il simbolo '%' significa:", 
+				options: ["Per cento (centesima parte)", "Per mille", "Per dieci", "Unità"], 
+				correctAnswer: "Per cento (centesima parte)",
+				explanation: "Indica una frazione con denominatore 100."
+			},
+			{ 
+				question: "Se il prezzo di un bene complementare scende, la curva di domanda del bene principale:", 
+				options: ["Si sposta a destra (aumenta)", "Si sposta a sinistra (diminuisce)", "Non cambia", "Cambia pendenza"], 
+				correctAnswer: "Si sposta a destra (aumenta)",
+				explanation: "Esempio: Benzina costa meno -> Compro più auto (o uso di più l'auto)."
+			},
+			{ 
+				question: "Se il prezzo di un bene succedaneo scende, la curva di domanda del bene principale:", 
+				options: ["Si sposta a sinistra (diminuisce)", "Si sposta a destra (aumenta)", "Resta ferma", "Diventa verticale"], 
+				correctAnswer: "Si sposta a sinistra (diminuisce)",
+				explanation: "Esempio: Il burro costa meno -> Smetto di comprare margarina (la domanda di margarina cala)."
+			},
+			{ 
+				question: "La 'Legge della domanda' può essere rappresentata dall'equazione:", 
+				options: ["Q = f(P) con correlazione negativa", "Q = f(P) con correlazione positiva", "P = Q", "Q = Costante"], 
+				correctAnswer: "Q = f(P) con correlazione negativa",
+				explanation: "La quantità è funzione del prezzo, con derivata prima negativa."
+			},
+			{ 
+				question: "Le 'Aspettative' dei consumatori su un futuro aumento dei prezzi causano oggi:", 
+				options: ["Un aumento della domanda corrente (accaparramento)", "Una diminuzione della domanda", "Nessun effetto", "Un aumento dell'offerta"], 
+				correctAnswer: "Un aumento della domanda corrente (accaparramento)",
+				explanation: "Se so che domani la benzina costerà di più, oggi corro a fare il pieno."
+			},
+			{ 
+				question: "Il 'Reddito' del consumatore è indicato spesso con la lettera:", 
+				options: ["Y o R", "P", "Q", "E"], 
+				correctAnswer: "Y o R",
+				explanation: "In macro/micro economia Y o R indicano il reddito (Yield/Reddito)."
+			},
+			{ 
+				question: "I beni 'Normali' sono quelli la cui domanda:", 
+				options: ["Aumenta all'aumentare del reddito", "Diminuisce all'aumentare del reddito", "Resta costante", "Non dipende dal reddito"], 
+				correctAnswer: "Aumenta all'aumentare del reddito",
+				explanation: "È la definizione standard, contrapposta ai beni inferiori."
+			},
+			{ 
+				question: "Se la curva di offerta è verticale, l'elasticità è:", 
+				options: ["Zero", "Uno", "Infinito", "Due"], 
+				correctAnswer: "Zero",
+				explanation: "Nessuna variazione di quantità possibile."
+			},
+			{ 
+				question: "Se la curva di domanda è orizzontale, l'elasticità è:", 
+				options: ["Infinita", "Zero", "Uno", "Negativa"], 
+				correctAnswer: "Infinita",
+				explanation: "Massima sensibilità possibile."
+			},
+			{ 
+				question: "Il punto di saturazione di un bisogno corrisponde a un'utilità marginale:", 
+				options: ["Zero", "Massima", "Infinita", "Crescente"], 
+				correctAnswer: "Zero",
+				explanation: "L'ultima unità consumata non dà più soddisfazione aggiuntiva."
+			},
+			{ 
+				question: "Un aumento delle tasse sul reddito dei consumatori provoca:", 
+				options: ["Spostamento della domanda a sinistra (riduzione)", "Spostamento della domanda a destra", "Spostamento dell'offerta", "Aumento dei prezzi"], 
+				correctAnswer: "Spostamento della domanda a sinistra (riduzione)",
+				explanation: "Meno reddito disponibile -> Meno acquisti."
+			},
+			{ 
+				question: "L'elasticità incrociata tra scarpe destre e scarpe sinistre è:", 
+				options: ["Negativa (complementari perfetti)", "Positiva", "Zero", "Infinita"], 
+				correctAnswer: "Negativa (complementari perfetti)",
+				explanation: "Si usano insieme. Se le destre costano un milione, non compro neanche le sinistre."
+			},
+			{ 
+				question: "L'elasticità incrociata tra Coca Cola e Pepsi è probabilmente:", 
+				options: ["Positiva (sostituti forti)", "Negativa", "Zero", "Uno"], 
+				correctAnswer: "Positiva (sostituti forti)",
+				explanation: "Se la Coca costa troppo, compro Pepsi."
+			},
+			{ 
+				question: "In un grafico domanda/offerta, un 'surplus' si rappresenta graficamente come:", 
+				options: ["La distanza orizzontale tra offerta e domanda sopra il prezzo di equilibrio", "La distanza sotto l'equilibrio", "L'area del triangolo", "L'origine"], 
+				correctAnswer: "La distanza orizzontale tra offerta e domanda sopra il prezzo di equilibrio",
+				explanation: "A un prezzo alto, Offerta > Domanda. Il segmento orizzontale è l'eccedenza."
+			},
+			{ 
+				question: "In un grafico domanda/offerta, una 'penuria' (scarcity) si trova:", 
+				options: ["Sotto il prezzo di equilibrio", "Sopra il prezzo di equilibrio", "A destra dell'equilibrio", "Sull'asse Y"], 
+				correctAnswer: "Sotto il prezzo di equilibrio",
+				explanation: "A un prezzo basso, Domanda > Offerta."
+			},
+			{ 
+				question: "Se l'elasticità della domanda è esattamente 1, un aumento del prezzo del 10% riduce la quantità del:", 
+				options: ["10%", "1%", "20%", "0%"], 
+				correctAnswer: "10%",
+				explanation: "Variazione identica in percentuale."
+			},
+			{ 
+				question: "Quale di questi fattori sposta la curva di Offerta e NON quella di Domanda?", 
+				options: ["Nuova tecnologia produttiva", "Moda del momento", "Stipendio degli impiegati statali (consumatori)", "Prezzo dei beni sostituti"], 
+				correctAnswer: "Nuova tecnologia produttiva",
+				explanation: "Riguarda il processo di fabbricazione."
+			},
+			{ 
+				question: "L'acqua potabile in una città ha generalmente una domanda:", 
+				options: ["Rigida", "Elastica", "Perfettamente elastica", "Nulla"], 
+				correctAnswer: "Rigida",
+				explanation: "È essenziale per la vita e non ha sostituti."
+			},
+			{ 
+				question: "I diamanti hanno generalmente una domanda:", 
+				options: ["Elastica (lusso)", "Rigida (necessità)", "Unitaria", "Inferiore"], 
+				correctAnswer: "Elastica (lusso)",
+				explanation: "Non sono necessari. Se il prezzo sale, se ne vendono molti meno."
+			},
+			{ 
+				question: "Cosa accade all'offerta di grano se il prezzo dei fertilizzanti (input) raddoppia?", 
+				options: ["Diminuisce (sposta a sinistra)", "Aumenta", "Resta uguale", "L'elasticità cambia"], 
+				correctAnswer: "Diminuisce (sposta a sinistra)",
+				explanation: "Aumento costi di produzione -> Contrazione offerta."
+			},
+			{ 
+				question: "L'elasticità dell'offerta di case in centro città nel brevissimo periodo è:", 
+				options: ["Quasi perfettamente rigida", "Elastica", "Infinita", "Negativa"], 
+				correctAnswer: "Quasi perfettamente rigida",
+				explanation: "Non si possono costruire nuovi palazzi in un giorno. L'offerta è fissa."
+			},
+			{ 
+				question: "L'elasticità dell'offerta di software digitale (copie aggiuntive) è:", 
+				options: ["Molto elastica (o quasi infinita)", "Rigida", "Zero", "Unitaria"], 
+				correctAnswer: "Molto elastica (o quasi infinita)",
+				explanation: "Costa quasi zero produrre una copia in più. Si può offrire tantissimo immediatamente."
+			},
+			{ 
+				question: "Il punto dove il ricavo totale è massimizzato sulla curva di domanda lineare corrisponde a:", 
+				options: ["Il punto a elasticità unitaria", "Il punto più alto", "Il punto più basso", "L'origine"], 
+				correctAnswer: "Il punto a elasticità unitaria",
+				explanation: "Matematicamente, il ricavo (P*Q) è massimo dove l'elasticità è 1."
+			},
+			{ 
+				question: "Se Edp = 0 (Domanda perfettamente rigida), la curva di domanda è:", 
+				options: ["Verticale", "Orizzontale", "Decrescente", "Crescente"], 
+				correctAnswer: "Verticale",
+				explanation: "Q è costante."
+			},
+			{ 
+				question: "Chi decide il prezzo in un mercato di concorrenza perfetta?", 
+				options: ["Il mercato (incontro D e O)", "Il singolo venditore", "Il singolo compratore", "Lo Stato"], 
+				correctAnswer: "Il mercato (incontro D e O)",
+				explanation: "Nessun singolo attore ha il potere di influenzarlo ('Price Taker')."
+			},
+			{ 
+				question: "Se aumenta il reddito, la curva di domanda di patate (considerate bene inferiore in certi contesti) potrebbe:", 
+				options: ["Spostarsi a sinistra", "Spostarsi a destra", "Restare ferma", "Diventare verticale"], 
+				correctAnswer: "Spostarsi a sinistra",
+				explanation: "La gente sostituisce le patate con cibi più pregiati."
+			},
+			{ 
+				question: "La 'Mano Invisibile' di Adam Smith suggerisce che:", 
+				options: ["Il mercato tende naturalmente all'equilibrio efficiente", "Lo Stato deve controllare i prezzi", "La domanda è sempre rigida", "L'offerta è sempre rigida"], 
+				correctAnswer: "Il mercato tende naturalmente all'equilibrio efficiente",
+				explanation: "Interazioni egoistiche portano al benessere collettivo ed equilibrio."
+			},
+			{ 
+				question: "Se il prezzo è 10 e la quantità domandata è 100. Il prezzo sale a 11 e la quantità scende a 90. Edp = ?", 
+				options: ["10% / 10% = 1", "10% / 1% = 10", "1% / 10% = 0.1", "Zero"], 
+				correctAnswer: "10% / 10% = 1",
+				explanation: "P: +10%. Q: -10%. Rapporto 1."
+			},
+			{ 
+				question: "Nel grafico, una traslazione della curva verso l'esterno (lontano dall'origine) indica sempre:", 
+				options: ["Un aumento (della domanda o dell'offerta)", "Una diminuzione", "Un errore", "Una stabilità"], 
+				correctAnswer: "Un aumento (della domanda o dell'offerta)",
+				explanation: "Spostarsi a destra/alto significa quantità maggiori per ogni prezzo."
+			},
+			{ 
+				question: "Nel grafico, una traslazione verso l'interno (verso l'origine) indica:", 
+				options: ["Una diminuzione", "Un aumento", "Un profitto", "Un costo"], 
+				correctAnswer: "Una diminuzione",
+				explanation: "Meno quantità per ogni prezzo."
+			},
+			{ 
+				question: "La 'Legge dell'utilità marginale decrescente' spiega perché:", 
+				options: ["La curva di domanda scende", "La curva di offerta sale", "L'offerta è rigida", "Il prezzo è fisso"], 
+				correctAnswer: "La curva di domanda scende",
+				explanation: "Meno valore attribuisco all'unità aggiuntiva, meno sono disposto a pagarla."
+			},
+			{ 
+				question: "L'elasticità dell'offerta di quadri di Picasso originali è:", 
+				options: ["Perfettamente rigida (zero)", "Elastica", "Unitaria", "Infinita"], 
+				correctAnswer: "Perfettamente rigida (zero)",
+				explanation: "Non se ne possono produrre altri. La quantità è fissa per sempre."
+			},
+			{ 
+				question: "Se viene scoperta una nuova riserva enorme di litio, l'offerta di batterie:", 
+				options: ["Aumenta (sposta a destra)", "Diminuisce", "Resta uguale", "Diventa rigida"], 
+				correctAnswer: "Aumenta (sposta a destra)",
+				explanation: "Materie prime più abbondanti/economiche aumentano l'offerta del prodotto finale."
+			},
+			{ 
+				question: "Una campagna pubblicitaria efficace contro il fumo:", 
+				options: ["Sposta la domanda di sigarette a sinistra", "Sposta l'offerta di sigarette a sinistra", "Sposta la domanda a destra", "Aumenta il prezzo"], 
+				correctAnswer: "Sposta la domanda di sigarette a sinistra",
+				explanation: "Cambia i gusti/preferenze in negativo, riducendo la domanda."
+			},
+			{ 
+				question: "Se il prezzo di equilibrio è 5€ e il governo impone un prezzo massimo di 3€:", 
+				options: ["Si crea una penuria (scarsità)", "Si crea un'eccedenza", "Il mercato è in equilibrio", "Tutti sono felici"], 
+				correctAnswer: "Si crea una penuria (scarsità)",
+				explanation: "Il prezzo è artificialmente basso, la domanda supera l'offerta."
+			},
+			{ 
+				question: "Se il prezzo di equilibrio è 5€ e il governo impone un prezzo minimo di 7€:", 
+				options: ["Si crea un'eccedenza (surplus)", "Si crea una penuria", "Il mercato si adatta", "La domanda aumenta"], 
+				correctAnswer: "Si crea un'eccedenza (surplus)",
+				explanation: "Il prezzo è artificialmente alto, l'offerta supera la domanda."
+			},
+			{ 
+				question: "Quale di questi NON influenza l'elasticità della domanda?", 
+				options: ["Costi fissi dell'impresa", "Presenza di sostituti", "Necessità del bene", "Incidenza sul reddito"], 
+				correctAnswer: "Costi fissi dell'impresa",
+				explanation: "I costi dell'impresa riguardano l'offerta. Gli altri riguardano la reazione del consumatore."
+			},
+			{ 
+				question: "Se un bene incide pochissimo sul reddito (es. stuzzicadenti), la sua domanda è tendenzialmente:", 
+				options: ["Rigida", "Elastica", "Infinita", "Zero"], 
+				correctAnswer: "Rigida",
+				explanation: "Anche se il prezzo raddoppia, la spesa è talmente irrisoria che non cambio abitudini."
+			},
+			{ 
+				question: "Se un bene incide moltissimo sul reddito (es. automobile), la sua domanda è tendenzialmente:", 
+				options: ["Elastica", "Rigida", "Unitaria", "Costante"], 
+				correctAnswer: "Elastica",
+				explanation: "Il consumatore fa molta attenzione al prezzo perché la spesa è grossa."
+			},
+			{ 
+				question: "Nel modello base, consumatori e produttori sono considerati:", 
+				options: ["Razionali", "Emotivi", "Irrazionali", "Casuali"], 
+				correctAnswer: "Razionali",
+				explanation: "L'Homo Oeconomicus agisce per massimizzare la propria utilità/profitto."
+			},
+			{ 
+				question: "L'area sotto la curva di domanda e sopra il prezzo di mercato rappresenta:", 
+				options: ["Il surplus del consumatore", "Il profitto", "Il costo", "Il surplus del produttore"], 
+				correctAnswer: "Il surplus del consumatore",
+				explanation: "La differenza tra quanto sarebbero stati disposti a pagare e quanto pagano effettivamente."
+			},
+			{ 
+				question: "L'area sopra la curva di offerta e sotto il prezzo di mercato rappresenta:", 
+				options: ["Il surplus del produttore", "Il surplus del consumatore", "La perdita secca", "Le tasse"], 
+				correctAnswer: "Il surplus del produttore",
+				explanation: "La differenza tra il prezzo incassato e il prezzo minimo a cui avrebbero venduto."
+			},
+			{ 
+				question: "Se la domanda e l'offerta aumentano nella stessa proporzione:", 
+				options: ["La quantità aumenta, il prezzo resta invariato", "Il prezzo aumenta", "Il prezzo diminuisce", "La quantità resta invariata"], 
+				correctAnswer: "La quantità aumenta, il prezzo resta invariato",
+				explanation: "Le pressioni sul prezzo si annullano, ma il volume degli scambi cresce."
+			},
+			{ 
+				question: "Gli 'Input' produttivi sono:", 
+				options: ["Fattori usati per produrre (lavoro, terra, capitale)", "I prodotti finiti", "I consumatori", "Le tasse"], 
+				correctAnswer: "Fattori usati per produrre (lavoro, terra, capitale)",
+				explanation: "Sinonimo di fattori di produzione."
+			},
+			{ 
+				question: "Un aumento dei salari dei lavoratori provoca:", 
+				options: ["Spostamento dell'offerta a sinistra (aumento costi)", "Spostamento dell'offerta a destra", "Aumento della domanda di lavoro", "Nulla"], 
+				correctAnswer: "Spostamento dell'offerta a sinistra (aumento costi)",
+				explanation: "Produrre costa di più, quindi le imprese offrono meno merce a parità di prezzo."
+			},
+			{ 
+				question: "Se un terremoto distrugge le fabbriche:", 
+				options: ["L'offerta diminuisce drasticamente", "La domanda diminuisce", "L'offerta aumenta", "Il prezzo scende"], 
+				correctAnswer: "L'offerta diminuisce drasticamente",
+				explanation: "Riduzione fisica della capacità produttiva (shock negativo dell'offerta)."
+			},
+			{ 
+				question: "Il 'Prezzo relativo' è:", 
+				options: ["Il prezzo di un bene in termini di un altro bene", "Il prezzo in euro", "Il prezzo scontato", "Il prezzo all'ingrosso"], 
+				correctAnswer: "Il prezzo di un bene in termini di un altro bene",
+				explanation: "Rapporto di scambio (es. 1 mela vale 2 arance)."
+			},
+			{ 
+				question: "L'inflazione generale dei prezzi:", 
+				options: ["Riduce il potere d'acquisto (reddito reale)", "Aumenta la domanda reale", "Non ha effetti", "Aumenta l'offerta reale"], 
+				correctAnswer: "Riduce il potere d'acquisto (reddito reale)",
+				explanation: "Se i prezzi salgono e il reddito nominale è fermo, posso comprare meno cose (effetto reddito negativo)."
+			},
+			{ 
+				question: "La curva di domanda per la singola impresa in concorrenza perfetta è:", 
+				options: ["Orizzontale (perfettamente elastica)", "Verticale", "Decrescente", "Crescente"], 
+				correctAnswer: "Orizzontale (perfettamente elastica)",
+				explanation: "L'impresa non può influenzare il prezzo. Se alza di 1 cent, vende zero. Vende tutto al prezzo di mercato."
+			},
+			{ 
+				question: "La curva di domanda per un monopolista è:", 
+				options: ["Decrescente (coincide con quella di mercato)", "Orizzontale", "Verticale", "Crescente"], 
+				correctAnswer: "Decrescente (coincide con quella di mercato)",
+				explanation: "Essendo l'unico venditore, fronteggia l'intera domanda di mercato."
+			},
+			{ 
+				question: "Cosa si intende per 'Variazione percentuale'?", 
+				options: ["(Valore Finale - Valore Iniziale) / Valore Iniziale * 100", "Valore Finale / Valore Iniziale", "Finale - Iniziale", "Iniziale - Finale"], 
+				correctAnswer: "(Valore Finale - Valore Iniziale) / Valore Iniziale * 100",
+				explanation: "Formula standard per calcolare la crescita o decrescita relativa."
+			},
+			{ 
+				question: "Se P passa da 4 a 5, la variazione % è:", 
+				options: "+25%", "-25%", "+20%", "+10%" 
+				correctAnswer: "+25%",
+				explanation: "(5-4)/4 = 1/4 = 0,25 = 25%."
+			},
+			{ 
+				question: "Se P passa da 5 a 4, la variazione % è:", 
+				options: "-20%", "-25%", "+25%", "-10%" 
+				correctAnswer: "-20%",
+				explanation: "(4-5)/5 = -1/5 = -0,20 = -20%."
+			},
+			{ 
+				question: "L'elasticità d'arco (metodo del punto medio) serve a:", 
+				options: ["Evitare che l'elasticità cambi a seconda della direzione (salita o discesa)", "Calcolare il profitto", "Misurare il reddito", "Trovare l'equilibrio"], 
+				correctAnswer: "Evitare che l'elasticità cambi a seconda della direzione (salita o discesa)",
+				explanation: "Usa la media dei valori come denominatore per rendere il calcolo simmetrico."
+			},
+			{ 
+				question: "Quale di questi è un 'costo variabile'?", 
+				options: ["Materie prime", "Affitto capannone", "Assicurazione annuale", "Stipendio manager"], 
+				correctAnswer: "Materie prime",
+				explanation: "Varia proporzionalmente alla quantità prodotta."
+			},
+			{ 
+				question: "Quale di questi è un 'costo fisso'?", 
+				options: ["Affitto del locale", "Farina per il pane", "Energia elettrica macchinari", "Imballaggi"], 
+				correctAnswer: "Affitto del locale",
+				explanation: "Si paga anche se non si produce nulla."
+			},
+			{ 
+				question: "Nel lungo periodo:", 
+				options: ["Tutti i costi sono variabili", "Tutti i costi sono fissi", "Non ci sono costi", "L'offerta è rigida"], 
+				correctAnswer: "Tutti i costi sono variabili",
+				explanation: "Posso disdire affitti, chiudere impianti, aprirne nuovi. Tutto è modificabile."
+			},
+			{ 
+				question: "La 'Legge dei rendimenti decrescenti' influenza:", 
+				options: ["La forma della curva di offerta nel breve periodo", "La domanda", "I gusti", "Il reddito"], 
+				correctAnswer: "La forma della curva di offerta nel breve periodo",
+				explanation: "Aggiungere lavoratori su macchinari fissi rende via via meno, aumentando i costi marginali e quindi inclinando l'offerta verso l'alto."
+			},
+			{ 
+				question: "Se un bene diventa di 'moda' (es. scarpe di marca), la sua domanda diventa temporaneamente:", 
+				options: ["Più rigida (fedeltà al brand)", "Più elastica", "Nulla", "Inferiore"], 
+				correctAnswer: "Più rigida (fedeltà al brand)",
+				explanation: "Il consumatore lo vuole 'a tutti i costi', diventando meno sensibile al prezzo."
+			},
+			{ 
+				question: "La speculazione finanziaria spesso sfrutta:", 
+				options: ["Le aspettative sui prezzi futuri", "L'elasticità unitaria", "La rigidità totale", "Il costo medio"], 
+				correctAnswer: "Le aspettative sui prezzi futuri",
+				explanation: "Comprare basso oggi per vendere alto domani basandosi su previsioni."
+			},
+			{ 
+				question: "Un mercato nero nasce solitamente quando:", 
+				options: ["C'è un prezzo massimo imposto (scarsità)", "Il mercato è libero", "C'è equilibrio", "L'offerta è infinita"], 
+				correctAnswer: "C'è un prezzo massimo imposto (scarsità)",
+				explanation: "La gente è disposta a pagare di più del prezzo legale pur di avere il bene scarso."
+			},
+			{ 
+				question: "Il 'razionamento' dei beni si verifica in caso di:", 
+				options: ["Eccesso di domanda (scarsità)", "Eccesso di offerta", "Equilibrio", "Prezzi liberi"], 
+				correctAnswer: "Eccesso di domanda (scarsità)",
+				explanation: "Quando non ce n'è per tutti, bisogna decidere chi lo prende (file, tessere, coupon)."
+			},
+			{ 
+				question: "Se la domanda di petrolio è rigida, un taglio della produzione OPEC (Cartello) provoca:", 
+				options: ["Un forte aumento del prezzo e aumento dei ricavi totali", "Un calo del prezzo", "Nessun effetto", "Un calo dei ricavi"], 
+				correctAnswer: "Un forte aumento del prezzo e aumento dei ricavi totali",
+				explanation: "Offerta giù -> Prezzo su. Essendo rigida la domanda, il prezzo esplode e i ricavi salgono."
+			},
+			{ 
+				question: "Se la tecnologia migliora ma la domanda crolla (es. macchine da scrivere), il prezzo:", 
+				options: ["Crolla drasticamente", "Sale", "Resta stabile", "Diventa infinito"], 
+				correctAnswer: "Crolla drasticamente",
+				explanation: "Offerta aumenterebbe (tech), Domanda scende. Entrambe le forze spingono il prezzo giù."
+			},
+			{ 
+				question: "La 'Sovranità del consumatore' significa che:", 
+				options: ["I consumatori decidono cosa si produce tramite i loro acquisti", "I consumatori sono re", "Le imprese comandano", "Lo Stato decide tutto"], 
+				correctAnswer: "I consumatori decidono cosa si produce tramite i loro acquisti",
+				explanation: "Le imprese producono solo ciò che i consumatori domandano."
+			},
+			{ 
+				question: "Il 'Prezzo di riserva' del produttore è:", 
+				options: ["Il prezzo minimo a cui è disposto a vendere", "Il prezzo massimo", "Il prezzo di mercato", "Il costo fisso"], 
+				correctAnswer: "Il prezzo minimo a cui è disposto a vendere",
+				explanation: "Corrisponde solitamente al costo marginale."
+			},
+			{ 
+				question: "Nei grafici, Q1 e Q2 indicano:", 
+				options: ["Quantità al tempo 1 e al tempo 2", "Qualità 1 e 2", "Quote di mercato", "Niente"], 
+				correctAnswer: "Quantità al tempo 1 e al tempo 2",
+				explanation: "Indicano lo spostamento della quantità sull'asse X."
+			},
+			{ 
+				question: "Se l'elasticità è uguale a zero in ogni punto, la curva è:", 
+				options: ["Una retta verticale", "Una retta orizzontale", "Una curva convessa", "Una retta obliqua"], 
+				correctAnswer: "Una retta verticale",
+				explanation: "Perfettamente anelastica/rigida."
+			}
+		];
+
+        /* ================================================================= */
+        /* LOGICA APPLICAZIONE (CORE) */
+        /* ================================================================= */
+
+        class ScrollytellingApp {
+            constructor(content) {
+                this.content = content;
+                this.lastScrollY = 0;
+                this.isDragging = false;
+                this.scrubTargetIndex = 0;
+                this.isSnapEnabled = localStorage.getItem('snapEnabled') !== 'false'; 
+                this.currentChapterIndex = 0;
+                this.isSnapping = false; 
+                
+                this.initDOMElements();
+                this.initEventListeners();
+                this.initTheme();
+                this.initSnapState();
+                
+                this.setMode(localStorage.getItem('template-mode') || 'study');
+                this.dom.appContainer.classList.add('loaded');
+            }
+            
+            initDOMElements() {
+                this.dom = {
+                    appContainer: document.getElementById('app'), header: document.getElementById('header'),
+                    headerTitle: document.getElementById('header-title'), 
+                    timelineNodesMobile: document.getElementById('timeline-nodes-mobile'),
+                    timelineProgressMobile: document.getElementById('timeline-progress-mobile'),
+                    timelineTrackMobile: document.getElementById('timeline-track-mobile'),
+                    timelineNodesDesktop: document.getElementById('timeline-nodes-desktop'),
+                    timelineProgressDesktop: document.getElementById('timeline-progress-desktop'),
+                    timelineDesktopContainer: document.querySelector('.timeline-desktop-container'),
+                    storyPanel: document.getElementById('story-panel'),
+                    themeSwitcher: document.querySelector('.theme-switcher'),
+                    scrollSentinel: document.getElementById('scroll-sentinel'),
+                    modeBtns: document.querySelectorAll('.mode-btn'),
+                    appFooter: document.getElementById('app-footer'),
+                    autoScrollBtn: document.getElementById('autoscroll-btn'),
+                    prevChapterBtn: document.getElementById('prev-chapter-btn'),
+                    nextChapterBtn: document.getElementById('next-chapter-btn')
+                };
+            }
+            
+            initSnapState() {
+                if (this.isSnapEnabled) {
+                    this.dom.autoScrollBtn.classList.add('active');
+                }
+            }
+
+            initTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light'; 
+                this.applyTheme(savedTheme);
+                this.dom.themeSwitcher.addEventListener('click', () => {
+                    if (navigator.vibrate) navigator.vibrate(20);
+                    const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                    this.applyTheme(newTheme);
+                });
+            }
+            
+            applyTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem('theme', theme);
+            }
+            
+            initEventListeners() {
+                if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
+                window.scrollTo(0, 0);
+
+                this.dom.modeBtns.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        if (navigator.vibrate) navigator.vibrate(20);
+                        const newMode = btn.dataset.mode;
+                        this.setMode(newMode);
+                    });
+                });
+                
+                this.dom.autoScrollBtn.addEventListener('click', () => {
+                     this.isSnapEnabled = !this.isSnapEnabled;
+                     localStorage.setItem('snapEnabled', this.isSnapEnabled);
+                     this.dom.autoScrollBtn.classList.toggle('active');
+                     if (navigator.vibrate) navigator.vibrate(10);
+                     
+                     if(this.isSnapEnabled) {
+                         this.dom.header.classList.remove('hidden');
+                         this.dom.appFooter.classList.remove('hidden');
+                     }
+                });
+
+                this.dom.prevChapterBtn.addEventListener('click', () => {
+                    if (this.currentChapterIndex > 0) {
+                        this.scrollToChapter(this.content.chapters[this.currentChapterIndex - 1].id);
+                    }
+                });
+
+                this.dom.nextChapterBtn.addEventListener('click', () => {
+                    if (this.currentChapterIndex < this.content.chapters.length - 1) {
+                        this.scrollToChapter(this.content.chapters[this.currentChapterIndex + 1].id);
+                    }
+                });
+
+                window.addEventListener('scroll', () => this.handleScroll(), { passive: true });
+                window.addEventListener('resize', () => this.handleResize());
+                this.initDraggableTimeline();
+            }
+            
+            handleScroll() {
+                const currentScrollY = window.scrollY;
+                const isMobile = window.innerWidth < 960;
+
+                if (Math.abs(currentScrollY - this.lastScrollY) > 5) {
+                    if (currentScrollY > this.lastScrollY && currentScrollY > 80) {
+                        this.dom.header.classList.add('hidden');
+                        this.dom.appFooter.classList.add('hidden');
+                    } else {
+                        this.dom.header.classList.remove('hidden');
+                        this.dom.appFooter.classList.remove('hidden');
+                    }
+                }
+                
+                if (this.isSnapEnabled && !isMobile && !this.isSnapping) {
+                    this.checkSnapTrigger();
+                }
+
+                this.lastScrollY = currentScrollY;
+            }
+
+            checkSnapTrigger() {
+                const chapters = document.querySelectorAll('.story-chapter');
+                const viewportHeight = window.innerHeight;
+                const triggerPoint = viewportHeight / 1.5; 
+                
+                chapters.forEach((chapter, index) => {
+                    const rect = chapter.getBoundingClientRect();
+                    if (rect.bottom < triggerPoint && rect.bottom > 0 && index < chapters.length - 1) {
+                        this.isSnapping = true;
+                        const nextChapterId = chapters[index + 1].id;
+                        this.scrollToChapter(nextChapterId);
+                        setTimeout(() => { this.isSnapping = false; }, 1000);
+                    }
+                });
+            }
+            
+            handleResize() {
+                document.querySelectorAll('.acc-item.open .acc-body').forEach(body => {
+                    body.style.maxHeight = body.scrollHeight + "px";
+                });
+                if(this.dom.timelineNodesDesktop.offsetHeight > 0) {
+                    this.setupDesktopTimelineSVG();
+                }
+            }
+            
+            initDraggableTimeline() {
+                const timeline = this.dom.timelineTrackMobile;
+                const handleDrag = (e) => {
+                    if (!this.isDragging) return;
+                    e.preventDefault();
+                    const clientX = e.clientX || e.touches[0].clientX;
+                    const rect = timeline.getBoundingClientRect();
+                    let progress = (clientX - rect.left) / rect.width;
+                    progress = Math.max(0, Math.min(1, progress));
+                    
+                    this.scrubTargetIndex = Math.round(progress * (this.content.chapters.length - 1));
+                    this.dom.headerTitle.textContent = this.content.chapters[this.scrubTargetIndex].title;
+                    
+                    document.querySelectorAll('.timeline-node-point').forEach((node, index) => {
+                        node.classList.toggle('active', index === this.scrubTargetIndex);
+                    });
+                    this.dom.timelineProgressMobile.style.width = `${progress * 100}%`;
+                };
+                const startDrag = (e) => {
+                    this.isDragging = true;
+                    handleDrag(e);
+                };
+                const endDrag = () => {
+                    if (!this.isDragging) return;
+                    this.isDragging = false;
+                    this.scrollToChapter(this.content.chapters[this.scrubTargetIndex].id);
+                };
+                timeline.addEventListener('mousedown', startDrag);
+                window.addEventListener('mousemove', handleDrag);
+                window.addEventListener('mouseup', endDrag);
+                timeline.addEventListener('touchstart', startDrag, { passive: false });
+                window.addEventListener('touchmove', handleDrag, { passive: false });
+                window.addEventListener('touchend', endDrag);
+            }
+            
+            setMode(mode) {
+                localStorage.setItem('template-mode', mode);
+                this.dom.modeBtns.forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+                const currentScrollRatio = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+                this.buildUI(mode);
+                this.initObservers(); 
+                const newScrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+                if(!isNaN(currentScrollRatio)) {
+                     window.scrollTo(0, newScrollHeight * currentScrollRatio);
+                }
+            }
+            
+            buildUI(mode) {
+                document.querySelector('.header-title').textContent = this.content.title;
+
+                this.dom.storyPanel.innerHTML = '';
+                this.dom.timelineNodesMobile.innerHTML = '';
+                this.dom.timelineNodesDesktop.innerHTML = '';
+                
+                this.content.chapters.forEach(chapter => {
+                    const nodePointMobile = document.createElement('button');
+                    nodePointMobile.className = 'timeline-node-point';
+                    nodePointMobile.dataset.targetId = chapter.id;
+                    nodePointMobile.setAttribute('aria-label', `Vai al capitolo: ${chapter.title}`);
+                    nodePointMobile.onclick = (e) => {
+                        if(navigator.vibrate) navigator.vibrate(10);
+                        this.scrollToChapter(chapter.id);
+                    };
+                    this.dom.timelineNodesMobile.appendChild(nodePointMobile);
+
+                    const nodeDesktop = document.createElement('button');
+                    nodeDesktop.className = 'timeline-desktop-node';
+                    nodeDesktop.dataset.targetId = chapter.id;
+                    nodeDesktop.innerHTML = `<div class="node-point"></div><div class="node-label">${chapter.title}</div>`;
+                    nodeDesktop.onclick = () => this.scrollToChapter(chapter.id);
+                    this.dom.timelineNodesDesktop.appendChild(nodeDesktop);
+
+                    const section = document.createElement('section');
+                    section.className = 'story-chapter';
+                    section.id = chapter.id;
+                    const content = mode === 'story' ? chapter.storyDescription : chapter.description;
+                    section.innerHTML = `<div class="chapter-content"><h2 class="chapter-title">${chapter.title}</h2><div class="chapter-body">${content}</div></div>`;
+                    this.dom.storyPanel.appendChild(section);
+                });
+
+                this.dom.storyPanel.querySelectorAll('.acc-header').forEach(header => {
+                    header.addEventListener('click', () => {
+                        const item = header.parentElement;
+                        const body = header.nextElementSibling;
+                        const isOpen = item.classList.contains('open');
+                        item.classList.toggle('open');
+                        if (!isOpen) {
+                            body.style.maxHeight = body.scrollHeight + "px";
+                        } else {
+                            body.style.maxHeight = null;
+                        }
+                    });
+                });
+
+                this.dom.storyPanel.querySelectorAll('.flip-container').forEach(container => {
+                    container.addEventListener('click', () => {
+                         const selection = window.getSelection();
+                         if (selection.toString().length === 0) {
+                             container.classList.toggle('flipped');
+                         }
+                    });
+                });
+                
+                this.setupDesktopTimelineSVG();
+                
+                // Render math with KaTeX
+                this.renderMath();
+            }
+            
+            renderMath() {
+                if (typeof renderMathInElement !== 'undefined') {
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: '$$', right: '$$', display: true},
+                            {left: '$', right: '$', display: false}
+                        ],
+                        throwOnError: false,
+                        trust: true
+                    });
+                } else {
+                    // Wait for KaTeX to load
+                    setTimeout(() => this.renderMath(), 100);
+                }
+            }
+            
+            setupDesktopTimelineSVG() {
+                const nodesHeight = this.dom.timelineNodesDesktop.offsetHeight;
+                const containerHeight = this.dom.timelineDesktopContainer.offsetHeight;
+                const startY = (containerHeight - nodesHeight) / 2;
+                const endY = startY + nodesHeight;
+
+                const line = this.dom.timelineProgressDesktop.previousElementSibling;
+                line.setAttribute('y1', startY);
+                line.setAttribute('y2', endY);
+                
+                const progressLine = this.dom.timelineProgressDesktop;
+                progressLine.setAttribute('y1', startY);
+                progressLine.setAttribute('y2', endY);
+
+                const pathLength = endY - startY;
+                progressLine.style.strokeDasharray = pathLength;
+                progressLine.style.strokeDashoffset = pathLength;
+            }
+
+            scrollToChapter(id) {
+                const targetElement = document.getElementById(id);
+                const headerOffset = 80;
+                const elementPosition = targetElement.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+            }
+            
+            updateNavButtonsState() {
+                if (this.currentChapterIndex <= 0) {
+                    this.dom.prevChapterBtn.classList.add('disabled');
+                } else {
+                    this.dom.prevChapterBtn.classList.remove('disabled');
+                }
+
+                if (this.currentChapterIndex >= this.content.chapters.length - 1) {
+                    this.dom.nextChapterBtn.classList.add('disabled');
+                } else {
+                    this.dom.nextChapterBtn.classList.remove('disabled');
+                }
+            }
+
+            initObservers() {
+                const chapterObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        const id = entry.target.id;
+                        const chapterIndex = this.content.chapters.findIndex(c => c.id === id);
+                        entry.target.classList.toggle('active', entry.isIntersecting);
+
+                        if (entry.isIntersecting) {
+                            this.currentChapterIndex = chapterIndex;
+                            this.updateNavButtonsState();
+
+                            if (!this.isDragging) {
+                                this.dom.headerTitle.textContent = this.content.chapters[chapterIndex].title;
+                            }
+                            document.querySelectorAll(`[data-target-id]`).forEach(node => {
+                                const isCurrent = node.dataset.targetId === id;
+                                const nodeIndex = this.content.chapters.findIndex(c => c.id === node.dataset.targetId);
+                                node.classList.toggle('active', isCurrent);
+                                node.classList.toggle('past', nodeIndex < chapterIndex);
+                            });
+                            
+                            const progress = (chapterIndex / (this.content.chapters.length - 1)) * 100;
+                            this.dom.timelineProgressMobile.style.width = `${progress}%`;
+
+                            const desktopLine = this.dom.timelineProgressDesktop;
+                            if (desktopLine) {
+                                const pathLength = parseFloat(desktopLine.style.strokeDasharray) || 0;
+                                const progressFraction = chapterIndex / (this.content.chapters.length - 1);
+                                desktopLine.style.strokeDashoffset = pathLength * (1 - progressFraction);
+                            }
+                        }
+                    });
+                }, { rootMargin: "-40% 0px -50% 0px", threshold: 0 });
+                
+                document.querySelectorAll('.story-chapter').forEach(chapter => chapterObserver.observe(chapter));
+
+                const headerObserver = new IntersectionObserver(([entry]) => {
+                    this.dom.header.classList.toggle('scrolled', !entry.isIntersecting);
+                }, { threshold: [1] });
+                
+                headerObserver.observe(this.dom.scrollSentinel);
+            }
+        }
+        
+        class Quiz {
+            constructor(questions) {
+                this.allQuestions = questions;
+                this.dom = {
+                    overlay: document.getElementById('quiz-overlay'),
+                    container: document.getElementById('quiz-container'),
+                };
+                this.state = {};
+                this.localStorageKey = 'microEconQuizState';
+                this.savedScrollPosition = 0; 
+            }
+            start() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                const savedState = this.loadState();
+                if (savedState) { this.renderResumePrompt(); } 
+                else { this.beginNewQuiz(); }
+            }
+            resume() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.state = this.loadState();
+                this.openOverlay();
+                this.startQuizUI();
+                this.renderQuestion();
+            }
+            beginNewQuiz() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.state = {
+                    questions: this.shuffleArray([...this.allQuestions]),
+                    currentQuestionIndex: 0,
+                    score: 0,
+                    answered: false,
+                };
+                this.saveState();
+                this.openOverlay();
+                this.renderIntro();
+            }
+            openOverlay() {
+                this.savedScrollPosition = window.scrollY;
+                this.dom.overlay.classList.add('visible');
+                document.body.classList.add('no-scroll');
+            }
+            close() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.dom.overlay.classList.remove('visible');
+                document.body.classList.remove('no-scroll');
+                window.scrollTo(0, this.savedScrollPosition);
+            }
+            saveState() { localStorage.setItem(this.localStorageKey, JSON.stringify(this.state)); }
+            loadState() { const saved = localStorage.getItem(this.localStorageKey); return saved ? JSON.parse(saved) : null; }
+            clearState() { localStorage.removeItem(this.localStorageKey); }
+            
+            renderMath() {
+                if (typeof renderMathInElement !== 'undefined') {
+                    renderMathInElement(this.dom.container, {
+                        delimiters: [
+                            {left: '$$', right: '$$', display: true},
+                            {left: '$', right: '$', display: false}
+                        ],
+                        throwOnError: false,
+                        trust: true
+                    });
+                }
+            }
+            
+            renderResumePrompt() {
+                this.openOverlay();
+                this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title">Quiz in Sospeso</span><button class="icon-btn quiz-close-btn" id="quiz-close-resume"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div><div class="quiz-body"><div class="quiz-results-wrapper"><h2 class="quiz-results-title">Bentornato!</h2><p class="quiz-results-text">Hai un quiz in sospeso. Vuoi continuare?</p><div class="quiz-results-actions"><button class="quiz-next-btn" id="resume-quiz-btn">Riprendi Quiz</button><button class="quiz-next-btn secondary" id="restart-quiz-btn">Inizia da Capo</button></div></div></div>`;
+                document.getElementById('resume-quiz-btn').onclick = () => this.resume();
+                document.getElementById('restart-quiz-btn').onclick = () => { this.clearState(); this.beginNewQuiz(); };
+                document.getElementById('quiz-close-resume').onclick = () => this.close();
+            }
+            renderIntro() {
+                 this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title">Test di Autovalutazione</span><button class="icon-btn quiz-close-btn" id="quiz-close-intro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div><div class="quiz-body"><div class="quiz-results-wrapper"><h2 class="quiz-results-title">Sei pronto?</h2><p class="quiz-results-text">Verifica la tua preparazione con ${this.state.questions.length} domande.</p><button class="quiz-next-btn" id="start-quiz-btn">Inizia il Quiz</button></div></div>`;
+                 document.getElementById('start-quiz-btn').onclick = () => { this.startQuizUI(); this.renderQuestion(); };
+                 document.getElementById('quiz-close-intro').onclick = () => this.close();
+            }
+            startQuizUI() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title" id="quiz-progress-text"></span><button class="icon-btn quiz-close-btn" id="quiz-close-main"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div><div class="quiz-body"><div id="quiz-content-wrapper"></div></div><div class="quiz-footer"><button class="quiz-next-btn" id="quiz-next-btn" disabled>Avanti</button></div>`;
+                document.getElementById('quiz-next-btn').onclick = () => this.nextQuestion();
+                document.getElementById('quiz-close-main').onclick = () => this.close();
+            }
+            renderQuestion() {
+                this.state.answered = false;
+                const question = this.state.questions[this.state.currentQuestionIndex];
+                const progressText = `Domanda ${this.state.currentQuestionIndex + 1} di ${this.state.questions.length}`;
+                document.getElementById('quiz-progress-text').textContent = progressText;
+                const answersHtml = this.shuffleArray(question.options).map(option => `<button class="quiz-answer-btn" data-answer="${option}">${option}</button>`).join('');
+                const contentWrapper = document.getElementById('quiz-content-wrapper');
+                const oldSlide = contentWrapper.querySelector('.quiz-slide');
+                if (oldSlide) {
+                    oldSlide.style.opacity = 0;
+                    setTimeout(() => {
+                        oldSlide.innerHTML = `<p class="quiz-question-text">${question.question}</p><div class="quiz-answers">${answersHtml}</div><div class="quiz-explanation"></div>`;
+                        oldSlide.style.opacity = 1;
+                        this.addAnswerListeners();
+                        this.renderMath();
+                    }, 200);
+                } else {
+                    contentWrapper.innerHTML = `<div class="quiz-slide active"><p class="quiz-question-text">${question.question}</p><div class="quiz-answers">${answersHtml}</div><div class="quiz-explanation"></div></div>`;
+                    this.addAnswerListeners();
+                    this.renderMath();
+                }
+                document.getElementById('quiz-next-btn').disabled = true;
+            }
+            addAnswerListeners() {
+                document.querySelectorAll('.quiz-answer-btn').forEach(btn => {
+                    btn.onclick = (e) => this.handleAnswer(e.currentTarget);
+                });
+            }
+            handleAnswer(selectedButton) {
+                if (this.state.answered) return;
+                this.state.answered = true;
+                if(navigator.vibrate) navigator.vibrate(20);
+                const selectedAnswer = selectedButton.dataset.answer;
+                const currentQ = this.state.questions[this.state.currentQuestionIndex];
+                const correctAnswer = currentQ.correctAnswer;
+                
+                if (selectedAnswer === correctAnswer) {
+                    this.state.score++;
+                    selectedButton.classList.add('correct');
+                } else {
+                    selectedButton.classList.add('incorrect');
+                    const correctBtn = Array.from(document.querySelectorAll('.quiz-answer-btn')).find(btn => btn.dataset.answer === correctAnswer);
+                    if (correctBtn) correctBtn.classList.add('correct');
+                }
+                
+                document.querySelectorAll('.quiz-answer-btn').forEach(btn => btn.classList.add('disabled'));
+                document.getElementById('quiz-next-btn').disabled = false;
+                
+                const explanationEl = document.querySelector('.quiz-explanation');
+                if(explanationEl) {
+                    const explText = currentQ.explanation || ("La risposta corretta è: " + correctAnswer);
+                    explanationEl.innerHTML = "<strong>Spiegazione:</strong> " + explText;
+                    explanationEl.classList.add('visible');
+                    this.renderMath();
+                }
+                
+                this.saveState();
+            }
+            nextQuestion() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.state.currentQuestionIndex++;
+                if (this.state.currentQuestionIndex < this.state.questions.length) {
+                    this.saveState();
+                    this.renderQuestion();
+                } else {
+                    this.renderResults();
+                }
+            }
+            renderResults() {
+                const score = this.state.score;
+                const total = this.state.questions.length;
+                const percentage = Math.round((score / total) * 100);
+                let message = "Puoi fare di meglio.";
+                if (percentage >= 70) message = "Ottimo lavoro!";
+                if (percentage >= 90) message = "Eccellente!";
+                this.clearState();
+                this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title">Risultati</span></div><div class="quiz-body"><div class="quiz-results-wrapper"><h2 class="quiz-results-title">${message}</h2><div class="quiz-results-score">${score} / ${total}</div><p class="quiz-results-text">Risposte corrette: ${percentage}%</p><div class="quiz-results-actions"><button class="quiz-next-btn" id="retake-quiz-btn">Riprova il Quiz</button><button class="quiz-next-btn secondary" id="close-results-btn">Torna allo Studio</button></div></div></div>`;
+                document.getElementById('retake-quiz-btn').onclick = () => this.beginNewQuiz();
+                document.getElementById('close-results-btn').onclick = () => this.close();
+            }
+            shuffleArray(array) {
+                return array.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const app = new ScrollytellingApp(learningContent);
+            const quiz = new Quiz(quizData);
+            document.getElementById('quiz-btn').onclick = () => quiz.start();
+        });
+    </script>
+</body>
+</html>
