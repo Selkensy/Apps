@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Microeconomia: Domanda, Offerta ed Equilibrio</title>
+    <title>OGPP: Domanda & Offerta</title>
     <!-- KaTeX for Math Rendering -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
@@ -208,14 +208,36 @@
         }
         .chapter-body h4::after { content: ''; flex-grow: 1; height: 1px; background-color: var(--border-color); opacity: 0.5; }
         
+        /* ====================================== */
+        /* ENHANCED MATH STYLING - MOBILE FIRST  */
+        /* ====================================== */
+        
+        /* Global KaTeX Improvements */
+        .katex {
+            font-size: 1.1em !important;
+            line-height: 1.5 !important;
+        }
+        
+        .katex-display {
+            margin: 1rem 0 !important;
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            padding: 0.5rem 0;
+        }
+        
+        .katex-display > .katex {
+            white-space: nowrap;
+        }
+        
         /* ENHANCED FORMULA BOX */
         .formula-box {
             position: relative;
             background: var(--formula-bg);
             border: 2px solid var(--formula-border);
             border-radius: 16px;
-            padding: 2rem;
-            margin: 2.5rem 0;
+            padding: 1.25rem;
+            margin: 2rem 0;
             text-align: center;
             box-shadow: var(--shadow-color), 0 0 40px -10px rgba(14, 165, 233, 0.15);
             overflow: hidden;
@@ -237,40 +259,79 @@
         }
         .formula-box .formula-label {
             display: inline-block;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.1em;
             color: var(--accent-color);
             background: var(--card-bg-color);
-            padding: 0.25rem 0.75rem;
+            padding: 0.2rem 0.6rem;
             border-radius: 20px;
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
             border: 1px solid var(--border-color);
         }
-        .formula-box .katex { 
-            font-size: 1.6rem !important; 
+        
+        /* Formula main container - scrollable on mobile */
+        .formula-box .formula-main {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            padding: 0.75rem 0;
+            margin: 0 -0.5rem;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-color) transparent;
+        }
+        
+        .formula-box .formula-main::-webkit-scrollbar {
+            height: 4px;
+        }
+        .formula-box .formula-main::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .formula-box .formula-main::-webkit-scrollbar-thumb {
+            background: var(--accent-color);
+            border-radius: 4px;
+            opacity: 0.5;
+        }
+        
+        .formula-box .formula-main .katex { 
+            font-size: clamp(1.1rem, 4.5vw, 1.6rem) !important; 
             color: var(--formula-text);
         }
+        
         .formula-box .formula-description {
-            margin-top: 1.25rem;
-            font-size: 0.9rem;
+            margin-top: 1rem;
+            font-size: 0.8rem;
             color: var(--text-secondary-color);
             font-style: italic;
+            line-height: 1.4;
+        }
+        
+        /* Scroll hint for formulas on mobile */
+        .formula-box .scroll-hint {
+            display: none;
+            font-size: 0.7rem;
+            color: var(--accent-color);
+            margin-top: 0.5rem;
+            opacity: 0.7;
+        }
+        
+        .formula-box.scrollable .scroll-hint {
+            display: block;
         }
 
-        /* MATH CALCULATION STEPS */
+        /* MATH CALCULATION STEPS - Mobile Optimized */
         .math-steps {
             background: var(--card-bg-color);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 1.5rem;
+            padding: 1rem;
             margin: 1.5rem 0;
         }
         .math-step {
             display: flex;
-            align-items: center;
-            gap: 1rem;
+            align-items: flex-start;
+            gap: 0.75rem;
             padding: 0.75rem 0;
             border-bottom: 1px dashed var(--border-color);
         }
@@ -285,84 +346,129 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 28px;
-            height: 28px;
+            min-width: 24px;
+            width: 24px;
+            height: 24px;
             background: var(--accent-color);
             color: white;
             border-radius: 50%;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             font-weight: 700;
             flex-shrink: 0;
+            margin-top: 2px;
         }
         .step-content {
             flex: 1;
+            min-width: 0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 10px 0 10px 0;
         }
         .step-content .katex {
-            font-size: 1.1rem !important;
+            font-size: clamp(0.9rem, 3.5vw, 1.1rem) !important;
+        }
+        .step-content .katex-display {
+            margin: 0.25rem 0 !important;
+            text-align: left;
         }
         .step-label {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--text-secondary-color);
             margin-bottom: 0.25rem;
+            font-weight: 500;
         }
 
         /* MATH RESULT HIGHLIGHT */
         .math-result {
-            display: inline-flex;
+            display: flex;
             align-items: center;
             gap: 0.5rem;
             background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
-            padding: 0.75rem 1.25rem;
+            padding: 0.75rem 1rem;
             border-radius: 12px;
-            margin: 1rem 0;
+            margin: 1.25rem 0;
             border: 2px solid #22c55e;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
         [data-theme="dark"] .math-result {
             background: linear-gradient(135deg, #14532d 0%, #166534 100%);
             border-color: #22c55e;
         }
         .math-result .katex {
-            font-size: 1.2rem !important;
+            font-size: clamp(0.95rem, 3.5vw, 1.2rem) !important;
             color: #14532d;
         }
         [data-theme="dark"] .math-result .katex {
             color: #dcfce7;
         }
         .math-result-icon {
-            font-size: 1.25rem;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+        .math-result-content {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            flex-wrap: wrap;
         }
 
-        /* INLINE MATH STYLING */
+        /* INLINE MATH STYLING - Better Mobile Visibility */
         .inline-math {
-            background: rgba(14, 165, 233, 0.1);
-            padding: 0.15rem 0.4rem;
-            border-radius: 4px;
-            margin: 0 0.1rem;
+            display: inline-block;
+            background: rgba(14, 165, 233, 0.12);
+            padding: 0.15rem 0.5rem;
+            border-radius: 6px;
+            margin: 0 0.15rem;
+            border: 1px solid rgba(14, 165, 233, 0.2);
+        }
+        .inline-math .katex {
+            font-size: 0.95em !important;
         }
         [data-theme="dark"] .inline-math {
-            background: rgba(56, 189, 248, 0.15);
+            background: rgba(56, 189, 248, 0.18);
+            border-color: rgba(56, 189, 248, 0.3);
         }
 
-        /* VARIABLE DEFINITION */
+        /* VARIABLE DEFINITION - Mobile Grid */
         .var-definition {
-            display: grid;
-            grid-template-columns: auto 1fr;
-            gap: 0.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
             background: var(--card-bg-color);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 1.25rem;
-            margin: 1rem 0;
+            padding: 1rem;
+            margin: 1.25rem 0;
+        }
+        .var-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px dashed var(--border-color);
+        }
+        .var-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        .var-row:first-child {
+            padding-top: 0;
         }
         .var-symbol {
             font-weight: 600;
             color: var(--accent-color);
+            flex-shrink: 0;
+            min-width: 80px;
+            overflow-x: auto;
         }
         .var-symbol .katex {
-            font-size: 1rem !important;
+            font-size: 0.9rem !important;
         }
         .var-meaning {
             color: var(--text-secondary-color);
+            font-size: 0.9rem;
+            line-height: 1.4;
         }
 
         /* INTERACTIVE ELEMENTS */
@@ -392,13 +498,13 @@
         }
         .acc-content { padding: 1.25rem 1.5rem; font-size: 1rem; color: var(--text-secondary-color); border-top: 1px dashed var(--border-color); line-height: 1.6; }
 
-        /* FLIP CARDS */
+        /* FLIP CARDS - Math Optimized */
         .flip-container { 
             margin: 2.5rem auto; 
             perspective: 1000px; 
             width: 100%; 
             max-width: 500px; 
-            min-height: 380px; 
+            min-height: 420px; 
         }
         .flip-card-inner {
             position: relative; width: 100%; height: 100%;
@@ -413,7 +519,7 @@
             grid-area: card-face; width: 100%;
             -webkit-backface-visibility: hidden; backface-visibility: hidden;
             border-radius: 20px; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; padding: 2rem;
+            align-items: center; justify-content: center; padding: 1.5rem;
         }
         
         .flip-front { background-color: var(--flip-front-bg); border: 1px solid var(--border-color); }
@@ -435,16 +541,31 @@
             width: 100%;
         }
         .flip-back li {
-            padding: 0.75rem 0;
+            padding: 0.6rem 0;
             border-bottom: 1px dashed rgba(255,255,255,0.2);
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             line-height: 1.5;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
         }
         .flip-back li:last-child {
             border-bottom: none;
         }
         .flip-back .katex {
-            font-size: 1rem !important;
+            font-size: 0.85rem !important;
+        }
+        .flip-back .elasticity-type {
+            font-weight: 700;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .flip-back .elasticity-desc {
+            font-weight: 400;
+            opacity: 0.9;
+            padding-left: 0;
         }
 
         #timeline-desktop { display: none; }
@@ -493,14 +614,26 @@
         .quiz-slide { width: 100%; opacity: 0; transition: opacity 0.3s ease; }
         .quiz-slide.active { opacity: 1; }
         
-        .quiz-question-text { font-size: clamp(1.1rem, 4vw, 1.35rem); font-weight: 700; margin-bottom: 1.5rem; line-height: 1.4; color: var(--text-color); }
+        .quiz-question-text { 
+            font-size: clamp(1rem, 4vw, 1.35rem); 
+            font-weight: 700; 
+            margin-bottom: 1.5rem; 
+            line-height: 1.5; 
+            color: var(--text-color); 
+        }
+        .quiz-question-text .katex {
+            font-size: 1em !important;
+        }
         .quiz-answers { display: grid; gap: 0.75rem; }
         .quiz-answer-btn {
             width: 100%; padding: 1rem 1.25rem; text-align: left; background-color: var(--bg-color);
-            border: 2px solid transparent; border-radius: 16px; font-size: 1rem; font-weight: 500;
+            border: 2px solid transparent; border-radius: 16px; font-size: 0.95rem; font-weight: 500;
             transition: all 0.2s ease; color: var(--text-color);
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             word-break: break-word; hyphens: auto; line-height: 1.4;
+        }
+        .quiz-answer-btn .katex {
+            font-size: 0.9em !important;
         }
         .quiz-answer-btn:hover { background-color: var(--border-color); }
         .quiz-answer-btn:active { transform: scale(0.98); }
@@ -511,11 +644,14 @@
         .quiz-answer-btn.disabled { opacity: 0.6; pointer-events: none; }
         
         .quiz-explanation {
-            margin-top: 1.5rem; padding: 1.25rem; border-radius: 12px; font-size: 1rem; line-height: 1.5;
+            margin-top: 1.5rem; padding: 1.25rem; border-radius: 12px; font-size: 0.95rem; line-height: 1.5;
             background-color: var(--quiz-expl-bg); border: 1px solid var(--quiz-expl-border); color: var(--quiz-expl-text);
             opacity: 0; transform: translateY(10px); transition: opacity 0.4s ease, transform 0.4s ease; display: none;
         }
         .quiz-explanation.visible { opacity: 1; transform: translateY(0); display: block; }
+        .quiz-explanation .katex {
+            font-size: 0.95em !important;
+        }
 
         .quiz-footer { 
             padding: 1.5rem; border-top: 1px solid var(--border-color); flex-shrink: 0; background-color: var(--bg-color);
@@ -533,7 +669,9 @@
         .quiz-results-actions .quiz-next-btn.secondary { background-color: transparent; border: 2px solid var(--border-color); color: var(--text-color); }
         .quiz-results-actions .quiz-next-btn.secondary:hover { border-color: var(--text-secondary-color); }
 
-        /* DESKTOP OVERRIDES */
+        /* ====================================== */
+        /* DESKTOP OVERRIDES                     */
+        /* ====================================== */
         @media (min-width: 960px) {
             .progress-timeline-mobile { display: none; }
             .app-footer { display: none; }
@@ -614,13 +752,120 @@
             .story-chapter { padding: 6rem 0; min-height: 85vh; }
             .story-chapter:first-child { padding-top: 4rem; }
 
-            .formula-box .katex { 
+            /* Desktop Math Sizing */
+            .formula-box {
+                padding: 2rem;
+                margin: 2.5rem 0;
+            }
+            
+            .formula-box .formula-label {
+                font-size: 0.75rem;
+                padding: 0.25rem 0.75rem;
+                margin-bottom: 1rem;
+            }
+            
+            .formula-box .formula-main .katex { 
                 font-size: 1.8rem !important; 
+            }
+            
+            .formula-box .formula-description {
+                font-size: 0.9rem;
+                margin-top: 1.25rem;
+            }
+            
+            .math-steps {
+                padding: 1.5rem;
+            }
+            
+            .math-step {
+                gap: 1rem;
+            }
+            
+            .step-number {
+                min-width: 28px;
+                width: 28px;
+                height: 28px;
+                font-size: 0.8rem;
+            }
+            
+            .step-content .katex {
+                font-size: 1.1rem !important;
+            }
+            
+            .var-definition {
+                display: grid;
+                grid-template-columns: auto 1fr;
+                gap: 0.5rem 1.5rem;
+                padding: 1.25rem;
+            }
+            
+            .var-row {
+                display: contents;
+            }
+            
+            .var-symbol, .var-meaning {
+                padding: 0.5rem 0;
+                border-bottom: 1px dashed var(--border-color);
+            }
+            
+            .var-row:last-child .var-symbol,
+            .var-row:last-child .var-meaning {
+                border-bottom: none;
+            }
+            
+            .flip-container {
+                min-height: 380px;
+            }
+            
+            .flip-front, .flip-back {
+                padding: 2rem;
+            }
+            
+            .flip-back li {
+                flex-direction: row;
+                gap: 0.75rem;
+                font-size: 0.95rem;
+            }
+            
+            .flip-back .katex {
+                font-size: 1rem !important;
             }
         }
         
         @media (min-width: 1200px) {
              .main-layout { gap: 4rem; }
+        }
+        
+        /* Extra small screens */
+        @media (max-width: 360px) {
+            .formula-box {
+                padding: 1rem;
+                border-radius: 12px;
+            }
+            
+            .formula-box .formula-main .katex {
+                font-size: 1rem !important;
+            }
+            
+            .step-content .katex {
+                font-size: 0.85rem !important;
+            }
+            
+            .math-result .katex {
+                font-size: 0.9rem !important;
+            }
+            
+            .flip-container {
+                min-height: 480px;
+            }
+            
+            .flip-back li {
+                font-size: 0.8rem;
+            }
+            
+            .flip-back .katex {
+                font-size: 0.8rem !important;
+            }
         }
     </style>
 </head>
@@ -766,14 +1011,22 @@
                         <h4>Esempio Pratico (Mercato delle Mele)</h4>
                         
                         <div class="var-definition">
-                            <span class="var-symbol">$P_1 = 1€$</span>
-                            <span class="var-meaning">Prezzo iniziale per kg</span>
-                            <span class="var-symbol">$Q_1 = 10 \\text{ kg}$</span>
-                            <span class="var-meaning">Quantità iniziale acquistata</span>
-                            <span class="var-symbol">$P_2 = 1{,}60€$</span>
-                            <span class="var-meaning">Nuovo prezzo per kg</span>
-                            <span class="var-symbol">$Q_2 = 7 \\text{ kg}$</span>
-                            <span class="var-meaning">Nuova quantità acquistata</span>
+                            <div class="var-row">
+                                <span class="var-symbol">$P_1 = 1€$</span>
+                                <span class="var-meaning">Prezzo iniziale per kg</span>
+                            </div>
+                            <div class="var-row">
+                                <span class="var-symbol">$Q_1 = 10 \\text{ kg}$</span>
+                                <span class="var-meaning">Quantità iniziale acquistata</span>
+                            </div>
+                            <div class="var-row">
+                                <span class="var-symbol">$P_2 = 1{,}60€$</span>
+                                <span class="var-meaning">Nuovo prezzo per kg</span>
+                            </div>
+                            <div class="var-row">
+                                <span class="var-symbol">$Q_2 = 7 \\text{ kg}$</span>
+                                <span class="var-meaning">Nuova quantità acquistata</span>
+                            </div>
                         </div>
 
                         <div class="math-steps">
@@ -781,28 +1034,33 @@
                                 <span class="step-number">1</span>
                                 <div class="step-content">
                                     <div class="step-label">Variazione del prezzo</div>
-                                    $\\Delta P = P_2 - P_1 = 1{,}60 - 1 = +0{,}60€ \\;\\; (+60\\%)$
+                                    $\\Delta P = P_2 - P_1 = 1{,}60 - 1 = +0{,}60€$<br>
+                                    <small style="color: var(--accent-color)">→ +60%</small>
                                 </div>
                             </div>
                             <div class="math-step">
                                 <span class="step-number">2</span>
                                 <div class="step-content">
                                     <div class="step-label">Variazione della quantità</div>
-                                    $\\Delta Q = Q_2 - Q_1 = 7 - 10 = -3 \\text{ kg} \\;\\; (-30\\%)$
+                                    $\\Delta Q = Q_2 - Q_1 = 7 - 10 = -3 \\text{ kg}$<br>
+                                    <small style="color: var(--accent-color)">→ -30%</small>
                                 </div>
                             </div>
                             <div class="math-step">
                                 <span class="step-number">3</span>
                                 <div class="step-content">
                                     <div class="step-label">Calcolo elasticità</div>
-                                    $E_{d,p} = \\frac{30\\%}{60\\%} = \\frac{0{,}30}{0{,}60} = 0{,}5$
+                                    $E_{d,p} = \\frac{30\\%}{60\\%} = 0{,}5$
                                 </div>
                             </div>
                         </div>
 
                         <div class="math-result">
                             <span class="math-result-icon">✓</span>
-                            <span>$E_{d,p} = 0{,}5 < 1$ → Domanda <strong>Anelastica</strong></span>
+                            <div class="math-result-content">
+                                <span>$E_{d,p} = 0{,}5 < 1$</span>
+                                <span>→ Domanda <strong>Anelastica</strong></span>
+                            </div>
                         </div>
 
                         <div class="flip-container">
@@ -813,11 +1071,26 @@
                                 </div>
                                 <div class="flip-back">
                                     <ul>
-                                        <li><strong>Rigida</strong> $E = 0$ — La domanda non cambia mai (es. farmaci salvavita). Curva verticale.</li>
-                                        <li><strong>Anelastica</strong> $E < 1$ — Reazione debole (beni di prima necessità).</li>
-                                        <li><strong>Unitaria</strong> $E = 1$ — Variazione proporzionale.</li>
-                                        <li><strong>Elastica</strong> $E > 1$ — Forte reazione (beni di lusso).</li>
-                                        <li><strong>Infinitamente Elastica</strong> $E = \\infty$ — Curva orizzontale.</li>
+                                        <li>
+                                            <span class="elasticity-type">Rigida $E = 0$</span>
+                                            <span class="elasticity-desc">La domanda non cambia mai (es. farmaci salvavita). Curva verticale.</span>
+                                        </li>
+                                        <li>
+                                            <span class="elasticity-type">Anelastica $E < 1$</span>
+                                            <span class="elasticity-desc">Reazione debole (beni di prima necessità).</span>
+                                        </li>
+                                        <li>
+                                            <span class="elasticity-type">Unitaria $E = 1$</span>
+                                            <span class="elasticity-desc">Variazione proporzionale.</span>
+                                        </li>
+                                        <li>
+                                            <span class="elasticity-type">Elastica $E > 1$</span>
+                                            <span class="elasticity-desc">Forte reazione (beni di lusso).</span>
+                                        </li>
+                                        <li>
+                                            <span class="elasticity-type">Infinita $E = \\infty$</span>
+                                            <span class="elasticity-desc">Curva orizzontale.</span>
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
@@ -886,28 +1159,36 @@
                         <h4>Esempio Pratico (Pastificio)</h4>
 
                         <div class="var-definition">
-                            <span class="var-symbol">$P_1 = 0{,}80€$</span>
-                            <span class="var-meaning">Prezzo iniziale per kg</span>
-                            <span class="var-symbol">$Q_1 = 20.000 \\text{ kg}$</span>
-                            <span class="var-meaning">Quantità prodotta iniziale</span>
-                            <span class="var-symbol">$P_2 = 1{,}00€$</span>
-                            <span class="var-meaning">Nuovo prezzo per kg</span>
-                            <span class="var-symbol">$Q_2 = 25.000 \\text{ kg}$</span>
-                            <span class="var-meaning">Nuova quantità prodotta</span>
+                            <div class="var-row">
+                                <span class="var-symbol">$P_1 = 0{,}80€$</span>
+                                <span class="var-meaning">Prezzo iniziale per kg</span>
+                            </div>
+                            <div class="var-row">
+                                <span class="var-symbol">$Q_1 = 20.000$</span>
+                                <span class="var-meaning">Quantità prodotta iniziale (kg)</span>
+                            </div>
+                            <div class="var-row">
+                                <span class="var-symbol">$P_2 = 1{,}00€$</span>
+                                <span class="var-meaning">Nuovo prezzo per kg</span>
+                            </div>
+                            <div class="var-row">
+                                <span class="var-symbol">$Q_2 = 25.000$</span>
+                                <span class="var-meaning">Nuova quantità prodotta (kg)</span>
+                            </div>
                         </div>
 
                         <div class="math-steps">
                             <div class="math-step">
                                 <span class="step-number">1</span>
                                 <div class="step-content">
-                                    <div class="step-label">Variazione percentuale del prezzo</div>
+                                    <div class="step-label">Variazione % del prezzo</div>
                                     $\\Delta\\% P = \\frac{0{,}20}{0{,}80} \\times 100 = 25\\%$
                                 </div>
                             </div>
                             <div class="math-step">
                                 <span class="step-number">2</span>
                                 <div class="step-content">
-                                    <div class="step-label">Variazione percentuale della quantità</div>
+                                    <div class="step-label">Variazione % della quantità</div>
                                     $\\Delta\\% Q = \\frac{5.000}{20.000} \\times 100 = 25\\%$
                                 </div>
                             </div>
@@ -922,7 +1203,10 @@
 
                         <div class="math-result">
                             <span class="math-result-icon">✓</span>
-                            <span>$E_{o,p} = 1$ → Elasticità <strong>Unitaria</strong></span>
+                            <div class="math-result-content">
+                                <span>$E_{o,p} = 1$</span>
+                                <span>→ Elasticità <strong>Unitaria</strong></span>
+                            </div>
                         </div>
                     `,
                     storyDescription: `
@@ -946,14 +1230,22 @@
                         <p>Graficamente, è il punto di intersezione tra la curva di domanda (decrescente) e la curva di offerta (crescente).</p>
                         
                         <div class="var-definition">
-                            <span class="var-symbol">$P^*$</span>
-                            <span class="var-meaning">Prezzo di equilibrio</span>
-                            <span class="var-symbol">$Q^*$</span>
-                            <span class="var-meaning">Quantità di equilibrio</span>
-                            <span class="var-symbol">$Q_d > Q_s$</span>
-                            <span class="var-meaning">Eccesso di domanda → il prezzo sale $\\uparrow$</span>
-                            <span class="var-symbol">$Q_d < Q_s$</span>
-                            <span class="var-meaning">Eccesso di offerta → il prezzo scende $\\downarrow$</span>
+                            <div class="var-row">
+                                <span class="var-symbol">$P^*$</span>
+                                <span class="var-meaning">Prezzo di equilibrio</span>
+                            </div>
+                            <div class="var-row">
+                                <span class="var-symbol">$Q^*$</span>
+                                <span class="var-meaning">Quantità di equilibrio</span>
+                            </div>
+                            <div class="var-row">
+                                <span class="var-symbol">$Q_d > Q_s$</span>
+                                <span class="var-meaning">Eccesso di domanda → prezzo sale ↑</span>
+                            </div>
+                            <div class="var-row">
+                                <span class="var-symbol">$Q_d < Q_s$</span>
+                                <span class="var-meaning">Eccesso di offerta → prezzo scende ↓</span>
+                            </div>
                         </div>
 
                         <ul>
@@ -979,1201 +1271,1066 @@
            =================================================================
         */
         const quizData = [
-			{ 
-				question: "Qual è la definizione corretta di 'Domanda di mercato' secondo gli appunti?", 
-				options: ["La quantità di beni che i produttori vogliono vendere", "La quantità di beni e servizi che il consumatore è disposto ad acquistare in un certo mercato, tempo e prezzo", "Il prezzo massimo che un consumatore paga", "La somma dei costi di produzione"], 
-				correctAnswer: "La quantità di beni e servizi che il consumatore è disposto ad acquistare in un certo mercato, tempo e prezzo",
-				explanation: "La domanda è definita specificamente come la quantità di beni o servizi che i consumatori sono disposti (e in grado) di acquistare, date determinate condizioni di mercato, tempo e prezzo. Non riguarda i produttori." 
-			},
-			{ 
-				question: "Qual è la relazione fondamentale descritta dalla 'Legge della domanda'?", 
-				options: ["All'aumentare del prezzo, la domanda aumenta", "Al diminuire del prezzo, la domanda diminuisce", "All'aumentare del prezzo, la quantità domandata decresce", "Il prezzo non influenza la quantità domandata"], 
-				correctAnswer: "All'aumentare del prezzo, la quantità domandata decresce",
-				explanation: "La Legge della Domanda stabilisce una relazione inversa tra prezzo e quantità domandata: se il prezzo di un bene sale, i consumatori ne acquisteranno di meno, ceteris paribus."
-			},
-			{ 
-				question: "Quali sono i fattori principali che influenzano la domanda elencati nel materiale?", 
-				options: ["Solo il prezzo", "Prezzo, costi di produzione, clima", "Prezzo, reddito, gusti, pubblicità, prezzi di altri beni", "Tecnologia e leggi"], 
-				correctAnswer: "Prezzo, reddito, gusti, pubblicità, prezzi di altri beni",
-				explanation: "Gli appunti elencano specificamente: prezzo del bene, reddito del consumatore, gusti personali, pubblicità e il prezzo di beni complementari o succedanei."
-			},
-			{ 
-				question: "Cosa si intende per 'Beni succedanei'?", 
-				options: ["Beni che devono essere usati insieme", "Beni che hanno un sostituto o si può usare l'uno o l'altro", "Beni di lusso", "Beni inferiori"], 
-				correctAnswer: "Beni che hanno un sostituto o si può usare l'uno o l'altro",
-				explanation: "I beni succedanei sono quelli che possono sostituirsi a vicenda nel soddisfare un bisogno (es. burro e margarina). Se il prezzo di uno sale, la domanda dell'altro tende ad aumentare."
-			},
-			{ 
-				question: "Quale esempio viene fornito negli appunti per i 'Beni complementari'?", 
-				options: ["Burro e margarina", "Caffè e zucchero", "Auto e bicicletta", "Mele e pere"], 
-				correctAnswer: "Caffè e zucchero",
-				explanation: "Gli appunti citano esplicitamente 'caffè e zucchero' e 'auto e benzina' come esempi di beni complementari, ovvero beni che vengono consumati congiuntamente."
-			},
-			{ 
-				question: "Se il prezzo delle automobili aumenta drasticamente, cosa accade alla domanda di benzina (bene complementare)?", 
-				options: ["Aumenta", "Diminuisce", "Resta invariata", "Diventa rigida"], 
-				correctAnswer: "Diminuisce",
-				explanation: "Essendo beni complementari, l'aumento del prezzo dell'auto riduce l'acquisto di auto, e di conseguenza riduce l'utilizzo e la domanda di benzina necessaria per farle funzionare."
-			},
-			{ 
-				question: "Cosa indica l'elasticità della domanda rispetto al prezzo (Edp)?", 
-				options: ["La variazione del reddito", "L'intensità della variazione della quantità domandata al variare del prezzo", "La quantità offerta dai produttori", "Il punto di equilibrio"], 
-				correctAnswer: "L'intensità della variazione della quantità domandata al variare del prezzo",
-				explanation: "L'elasticità misura la reattività dei consumatori: quanto varia in percentuale la quantità acquistata rispetto a una variazione percentuale del prezzo."
-			},
-			{ 
-				question: "Qual è la formula corretta per calcolare l'elasticità della domanda (Edp)?", 
-				options: ["Variazione % Prezzo / Variazione % Quantità", "Variazione % Quantità / Variazione % Prezzo", "Prezzo finale - Prezzo iniziale", "Quantità finale * Prezzo finale"], 
-				correctAnswer: "Variazione % Quantità / Variazione % Prezzo",
-				explanation: "La formula riportata negli appunti è Edp = Δ%Q / Δ%P. Il numeratore è sempre la reazione (quantità), il denominatore è l'azione (prezzo)."
-			},
-			{ 
-				question: "Nel calcolo dell'elasticità delle mele presente negli appunti, qual era la variazione percentuale del prezzo?", 
-				options: ["30%", "60%", "100%", "25%"], 
-				correctAnswer: "60%",
-				explanation: "Il prezzo è passato da 1€ a 1,60€. L'aumento è di 0,60€. Rispetto all'originale 1€, è un aumento del 60%."
-			},
-			{ 
-				question: "Nel calcolo dell'elasticità delle mele, la quantità è scesa da 10kg a 7kg. Qual è la variazione percentuale della quantità?", 
-				options: ["10%", "20%", "30%", "40%"], 
-				correctAnswer: "30%",
-				explanation: "La differenza è 3kg su una base di 10kg. 3 su 10 corrisponde al 30%."
-			},
-			{ 
-				question: "Se Edp = 0,5 (come nell'esempio delle mele), come si definisce la domanda?", 
-				options: ["Elastica", "Anelastica (o rigida in senso lato)", "Unitaria", "Perfettamente elastica"], 
-				correctAnswer: "Anelastica (o rigida in senso lato)",
-				explanation: "Quando il coefficiente è minore di 1 (Edp < 1), la domanda è definita anelastica. La reazione della quantità è meno che proporzionale rispetto al prezzo."
-			},
-			{ 
-				question: "Quando la domanda si definisce 'Rigida'?", 
-				options: ["Quando Edp > 1", "Quando Edp = 1", "Quando Edp = 0", "Quando Edp = infinito"], 
-				correctAnswer: "Quando Edp = 0",
-				explanation: "Una domanda rigida (Edp=0) significa che la quantità domandata non cambia affatto al variare del prezzo (es. farmaci salvavita indispensabili)."
-			},
-			{ 
-				question: "Quale tipo di beni tende ad avere una domanda 'Infinitamente elastica'?", 
-				options: ["Beni di prima necessità", "Beni di lusso (secondo alcune interpretazioni grafiche estreme o teoriche)", "Beni inferiori", "Beni complementari"], 
-				correctAnswer: "Beni di lusso (secondo alcune interpretazioni grafiche estreme o teoriche)",
-				explanation: "Sebbene i beni di lusso siano generalmente 'elastici', il caso 'infinitamente elastico' è teorico o si applica a mercati perfetti; tuttavia, negli appunti è associato a una reattività estrema opposta ai beni di prima necessità."
-			},
-			{ 
-				question: "Cosa accade alla domanda dei 'Beni Inferiori' quando il reddito aumenta?", 
-				options: ["Aumenta", "Diminuisce", "Rimane costante", "Diventa infinita"], 
-				correctAnswer: "Diminuisce",
-				explanation: "I beni inferiori (es. cibo di scarsa qualità) vengono abbandonati dal consumatore non appena il suo reddito gli permette di acquistare beni migliori. Quindi la domanda cala all'aumentare del reddito."
-			},
-			{ 
-				question: "Come viene definita l'Offerta di mercato?", 
-				options: ["La quantità che i consumatori comprano", "La quantità di beni e servizi che le imprese sono disposte a vendere a un certo prezzo", "Il totale delle vendite effettuate", "La spesa pubblica"], 
-				correctAnswer: "La quantità di beni e servizi che le imprese sono disposte a vendere a un certo prezzo",
-				explanation: "L'offerta rappresenta la volontà dei produttori di immettere beni sul mercato in relazione al prezzo e ad altri fattori produttivi."
-			},
-			{ 
-				question: "Quali sono i fattori che influenzano l'offerta citati nelle slide?", 
-				options: ["Reddito e gusti", "Pubblicità e moda", "Costi dei fattori produttivi, nuove tecnologie, clima, leggi, prezzo", "Numero di consumatori"], 
-				correctAnswer: "Costi dei fattori produttivi, nuove tecnologie, clima, leggi, prezzo",
-				explanation: "Le slide elencano dettagliatamente: costi di produzione, introduzione di nuove tecnologie (che abbassano i costi), fattori climatici (per l'agricoltura), leggi e ovviamente il prezzo."
-			},
-			{ 
-				question: "Se i costi di produzione aumentano, cosa succede all'offerta a parità di prezzo?", 
-				options: ["Aumenta", "Si riduce", "Rimane invariata", "Diventa infinitamente elastica"], 
-				correctAnswer: "Si riduce",
-				explanation: "L'aumento dei costi riduce il margine di profitto dell'impresa. A parità di prezzo di vendita, l'impresa sarà disposta a produrre e offrire meno quantità."
-			},
-			{ 
-				question: "Qual è l'effetto dell'introduzione di 'nuove tecnologie' sull'offerta?", 
-				options: ["Permette di ridurre i costi e aumentare la quantità offerta", "Aumenta i costi e riduce l'offerta", "Non ha effetto", "Riduce la domanda"], 
-				correctAnswer: "Permette di ridurre i costi e aumentare la quantità offerta",
-				explanation: "Le slide specificano che le nuove tecnologie permettono di ottenere prodotti a costi più contenuti, spingendo le imprese ad aumentare le quantità offerte."
-			},
-			{ 
-				question: "Cosa afferma la 'Legge dell'Offerta'?", 
-				options: ["Se il prezzo aumenta, l'offerta diminuisce", "Se il prezzo aumenta, l'offerta aumenta", "L'offerta è sempre uguale alla domanda", "Il prezzo non influenza l'offerta"], 
-				correctAnswer: "Se il prezzo aumenta, l'offerta aumenta",
-				explanation: "Esiste una relazione diretta: prezzi più alti incentivano le imprese a produrre e vendere di più per massimizzare i profitti."
-			},
-			{ 
-				question: "Nell'esempio numerico dell'offerta (pasta), il prezzo passa da 0,80€ a 1€. Qual è la variazione percentuale del prezzo?", 
-				options: ["20%", "25%", "50%", "10%"], 
-				correctAnswer: "25%",
-				explanation: "L'incremento è di 0,20€. 0,20€ su 0,80€ è un quarto, ovvero il 25%. (Calcolo: 0,20 : 0,80 = x : 100 -> x = 25)."
-			},
-			{ 
-				question: "Nell'esempio dell'offerta, se la variazione del prezzo è 25% e la variazione della quantità offerta è anch'essa 25%, qual è il coefficiente di elasticità?", 
-				options: ["0", "0,5", "1", "2"], 
-				correctAnswer: "1",
-				explanation: "Il coefficiente è dato dal rapporto tra le variazioni percentuali: 25 / 25 = 1. Si tratta di elasticità unitaria."
-			},
-			{ 
-				question: "Nel breve periodo, come tende ad essere l'elasticità dell'offerta?", 
-				options: ["Molto elastica", "Rigida o anelastica", "Infinita", "Indefinita"], 
-				correctAnswer: "Rigida o anelastica",
-				explanation: "Nel breve periodo le imprese non possono adattare facilmente gli impianti e la capacità produttiva, quindi la reazione della quantità offerta a variazioni di prezzo è limitata (anelastica)."
-			},
-			{ 
-				question: "Nel lungo periodo, l'offerta tende ad essere:", 
-				options: ["Più rigida", "Più elastica", "Invariata", "Decrescente"], 
-				correctAnswer: "Più elastica",
-				explanation: "Nel lungo periodo le imprese possono acquistare nuovi macchinari, espandere fabbriche e assumere personale, rendendo la produzione molto più reattiva alle variazioni di prezzo."
-			},
-			{ 
-				question: "Cosa rappresenta il 'Prezzo di equilibrio'?", 
-				options: ["Il prezzo imposto dallo Stato", "Il prezzo che eguaglia la quantità offerta e la quantità di domanda", "Il prezzo più basso possibile", "Il prezzo più alto possibile"], 
-				correctAnswer: "Il prezzo che eguaglia la quantità offerta e la quantità di domanda",
-				explanation: "Graficamente è il punto di intersezione tra la curva di domanda e la curva di offerta. A quel prezzo, tutto ciò che viene prodotto viene acquistato."
-			},
-			{ 
-				question: "Se il prezzo di mercato è superiore al prezzo di equilibrio, cosa si verifica?", 
-				options: ["Eccesso di domanda", "Eccesso di offerta", "Equilibrio stabile", "Carenza di beni"], 
-				correctAnswer: "Eccesso di offerta",
-				explanation: "Se il prezzo è troppo alto, i produttori vogliono vendere molto ma i consumatori comprano poco. Si crea un'eccedenza (surplus) di beni invenduti."
-			},
-			{ 
-				question: "Se il prezzo di mercato è inferiore al prezzo di equilibrio, cosa si verifica?", 
-				options: ["Eccesso di domanda", "Eccesso di offerta", "Saturazione del mercato", "Nessuna reazione"], 
-				correctAnswer: "Eccesso di domanda",
-				explanation: "A un prezzo basso, i consumatori vorrebbero comprare molto, ma i produttori offrono poco. Si crea una penuria (scarcity) e i consumatori competono per i beni."
-			},
-			{ 
-				question: "Qual è il valore di elasticità per un'offerta definita 'Rigida'?", 
-				options: ["E = 0", "E < 1", "E = 1", "E > 1"], 
-				correctAnswer: "E = 0",
-				explanation: "L'offerta rigida ha un'elasticità pari a zero. La quantità offerta non cambia indipendentemente dal prezzo (linea verticale nel grafico)."
-			},
-			{ 
-				question: "Un esempio di offerta rigida citato potrebbe riguardare:", 
-				options: ["Prodotti agricoli deperibili nel brevissimo periodo", "Automobili", "Servizi bancari", "Elettricità nel lungo periodo"], 
-				correctAnswer: "Prodotti agricoli deperibili nel brevissimo periodo",
-				explanation: "Se la merce è già stata prodotta e deperisce (es. pesce al mercato), la quantità è quella e non può cambiare in risposta al prezzo immediato."
-			},
-			{ 
-				question: "Cosa succede alla curva di offerta se il clima è sfavorevole (in agricoltura)?", 
-				options: ["Si sposta verso destra (aumenta)", "La quantità offerta si riduce (spostamento verso sinistra/alto)", "Resta ferma", "Diventa orizzontale"], 
-				correctAnswer: "La quantità offerta si riduce (spostamento verso sinistra/alto)",
-				explanation: "Un clima sfavorevole distrugge i raccolti, riducendo la quantità disponibile per ogni livello di prezzo."
-			},
-			{ 
-				question: "Il reddito è un fattore che influenza direttamente:", 
-				options: ["L'offerta", "La tecnologia", "La domanda", "I costi di produzione"], 
-				correctAnswer: "La domanda",
-				explanation: "Il reddito determina il potere d'acquisto dei consumatori, spostando la curva di domanda. Non influenza direttamente la curva dei costi o l'offerta tecnologica."
-			},
-			{ 
-				question: "Qual è la rappresentazione grafica della curva di domanda?", 
-				options: ["Una linea crescente (pendenza positiva)", "Una linea decrescente (pendenza negativa)", "Una linea orizzontale fissa", "Una parabola a U"], 
-				correctAnswer: "Una linea decrescente (pendenza negativa)",
-				explanation: "Poiché prezzo e quantità domandata sono inversamente proporzionali, la curva scende da sinistra verso destra."
-			},
-			{ 
-				question: "Qual è la rappresentazione grafica della curva di offerta?", 
-				options: ["Una linea decrescente", "Una linea crescente (pendenza positiva)", "Una linea verticale sempre", "Un cerchio"], 
-				correctAnswer: "Una linea crescente (pendenza positiva)",
-				explanation: "Poiché prezzo e quantità offerta sono direttamente proporzionali (più alto il prezzo, più si produce), la curva sale da sinistra verso destra."
-			},
-			{ 
-				question: "Cosa si intende per 'Beni soddisfatti' o 'saturi' nelle eccezioni della domanda?", 
-				options: ["Beni la cui domanda non aumenta più anche se il reddito sale", "Beni che nessuno vuole", "Beni di lusso", "Beni tecnologici"], 
-				correctAnswer: "Beni la cui domanda non aumenta più anche se il reddito sale",
-				explanation: "Una volta soddisfatto completamente un bisogno (es. il sale da cucina), un ulteriore aumento di reddito non porta ad acquistarne di più. La domanda si stabilizza."
-			},
-			{ 
-				question: "Secondo gli appunti, la pubblicità influenza:", 
-				options: ["L'offerta", "I costi di trasporto", "I gusti e quindi la domanda", "Il clima"], 
-				correctAnswer: "I gusti e quindi la domanda",
-				explanation: "La pubblicità agisce sulle preferenze (gusti) dei consumatori, inducendo bisogni e spostando la curva di domanda."
-			},
-			{ 
-				question: "Come viene calcolato il coefficiente Edp se la variazione % della quantità è 10% e quella del prezzo è 10%?", 
-				options: ["0,1", "1", "10", "100"], 
-				correctAnswer: "1",
-				explanation: "10% diviso 10% è uguale a 1. Elasticità unitaria."
-			},
-			{ 
-				question: "Se l'elasticità della domanda è > 1, la domanda è:", 
-				options: ["Rigida", "Elastica", "Unitaria", "Nulla"], 
-				correctAnswer: "Elastica",
-				explanation: "Un valore superiore a 1 indica che la reazione della quantità è proporzionalmente maggiore della variazione del prezzo (alta sensibilità)."
-			},
-			{ 
-				question: "Quale dei seguenti è un esempio di bene a domanda rigida?", 
-				options: ["Profumo di lusso", "Benzina (nel breve periodo) o Farmaci salvavita", "Vacanza ai Caraibi", "Biscotti di una marca specifica"], 
-				correctAnswer: "Benzina (nel breve periodo) o Farmaci salvavita",
-				explanation: "I beni necessari con pochi sostituti tendono ad avere una domanda rigida: anche se il prezzo sale, bisogna comprarli comunque."
-			},
-			{ 
-				question: "La 'Legge che impone impianti di bonifica' citata nelle slide ha come effetto immediato:", 
-				options: ["L'aumento dell'offerta", "L'aumento dei costi e quindi la riduzione dell'offerta", "L'aumento della domanda", "La riduzione del prezzo"], 
-				correctAnswer: "L'aumento dei costi e quindi la riduzione dell'offerta",
-				explanation: "L'obbligo di nuovi impianti costosi aumenta i costi di produzione per le imprese, che a parità di prezzo ridurranno l'offerta."
-			},
-			{ 
-				question: "Nel grafico dell'equilibrio, il punto di incontro delle curve determina:", 
-				options: ["Solo il prezzo", "Solo la quantità", "Prezzo di equilibrio e Quantità di equilibrio", "Il profitto massimo"], 
-				correctAnswer: "Prezzo di equilibrio e Quantità di equilibrio",
-				explanation: "Il punto (E) fornisce le coordinate cartesiane sia per il prezzo (sull'asse Y) che per la quantità scambiata (sull'asse X)."
-			},
-			{ 
-				question: "Se il prezzo delle pere aumenta, la domanda di mele (bene succedaneo) tende a:", 
-				options: ["Diminuire", "Aumentare", "Restare uguale", "Crollare a zero"], 
-				correctAnswer: "Aumentare",
-				explanation: "I consumatori sostituiranno le pere (diventate care) con le mele (relativamente più economiche), aumentandone la domanda."
-			},
-			{ 
-				question: "L'elasticità incrociata misura:", 
-				options: ["La reazione della domanda di un bene al variare del prezzo di un altro bene", "La reazione dell'offerta ai costi", "La somma delle elasticità", "Il rapporto tra domanda e offerta"], 
-				correctAnswer: "La reazione della domanda di un bene al variare del prezzo di un altro bene",
-				explanation: "È definita come la variazione percentuale della domanda del bene A rispetto alla variazione percentuale del prezzo del bene B."
-			},
-			{ 
-				question: "Se l'elasticità incrociata è negativa, i beni sono:", 
-				options: ["Succedanei", "Complementari", "Indipendenti", "Inferiori"], 
-				correctAnswer: "Complementari",
-				explanation: "Se aumenta il prezzo di B e la domanda di A scende (segno meno), significa che i beni sono legati e consumati insieme (es. auto e benzina)."
-			},
-			{ 
-				question: "Se l'elasticità incrociata è positiva, i beni sono:", 
-				options: ["Succedanei", "Complementari", "Indipendenti", "Di lusso"], 
-				correctAnswer: "Succedanei",
-				explanation: "Se aumenta il prezzo di B e la domanda di A sale (segno più), significa che i consumatori stanno passando da B ad A (sostituzione)."
-			},
-			{ 
-				question: "Un'offerta infinitamente elastica è rappresentata graficamente da:", 
-				options: ["Una linea verticale", "Una linea orizzontale", "Una curva a 45 gradi", "Una parabola"], 
-				correctAnswer: "Una linea orizzontale",
-				explanation: "Significa che a un determinato prezzo l'offerta è potenzialmente infinita, ma basta una minima variazione di prezzo per azzerarla o cambiarla drasticamente. È una linea parallela all'asse delle quantità."
-			},
-			{ 
-				question: "Quale fattore NON sposta la curva di domanda?", 
-				options: ["Reddito", "Pubblicità", "Costi di produzione", "Moda"], 
-				correctAnswer: "Costi di produzione",
-				explanation: "I costi di produzione influenzano l'offerta, non la domanda. Gli altri fattori elencati agiscono sulla volontà del consumatore."
-			},
-			{ 
-				question: "Se il reddito di una famiglia povera aumenta, la domanda di fagioli (bene inferiore) nel grafico:", 
-				options: ["Cresce indefinitamente", "Prima cresce, poi decresce", "È sempre costante", "Non esiste"], 
-				correctAnswer: "Prima cresce, poi decresce",
-				explanation: "Inizialmente si comprano più fagioli, ma superata una soglia di reddito, si sostituiscono i fagioli con la carne, facendo calare la domanda dei primi."
-			},
-			{ 
-				question: "L'introduzione di sussidi statali per la produzione biologica provoca:", 
-				options: ["Una riduzione dell'offerta", "Un aumento dell'offerta", "Un aumento del prezzo di vendita", "Un calo della domanda"], 
-				correctAnswer: "Un aumento dell'offerta",
-				explanation: "I contributi riducono i costi effettivi per l'impresa, incentivando la produzione e spostando la curva di offerta verso destra (aumento)."
-			},
-			{ 
-				question: "L'elasticità unitaria grafica (iperbole equilatera per la domanda) implica che:", 
-				options: ["La spesa totale del consumatore rimane costante", "La quantità è fissa", "Il prezzo è fisso", "Non esiste relazione"], 
-				correctAnswer: "La spesa totale del consumatore rimane costante",
-				explanation: "Se il prezzo sale del 10% e la quantità scende del 10%, il prodotto P*Q (spesa totale) rimane invariato."
-			},
-			{ 
-				question: "Nell'esempio del burro e margarina, se il prezzo del burro sale:", 
-				options: ["La domanda di margarina sale", "La domanda di margarina scende", "L'offerta di burro scende", "Il prezzo della margarina scende"], 
-				correctAnswer: "La domanda di margarina sale",
-				explanation: "La margarina è un bene succedaneo del burro. Se il burro diventa caro, la gente compra più margarina."
-			},
-			{ 
-				question: "Cosa si intende per 'Mercato' in economia?", 
-				options: ["Solo il luogo fisico", "L'insieme delle contrattazioni tra acquirenti e venditori", "Un negozio specifico", "La borsa valori"], 
-				correctAnswer: "L'insieme delle contrattazioni tra acquirenti e venditori",
-				explanation: "Il mercato non è solo un luogo fisico, ma il contesto astratto o reale dove domanda e offerta si incontrano per determinare il prezzo."
-			},
-			{ 
-				question: "Se Edp = 2, una riduzione del prezzo del 10% porta a:", 
-				options: ["Un aumento della quantità del 20%", "Un aumento della quantità del 5%", "Una riduzione della quantità del 20%", "Nessun cambiamento"], 
-				correctAnswer: "Un aumento della quantità del 20%",
-				explanation: "Edp = Δ%Q / Δ%P -> 2 = X / 10 -> X = 20%. La relazione è inversa, quindi prezzo giù, quantità su."
-			},
-			{ 
-				question: "Se Edp = 0,5, un aumento del prezzo del 20% porta a:", 
-				options: ["Una riduzione della quantità del 10%", "Una riduzione della quantità del 40%", "Un aumento della quantità del 10%", "Stessa quantità"], 
-				correctAnswer: "Una riduzione della quantità del 10%",
-				explanation: "Edp = Δ%Q / Δ%P -> 0,5 = X / 20 -> X = 10%. Prezzo su, quantità giù."
-			},
-			{ 
-				question: "Qual è l'unità di misura dell'elasticità?", 
-				options: ["Euro", "Chilogrammi", "È un numero puro (adimensionale)", "Percentuale"], 
-				correctAnswer: "È un numero puro (adimensionale)",
-				explanation: "L'elasticità è un rapporto tra percentuali, quindi le unità si annullano. È un coefficiente numerico."
-			},
-			{ 
-				question: "Perché la curva di domanda ha pendenza negativa?", 
-				options: ["Per l'utilità marginale decrescente e l'effetto reddito/sostituzione", "Perché i produttori producono meno", "Perché lo Stato impone prezzi bassi", "Perché i costi aumentano"], 
-				correctAnswer: "Per l'utilità marginale decrescente e l'effetto reddito/sostituzione",
-				explanation: "Anche se gli appunti non lo esplicitano in dettaglio teorico, la logica inversa (prezzo su -> quantità giù) è alla base della pendenza negativa."
-			},
-			{ 
-				question: "Se l'offerta si sposta a destra e la domanda rimane ferma, il prezzo di equilibrio:", 
-				options: ["Aumenta", "Diminuisce", "Resta uguale", "Diventa negativo"], 
-				correctAnswer: "Diminuisce",
-				explanation: "Più merce disponibile sul mercato crea concorrenza tra venditori, abbassando il prezzo per smaltire l'offerta."
-			},
-			{ 
-				question: "Se la domanda si sposta a destra (aumenta) e l'offerta resta ferma, il prezzo di equilibrio:", 
-				options: ["Aumenta", "Diminuisce", "Resta uguale", "Oscilla"], 
-				correctAnswer: "Aumenta",
-				explanation: "Più gente vuole il bene, creando scarsità relativa e spingendo il prezzo verso l'alto."
-			},
-			{ 
-				question: "Quale variabile è posta sull'asse delle ascisse (X) nei grafici standard?", 
-				options: ["Prezzo", "Quantità", "Reddito", "Tempo"], 
-				correctAnswer: "Quantità",
-				explanation: "Per convenzione economica (anche se matematicamente inverso), la Quantità (Q) sta sulla X e il Prezzo (P) sulla Y."
-			},
-			{ 
-				question: "Quale variabile è posta sull'asse delle ordinate (Y) nei grafici standard?", 
-				options: ["Prezzo", "Quantità", "Costi", "Utilità"], 
-				correctAnswer: "Prezzo",
-				explanation: "L'asse verticale Y rappresenta il livello dei prezzi."
-			},
-			{ 
-				question: "Il punto P1, Q1 nel grafico rappresenta:", 
-				options: ["Una situazione iniziale", "Il punto finale", "L'equilibrio impossibile", "L'origine"], 
-				correctAnswer: "Una situazione iniziale",
-				explanation: "Solitamente i pedici '1' indicano lo stato di partenza prima di una variazione verso '2'."
-			},
-			{ 
-				question: "Nel calcolo Edp = Δ%Q / Δ%P, il simbolo Δ (Delta) significa:", 
-				options: ["Somma", "Variazione o differenza", "Moltiplicazione", "Divisione"], 
-				correctAnswer: "Variazione o differenza",
-				explanation: "Delta è la lettera greca utilizzata universalmente in matematica e fisica per indicare una variazione (Finale - Iniziale)."
-			},
-			{ 
-				question: "Un bene di lusso tende ad avere una domanda:", 
-				options: ["Rigida", "Molto elastica", "Inesistente", "Decrescente col reddito"], 
-				correctAnswer: "Molto elastica",
-				explanation: "Non essendo necessario, se il prezzo sale i consumatori possono facilmente rinunciare ad acquistarlo, rendendo la domanda molto sensibile (elastica)."
-			},
-			{ 
-				question: "Il sale da cucina è un classico esempio di bene a domanda:", 
-				options: ["Elastica", "Rigida", "Perfettamente elastica", "Anelastica"], 
-				correctAnswer: "Rigida",
-				explanation: "Costa poco e non ha sostituti. Se il prezzo raddoppia, si continua a comprarne la stessa quantità necessaria."
-			},
-			{ 
-				question: "Nel grafico dell'offerta rigida, la linea è:", 
-				options: ["Parallela all'asse Y (verticale)", "Parallela all'asse X (orizzontale)", "Obliqua a 45 gradi", "Curva"], 
-				correctAnswer: "Parallela all'asse Y (verticale)",
-				explanation: "La quantità (asse X) è fissa a un valore specifico, indipendentemente dall'altezza del prezzo (asse Y)."
-			},
-			{ 
-				question: "Se un'azienda opera nel 'lungo periodo', può:", 
-				options: ["Solo variare il prezzo", "Modificare la capacità produttiva e i macchinari", "Non fare nulla", "Vendere solo scorte"], 
-				correctAnswer: "Modificare la capacità produttiva e i macchinari",
-				explanation: "La distinzione chiave tra breve e lungo periodo è la possibilità di variare tutti i fattori produttivi, inclusi quelli fissi come gli impianti."
-			},
-			{ 
-				question: "L'aumento del prezzo del carburante per i trasporti agisce sull'offerta come:", 
-				options: ["Aumento dei costi -> Offerta diminuisce", "Riduzione dei costi -> Offerta aumenta", "Aumento della domanda", "Nessun effetto"], 
-				correctAnswer: "Aumento dei costi -> Offerta diminuisce",
-				explanation: "Il trasporto è un costo di produzione/distribuzione. Se aumenta, l'offerta si contrae (spostamento a sinistra)."
-			},
-			{ 
-				question: "In un mercato di concorrenza, il prezzo tende naturalmente verso:", 
-				options: ["Zero", "L'infinito", "L'equilibrio", "Il costo marginale"], 
-				correctAnswer: "L'equilibrio",
-				explanation: "Le forze di mercato (eccesso di domanda o offerta) spingono il prezzo verso il punto in cui Q_domanda = Q_offerta."
-			},
-			{ 
-				question: "La domanda 'Anelastica' è tipica di beni:", 
-				options: ["Voluttuari", "Di prima necessità", "Di lusso", "Succedanei perfetti"], 
-				correctAnswer: "Di prima necessità",
-				explanation: "I beni necessari (pane, latte, medicine) hanno pochi sostituti e non vi si può rinunciare facilmente, rendendo la domanda poco sensibile al prezzo."
-			},
-			{ 
-				question: "Se Edp = 1, la curva di domanda è geometricamente:", 
-				options: ["Una retta verticale", "Una retta orizzontale", "Un'iperbole equilatera", "Una retta a 45 gradi"], 
-				correctAnswer: "Un'iperbole equilatera",
-				explanation: "Matematicamente, elasticità unitaria costante lungo la curva corrisponde all'equazione P*Q = k, che è un'iperbole equilatera."
-			},
-			{ 
-				question: "Cosa significa 'Ceteris Paribus' nell'analisi della domanda?", 
-				options: ["A parità di tutte le altre condizioni", "Considerando solo il prezzo", "Tutto cambia", "Niente cambia"], 
-				correctAnswer: "A parità di tutte le altre condizioni",
-				explanation: "Quando analizziamo l'effetto del prezzo, assumiamo che reddito, gusti, ecc. rimangano fermi per isolare l'effetto."
-			},
-			{ 
-				question: "Se il prezzo di un bene aumenta e la spesa totale dei consumatori per quel bene aumenta, la domanda è:", 
-				options: ["Elastica", "Anelastica (Rigida)", "Unitaria", "Infinita"], 
-				correctAnswer: "Anelastica (Rigida)",
-				explanation: "Se la domanda è rigida, il calo di quantità è piccolo rispetto all'aumento di prezzo, quindi il ricavo totale (P*Q) sale."
-			},
-			{ 
-				question: "Se il prezzo di un bene aumenta e la spesa totale dei consumatori diminuisce, la domanda è:", 
-				options: ["Elastica", "Anelastica", "Unitaria", "Nulla"], 
-				correctAnswer: "Elastica",
-				explanation: "Se la domanda è elastica, la quantità crolla molto più dell'aumento di prezzo, facendo scendere il ricavo totale."
-			},
-			{ 
-				question: "L'elasticità dell'offerta dipende principalmente da:", 
-				options: ["Gusti dei consumatori", "Tempo e capacità produttiva", "Reddito", "Pubblicità"], 
-				correctAnswer: "Tempo e capacità produttiva",
-				explanation: "La flessibilità produttiva e l'orizzonte temporale (breve/lungo periodo) sono i determinanti principali della reattività dell'offerta."
-			},
-			{ 
-				question: "Un raccolto agricolo abbondante dovuto a ottimo clima causa:", 
-				options: ["Spostamento dell'offerta a destra e calo del prezzo", "Spostamento dell'offerta a sinistra e aumento del prezzo", "Aumento della domanda", "Aumento del prezzo"], 
-				correctAnswer: "Spostamento dell'offerta a destra e calo del prezzo",
-				explanation: "Più merce disponibile (aumento offerta) a parità di domanda fa scendere il prezzo di equilibrio."
-			},
-			{ 
-				question: "I beni 'Succedanei' sono anche detti:", 
-				options: ["Sostituti", "Complementari", "Indipendenti", "Giffen"], 
-				correctAnswer: "Sostituti",
-				explanation: "Succedaneo è sinonimo di sostituto: un bene che può prendere il posto di un altro."
-			},
-			{ 
-				question: "Se aumenta il prezzo del tè, la domanda di caffè (sostituto):", 
-				options: ["Aumenta", "Diminuisce", "Resta uguale", "Diventa zero"], 
-				correctAnswer: "Aumenta",
-				explanation: "La gente smette di bere tè costoso e passa al caffè, aumentandone la richiesta."
-			},
-			{ 
-				question: "Se aumenta il prezzo dello zucchero, la domanda di caffè (complementare):", 
-				options: ["Aumenta", "Diminuisce", "Resta uguale", "Diventa infinita"], 
-				correctAnswer: "Diminuisce",
-				explanation: "Bere caffè diventa complessivamente più costoso (caffè + zucchero), quindi se ne consuma meno."
-			},
-			{ 
-				question: "La 'Legge della Domanda' ha validità:", 
-				options: ["Sempre, senza eccezioni", "Generalmente, ma con eccezioni (es. beni inferiori, Giffen)", "Mai", "Solo per le aziende"], 
-				correctAnswer: "Generalmente, ma con eccezioni (es. beni inferiori, Giffen)",
-				explanation: "È una legge tendenziale; esistono eccezioni come i beni di Giffen o i beni Veblen (di status) e i beni inferiori in certe dinamiche di reddito."
-			},
-			{ 
-				question: "Il punto in cui la curva di domanda interseca l'asse del prezzo rappresenta:", 
-				options: ["Il prezzo massimo che i consumatori sono disposti a pagare (prezzo di riserva)", "La quantità massima", "Il prezzo zero", "L'elasticità unitaria"], 
-				correctAnswer: "Il prezzo massimo che i consumatori sono disposti a pagare (prezzo di riserva)",
-				explanation: "A quel livello di prezzo, la quantità domandata è zero. Nessuno compra a un prezzo superiore."
-			},
-			{ 
-				question: "Il punto in cui la curva di domanda interseca l'asse della quantità rappresenta:", 
-				options: ["La quantità domandata se il bene fosse gratis", "Il prezzo infinito", "L'offerta massima", "Il costo di produzione"], 
-				correctAnswer: "La quantità domandata se il bene fosse gratis",
-				explanation: "Se il prezzo è zero (asse X), quella è la quantità massima che verrebbe consumata (saturazione del bisogno)."
-			},
-			{ 
-				question: "Una variazione DELLA domanda (spostamento della curva) è diversa da una variazione DELLA QUANTITÀ DOMANDATA (movimento lungo la curva) perché:", 
-				options: ["La prima è causata da fattori diversi dal prezzo, la seconda dal prezzo", "Sono la stessa cosa", "La prima dipende dal prezzo, la seconda dal reddito", "La prima riguarda l'offerta"], 
-				correctAnswer: "La prima è causata da fattori diversi dal prezzo, la seconda dal prezzo",
-				explanation: "Se cambia il prezzo del bene, ci muoviamo LUNGO la curva. Se cambia il reddito o i gusti, l'INTERA curva si sposta."
-			},
-			{ 
-				question: "Se un'azienda prevede un aumento futuro dei prezzi, l'offerta presente potrebbe:", 
-				options: ["Diminuire (accumulo scorte)", "Aumentare subito", "Restare fissa", "Diventare rigida"], 
-				correctAnswer: "Diminuire (accumulo scorte)",
-				explanation: "I produttori potrebbero trattenere la merce oggi per venderla domani a prezzo più alto, riducendo l'offerta odierna."
-			},
-			{ 
-				question: "Il concetto di 'Packaging' negli appunti è collegato a:", 
-				options: ["Fattori che influenzano la domanda (marketing/gusti)", "Costi di produzione", "Leggi dello Stato", "Clima"], 
-				correctAnswer: "Fattori che influenzano la domanda (marketing/gusti)",
-				explanation: "Un packaging attraente è una forma di pubblicità/marketing che influenza i gusti e la percezione del consumatore, aumentando la domanda."
-			},
-			{ 
-				question: "Nella formula dell'elasticità, il segno del risultato per la domanda è solitamente:", 
-				options: ["Negativo (ma si considera il valore assoluto)", "Positivo", "Indifferente", "Immaginario"], 
-				correctAnswer: "Negativo (ma si considera il valore assoluto)",
-				explanation: "Poiché prezzo e quantità vanno in direzioni opposte, il rapporto matematico è negativo. In economia si usa spesso il valore assoluto per classificare l'elasticità."
-			},
-			{ 
-				question: "Se il prezzo delle mele sale del 50% e la domanda scende del 50%, Edp è:", 
-				options: ["1", "0", "0,5", "Infinite"], 
-				correctAnswer: "1",
-				explanation: "50/50 = 1. Elasticità unitaria."
-			},
-			{ 
-				question: "Se il prezzo sale del 10% e la domanda non cambia (0%), Edp è:", 
-				options: ["0", "1", "10", "Infinito"], 
-				correctAnswer: "0",
-				explanation: "0 / 10 = 0. Domanda perfettamente rigida."
-			},
-			{ 
-				question: "Se il prezzo non cambia ma la domanda aumenta all'infinito (teorico), Edp è:", 
-				options: ["Infinito", "0", "1", "Negativo"], 
-				correctAnswer: "Infinito",
-				explanation: "Divisione per zero variazione di prezzo -> infinito. Domanda perfettamente elastica."
-			},
-			{ 
-				question: "Quale grafico mostra una curva che parte dall'origine degli assi?", 
-				options: ["Nessuno, o teoricamente un'offerta con costo zero", "Curva di domanda", "Curva di offerta (spesso semplificata così)", "Curva dei beni inferiori"], 
-				correctAnswer: "Curva di offerta (spesso semplificata così)",
-				explanation: "Nei grafici degli appunti, la curva di offerta parte dall'origine o dall'asse Y, indicando che a prezzo zero l'offerta è zero (o negativa)."
-			},
-			{ 
-				question: "Quali beni hanno tipicamente un'offerta anelastica?", 
-				options: ["Beni industriali complessi nel breve periodo", "Beni digitali", "Servizi semplici", "Beni con scorte immense"], 
-				correctAnswer: "Beni industriali complessi nel breve periodo",
-				explanation: "Se serve tempo per costruire fabbriche (es. chip, aerei), l'offerta non può reagire subito al prezzo."
-			},
-			{ 
-				question: "Se viene imposta una tassa sulla produzione, la curva di offerta:", 
-				options: ["Si sposta a sinistra (diminuisce)", "Si sposta a destra (aumenta)", "Resta ferma", "Diventa orizzontale"], 
-				correctAnswer: "Si sposta a sinistra (diminuisce)",
-				explanation: "Una tassa è equivalente a un aumento dei costi di produzione: per ogni prezzo, l'impresa offre meno (o alza il prezzo per offrire la stessa quantità)."
-			},
-			{ 
-				question: "Un sussidio alla produzione ha l'effetto opposto di:", 
-				options: ["Una tassa", "Una nuova tecnologia", "Un clima favorevole", "Un aumento di prezzo"], 
-				correctAnswer: "Una tassa",
-				explanation: "Mentre la tassa aumenta i costi e riduce l'offerta, il sussidio riduce i costi e aumenta l'offerta."
-			},
-			{ 
-				question: "La 'Domanda individuale' è:", 
-				options: ["La domanda di un singolo consumatore", "La somma di tutte le domande", "La domanda dello Stato", "La domanda estera"], 
-				correctAnswer: "La domanda di un singolo consumatore",
-				explanation: "Si contrappone alla domanda di mercato, che è la somma aggregata di tutte le domande individuali."
-			},
-			{ 
-				question: "La 'Domanda di mercato' si ottiene:", 
-				options: ["Sommando orizzontalmente le curve di domanda individuali", "Facendo la media", "Sommando i prezzi", "Moltiplicando le quantità"], 
-				correctAnswer: "Sommando orizzontalmente le curve di domanda individuali",
-				explanation: "Per ogni livello di prezzo, si sommano le quantità desiderate da tutti i consumatori."
-			},
-			{ 
-				question: "Secondo gli appunti, nel 'breve periodo' i prezzi sono influenzati soprattutto da:", 
-				options: ["La domanda", "L'offerta", "I costi", "La tecnologia"], 
-				correctAnswer: "La domanda",
-				explanation: "Essendo l'offerta rigida nel breve periodo, le oscillazioni di prezzo dipendono quasi esclusivamente dalle variazioni della domanda."
-			},
-			{ 
-				question: "Secondo gli appunti, nel 'lungo periodo' i prezzi sono influenzati da:", 
-				options: ["Anche dall'offerta", "Solo dalla domanda", "Solo dallo Stato", "Dal clima"], 
-				correctAnswer: "Anche dall'offerta",
-				explanation: "Poiché l'offerta diventa elastica e può adattarsi, gioca un ruolo attivo nella determinazione del prezzo finale."
-			},
-			{ 
-				question: "Cosa succede se il prezzo di mercato viene fissato PER LEGGE sotto il prezzo di equilibrio (calmiere)?", 
-				options: ["Si crea scarsità (eccesso di domanda)", "Si crea surplus", "Il mercato è felice", "L'offerta aumenta"], 
-				correctAnswer: "Si crea scarsità (eccesso di domanda)",
-				explanation: "Prezzo basso -> Domanda alta, Offerta bassa -> Manca la merce (file, mercato nero)."
-			},
-			{ 
-				question: "Cosa succede se il prezzo minimo è fissato sopra l'equilibrio (es. prezzi agricoli garantiti)?", 
-				options: ["Si crea surplus (eccesso di offerta)", "Si crea scarsità", "La domanda aumenta", "Nessun effetto"], 
-				correctAnswer: "Si crea surplus (eccesso di offerta)",
-				explanation: "Prezzo alto -> Offerta alta, Domanda bassa -> Beni invenduti (eccedenze)."
-			},
-			{ 
-				question: "Quale di questi NON è un fattore produttivo che influenza i costi?", 
-				options: ["Gusti del consumatore", "Salari", "Costo materie prime", "Affitto impianti"], 
-				correctAnswer: "Gusti del consumatore",
-				explanation: "I gusti riguardano la domanda. Gli altri sono costi che l'impresa sostiene per produrre (lato offerta)."
-			},
-			{ 
-				question: "Se l'elasticità della domanda è pari a 0,8, la domanda è:", 
-				options: ["Rigida / Anelastica", "Elastica", "Unitaria", "Perfetta"], 
-				correctAnswer: "Rigida / Anelastica",
-				explanation: "Essendo minore di 1, indica scarsa reattività."
-			},
-			{ 
-				question: "Se l'elasticità della domanda è pari a 1,5, la domanda è:", 
-				options: ["Elastica", "Rigida", "Unitaria", "Nulla"], 
-				correctAnswer: "Elastica",
-				explanation: "Essendo maggiore di 1, indica alta reattività."
-			},
-			{ 
-				question: "Nei grafici presentati, la curva che ha una forma convessa verso l'origine (iperbole) è:", 
-				options: ["La curva di domanda a elasticità unitaria (o simile)", "L'offerta rigida", "L'offerta elastica", "La domanda rigida"], 
-				correctAnswer: "La curva di domanda a elasticità unitaria (o simile)",
-				explanation: "Spesso la domanda generica è disegnata come curva convessa decrescente."
-			},
-			{ 
-				question: "Se un bene ha molti sostituti validi, la sua domanda sarà probabilmente:", 
-				options: ["Molto elastica", "Molto rigida", "Unitaria", "Zero"], 
-				correctAnswer: "Molto elastica",
-				explanation: "Se il prezzo sale anche di poco, il consumatore 'tradisce' subito il prodotto per comprare il sostituto, causando un crollo della domanda."
-			},
-			{ 
-				question: "Se un bene NON ha sostituti (es. insulina per diabetici), la domanda è:", 
-				options: ["Rigida", "Elastica", "Infinita", "Variabile"], 
-				correctAnswer: "Rigida",
-				explanation: "Il consumatore è obbligato a comprare quel bene indipendentemente dal prezzo."
-			},
-			{ 
-				question: "Nel grafico dell'equilibrio, se ci troviamo nel punto esatto di incrocio:", 
-				options: ["Non ci sono pressioni per cambiare il prezzo", "Il prezzo tende a salire", "Il prezzo tende a scendere", "L'offerta supera la domanda"], 
-				correctAnswer: "Non ci sono pressioni per cambiare il prezzo",
-				explanation: "È uno stato di quiete (equilibrio stabile) dove i piani di acquirenti e venditori coincidono."
-			},
-			{ 
-				question: "L'aumento della popolazione (numero di consumatori) sposta la curva di domanda a:", 
-				options: ["Destra (aumento)", "Sinistra (diminuzione)", "Non la sposta", "Modifica solo l'offerta"], 
-				correctAnswer: "Destra (aumento)",
-				explanation: "Più persone significano più quantità domandata per ogni livello di prezzo."
-			},
-			{ 
-				question: "La stagionalità influenza:", 
-				options: ["Sia la domanda (es. gelati) che l'offerta (es. frutta)", "Solo i costi", "Nessuno dei due", "Solo le tasse"], 
-				correctAnswer: "Sia la domanda (es. gelati) che l'offerta (es. frutta)",
-				explanation: "I fattori climatici/stagionali agiscono sulla produzione agricola (offerta) e sui gusti momentanei (domanda di costumi da bagno o stufe)."
-			},
-			{ 
-				question: "Nel calcolo Edp = 30% / 60% = 0,5, il 30% rappresentava:", 
-				options: ["La diminuzione della quantità", "L'aumento del prezzo", "L'aumento della quantità", "Il reddito"], 
-				correctAnswer: "La diminuzione della quantità",
-				explanation: "Dall'esempio delle mele: prezzo su, quantità giù del 30%."
-			},
-			{ 
-				question: "Se il prezzo di un bene passa da 10 a 12 (+20%) e la quantità da 100 a 80 (-20%), l'elasticità è:", 
-				options: ["1 (Unitaria)", "2", "0,5", "0"], 
-				correctAnswer: "1 (Unitaria)",
-				explanation: "20% / 20% = 1."
-			},
-			{ 
-				question: "Se il prezzo passa da 5 a 6 (+20%) e la quantità da 100 a 90 (-10%), l'elasticità è:", 
-				options: ["0,5 (Anelastica)", "2 (Elastica)", "1", "10"], 
-				correctAnswer: "0,5 (Anelastica)",
-				explanation: "10% / 20% = 0,5."
-			},
-			{ 
-				question: "Se il prezzo passa da 10 a 11 (+10%) e la quantità da 100 a 50 (-50%), l'elasticità è:", 
-				options: ["5 (Molto elastica)", "0,2 (Rigida)", "1", "0"], 
-				correctAnswer: "5 (Molto elastica)",
-				explanation: "50% / 10% = 5. Reazione fortissima al prezzo."
-			},
-			{ 
-				question: "La pendenza della curva di domanda e l'elasticità sono:", 
-				options: ["Concetti legati ma matematicamente diversi", "La stessa cosa identica", "Non correlati", "L'elasticità è sempre costante sulla retta"], 
-				correctAnswer: "Concetti legati ma matematicamente diversi",
-				explanation: "La pendenza è ΔP/ΔQ (assoluta), l'elasticità è Δ%Q/Δ%P (relativa). Su una retta di domanda lineare, l'elasticità cambia in ogni punto."
-			},
-			{ 
-				question: "Una 'Domanda Perfettamente Elastica' è graficamente:", 
-				options: ["Orizzontale", "Verticale", "Obliqua", "A zig zag"], 
-				correctAnswer: "Orizzontale",
-				explanation: "Al prezzo P i consumatori comprano tutto, ma a P+epsilon comprano zero."
-			},
-			{ 
-				question: "Una 'Domanda Perfettamente Rigida' è graficamente:", 
-				options: ["Verticale", "Orizzontale", "Obliqua", "Circolare"], 
-				correctAnswer: "Verticale",
-				explanation: "La quantità è fissa sull'asse X, qualunque sia il prezzo."
-			},
-			{ 
-				question: "Se l'elasticità dell'offerta è infinita, il prezzo:", 
-				options: ["Non cambia al variare della quantità", "Cambia continuamente", "È zero", "È infinito"], 
-				correctAnswer: "Non cambia al variare della quantità",
-				explanation: "La curva è orizzontale: si offre qualsiasi quantità a quel determinato prezzo."
-			},
-			{ 
-				question: "Il 'Prezzo delle materie prime' rientra tra:", 
-				options: ["Costi dei fattori produttivi (Offerta)", "Fattori della Domanda", "Beni complementari", "Reddito"], 
-				correctAnswer: "Costi dei fattori produttivi (Offerta)",
-				explanation: "Influenza quanto costa produrre il bene, quindi sposta la curva di offerta."
-			},
-			{ 
-				question: "Il 'Clima favorevole' per l'agricoltura viene classificato come:", 
-				options: ["Fattore che aumenta l'offerta", "Fattore che aumenta la domanda", "Fattore di costo", "Fattore giuridico"], 
-				correctAnswer: "Fattore che aumenta l'offerta",
-				explanation: "A parità di lavoro e terra, si produce di più (resa maggiore)."
-			},
-			{ 
-				question: "L'equilibrio di mercato è una condizione:", 
-				options: ["Statica o dinamica verso cui tende il mercato", "Impossibile da raggiungere", "Dannosa per l'economia", "Decisa dal governo"], 
-				correctAnswer: "Statica o dinamica verso cui tende il mercato",
-				explanation: "È il punto di stabilità verso cui le forze di mercato convergono."
-			},
-			{ 
-				question: "Se il prezzo delle scarpe da ginnastica sale, la domanda di lacci per scarpe (complementare):", 
-				options: ["Diminuisce", "Aumenta", "Resta invariata", "Dipende dal colore"], 
-				correctAnswer: "Diminuisce",
-				explanation: "Meno scarpe vendute (perché care) -> meno lacci necessari."
-			},
-			{ 
-				question: "Se il prezzo del pollo sale, la domanda di tacchino (succedaneo):", 
-				options: ["Aumenta", "Diminuisce", "Crolla", "Resta uguale"], 
-				correctAnswer: "Aumenta",
-				explanation: "La gente mangia meno pollo e più tacchino."
-			},
-			{ 
-				question: "Quale frase descrive meglio i 'Beni di prima necessità'?", 
-				options: ["Hanno domanda rigida rispetto al prezzo e bassa elasticità al reddito (oltre un certo livello)", "Hanno domanda elastica", "Sono beni di lusso", "Sono beni inferiori"], 
-				correctAnswer: "Hanno domanda rigida rispetto al prezzo e bassa elasticità al reddito (oltre un certo livello)",
-				explanation: "Servono per vivere, quindi si comprano sempre (rigida), ma non se ne comprano quantità infinite se si diventa ricchi."
-			},
-			{ 
-				question: "Cosa accade alla curva di domanda di ombrelli se inizia a piovere tutti i giorni?", 
-				options: ["Si sposta a destra (aumenta per cambio gusti/bisogni)", "Si sposta a sinistra", "Movimento lungo la curva", "Resta ferma"], 
-				correctAnswer: "Si sposta a destra (aumenta per cambio gusti/bisogni)",
-				explanation: "Cambia il contesto (fattore climatico lato domanda/bisogno), quindi a parità di prezzo la gente ne vuole di più."
-			},
-			{ 
-				question: "Se l'offerta cala (sinistra) e la domanda aumenta (destra) contemporaneamente, cosa siamo certi che accada al prezzo?", 
-				options: ["Aumenta sicuramente", "Diminuisce", "Resta uguale", "Non si può dire"], 
-				correctAnswer: "Aumenta sicuramente",
-				explanation: "Meno merce disponibile + più gente che la vuole = esplosione del prezzo."
-			},
-			{ 
-				question: "Se l'offerta cala e la domanda aumenta, cosa accade alla QUANTITÀ scambiata?", 
-				options: ["Indeterminato (dipende dall'intensità degli spostamenti)", "Aumenta", "Diminuisce", "Resta uguale"], 
-				correctAnswer: "Indeterminato (dipende dall'intensità degli spostamenti)",
-				explanation: "Il calo dell'offerta riduce la quantità, l'aumento della domanda la alza. L'effetto netto dipende da quale forza prevale."
-			},
-			{ 
-				question: "L'elasticità dell'offerta nel lunghissimo periodo tende a:", 
-				options: ["Aumentare (diventare più elastica)", "Diminuire", "Diventare zero", "Oscillare"], 
-				correctAnswer: "Aumentare (diventare più elastica)",
-				explanation: "Con tempo infinito, le risorse possono essere completamente riconfigurate."
-			},
-			{ 
-				question: "La relazione tra Prezzo e Quantità nell'Offerta è:", 
-				options: ["Diretta", "Inversa", "Casuale", "Circolare"], 
-				correctAnswer: "Diretta",
-				explanation: "Entrambi salgono o entrambi scendono."
-			},
-			{ 
-				question: "La relazione tra Prezzo e Quantità nella Domanda è:", 
-				options: ["Inversa", "Diretta", "Esponenziale positiva", "Costante"], 
-				correctAnswer: "Inversa",
-				explanation: "Uno sale, l'altro scende."
-			},
-			{ 
-				question: "Il termine 'Elasticità unitaria' corrisponde numericamente a:", 
-				options: ["1", "0", "-1", "100"], 
-				correctAnswer: "1",
-				explanation: "Le variazioni percentuali sono identiche."
-			},
-			{ 
-				question: "Quale di questi beni ha probabilmente l'elasticità al prezzo più alta?", 
-				options: ["Biglietto per un viaggio alle Maldive (vacanza specifica)", "Acqua", "Pane", "Elettricità"], 
-				correctAnswer: "Biglietto per un viaggio alle Maldive (vacanza specifica)",
-				explanation: "È un lusso superfluo con molte alternative (altre mete turistiche). Se costa troppo, non ci vado."
-			},
-			{ 
-				question: "Se un venditore vuole massimizzare i ricavi e sa che la domanda del suo bene è RIGIDA, dovrebbe:", 
-				options: ["Aumentare il prezzo", "Diminuire il prezzo", "Lasciare il prezzo invariato", "Chiudere"], 
-				correctAnswer: "Aumentare il prezzo",
-				explanation: "Se alza il prezzo, perde pochissimi clienti (rigida), quindi incassa di più da ciascuno, aumentando il totale."
-			},
-			{ 
-				question: "Se un venditore vuole massimizzare i ricavi e sa che la domanda è ELASTICA, dovrebbe:", 
-				options: ["Diminuire il prezzo", "Aumentare il prezzo", "Non vendere", "Aumentare i costi"], 
-				correctAnswer: "Diminuire il prezzo",
-				explanation: "Abbassando il prezzo attira talmente tanti nuovi clienti (reazione forte) da compensare il minor incasso unitario."
-			},
-			{ 
-				question: "Negli appunti, l'esempio dell'offerta usa prezzi di 0,80€ e 1€. La differenza è:", 
-				options: ["20 centesimi", "10 centesimi", "30 centesimi", "50 centesimi"], 
-				correctAnswer: "20 centesimi",
-				explanation: "1,00 - 0,80 = 0,20."
-			},
-			{ 
-				question: "Negli appunti, l'esempio delle mele usa quantità di 10kg e 7kg. La differenza è:", 
-				options: ["3kg", "2kg", "4kg", "5kg"], 
-				correctAnswer: "3kg",
-				explanation: "10 - 7 = 3."
-			},
-			{ 
-				question: "Il simbolo '%' significa:", 
-				options: ["Per cento (centesima parte)", "Per mille", "Per dieci", "Unità"], 
-				correctAnswer: "Per cento (centesima parte)",
-				explanation: "Indica una frazione con denominatore 100."
-			},
-			{ 
-				question: "Se il prezzo di un bene complementare scende, la curva di domanda del bene principale:", 
-				options: ["Si sposta a destra (aumenta)", "Si sposta a sinistra (diminuisce)", "Non cambia", "Cambia pendenza"], 
-				correctAnswer: "Si sposta a destra (aumenta)",
-				explanation: "Esempio: Benzina costa meno -> Compro più auto (o uso di più l'auto)."
-			},
-			{ 
-				question: "Se il prezzo di un bene succedaneo scende, la curva di domanda del bene principale:", 
-				options: ["Si sposta a sinistra (diminuisce)", "Si sposta a destra (aumenta)", "Resta ferma", "Diventa verticale"], 
-				correctAnswer: "Si sposta a sinistra (diminuisce)",
-				explanation: "Esempio: Il burro costa meno -> Smetto di comprare margarina (la domanda di margarina cala)."
-			},
-			{ 
-				question: "La 'Legge della domanda' può essere rappresentata dall'equazione:", 
-				options: ["Q = f(P) con correlazione negativa", "Q = f(P) con correlazione positiva", "P = Q", "Q = Costante"], 
-				correctAnswer: "Q = f(P) con correlazione negativa",
-				explanation: "La quantità è funzione del prezzo, con derivata prima negativa."
-			},
-			{ 
-				question: "Le 'Aspettative' dei consumatori su un futuro aumento dei prezzi causano oggi:", 
-				options: ["Un aumento della domanda corrente (accaparramento)", "Una diminuzione della domanda", "Nessun effetto", "Un aumento dell'offerta"], 
-				correctAnswer: "Un aumento della domanda corrente (accaparramento)",
-				explanation: "Se so che domani la benzina costerà di più, oggi corro a fare il pieno."
-			},
-			{ 
-				question: "Il 'Reddito' del consumatore è indicato spesso con la lettera:", 
-				options: ["Y o R", "P", "Q", "E"], 
-				correctAnswer: "Y o R",
-				explanation: "In macro/micro economia Y o R indicano il reddito (Yield/Reddito)."
-			},
-			{ 
-				question: "I beni 'Normali' sono quelli la cui domanda:", 
-				options: ["Aumenta all'aumentare del reddito", "Diminuisce all'aumentare del reddito", "Resta costante", "Non dipende dal reddito"], 
-				correctAnswer: "Aumenta all'aumentare del reddito",
-				explanation: "È la definizione standard, contrapposta ai beni inferiori."
-			},
-			{ 
-				question: "Se la curva di offerta è verticale, l'elasticità è:", 
-				options: ["Zero", "Uno", "Infinito", "Due"], 
-				correctAnswer: "Zero",
-				explanation: "Nessuna variazione di quantità possibile."
-			},
-			{ 
-				question: "Se la curva di domanda è orizzontale, l'elasticità è:", 
-				options: ["Infinita", "Zero", "Uno", "Negativa"], 
-				correctAnswer: "Infinita",
-				explanation: "Massima sensibilità possibile."
-			},
-			{ 
-				question: "Il punto di saturazione di un bisogno corrisponde a un'utilità marginale:", 
-				options: ["Zero", "Massima", "Infinita", "Crescente"], 
-				correctAnswer: "Zero",
-				explanation: "L'ultima unità consumata non dà più soddisfazione aggiuntiva."
-			},
-			{ 
-				question: "Un aumento delle tasse sul reddito dei consumatori provoca:", 
-				options: ["Spostamento della domanda a sinistra (riduzione)", "Spostamento della domanda a destra", "Spostamento dell'offerta", "Aumento dei prezzi"], 
-				correctAnswer: "Spostamento della domanda a sinistra (riduzione)",
-				explanation: "Meno reddito disponibile -> Meno acquisti."
-			},
-			{ 
-				question: "L'elasticità incrociata tra scarpe destre e scarpe sinistre è:", 
-				options: ["Negativa (complementari perfetti)", "Positiva", "Zero", "Infinita"], 
-				correctAnswer: "Negativa (complementari perfetti)",
-				explanation: "Si usano insieme. Se le destre costano un milione, non compro neanche le sinistre."
-			},
-			{ 
-				question: "L'elasticità incrociata tra Coca Cola e Pepsi è probabilmente:", 
-				options: ["Positiva (sostituti forti)", "Negativa", "Zero", "Uno"], 
-				correctAnswer: "Positiva (sostituti forti)",
-				explanation: "Se la Coca costa troppo, compro Pepsi."
-			},
-			{ 
-				question: "In un grafico domanda/offerta, un 'surplus' si rappresenta graficamente come:", 
-				options: ["La distanza orizzontale tra offerta e domanda sopra il prezzo di equilibrio", "La distanza sotto l'equilibrio", "L'area del triangolo", "L'origine"], 
-				correctAnswer: "La distanza orizzontale tra offerta e domanda sopra il prezzo di equilibrio",
-				explanation: "A un prezzo alto, Offerta > Domanda. Il segmento orizzontale è l'eccedenza."
-			},
-			{ 
-				question: "In un grafico domanda/offerta, una 'penuria' (scarcity) si trova:", 
-				options: ["Sotto il prezzo di equilibrio", "Sopra il prezzo di equilibrio", "A destra dell'equilibrio", "Sull'asse Y"], 
-				correctAnswer: "Sotto il prezzo di equilibrio",
-				explanation: "A un prezzo basso, Domanda > Offerta."
-			},
-			{ 
-				question: "Se l'elasticità della domanda è esattamente 1, un aumento del prezzo del 10% riduce la quantità del:", 
-				options: ["10%", "1%", "20%", "0%"], 
-				correctAnswer: "10%",
-				explanation: "Variazione identica in percentuale."
-			},
-			{ 
-				question: "Quale di questi fattori sposta la curva di Offerta e NON quella di Domanda?", 
-				options: ["Nuova tecnologia produttiva", "Moda del momento", "Stipendio degli impiegati statali (consumatori)", "Prezzo dei beni sostituti"], 
-				correctAnswer: "Nuova tecnologia produttiva",
-				explanation: "Riguarda il processo di fabbricazione."
-			},
-			{ 
-				question: "L'acqua potabile in una città ha generalmente una domanda:", 
-				options: ["Rigida", "Elastica", "Perfettamente elastica", "Nulla"], 
-				correctAnswer: "Rigida",
-				explanation: "È essenziale per la vita e non ha sostituti."
-			},
-			{ 
-				question: "I diamanti hanno generalmente una domanda:", 
-				options: ["Elastica (lusso)", "Rigida (necessità)", "Unitaria", "Inferiore"], 
-				correctAnswer: "Elastica (lusso)",
-				explanation: "Non sono necessari. Se il prezzo sale, se ne vendono molti meno."
-			},
-			{ 
-				question: "Cosa accade all'offerta di grano se il prezzo dei fertilizzanti (input) raddoppia?", 
-				options: ["Diminuisce (sposta a sinistra)", "Aumenta", "Resta uguale", "L'elasticità cambia"], 
-				correctAnswer: "Diminuisce (sposta a sinistra)",
-				explanation: "Aumento costi di produzione -> Contrazione offerta."
-			},
-			{ 
-				question: "L'elasticità dell'offerta di case in centro città nel brevissimo periodo è:", 
-				options: ["Quasi perfettamente rigida", "Elastica", "Infinita", "Negativa"], 
-				correctAnswer: "Quasi perfettamente rigida",
-				explanation: "Non si possono costruire nuovi palazzi in un giorno. L'offerta è fissa."
-			},
-			{ 
-				question: "L'elasticità dell'offerta di software digitale (copie aggiuntive) è:", 
-				options: ["Molto elastica (o quasi infinita)", "Rigida", "Zero", "Unitaria"], 
-				correctAnswer: "Molto elastica (o quasi infinita)",
-				explanation: "Costa quasi zero produrre una copia in più. Si può offrire tantissimo immediatamente."
-			},
-			{ 
-				question: "Il punto dove il ricavo totale è massimizzato sulla curva di domanda lineare corrisponde a:", 
-				options: ["Il punto a elasticità unitaria", "Il punto più alto", "Il punto più basso", "L'origine"], 
-				correctAnswer: "Il punto a elasticità unitaria",
-				explanation: "Matematicamente, il ricavo (P*Q) è massimo dove l'elasticità è 1."
-			},
-			{ 
-				question: "Se Edp = 0 (Domanda perfettamente rigida), la curva di domanda è:", 
-				options: ["Verticale", "Orizzontale", "Decrescente", "Crescente"], 
-				correctAnswer: "Verticale",
-				explanation: "Q è costante."
-			},
-			{ 
-				question: "Chi decide il prezzo in un mercato di concorrenza perfetta?", 
-				options: ["Il mercato (incontro D e O)", "Il singolo venditore", "Il singolo compratore", "Lo Stato"], 
-				correctAnswer: "Il mercato (incontro D e O)",
-				explanation: "Nessun singolo attore ha il potere di influenzarlo ('Price Taker')."
-			},
-			{ 
-				question: "Se aumenta il reddito, la curva di domanda di patate (considerate bene inferiore in certi contesti) potrebbe:", 
-				options: ["Spostarsi a sinistra", "Spostarsi a destra", "Restare ferma", "Diventare verticale"], 
-				correctAnswer: "Spostarsi a sinistra",
-				explanation: "La gente sostituisce le patate con cibi più pregiati."
-			},
-			{ 
-				question: "La 'Mano Invisibile' di Adam Smith suggerisce che:", 
-				options: ["Il mercato tende naturalmente all'equilibrio efficiente", "Lo Stato deve controllare i prezzi", "La domanda è sempre rigida", "L'offerta è sempre rigida"], 
-				correctAnswer: "Il mercato tende naturalmente all'equilibrio efficiente",
-				explanation: "Interazioni egoistiche portano al benessere collettivo ed equilibrio."
-			},
-			{ 
-				question: "Se il prezzo è 10 e la quantità domandata è 100. Il prezzo sale a 11 e la quantità scende a 90. Edp = ?", 
-				options: ["10% / 10% = 1", "10% / 1% = 10", "1% / 10% = 0.1", "Zero"], 
-				correctAnswer: "10% / 10% = 1",
-				explanation: "P: +10%. Q: -10%. Rapporto 1."
-			},
-			{ 
-				question: "Nel grafico, una traslazione della curva verso l'esterno (lontano dall'origine) indica sempre:", 
-				options: ["Un aumento (della domanda o dell'offerta)", "Una diminuzione", "Un errore", "Una stabilità"], 
-				correctAnswer: "Un aumento (della domanda o dell'offerta)",
-				explanation: "Spostarsi a destra/alto significa quantità maggiori per ogni prezzo."
-			},
-			{ 
-				question: "Nel grafico, una traslazione verso l'interno (verso l'origine) indica:", 
-				options: ["Una diminuzione", "Un aumento", "Un profitto", "Un costo"], 
-				correctAnswer: "Una diminuzione",
-				explanation: "Meno quantità per ogni prezzo."
-			},
-			{ 
-				question: "La 'Legge dell'utilità marginale decrescente' spiega perché:", 
-				options: ["La curva di domanda scende", "La curva di offerta sale", "L'offerta è rigida", "Il prezzo è fisso"], 
-				correctAnswer: "La curva di domanda scende",
-				explanation: "Meno valore attribuisco all'unità aggiuntiva, meno sono disposto a pagarla."
-			},
-			{ 
-				question: "L'elasticità dell'offerta di quadri di Picasso originali è:", 
-				options: ["Perfettamente rigida (zero)", "Elastica", "Unitaria", "Infinita"], 
-				correctAnswer: "Perfettamente rigida (zero)",
-				explanation: "Non se ne possono produrre altri. La quantità è fissa per sempre."
-			},
-			{ 
-				question: "Se viene scoperta una nuova riserva enorme di litio, l'offerta di batterie:", 
-				options: ["Aumenta (sposta a destra)", "Diminuisce", "Resta uguale", "Diventa rigida"], 
-				correctAnswer: "Aumenta (sposta a destra)",
-				explanation: "Materie prime più abbondanti/economiche aumentano l'offerta del prodotto finale."
-			},
-			{ 
-				question: "Una campagna pubblicitaria efficace contro il fumo:", 
-				options: ["Sposta la domanda di sigarette a sinistra", "Sposta l'offerta di sigarette a sinistra", "Sposta la domanda a destra", "Aumenta il prezzo"], 
-				correctAnswer: "Sposta la domanda di sigarette a sinistra",
-				explanation: "Cambia i gusti/preferenze in negativo, riducendo la domanda."
-			},
-			{ 
-				question: "Se il prezzo di equilibrio è 5€ e il governo impone un prezzo massimo di 3€:", 
-				options: ["Si crea una penuria (scarsità)", "Si crea un'eccedenza", "Il mercato è in equilibrio", "Tutti sono felici"], 
-				correctAnswer: "Si crea una penuria (scarsità)",
-				explanation: "Il prezzo è artificialmente basso, la domanda supera l'offerta."
-			},
-			{ 
-				question: "Se il prezzo di equilibrio è 5€ e il governo impone un prezzo minimo di 7€:", 
-				options: ["Si crea un'eccedenza (surplus)", "Si crea una penuria", "Il mercato si adatta", "La domanda aumenta"], 
-				correctAnswer: "Si crea un'eccedenza (surplus)",
-				explanation: "Il prezzo è artificialmente alto, l'offerta supera la domanda."
-			},
-			{ 
-				question: "Quale di questi NON influenza l'elasticità della domanda?", 
-				options: ["Costi fissi dell'impresa", "Presenza di sostituti", "Necessità del bene", "Incidenza sul reddito"], 
-				correctAnswer: "Costi fissi dell'impresa",
-				explanation: "I costi dell'impresa riguardano l'offerta. Gli altri riguardano la reazione del consumatore."
-			},
-			{ 
-				question: "Se un bene incide pochissimo sul reddito (es. stuzzicadenti), la sua domanda è tendenzialmente:", 
-				options: ["Rigida", "Elastica", "Infinita", "Zero"], 
-				correctAnswer: "Rigida",
-				explanation: "Anche se il prezzo raddoppia, la spesa è talmente irrisoria che non cambio abitudini."
-			},
-			{ 
-				question: "Se un bene incide moltissimo sul reddito (es. automobile), la sua domanda è tendenzialmente:", 
-				options: ["Elastica", "Rigida", "Unitaria", "Costante"], 
-				correctAnswer: "Elastica",
-				explanation: "Il consumatore fa molta attenzione al prezzo perché la spesa è grossa."
-			},
-			{ 
-				question: "Nel modello base, consumatori e produttori sono considerati:", 
-				options: ["Razionali", "Emotivi", "Irrazionali", "Casuali"], 
-				correctAnswer: "Razionali",
-				explanation: "L'Homo Oeconomicus agisce per massimizzare la propria utilità/profitto."
-			},
-			{ 
-				question: "L'area sotto la curva di domanda e sopra il prezzo di mercato rappresenta:", 
-				options: ["Il surplus del consumatore", "Il profitto", "Il costo", "Il surplus del produttore"], 
-				correctAnswer: "Il surplus del consumatore",
-				explanation: "La differenza tra quanto sarebbero stati disposti a pagare e quanto pagano effettivamente."
-			},
-			{ 
-				question: "L'area sopra la curva di offerta e sotto il prezzo di mercato rappresenta:", 
-				options: ["Il surplus del produttore", "Il surplus del consumatore", "La perdita secca", "Le tasse"], 
-				correctAnswer: "Il surplus del produttore",
-				explanation: "La differenza tra il prezzo incassato e il prezzo minimo a cui avrebbero venduto."
-			},
-			{ 
-				question: "Se la domanda e l'offerta aumentano nella stessa proporzione:", 
-				options: ["La quantità aumenta, il prezzo resta invariato", "Il prezzo aumenta", "Il prezzo diminuisce", "La quantità resta invariata"], 
-				correctAnswer: "La quantità aumenta, il prezzo resta invariato",
-				explanation: "Le pressioni sul prezzo si annullano, ma il volume degli scambi cresce."
-			},
-			{ 
-				question: "Gli 'Input' produttivi sono:", 
-				options: ["Fattori usati per produrre (lavoro, terra, capitale)", "I prodotti finiti", "I consumatori", "Le tasse"], 
-				correctAnswer: "Fattori usati per produrre (lavoro, terra, capitale)",
-				explanation: "Sinonimo di fattori di produzione."
-			},
-			{ 
-				question: "Un aumento dei salari dei lavoratori provoca:", 
-				options: ["Spostamento dell'offerta a sinistra (aumento costi)", "Spostamento dell'offerta a destra", "Aumento della domanda di lavoro", "Nulla"], 
-				correctAnswer: "Spostamento dell'offerta a sinistra (aumento costi)",
-				explanation: "Produrre costa di più, quindi le imprese offrono meno merce a parità di prezzo."
-			},
-			{ 
-				question: "Se un terremoto distrugge le fabbriche:", 
-				options: ["L'offerta diminuisce drasticamente", "La domanda diminuisce", "L'offerta aumenta", "Il prezzo scende"], 
-				correctAnswer: "L'offerta diminuisce drasticamente",
-				explanation: "Riduzione fisica della capacità produttiva (shock negativo dell'offerta)."
-			},
-			{ 
-				question: "Il 'Prezzo relativo' è:", 
-				options: ["Il prezzo di un bene in termini di un altro bene", "Il prezzo in euro", "Il prezzo scontato", "Il prezzo all'ingrosso"], 
-				correctAnswer: "Il prezzo di un bene in termini di un altro bene",
-				explanation: "Rapporto di scambio (es. 1 mela vale 2 arance)."
-			},
-			{ 
-				question: "L'inflazione generale dei prezzi:", 
-				options: ["Riduce il potere d'acquisto (reddito reale)", "Aumenta la domanda reale", "Non ha effetti", "Aumenta l'offerta reale"], 
-				correctAnswer: "Riduce il potere d'acquisto (reddito reale)",
-				explanation: "Se i prezzi salgono e il reddito nominale è fermo, posso comprare meno cose (effetto reddito negativo)."
-			},
-			{ 
-				question: "La curva di domanda per la singola impresa in concorrenza perfetta è:", 
-				options: ["Orizzontale (perfettamente elastica)", "Verticale", "Decrescente", "Crescente"], 
-				correctAnswer: "Orizzontale (perfettamente elastica)",
-				explanation: "L'impresa non può influenzare il prezzo. Se alza di 1 cent, vende zero. Vende tutto al prezzo di mercato."
-			},
-			{ 
-				question: "La curva di domanda per un monopolista è:", 
-				options: ["Decrescente (coincide con quella di mercato)", "Orizzontale", "Verticale", "Crescente"], 
-				correctAnswer: "Decrescente (coincide con quella di mercato)",
-				explanation: "Essendo l'unico venditore, fronteggia l'intera domanda di mercato."
-			},
-			{ 
-				question: "Cosa si intende per 'Variazione percentuale'?", 
-				options: ["(Valore Finale - Valore Iniziale) / Valore Iniziale * 100", "Valore Finale / Valore Iniziale", "Finale - Iniziale", "Iniziale - Finale"], 
-				correctAnswer: "(Valore Finale - Valore Iniziale) / Valore Iniziale * 100",
-				explanation: "Formula standard per calcolare la crescita o decrescita relativa."
-			},
-			{ 
-				question: "Se P passa da 4 a 5, la variazione % è:", 
-				options: "+25%", "-25%", "+20%", "+10%" 
-				correctAnswer: "+25%",
-				explanation: "(5-4)/4 = 1/4 = 0,25 = 25%."
-			},
-			{ 
-				question: "Se P passa da 5 a 4, la variazione % è:", 
-				options: "-20%", "-25%", "+25%", "-10%" 
-				correctAnswer: "-20%",
-				explanation: "(4-5)/5 = -1/5 = -0,20 = -20%."
-			},
-			{ 
-				question: "L'elasticità d'arco (metodo del punto medio) serve a:", 
-				options: ["Evitare che l'elasticità cambi a seconda della direzione (salita o discesa)", "Calcolare il profitto", "Misurare il reddito", "Trovare l'equilibrio"], 
-				correctAnswer: "Evitare che l'elasticità cambi a seconda della direzione (salita o discesa)",
-				explanation: "Usa la media dei valori come denominatore per rendere il calcolo simmetrico."
-			},
-			{ 
-				question: "Quale di questi è un 'costo variabile'?", 
-				options: ["Materie prime", "Affitto capannone", "Assicurazione annuale", "Stipendio manager"], 
-				correctAnswer: "Materie prime",
-				explanation: "Varia proporzionalmente alla quantità prodotta."
-			},
-			{ 
-				question: "Quale di questi è un 'costo fisso'?", 
-				options: ["Affitto del locale", "Farina per il pane", "Energia elettrica macchinari", "Imballaggi"], 
-				correctAnswer: "Affitto del locale",
-				explanation: "Si paga anche se non si produce nulla."
-			},
-			{ 
-				question: "Nel lungo periodo:", 
-				options: ["Tutti i costi sono variabili", "Tutti i costi sono fissi", "Non ci sono costi", "L'offerta è rigida"], 
-				correctAnswer: "Tutti i costi sono variabili",
-				explanation: "Posso disdire affitti, chiudere impianti, aprirne nuovi. Tutto è modificabile."
-			},
-			{ 
-				question: "La 'Legge dei rendimenti decrescenti' influenza:", 
-				options: ["La forma della curva di offerta nel breve periodo", "La domanda", "I gusti", "Il reddito"], 
-				correctAnswer: "La forma della curva di offerta nel breve periodo",
-				explanation: "Aggiungere lavoratori su macchinari fissi rende via via meno, aumentando i costi marginali e quindi inclinando l'offerta verso l'alto."
-			},
-			{ 
-				question: "Se un bene diventa di 'moda' (es. scarpe di marca), la sua domanda diventa temporaneamente:", 
-				options: ["Più rigida (fedeltà al brand)", "Più elastica", "Nulla", "Inferiore"], 
-				correctAnswer: "Più rigida (fedeltà al brand)",
-				explanation: "Il consumatore lo vuole 'a tutti i costi', diventando meno sensibile al prezzo."
-			},
-			{ 
-				question: "La speculazione finanziaria spesso sfrutta:", 
-				options: ["Le aspettative sui prezzi futuri", "L'elasticità unitaria", "La rigidità totale", "Il costo medio"], 
-				correctAnswer: "Le aspettative sui prezzi futuri",
-				explanation: "Comprare basso oggi per vendere alto domani basandosi su previsioni."
-			},
-			{ 
-				question: "Un mercato nero nasce solitamente quando:", 
-				options: ["C'è un prezzo massimo imposto (scarsità)", "Il mercato è libero", "C'è equilibrio", "L'offerta è infinita"], 
-				correctAnswer: "C'è un prezzo massimo imposto (scarsità)",
-				explanation: "La gente è disposta a pagare di più del prezzo legale pur di avere il bene scarso."
-			},
-			{ 
-				question: "Il 'razionamento' dei beni si verifica in caso di:", 
-				options: ["Eccesso di domanda (scarsità)", "Eccesso di offerta", "Equilibrio", "Prezzi liberi"], 
-				correctAnswer: "Eccesso di domanda (scarsità)",
-				explanation: "Quando non ce n'è per tutti, bisogna decidere chi lo prende (file, tessere, coupon)."
-			},
-			{ 
-				question: "Se la domanda di petrolio è rigida, un taglio della produzione OPEC (Cartello) provoca:", 
-				options: ["Un forte aumento del prezzo e aumento dei ricavi totali", "Un calo del prezzo", "Nessun effetto", "Un calo dei ricavi"], 
-				correctAnswer: "Un forte aumento del prezzo e aumento dei ricavi totali",
-				explanation: "Offerta giù -> Prezzo su. Essendo rigida la domanda, il prezzo esplode e i ricavi salgono."
-			},
-			{ 
-				question: "Se la tecnologia migliora ma la domanda crolla (es. macchine da scrivere), il prezzo:", 
-				options: ["Crolla drasticamente", "Sale", "Resta stabile", "Diventa infinito"], 
-				correctAnswer: "Crolla drasticamente",
-				explanation: "Offerta aumenterebbe (tech), Domanda scende. Entrambe le forze spingono il prezzo giù."
-			},
-			{ 
-				question: "La 'Sovranità del consumatore' significa che:", 
-				options: ["I consumatori decidono cosa si produce tramite i loro acquisti", "I consumatori sono re", "Le imprese comandano", "Lo Stato decide tutto"], 
-				correctAnswer: "I consumatori decidono cosa si produce tramite i loro acquisti",
-				explanation: "Le imprese producono solo ciò che i consumatori domandano."
-			},
-			{ 
-				question: "Il 'Prezzo di riserva' del produttore è:", 
-				options: ["Il prezzo minimo a cui è disposto a vendere", "Il prezzo massimo", "Il prezzo di mercato", "Il costo fisso"], 
-				correctAnswer: "Il prezzo minimo a cui è disposto a vendere",
-				explanation: "Corrisponde solitamente al costo marginale."
-			},
-			{ 
-				question: "Nei grafici, Q1 e Q2 indicano:", 
-				options: ["Quantità al tempo 1 e al tempo 2", "Qualità 1 e 2", "Quote di mercato", "Niente"], 
-				correctAnswer: "Quantità al tempo 1 e al tempo 2",
-				explanation: "Indicano lo spostamento della quantità sull'asse X."
-			},
-			{ 
-				question: "Se l'elasticità è uguale a zero in ogni punto, la curva è:", 
-				options: ["Una retta verticale", "Una retta orizzontale", "Una curva convessa", "Una retta obliqua"], 
-				correctAnswer: "Una retta verticale",
-				explanation: "Perfettamente anelastica/rigida."
-			}
-		];
+            // -------------------------------------------------------------------------
+            // SEZIONE 1: CONCETTI FONDAMENTALI DELLA DOMANDA (DEFINIZIONI E LEGGE)
+            // -------------------------------------------------------------------------
+            {
+                question: "Qual è la definizione esatta di 'Domanda di mercato'?",
+                options: [
+                    "La quantità di beni e servizi che il consumatore è disposto ad acquistare in un certo mercato, in un certo tempo, a un certo prezzo",
+                    "La quantità di beni che i produttori desiderano vendere per massimizzare il profitto",
+                    "Il volume totale delle vendite effettuate in un negozio in un anno",
+                    "La somma dei desideri illimitati dei consumatori indipendentemente dal prezzo"
+                ],
+                correctAnswer: "La quantità di beni e servizi che il consumatore è disposto ad acquistare in un certo mercato, in un certo tempo, a un certo prezzo",
+                explanation: "La domanda non è un semplice desiderio, ma una volontà d'acquisto supportata dalla capacità di pagare, definita in base a mercato, tempo e prezzo specifici."
+            },
+            {
+                question: "Cosa enuncia la 'Legge della domanda'?",
+                options: [
+                    "La domanda di un bene è inversamente proporzionale al suo prezzo",
+                    "La domanda di un bene è direttamente proporzionale al suo prezzo",
+                    "La domanda di un bene non varia al variare del prezzo",
+                    "La domanda dipende esclusivamente dal reddito e non dal prezzo"
+                ],
+                correctAnswer: "La domanda di un bene è inversamente proporzionale al suo prezzo",
+                explanation: "All'aumentare del prezzo di un bene, la sua domanda decresce, e viceversa. Questa relazione inversa è il pilastro della teoria della domanda."
+            },
+            {
+                question: "Graficamente, come si presenta generalmente la curva di domanda?",
+                options: [
+                    "Decrescente da sinistra verso destra",
+                    "Crescente da sinistra verso destra",
+                    "Una linea retta orizzontale",
+                    "Una linea retta verticale"
+                ],
+                correctAnswer: "Decrescente da sinistra verso destra",
+                explanation: "Poiché la relazione tra prezzo (asse Y) e quantità (asse X) è inversa, la pendenza della curva è negativa."
+            },
+            {
+                question: "Quali sono le variabili sugli assi cartesiani nel grafico della domanda?",
+                options: [
+                    "Prezzo sull'asse delle ordinate (Y) e Quantità sull'asse delle ascisse (X)",
+                    "Quantità sull'asse delle ordinate (Y) e Prezzo sull'asse delle ascisse (X)",
+                    "Reddito sull'asse delle ordinate (Y) e Quantità sull'asse delle ascisse (X)",
+                    "Tempo sull'asse delle ordinate (Y) e Prezzo sull'asse delle ascisse (X)"
+                ],
+                correctAnswer: "Prezzo sull'asse delle ordinate (Y) e Quantità sull'asse delle ascisse (X)",
+                explanation: "Per convenzione economica, il prezzo (variabile indipendente nel modello teorico causale, ma dipendente nel grafico marshalliano) è sulle ordinate, la quantità sulle ascisse."
+            },
+            {
+                question: "Se il prezzo di un bene aumenta, cosa accade alla quantità domandata (ceteris paribus)?",
+                options: [
+                    "Diminuisce",
+                    "Aumenta",
+                    "Resta invariata",
+                    "Diventa infinita"
+                ],
+                correctAnswer: "Diminuisce",
+                explanation: "È l'applicazione diretta della legge della domanda: prezzo più alto disincentiva l'acquisto."
+            },
+            {
+                question: "Se il prezzo di un bene diminuisce, cosa accade alla quantità domandata?",
+                options: [
+                    "Aumenta",
+                    "Diminuisce",
+                    "Resta costante",
+                    "Si azzera"
+                ],
+                correctAnswer: "Aumenta",
+                explanation: "Prezzi più bassi rendono il bene accessibile a più consumatori o incentivano acquisti maggiori da parte degli stessi consumatori."
+            },
+
+            // -------------------------------------------------------------------------
+            // SEZIONE 2: FATTORI CHE INFLUENZANO LA DOMANDA (ESCLUSO IL PREZZO)
+            // -------------------------------------------------------------------------
+            {
+                question: "Quale dei seguenti NON è citato come fattore che influenza la domanda?",
+                options: [
+                    "Costo di produzione",
+                    "Reddito del consumatore",
+                    "Gusti personali",
+                    "Pubblicità"
+                ],
+                correctAnswer: "Costo di produzione",
+                explanation: "Il costo di produzione influenza l'OFFERTA (le imprese), non direttamente la domanda (i consumatori)."
+            },
+            {
+                question: "Come influiscono i 'gusti personali' sulla domanda?",
+                options: [
+                    "Possono aumentare o diminuire la domanda indipendentemente dal prezzo",
+                    "Non hanno alcuna influenza",
+                    "Determinano solo l'offerta",
+                    "Sono rilevanti solo per i beni di lusso"
+                ],
+                correctAnswer: "Possono aumentare o diminuire la domanda indipendentemente dal prezzo",
+                explanation: "Se un prodotto diventa di moda o incontra i gusti del consumatore, la sua domanda aumenta a parità di prezzo."
+            },
+            {
+                question: "Che ruolo gioca la pubblicità nella domanda di un bene?",
+                options: [
+                    "Crea bisogni indotti influenzando le abitudini di acquisto",
+                    "Riduce il prezzo del bene",
+                    "Aumenta i costi di produzione riducendo l'offerta",
+                    "Non ha effetti significativi nel breve periodo"
+                ],
+                correctAnswer: "Crea bisogni indotti influenzando le abitudini di acquisto",
+                explanation: "La pubblicità serve a spostare la curva di domanda verso destra, aumentando il desiderio del consumatore per quel bene."
+            },
+            {
+                question: "Cosa si intende per 'Packaging' tra i fattori della domanda?",
+                options: [
+                    "L'aspetto esteriore e la confezione del prodotto che può attrarre il consumatore",
+                    "Il costo del trasporto del bene",
+                    "La quantità di prodotto contenuta nella confezione",
+                    "Il materiale di scarto della produzione"
+                ],
+                correctAnswer: "L'aspetto esteriore e la confezione del prodotto che può attrarre il consumatore",
+                explanation: "Un packaging curato è una leva di marketing che influenza i gusti e quindi la domanda del consumatore."
+            },
+            {
+                question: "Come varia generalmente la domanda al variare del reddito?",
+                options: [
+                    "Più è alto il reddito, più è alta la domanda (per la maggior parte dei beni)",
+                    "Più è alto il reddito, più è bassa la domanda",
+                    "Il reddito non influenza la quantità domandata",
+                    "La domanda aumenta solo se il reddito diminuisce"
+                ],
+                correctAnswer: "Più è alto il reddito, più è alta la domanda (per la maggior parte dei beni)",
+                explanation: "Un maggiore potere d'acquisto permette al consumatore di comprare maggiori quantità di beni e servizi."
+            },
+            {
+                question: "Cos'è un 'bene inferiore'?",
+                options: [
+                    "Un bene di scarsa qualità la cui domanda diminuisce all'aumentare del reddito",
+                    "Un bene che costa meno di 1 euro",
+                    "Un bene prodotto all'estero",
+                    "Un bene complementare alla benzina"
+                ],
+                correctAnswer: "Un bene di scarsa qualità la cui domanda diminuisce all'aumentare del reddito",
+                explanation: "Quando il consumatore diventa più ricco, abbandona i beni inferiori (es. fagioli in scatola di bassa qualità) per passare a beni superiori (es. carne o pesce)."
+            },
+            {
+                question: "Quale esempio viene fornito per spiegare i beni inferiori?",
+                options: [
+                    "Fagioli rispetto a carne/pesce",
+                    "Auto rispetto a bici",
+                    "Oro rispetto all'argento",
+                    "Smartphone rispetto a telefoni fissi"
+                ],
+                correctAnswer: "Fagioli rispetto a carne/pesce",
+                explanation: "L'esempio classico mostra una famiglia povera che consuma molti fagioli; arricchendosi, riduce i fagioli per comprare carne."
+            },
+            {
+                question: "Cosa accade alla domanda di beni 'completamente soddisfatti' (bisogni saturi) all'aumentare del reddito?",
+                options: [
+                    "Si mantengono stabili",
+                    "Aumentano esponenzialmente",
+                    "Diminuiscono drasticamente",
+                    "Diventano negativi"
+                ],
+                correctAnswer: "Si mantengono stabili",
+                explanation: "Se un bisogno è già totalmente soddisfatto (es. la quantità di sale o pane necessaria), un aumento di reddito non ne fa aumentare ulteriormente il consumo."
+            },
+            {
+                question: "Qual è la definizione di 'Beni succedanei'?",
+                options: [
+                    "Beni che possono essere usati l'uno al posto dell'altro (sostituti)",
+                    "Beni che devono essere usati insieme",
+                    "Beni che non hanno alcuna relazione tra loro",
+                    "Beni di lusso"
+                ],
+                correctAnswer: "Beni che possono essere usati l'uno al posto dell'altro (sostituti)",
+                explanation: "I succedanei soddisfano lo stesso bisogno. Se non ho il bene A, posso usare il bene B."
+            },
+            {
+                question: "Quale coppia è un esempio di beni succedanei?",
+                options: [
+                    "Burro e Margarina",
+                    "Caffè e Zucchero",
+                    "Auto e Benzina",
+                    "Software e Computer"
+                ],
+                correctAnswer: "Burro e Margarina",
+                explanation: "Burro e margarina sono interscambiabili per molti usi culinari. Se il prezzo del burro sale, la domanda di margarina tende a salire."
+            },
+            {
+                question: "Qual è la definizione di 'Beni complementari'?",
+                options: [
+                    "Beni che devono essere utilizzati insieme per soddisfare un bisogno",
+                    "Beni che si escludono a vicenda",
+                    "Beni prodotti dalla stessa azienda",
+                    "Beni con la stessa elasticità"
+                ],
+                correctAnswer: "Beni che devono essere utilizzati insieme per soddisfare un bisogno",
+                explanation: "L'uso dell'uno richiede l'uso dell'altro (es. l'auto non funziona senza benzina)."
+            },
+            {
+                question: "Quale coppia è un esempio di beni complementari?",
+                options: [
+                    "Auto e Benzina",
+                    "Tè e Caffè",
+                    "Mele e Pere",
+                    "Olio d'oliva e Olio di semi"
+                ],
+                correctAnswer: "Auto e Benzina",
+                explanation: "La benzina è necessaria per far funzionare l'auto; la domanda di una influenza l'altra."
+            },
+            {
+                question: "Se il prezzo della benzina aumenta notevolmente, cosa succede alla domanda di Auto?",
+                options: [
+                    "Diminuisce",
+                    "Aumenta",
+                    "Resta invariata",
+                    "Diventa infinitamente elastica"
+                ],
+                correctAnswer: "Diminuisce",
+                explanation: "Essendo beni complementari, l'aumento del costo di utilizzo (benzina) scoraggia l'acquisto del bene principale (auto)."
+            },
+            {
+                question: "Se il prezzo del Burro aumenta, cosa succede alla domanda di Margarina?",
+                options: [
+                    "Aumenta",
+                    "Diminuisce",
+                    "Resta invariata",
+                    "Si azzera"
+                ],
+                correctAnswer: "Aumenta",
+                explanation: "I consumatori sostituiscono il bene diventato più caro (burro) con il sostituto più economico (margarina)."
+            },
+
+            // -------------------------------------------------------------------------
+            // SEZIONE 3: ELASTICITÀ DELLA DOMANDA (CALCOLO E TIPI)
+            // -------------------------------------------------------------------------
+            {
+                question: "Cosa misura l'elasticità della domanda rispetto al prezzo (Edp)?",
+                options: [
+                    "L'intensità della variazione della quantità domandata al variare del prezzo",
+                    "La somma totale spesa dai consumatori",
+                    "La differenza in euro tra due prezzi",
+                    "Il tempo necessario affinché il mercato reagisca"
+                ],
+                correctAnswer: "L'intensità della variazione della quantità domandata al variare del prezzo",
+                explanation: "Indica 'con quanta forza' reagiscono i consumatori a un cambiamento di prezzo."
+            },
+            {
+                question: "Qual è la formula matematica base per il coefficiente di elasticità della domanda (Edp)?",
+                options: [
+                    "Edp = (Variazione % della Quantità) / (Variazione % del Prezzo)",
+                    "Edp = (Variazione % del Prezzo) / (Variazione % della Quantità)",
+                    "Edp = Prezzo / Quantità",
+                    "Edp = Quantità finale - Quantità iniziale"
+                ],
+                correctAnswer: "Edp = (Variazione % della Quantità) / (Variazione % del Prezzo)",
+                explanation: "È il rapporto tra la reazione percentuale della quantità e l'impulso percentuale del prezzo."
+            },
+            {
+                question: "In termini di formula simbolica, come si scrive l'elasticità?",
+                options: [
+                    "Edp = Δ%Q / Δ%P",
+                    "Edp = ΔP / ΔQ",
+                    "Edp = Q1 + Q2",
+                    "Edp = P x Q"
+                ],
+                correctAnswer: "Edp = Δ%Q / Δ%P",
+                explanation: "Dove Δ (Delta) indica la variazione e % indica che è calcolata in termini percentuali."
+            },
+            {
+                question: "Se Edp = 0, come viene definita la domanda?",
+                options: [
+                    "Rigida",
+                    "Elastica",
+                    "Unitaria",
+                    "Infinitamente elastica"
+                ],
+                correctAnswer: "Rigida",
+                explanation: "Una domanda rigida significa che la quantità domandata non cambia affatto al variare del prezzo (es. farmaci salvavita)."
+            },
+            {
+                question: "Se il coefficiente Edp è minore di 1 (ma maggiore di 0), la domanda è:",
+                options: [
+                    "Anelastica",
+                    "Elastica",
+                    "Unitaria",
+                    "Perfettamente elastica"
+                ],
+                correctAnswer: "Anelastica",
+                explanation: "La variazione percentuale della quantità è inferiore alla variazione percentuale del prezzo (reazione debole)."
+            },
+            {
+                question: "In una domanda anelastica (Edp < 1), quale relazione c'è tra ΔP e ΔQ?",
+                options: [
+                    "ΔP > ΔQ (La variazione del prezzo è maggiore della variazione della quantità)",
+                    "ΔP < ΔQ",
+                    "ΔP = ΔQ",
+                    "ΔQ è infinita"
+                ],
+                correctAnswer: "ΔP > ΔQ (La variazione del prezzo è maggiore della variazione della quantità)",
+                explanation: "Il prezzo cambia molto, ma la quantità reagisce poco."
+            },
+            {
+                question: "Se Edp = 1, come viene definita l'elasticità?",
+                options: [
+                    "Elasticità Unitaria",
+                    "Rigida",
+                    "Neutrale",
+                    "Inversa"
+                ],
+                correctAnswer: "Elasticità Unitaria",
+                explanation: "La variazione percentuale della quantità è esattamente identica alla variazione percentuale del prezzo."
+            },
+            {
+                question: "In caso di elasticità unitaria, qual è la relazione tra ΔP e ΔQ?",
+                options: [
+                    "ΔP = ΔQ",
+                    "ΔP > ΔQ",
+                    "ΔP < ΔQ",
+                    "Nessuna relazione"
+                ],
+                correctAnswer: "ΔP = ΔQ",
+                explanation: "Le due variazioni percentuali si equivalgono."
+            },
+            {
+                question: "Se Edp > 1, la domanda è:",
+                options: [
+                    "Elastica",
+                    "Rigida",
+                    "Anelastica",
+                    "Stabile"
+                ],
+                correctAnswer: "Elastica",
+                explanation: "Una piccola variazione di prezzo provoca una grande reazione nella quantità domandata."
+            },
+            {
+                question: "Quale tipo di beni tende ad avere una domanda Elastica (Edp > 1)?",
+                options: [
+                    "Beni di lusso (o non di prima necessità)",
+                    "Beni di prima necessità",
+                    "Farmaci salvavita",
+                    "Sale e pane"
+                ],
+                correctAnswer: "Beni di lusso (o non di prima necessità)",
+                explanation: "Per i beni superflui o di lusso (come profumi costosi), se il prezzo sale, il consumatore rinuncia facilmente all'acquisto."
+            },
+            {
+                question: "Se Edp = ∞ (infinito), la domanda è:",
+                options: [
+                    "Infinitamente elastica",
+                    "Totalmente rigida",
+                    "Normalmente elastica",
+                    "Unitaria"
+                ],
+                correctAnswer: "Infinitamente elastica",
+                explanation: "Basta una variazione infinitesimale del prezzo per far crollare la domanda a zero o portarla all'infinito (caso teorico di concorrenza perfetta)."
+            },
+            {
+                question: "Quale rappresentazione grafica corrisponde a una domanda Rigida (Edp=0)?",
+                options: [
+                    "Una linea verticale",
+                    "Una linea orizzontale",
+                    "Una curva decrescente",
+                    "Una retta a 45 gradi"
+                ],
+                correctAnswer: "Una linea verticale",
+                explanation: "La quantità (asse X) rimane fissa allo stesso punto qualunque sia il livello del prezzo (asse Y)."
+            },
+            {
+                question: "Quale rappresentazione grafica corrisponde a una domanda Infinitamente Elastica?",
+                options: [
+                    "Una linea orizzontale",
+                    "Una linea verticale",
+                    "Una curva iperbolica",
+                    "Una retta crescente"
+                ],
+                correctAnswer: "Una linea orizzontale",
+                explanation: "A un solo livello di prezzo (fisso), i consumatori sono disposti ad acquistare quantità infinite."
+            },
+            {
+                question: "Quali beni hanno tipicamente una domanda rigida?",
+                options: [
+                    "Beni di prima necessità (es. pane, medicinali)",
+                    "Profumi",
+                    "Automobili sportive",
+                    "Vacanze"
+                ],
+                correctAnswer: "Beni di prima necessità (es. pane, medicinali)",
+                explanation: "Il consumatore non può fare a meno di questi beni, quindi li acquista anche se il prezzo aumenta."
+            },
+
+            // -------------------------------------------------------------------------
+            // SEZIONE 4: ESERCIZI DI CALCOLO SULLA DOMANDA (DATI DAGLI APPUNTI)
+            // -------------------------------------------------------------------------
+            {
+                question: "Dati: P1 (mele) = 1€/kg, P2 = 1,60€/kg. Qual è la variazione assoluta di prezzo (ΔP)?",
+                options: [
+                    "0,60 €/kg",
+                    "0,40 €/kg",
+                    "1,00 €/kg",
+                    "2,60 €/kg"
+                ],
+                correctAnswer: "0,60 €/kg",
+                explanation: "ΔP = P2 - P1 = 1,60 - 1,00 = 0,60."
+            },
+            {
+                question: "Dati: Q1 = 10kg, Q2 = 7kg. Qual è la variazione assoluta di quantità (ΔQ)?",
+                options: [
+                    "3 kg",
+                    "7 kg",
+                    "17 kg",
+                    "10 kg"
+                ],
+                correctAnswer: "3 kg",
+                explanation: "In valore assoluto (come spesso usato negli esercizi introduttivi), ΔQ = |7 - 10| = 3. La variazione è una diminuzione di 3 unità."
+            },
+            {
+                question: "Usando i dati precedenti (P1=1, P2=1,60), qual è la variazione percentuale del prezzo?",
+                options: [
+                    "60%",
+                    "30%",
+                    "50%",
+                    "100%"
+                ],
+                correctAnswer: "60%",
+                explanation: "Calcolo: (0,60 / 1,00) * 100 = 60%."
+            },
+            {
+                question: "Usando i dati precedenti (Q1=10, Q2=7), qual è la variazione percentuale della quantità?",
+                options: [
+                    "30%",
+                    "70%",
+                    "3%",
+                    "10%"
+                ],
+                correctAnswer: "30%",
+                explanation: "Calcolo: (3 / 10) * 100 = 30%."
+            },
+            {
+                question: "Se la variazione % della quantità è 30% e la variazione % del prezzo è 60%, qual è l'elasticità (Edp)?",
+                options: [
+                    "0,5",
+                    "2",
+                    "1",
+                    "0,2"
+                ],
+                correctAnswer: "0,5",
+                explanation: "Edp = 30% / 60% = 0,5 (o 1/2)."
+            },
+            {
+                question: "Con un'elasticità di 0,5, come classifichiamo questa domanda?",
+                options: [
+                    "Anelastica (o poco elastica)",
+                    "Elastica",
+                    "Unitaria",
+                    "Infinita"
+                ],
+                correctAnswer: "Anelastica (o poco elastica)",
+                explanation: "Poiché 0,5 è minore di 1, la domanda reagisce meno che proporzionalmente al prezzo."
+            },
+
+            // -------------------------------------------------------------------------
+            // SEZIONE 5: CONCETTI FONDAMENTALI DELL'OFFERTA (DEFINIZIONI E LEGGE)
+            // -------------------------------------------------------------------------
+            {
+                question: "Qual è la definizione di 'Offerta di mercato'?",
+                options: [
+                    "La quantità di beni e servizi che le imprese sono disposte a vendere in un certo mercato, momento e prezzo",
+                    "La quantità di merce acquistata dai consumatori",
+                    "Lo sconto applicato su un prodotto",
+                    "L'insieme dei beni invenduti in magazzino"
+                ],
+                correctAnswer: "La quantità di beni e servizi che le imprese sono disposte a vendere in un certo mercato, momento e prezzo",
+                explanation: "L'offerta rappresenta la volontà e capacità dei produttori di immettere merce sul mercato a date condizioni."
+            },
+            {
+                question: "Cosa afferma la 'Legge dell'offerta'?",
+                options: [
+                    "All'aumentare del prezzo, l'offerta aumenta",
+                    "All'aumentare del prezzo, l'offerta diminuisce",
+                    "L'offerta è sempre costante",
+                    "L'offerta dipende solo dalla domanda"
+                ],
+                correctAnswer: "All'aumentare del prezzo, l'offerta aumenta",
+                explanation: "Esiste una relazione diretta: prezzi più alti incentivano i produttori a produrre di più per aumentare i profitti."
+            },
+            {
+                question: "Perché la curva di offerta è crescente?",
+                options: [
+                    "Perché a prezzi più alti i venditori hanno maggiori incentivi a vendere e possono coprire costi maggiori",
+                    "Perché i consumatori comprano di più se il prezzo sale",
+                    "Perché i costi diminuiscono se il prezzo sale",
+                    "È un errore grafico, dovrebbe essere decrescente"
+                ],
+                correctAnswer: "Perché a prezzi più alti i venditori hanno maggiori incentivi a vendere e possono coprire costi maggiori",
+                explanation: "Il profitto atteso maggiore spinge le imprese ad aumentare la produzione e nuove imprese ad entrare nel mercato."
+            },
+            {
+                question: "Cosa accade all'offerta se il prezzo diminuisce?",
+                options: [
+                    "Diminuisce",
+                    "Aumenta",
+                    "Resta uguale",
+                    "Diventa negativa"
+                ],
+                correctAnswer: "Diminuisce",
+                explanation: "I margini di profitto si riducono, quindi i produttori tagliano la produzione o escono dal mercato."
+            },
+            {
+                question: "Graficamente, come si presenta la curva di offerta?",
+                options: [
+                    "Crescente da sinistra verso destra",
+                    "Decrescente da sinistra verso destra",
+                    "Verticale",
+                    "A forma di U"
+                ],
+                correctAnswer: "Crescente da sinistra verso destra",
+                explanation: "Parte bassa a sinistra (prezzo basso, quantità bassa) e sale verso destra (prezzo alto, quantità alta)."
+            },
+
+            // -------------------------------------------------------------------------
+            // SEZIONE 6: FATTORI CHE INFLUENZANO L'OFFERTA
+            // -------------------------------------------------------------------------
+            {
+                question: "Quale dei seguenti è un fattore chiave che influenza l'offerta (oltre al prezzo)?",
+                options: [
+                    "Costi dei fattori produttivi",
+                    "Reddito del consumatore",
+                    "Gusti del consumatore",
+                    "Pubblicità rivolta al consumatore"
+                ],
+                correctAnswer: "Costi dei fattori produttivi",
+                explanation: "Se produrre costa di più (materie prime, lavoro, energia), l'impresa offrirà meno prodotto a parità di prezzo di vendita."
+            },
+            {
+                question: "Come influisce l'introduzione di 'nuove tecnologie' sull'offerta?",
+                options: [
+                    "Aumenta l'offerta riducendo i costi di produzione",
+                    "Diminuisce l'offerta aumentando la complessità",
+                    "Non ha effetti sulla produzione",
+                    "Aumenta solo il prezzo di vendita"
+                ],
+                correctAnswer: "Aumenta l'offerta riducendo i costi di produzione",
+                explanation: "L'innovazione tecnologica permette di produrre di più con meno risorse (efficienza), spostando la curva di offerta verso destra."
+            },
+            {
+                question: "Quale effetto ha un clima favorevole sull'offerta di prodotti agricoli?",
+                options: [
+                    "La quantità offerta aumenta",
+                    "La quantità offerta diminuisce",
+                    "Il prezzo aumenta drasticamente",
+                    "Nessun effetto"
+                ],
+                correctAnswer: "La quantità offerta aumenta",
+                explanation: "In agricoltura, il clima è un fattore produttivo determinante. Buon clima = raccolto abbondante = maggiore offerta."
+            },
+            {
+                question: "Se una legge impone costi aggiuntivi (es. impianti di bonifica obbligatori) alle imprese, cosa succede all'offerta?",
+                options: [
+                    "L'offerta diminuisce",
+                    "L'offerta aumenta",
+                    "L'offerta rimane invariata",
+                    "La domanda aumenta"
+                ],
+                correctAnswer: "L'offerta diminuisce",
+                explanation: "Costi più alti (per adeguarsi alle normative) riducono i margini, portando le imprese a produrre meno a parità di prezzo."
+            },
+            {
+                question: "Cosa succede se lo Stato fornisce contributi (sussidi) alle imprese (es. per il biologico)?",
+                options: [
+                    "L'offerta aumenta",
+                    "L'offerta diminuisce",
+                    "I prezzi aumentano",
+                    "Le imprese chiudono"
+                ],
+                correctAnswer: "L'offerta aumenta",
+                explanation: "I sussidi riducono i costi effettivi per l'impresa, incentivando la produzione."
+            },
+            {
+                question: "Quali sono i fattori elencati che influenzano l'offerta?",
+                options: [
+                    "Costi produttivi, tecnologia, clima, leggi, prezzo",
+                    "Reddito, gusti, pubblicità",
+                    "Solo il prezzo",
+                    "Domanda estera e cambio valuta"
+                ],
+                correctAnswer: "Costi produttivi, tecnologia, clima, leggi, prezzo",
+                explanation: "Questi sono i principali determinanti (shift factors) della curva di offerta."
+            },
+
+            // -------------------------------------------------------------------------
+            // SEZIONE 7: ELASTICITÀ DELL'OFFERTA
+            // -------------------------------------------------------------------------
+            {
+                question: "Cos'è l'elasticità dell'offerta?",
+                options: [
+                    "La misura di come varia l'offerta al variare del prezzo",
+                    "La misura di come varia la domanda al variare dell'offerta",
+                    "La velocità di produzione",
+                    "Il margine di profitto"
+                ],
+                correctAnswer: "La misura di come varia l'offerta al variare del prezzo",
+                explanation: "Analoga all'elasticità della domanda, ma dal lato del produttore: quanto reagiscono le imprese ai cambi di listino?"
+            },
+            {
+                question: "Qual è la formula del coefficiente di elasticità dell'offerta (eop)?",
+                options: [
+                    "eop = (Variazione % Quantità Offerta) / (Variazione % Prezzo)",
+                    "eop = Prezzo / Costo",
+                    "eop = (Variazione % Prezzo) / (Variazione % Quantità Offerta)",
+                    "eop = Ricavo Totale - Costo Totale"
+                ],
+                correctAnswer: "eop = (Variazione % Quantità Offerta) / (Variazione % Prezzo)",
+                explanation: "Rapporto tra la reazione percentuale della quantità offerta e l'azione percentuale del prezzo."
+            },
+            {
+                question: "Il coefficiente di elasticità dell'offerta è sempre:",
+                options: [
+                    "Positivo",
+                    "Negativo",
+                    "Zero",
+                    "Indefinito"
+                ],
+                correctAnswer: "Positivo",
+                explanation: "Poiché la curva di offerta è crescente (prezzo su -> quantità su), il rapporto tra due variazioni dello stesso segno è sempre positivo."
+            },
+            {
+                question: "Se l'offerta è rigida, il coefficiente eop è:",
+                options: [
+                    "Uguale a 0",
+                    "Minore di 1",
+                    "Maggiore di 1",
+                    "Infinito"
+                ],
+                correctAnswer: "Uguale a 0",
+                explanation: "La quantità offerta non cambia affatto, qualunque sia il prezzo (es. periodo brevissimo, o quantità fissa come quadri di un pittore defunto)."
+            },
+            {
+                question: "Se eop < 1, l'offerta è:",
+                options: [
+                    "Anelastica",
+                    "Elastica",
+                    "Rigida",
+                    "Unitaria"
+                ],
+                correctAnswer: "Anelastica",
+                explanation: "La variazione della quantità offerta è proporzionalmente inferiore alla variazione del prezzo."
+            },
+            {
+                question: "In quale orizzonte temporale l'offerta tende ad essere più rigida/anelastica?",
+                options: [
+                    "Nel breve periodo",
+                    "Nel lungo periodo",
+                    "Sempre",
+                    "Mai"
+                ],
+                correctAnswer: "Nel breve periodo",
+                explanation: "Nel breve periodo le imprese non possono modificare facilmente gli impianti o la capacità produttiva, quindi faticano a rispondere a variazioni di prezzo."
+            },
+            {
+                question: "In quale orizzonte temporale l'offerta tende ad essere più elastica?",
+                options: [
+                    "Nel lungo periodo",
+                    "Nel breve periodo",
+                    "Nell'immediato",
+                    "Non dipende dal tempo"
+                ],
+                correctAnswer: "Nel lungo periodo",
+                explanation: "Col tempo, le imprese possono costruire nuove fabbriche, assumere personale o acquistare macchinari, reagendo pienamente al prezzo."
+            },
+            {
+                question: "Se eop > 1, l'offerta è:",
+                options: [
+                    "Elastica",
+                    "Rigida",
+                    "Neutra",
+                    "Unitaria"
+                ],
+                correctAnswer: "Elastica",
+                explanation: "Le imprese reagiscono con un grande aumento di produzione a un piccolo aumento di prezzo."
+            },
+            {
+                question: "Un'offerta infinitamente elastica (eop = ∞) è rappresentata graficamente da:",
+                options: [
+                    "Una retta orizzontale",
+                    "Una retta verticale",
+                    "Una curva a 45 gradi",
+                    "Una parabola"
+                ],
+                correctAnswer: "Una retta orizzontale",
+                explanation: "A un determinato prezzo, l'impresa è disposta a offrire qualsiasi quantità. Sotto quel prezzo, nulla."
+            },
+
+            // -------------------------------------------------------------------------
+            // SEZIONE 8: EQUILIBRIO DI MERCATO
+            // -------------------------------------------------------------------------
+            {
+                question: "Cos'è il punto di equilibrio di mercato?",
+                options: [
+                    "Il punto in cui la curva di domanda e la curva di offerta si intersecano",
+                    "Il punto in cui il prezzo è più alto possibile",
+                    "Il punto in cui la quantità è zero",
+                    "Il punto medio tra costo e ricavo"
+                ],
+                correctAnswer: "Il punto in cui la curva di domanda e la curva di offerta si intersecano",
+                explanation: "È l'unica combinazione prezzo-quantità che soddisfa contemporaneamente consumatori e produttori."
+            },
+            {
+                question: "Cosa rappresenta il 'prezzo di equilibrio'?",
+                options: [
+                    "Il prezzo che eguaglia la quantità offerta e la quantità domandata",
+                    "Il prezzo imposto dallo Stato",
+                    "Il prezzo medio di tutti i beni",
+                    "Il prezzo che massimizza il profitto del monopolista"
+                ],
+                correctAnswer: "Il prezzo che eguaglia la quantità offerta e la quantità domandata",
+                explanation: "A questo prezzo non c'è né eccesso di domanda (scarsità) né eccesso di offerta (surplus). Il mercato si 'pulisce' (market clearing)."
+            },
+            {
+                question: "Se il prezzo di mercato è superiore al prezzo di equilibrio, cosa si verifica?",
+                options: [
+                    "Un eccesso di offerta (surplus)",
+                    "Un eccesso di domanda (scarsità)",
+                    "Un equilibrio stabile",
+                    "Un aumento immediato della domanda"
+                ],
+                correctAnswer: "Un eccesso di offerta (surplus)",
+                explanation: "A prezzi alti, i produttori offrono molto, ma i consumatori domandano poco. La merce resta invenduta."
+            },
+            {
+                question: "Se c'è un eccesso di offerta, cosa tendono a fare i produttori?",
+                options: [
+                    "Abbassare il prezzo per smaltire le scorte",
+                    "Alzare il prezzo per guadagnare di più",
+                    "Aumentare ancora la produzione",
+                    "Non fanno nulla"
+                ],
+                correctAnswer: "Abbassare il prezzo per smaltire le scorte",
+                explanation: "La concorrenza per vendere la merce in eccesso spinge il prezzo verso il basso, ritornando verso l'equilibrio."
+            },
+            {
+                question: "Se il prezzo di mercato è inferiore al prezzo di equilibrio, cosa si verifica?",
+                options: [
+                    "Un eccesso di domanda (scarsità)",
+                    "Un eccesso di offerta",
+                    "Le scorte aumentano",
+                    "I consumatori smettono di comprare"
+                ],
+                correctAnswer: "Un eccesso di domanda (scarsità)",
+                explanation: "A prezzi bassi, tutti vogliono comprare, ma i produttori offrono poco. I beni spariscono dagli scaffali."
+            },
+            {
+                question: "Nel breve periodo, i prezzi sono influenzati soprattutto da:",
+                options: [
+                    "Dalla domanda",
+                    "Dall'offerta",
+                    "Dai costi fissi",
+                    "Dalle tecnologie"
+                ],
+                correctAnswer: "Dalla domanda",
+                explanation: "Poiché l'offerta è rigida nel breve periodo (non si può produrre di più subito), variazioni della domanda impattano subito sul prezzo."
+            },
+            {
+                question: "Nel lungo periodo, i prezzi sono influenzati anche da:",
+                options: [
+                    "Dall'offerta",
+                    "Solo dalla domanda",
+                    "Solo dal clima",
+                    "Non variano mai"
+                ],
+                correctAnswer: "Dall'offerta",
+                explanation: "Nel lungo periodo l'offerta diventa elastica e si adatta, giocando un ruolo attivo nella determinazione del nuovo prezzo di equilibrio."
+            },
+
+            // -------------------------------------------------------------------------
+            // SEZIONE 9: ESERCIZI DI CALCOLO SULL'OFFERTA (DATI DAGLI APPUNTI)
+            // -------------------------------------------------------------------------
+            {
+                question: "Dati Offerta: P1 = 0,80 €, P2 = 1,00 €. Qual è ΔP?",
+                options: [
+                    "0,20 €",
+                    "0,80 €",
+                    "1,80 €",
+                    "0,10 €"
+                ],
+                correctAnswer: "0,20 €",
+                explanation: "ΔP = 1,00 - 0,80 = 0,20."
+            },
+            {
+                question: "Dati Offerta: Q1 = 20.000 kg, Q2 = 25.000 kg. Qual è ΔQ?",
+                options: [
+                    "5.000 kg",
+                    "45.000 kg",
+                    "20.000 kg",
+                    "25.000 kg"
+                ],
+                correctAnswer: "5.000 kg",
+                explanation: "ΔQ = 25.000 - 20.000 = 5.000."
+            },
+            {
+                question: "Calcola la variazione % del prezzo (P1=0,80, P2=1,00).",
+                options: [
+                    "25%",
+                    "20%",
+                    "50%",
+                    "10%"
+                ],
+                correctAnswer: "25%",
+                explanation: "Calcolo: (0,20 / 0,80) * 100. 0,20 è un quarto di 0,80, quindi 25%."
+            },
+            {
+                question: "Calcola la variazione % della quantità offerta (Q1=20.000, Q2=25.000).",
+                options: [
+                    "25%",
+                    "20%",
+                    "50%",
+                    "5%"
+                ],
+                correctAnswer: "25%",
+                explanation: "Calcolo: (5.000 / 20.000) * 100. 5 su 20 è un quarto, quindi 25%."
+            },
+            {
+                question: "Se Δ%Q = 25% e Δ%P = 25%, qual è il coefficiente di elasticità dell'offerta (eop)?",
+                options: [
+                    "1",
+                    "0",
+                    "0,5",
+                    "25"
+                ],
+                correctAnswer: "1",
+                explanation: "eop = 25 / 25 = 1. Si tratta di elasticità unitaria."
+            },
+            {
+                question: "Un coefficiente eop = 1 indica:",
+                options: [
+                    "Elasticità Unitaria",
+                    "Offerta Rigida",
+                    "Offerta Elastica",
+                    "Offerta Anelastica"
+                ],
+                correctAnswer: "Elasticità Unitaria",
+                explanation: "L'offerta varia esattamente nella stessa proporzione del prezzo."
+            },
+
+            // -------------------------------------------------------------------------
+            // SEZIONE 10: ELASTICITÀ INCROCIATA E REDDITO (APPROFONDIMENTI)
+            // -------------------------------------------------------------------------
+            {
+                question: "Cosa misura l'elasticità incrociata?",
+                options: [
+                    "La variazione della domanda del bene A al variare del prezzo del bene B",
+                    "La variazione della domanda al variare del reddito",
+                    "La somma delle elasticità di due beni",
+                    "L'incrocio tra domanda e offerta"
+                ],
+                correctAnswer: "La variazione della domanda del bene A al variare del prezzo del bene B",
+                explanation: "Serve a capire la relazione tra due beni (se sono sostituti, complementari o indipendenti)."
+            },
+            {
+                question: "Se l'elasticità incrociata è positiva, i due beni sono:",
+                options: [
+                    "Succedanei (Sostituti)",
+                    "Complementari",
+                    "Indipendenti",
+                    "Inferiori"
+                ],
+                correctAnswer: "Succedanei (Sostituti)",
+                explanation: "Se aumenta il prezzo di B (es. burro), aumenta la domanda di A (margarina). Segno positivo."
+            },
+            {
+                question: "Se l'elasticità incrociata è negativa, i due beni sono:",
+                options: [
+                    "Complementari",
+                    "Succedanei",
+                    "Di lusso",
+                    "Normali"
+                ],
+                correctAnswer: "Complementari",
+                explanation: "Se aumenta il prezzo di B (benzina), diminuisce la domanda di A (auto). Segno negativo (relazione inversa)."
+            },
+            {
+                question: "Se il reddito aumenta e la domanda di un bene diminuisce, quel bene è:",
+                options: [
+                    "Un bene inferiore",
+                    "Un bene normale",
+                    "Un bene di lusso",
+                    "Un bene primario"
+                ],
+                correctAnswer: "Un bene inferiore",
+                explanation: "È la definizione tecnica di bene inferiore (elasticità rispetto al reddito negativa)."
+            },
+            {
+                question: "Se il reddito aumenta e la domanda di un bene aumenta, quel bene è:",
+                options: [
+                    "Un bene normale",
+                    "Un bene inferiore",
+                    "Un bene di Giffen",
+                    "Un bene pubblico"
+                ],
+                correctAnswer: "Un bene normale",
+                explanation: "La maggior parte dei beni sono normali: più soldi hai, più ne compri."
+            },
+
+            // -------------------------------------------------------------------------
+            // SEZIONE 11: VARI SCENARI E DOMANDE DI RAGIONAMENTO
+            // -------------------------------------------------------------------------
+            {
+                question: "Perché la curva di domanda dei beni inferiori può avere un andamento anomalo rispetto al reddito?",
+                options: [
+                    "Perché all'aumentare della ricchezza il consumatore preferisce beni di qualità superiore",
+                    "Perché costano troppo",
+                    "Perché non sono tassati",
+                    "Perché sono beni importati"
+                ],
+                correctAnswer: "Perché all'aumentare della ricchezza il consumatore preferisce beni di qualità superiore",
+                explanation: "L'effetto reddito negativo prevale: non ne compro di più, ne compro di meno per migliorare il mio standard di vita."
+            },
+            {
+                question: "Esempio pratico: Se il prezzo delle mele passa da 1€ a 3€, e la domanda scende da 100kg a 20kg. Calcola elasticità approssimativa.",
+                options: [
+                    "Domanda elastica",
+                    "Domanda rigida",
+                    "Elasticità nulla",
+                    "Domanda crescente"
+                ],
+                correctAnswer: "Domanda elastica",
+                explanation: "Il prezzo triplica (+200%), la domanda crolla dell'80%. La reazione è forte, suggerendo elasticità."
+            },
+            {
+                question: "Quale fattore può rendere la domanda di un bene più rigida?",
+                options: [
+                    "La mancanza di beni sostituti",
+                    "La presenza di molti sostituti",
+                    "Essere un bene di lusso",
+                    "Avere un prezzo molto alto rispetto al reddito"
+                ],
+                correctAnswer: "La mancanza di beni sostituti",
+                explanation: "Se non ci sono alternative (es. benzina in assenza di auto elettriche o mezzi pubblici), devo comprare per forza quel bene anche se il prezzo sale."
+            },
+            {
+                question: "Quale fattore rende l'offerta più elastica?",
+                options: [
+                    "La facilità di immagazzinamento e la capacità produttiva inutilizzata",
+                    "La piena occupazione delle risorse",
+                    "La deperibilità immediata del prodotto",
+                    "Costi fissi elevatissimi"
+                ],
+                correctAnswer: "La facilità di immagazzinamento e la capacità produttiva inutilizzata",
+                explanation: "Se ho merce in magazzino o macchine ferme, posso rispondere subito a un aumento di prezzo aumentando l'offerta."
+            },
+            {
+                question: "Nell'equilibrio di mercato grafico, l'eccesso di domanda si trova:",
+                options: [
+                    "Sotto il punto di equilibrio",
+                    "Sopra il punto di equilibrio",
+                    "A destra dell'equilibrio",
+                    "Sulla curva di offerta"
+                ],
+                correctAnswer: "Sotto il punto di equilibrio",
+                explanation: "Sotto il prezzo di equilibrio, il prezzo è troppo basso, quindi la quantità domandata (sulla curva di domanda) eccede quella offerta."
+            },
+            {
+                question: "Nell'equilibrio di mercato grafico, l'eccesso di offerta si trova:",
+                options: [
+                    "Sopra il punto di equilibrio",
+                    "Sotto il punto di equilibrio",
+                    "A sinistra dell'equilibrio",
+                    "Sull'asse delle ascisse"
+                ],
+                correctAnswer: "Sopra il punto di equilibrio",
+                explanation: "Sopra il prezzo di equilibrio, il prezzo è troppo alto, quindi i produttori offrono più di quanto i consumatori chiedano."
+            },
+
+            // -------------------------------------------------------------------------
+            // SEZIONE 12: DETTAGLI GRAFICI E TEORICI (MIX FINALE)
+            // -------------------------------------------------------------------------
+            {
+                question: "Cosa indica lo spostamento dell'intera curva di domanda verso destra?",
+                options: [
+                    "Un aumento della domanda a parità di prezzo (es. per aumento reddito o moda)",
+                    "Una diminuzione della domanda",
+                    "Un movimento lungo la curva dovuto al calo del prezzo",
+                    "Un aumento dell'offerta"
+                ],
+                correctAnswer: "Un aumento della domanda a parità di prezzo (es. per aumento reddito o moda)",
+                explanation: "Significa che per ogni livello di prezzo, i consumatori ora vogliono comprare una quantità maggiore."
+            },
+            {
+                question: "Cosa indica lo spostamento dell'intera curva di offerta verso sinistra?",
+                options: [
+                    "Una diminuzione dell'offerta (es. aumento costi produzione)",
+                    "Un aumento dell'offerta",
+                    "Un calo del prezzo di equilibrio",
+                    "Un miglioramento tecnologico"
+                ],
+                correctAnswer: "Una diminuzione dell'offerta (es. aumento costi produzione)",
+                explanation: "A parità di prezzo, le imprese offrono meno (o richiedono un prezzo più alto per offrire la stessa quantità)."
+            },
+            {
+                question: "Il punto in cui la curva di domanda interseca l'asse delle ordinate (Prezzo) rappresenta:",
+                options: [
+                    "Il prezzo massimo che i consumatori sono disposti a pagare (prezzo di riserva)",
+                    "La quantità massima acquistabile",
+                    "Il costo di produzione nullo",
+                    "L'equilibrio"
+                ],
+                correctAnswer: "Il prezzo massimo che i consumatori sono disposti a pagare (prezzo di riserva)",
+                explanation: "Sopra quel prezzo, la domanda è zero."
+            },
+            {
+                question: "Il punto in cui la curva di offerta parte dall'asse delle ordinate (o vicino all'origine) indica:",
+                options: [
+                    "Il prezzo minimo al di sotto del quale non c'è offerta",
+                    "La capacità produttiva massima",
+                    "Il profitto massimo",
+                    "La domanda satura"
+                ],
+                correctAnswer: "Il prezzo minimo al di sotto del quale non c'è offerta",
+                explanation: "Le imprese non producono se il prezzo non copre almeno certi costi variabili."
+            },
+            {
+                question: "Se Edp = 1, una variazione del prezzo del 10% provoca:",
+                options: [
+                    "Una variazione della quantità del 10%",
+                    "Una variazione della quantità dell'1%",
+                    "Una variazione della quantità del 100%",
+                    "Nessuna variazione"
+                ],
+                correctAnswer: "Una variazione della quantità del 10%",
+                explanation: "Percentuali identiche caratterizzano l'elasticità unitaria."
+            },
+            {
+                question: "Un esempio di domanda perfettamente rigida (linea verticale) potrebbe essere, in teoria:",
+                options: [
+                    "L'insulina per un diabetico (senza sostituti)",
+                    "Un biglietto del cinema",
+                    "Un pacchetto di gomme",
+                    "Un'auto di lusso"
+                ],
+                correctAnswer: "L'insulina per un diabetico (senza sostituti)",
+                explanation: "Il consumatore deve acquistarla a qualsiasi prezzo per sopravvivere (quantità fissa necessaria)."
+            },
+            {
+                question: "Quando si dice che la domanda è 'funzione inversa' del prezzo, matematicamente significa che:",
+                options: [
+                    "La derivata (o pendenza) è negativa",
+                    "La derivata è positiva",
+                    "La funzione è esponenziale",
+                    "La funzione è logaritmica crescente"
+                ],
+                correctAnswer: "La derivata (o pendenza) è negativa",
+                explanation: "All'aumentare di X (quantità) il valore di Y (prezzo di domanda) scende, o viceversa."
+            },
+            {
+                question: "Se il reddito dei consumatori raddoppia, cosa accade alla curva di domanda di auto nuove (bene normale)?",
+                options: [
+                    "Si sposta verso destra (in alto)",
+                    "Si sposta verso sinistra (in basso)",
+                    "Resta ferma",
+                    "Diventa verticale"
+                ],
+                correctAnswer: "Si sposta verso destra (in alto)",
+                explanation: "Più ricchezza = maggiore disponibilità a comprare auto a ogni dato prezzo."
+            }
+        ];
 
         /* ================================================================= */
         /* LOGICA APPLICAZIONE (CORE) */
@@ -2446,10 +2603,21 @@
                         throwOnError: false,
                         trust: true
                     });
+                    
+                    // Check for scrollable formulas and add hint
+                    this.checkScrollableFormulas();
                 } else {
                     // Wait for KaTeX to load
                     setTimeout(() => this.renderMath(), 100);
                 }
+            }
+            
+            checkScrollableFormulas() {
+                document.querySelectorAll('.formula-main').forEach(el => {
+                    if (el.scrollWidth > el.clientWidth) {
+                        el.closest('.formula-box')?.classList.add('scrollable');
+                    }
+                });
             }
             
             setupDesktopTimelineSVG() {
