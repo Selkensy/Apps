@@ -1,0 +1,2930 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0b0b10" />
+    <title>LITERATURA TOTALIS | 1080p Edition</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS (required) -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <style>
+        :root{
+            --bg:#07070b;
+            --panel:rgba(16,16,22,.92);
+            --panel2:rgba(24,24,34,.80);
+            --border:rgba(255,255,255,.10);
+            --text:#ECECF2;
+            --muted:#A0A0B2;
+            --accent:#FFD700;
+            --accent2:#8be9fd;
+            --good:#19f59a;
+            --bad:#ff3355;
+            --shadow: 0 18px 80px rgba(0,0,0,.65);
+            --radius: 16px;
+            --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            --serif: 'Crimson Pro', ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+
+            --qScale: 1;
+            --uiScale: 1;
+        }
+
+        html, body { height: 100%; }
+
+        body{
+            font-family: var(--serif);
+            background: radial-gradient(1200px 700px at 20% 10%, rgba(255,215,0,.12), transparent 60%),
+            radial-gradient(1000px 600px at 80% 0%, rgba(139,233,253,.10), transparent 55%),
+            radial-gradient(900px 600px at 50% 110%, rgba(25,245,154,.06), transparent 60%),
+            linear-gradient(180deg, #05050a, #000 80%);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* Better tap behavior */
+        * { -webkit-tap-highlight-color: transparent; }
+
+        /* Smooth but respectful */
+        .anim { transition: all .18s cubic-bezier(.2,.9,.2,1); }
+
+        @media (prefers-reduced-motion: reduce) {
+            .anim { transition: none !important; }
+            .reduce-motion { scroll-behavior: auto !important; }
+        }
+
+        /* Safe area padding helpers */
+        .safe-b { padding-bottom: calc(env(safe-area-inset-bottom) + 1rem); }
+        .safe-t { padding-top: calc(env(safe-area-inset-top) + 0.5rem); }
+
+        /* Subtle noise */
+        .noise::before{
+            content:"";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" stitchTiles="stitch"/></filter><rect width="200" height="200" filter="url(%23n)" opacity=".08"/></svg>');
+            mix-blend-mode: overlay;
+            opacity: .32;
+        }
+
+        /* Scrollbars */
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.10); border-radius: 999px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+
+        /* Option buttons */
+        .opt {
+            background: linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.03));
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            box-shadow: 0 10px 30px rgba(0,0,0,.25);
+        }
+        .opt:hover { border-color: rgba(255,215,0,.45); transform: translateY(-1px); }
+        .opt:active { transform: translateY(0px) scale(.99); }
+        .opt[aria-disabled="true"]{ opacity: .72; cursor: default; }
+
+        .opt.good{ border-color: rgba(25,245,154,.85); background: linear-gradient(180deg, rgba(25,245,154,.16), rgba(25,245,154,.10)); }
+        .opt.bad{ border-color: rgba(255,51,85,.85); background: linear-gradient(180deg, rgba(255,51,85,.14), rgba(255,51,85,.08)); }
+
+        /* Bottom sheet */
+        .sheet {
+            transform: translateY(110%);
+            opacity: 0;
+            pointer-events: none;
+        }
+        .sheet.show{
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Focus rings */
+        :focus-visible { outline: 2px solid rgba(255,215,0,.8); outline-offset: 3px; border-radius: 12px; }
+
+        /* Small pill */
+        .pill{ border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.03); }
+
+        /* Text scaling (bigger + clearer for study) */
+        .qText{ font-size: calc(1.35rem * var(--qScale)); line-height: 1.32; letter-spacing: 0.01em; }
+        @media (min-width: 768px){ .qText{ font-size: calc(2.15rem * var(--qScale)); } }
+
+        .uiText{ font-size: calc(.95rem * var(--uiScale)); }
+        .mono{ font-family: var(--mono); }
+
+        /* Animated gradient border (header) */
+        .glow{
+            box-shadow: 0 0 0 1px rgba(255,255,255,.06), 0 30px 100px rgba(0,0,0,.7);
+            border: 1px solid rgba(255,255,255,.10);
+            background: linear-gradient(180deg, rgba(20,20,30,.92), rgba(14,14,20,.88));
+        }
+
+        .kbd{ font-family: var(--mono); font-weight: 700; font-size: .75rem; padding: .18rem .45rem; border-radius: .45rem; border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.06); }
+
+        /* Toast */
+        .toast{ transform: translateY(-8px); opacity: 0; pointer-events: none; }
+        .toast.show{ transform: translateY(0); opacity: 1; pointer-events: auto; }
+
+        /* Pulse */
+        @keyframes pulseGlow { 0%, 100% { box-shadow: 0 0 0 rgba(255,215,0,0); } 50% { box-shadow: 0 0 24px rgba(255,215,0,.22); } }
+        .pulse{ animation: pulseGlow 1.4s ease-in-out infinite; }
+    </style>
+</head>
+
+<body class="noise reduce-motion">
+<div class="min-h-dvh w-full flex items-center justify-center p-2 sm:p-6 safe-t safe-b">
+    <div class="w-full max-w-6xl glow rounded-[var(--radius)] overflow-hidden">
+
+        <!-- Header -->
+        <header class="flex items-center justify-between gap-3 px-4 sm:px-6 py-3 border-b border-white/10 bg-black/20 backdrop-blur">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="mono font-bold tracking-tight text-[0.95rem] sm:text-[1.05rem] whitespace-nowrap">
+                    LITERATURA <span class="text-[color:var(--accent)]">TOTALIS</span>
+                    <span class="ml-2 hidden sm:inline-block text-[0.7rem] text-white/35 border border-white/15 px-2 py-0.5 rounded-md">2.1 MOBILE+</span>
+                </div>
+                <div id="badge-mode" class="hidden md:flex items-center gap-2 pill rounded-full px-3 py-1 mono text-xs text-white/70">
+                    <span id="badge-mode-text">STUDY</span>
+                    <span class="text-white/25">•</span>
+                    <span id="badge-topic" class="truncate max-w-[36ch]">—</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <div id="streak-box" class="pill rounded-full px-3 py-1 mono font-bold text-[color:var(--accent)] text-xs sm:text-sm">
+                    COMBO <span id="streak-val">0</span>x
+                </div>
+
+                <button id="btn-sound" class="pill anim rounded-full px-3 py-1 mono text-xs sm:text-sm text-white/75 hover:text-white" aria-label="Audio">
+                    AUDIO: <span id="sound-state">ON</span>
+                </button>
+
+                <button id="btn-settings" class="pill anim rounded-full px-3 py-1 mono text-xs sm:text-sm text-white/75 hover:text-white" aria-label="Impostazioni">
+                    ⚙︎
+                </button>
+            </div>
+        </header>
+
+        <!-- Screens container -->
+        <main class="relative">
+
+            <!-- MENU -->
+            <section id="screen-menu" class="block">
+                <div class="px-4 sm:px-6 py-5 sm:py-8">
+                    <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
+                        <div>
+                            <h1 class="text-3xl sm:text-5xl font-light tracking-tight">Centro di Comando</h1>
+                            <p class="mono text-white/55 mt-2 tracking-[0.22em] uppercase text-xs sm:text-sm">Analisi granulare del database letterario</p>
+                        </div>
+
+                        <div class="w-full lg:max-w-md">
+                            <label class="mono text-white/50 text-xs" for="search">Cerca argomento</label>
+                            <div class="mt-2 flex items-center gap-2">
+                                <input id="search" class="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-white placeholder:text-white/25 focus:border-[color:var(--accent)] anim" placeholder="Verga, Futurismo, Guerra..." />
+                                <button id="btn-clear" class="pill anim rounded-xl px-3 py-3 mono text-xs text-white/70 hover:text-white">RESET</button>
+                            </div>
+                            <p class="mono text-white/35 mt-2 text-xs">Suggerimento: tocchi lunghi sulle cards mostrano le tue statistiche (se disponibili).</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3" id="topic-grid"></div>
+
+                    <div class="mt-6 flex flex-col sm:flex-row gap-3">
+                        <button id="btn-full" class="anim w-full sm:w-auto px-5 py-4 rounded-2xl bg-[color:var(--accent)] text-black mono font-bold tracking-wide hover:brightness-110">
+                            AVVIA REVISIONE TOTALE
+                            <span class="ml-2 text-black/60 text-xs">(FULL DB • autore/opera sempre visibili)</span>
+                        </button>
+                        <button id="btn-quick" class="anim w-full sm:w-auto px-5 py-4 rounded-2xl bg-white/5 border border-white/10 mono font-bold tracking-wide hover:border-[color:var(--accent)]">
+                            QUICK SESSION
+                            <span class="ml-2 text-white/45 text-xs">(limite impostazioni)</span>
+                        </button>
+                        <button id="btn-resume" class="hidden anim w-full sm:w-auto px-5 py-4 rounded-2xl bg-white/5 border border-white/10 mono font-bold tracking-wide hover:border-[color:var(--accent2)]">
+                            RIPRENDI SESSIONE
+                            <span id="resume-meta" class="ml-2 text-white/45 text-xs"></span>
+                        </button>
+                    </div>
+
+                    <div class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-3">
+                        <div class="pill rounded-2xl p-4">
+                            <div class="mono text-xs text-white/45">STATISTICHE GLOBALI</div>
+                            <div class="mt-2 flex items-baseline gap-4">
+                                <div>
+                                    <div class="text-3xl font-semibold text-[color:var(--accent)]" id="stat-best">—</div>
+                                    <div class="mono text-xs text-white/45">Best Accuracy</div>
+                                </div>
+                                <div>
+                                    <div class="text-3xl font-semibold" id="stat-sessions">—</div>
+                                    <div class="mono text-xs text-white/45">Sessions</div>
+                                </div>
+                                <div>
+                                    <div class="text-3xl font-semibold" id="stat-answered">—</div>
+                                    <div class="mono text-xs text-white/45">Answered</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pill rounded-2xl p-4 lg:col-span-2">
+                            <div class="mono text-xs text-white/45">CONTROLLO</div>
+                            <div class="mt-2 text-white/75 leading-relaxed">
+                                Sessioni più rapide e leggibili su mobile, opzioni touch-friendly, overlay spiegazione come bottom-sheet, impostazioni persistenti, resume sessione, e scorciatoie tastiera.
+                                <div class="mt-3 flex flex-wrap gap-2">
+                                    <span class="kbd">1–4</span><span class="mono text-white/45 text-xs">rispondi</span>
+                                    <span class="kbd">SPAZIO</span><span class="mono text-white/45 text-xs">continua</span>
+                                    <span class="kbd">ESC</span><span class="mono text-white/45 text-xs">menu</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- QUIZ -->
+            <section id="screen-quiz" class="hidden">
+                <div class="px-4 sm:px-6 py-4 sm:py-6">
+
+                    <div class="flex items-center gap-3">
+                        <button id="btn-exit" class="anim pill rounded-xl px-3 py-2 mono text-sm text-white/70 hover:text-white">← ESCI</button>
+
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between gap-3">
+                                <div class="mono text-xs text-white/50" id="q-meta">CARICAMENTO…</div>
+                                <div class="mono text-xs text-white/35" id="q-count">1/1</div>
+                            </div>
+                            <div class="mt-2 h-2 rounded-full bg-white/10 overflow-hidden">
+                                <div id="progress" class="h-full w-0 bg-[color:var(--accent)] anim"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-5 sm:mt-8 flex items-center justify-center">
+                        <div class="w-full max-w-3xl">
+                            <div id="q-context" class="mb-3 flex flex-wrap items-center justify-center gap-2 px-1"></div>
+                            <h2 id="q-text" class="qText text-center font-normal">…</h2>
+                            <p id="q-sub" class="hidden mt-4 text-center mono text-xs text-white/35">Rispondi con tap o 1–4. Spazio per continuare.</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 sm:mt-10 grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4" id="options"></div>
+
+                    <div class="mt-6 flex flex-col sm:flex-row gap-3">
+                        <button id="btn-skip" class="anim w-full sm:w-auto px-4 py-3 rounded-xl bg-white/5 border border-white/10 mono text-sm text-white/75 hover:border-white/20">
+                            SALTA
+                        </button>
+                        <div class="flex-1"></div>
+                        <button id="btn-end" class="anim w-full sm:w-auto px-4 py-3 rounded-xl bg-white/5 border border-white/10 mono text-sm text-white/75 hover:border-[color:var(--bad)] hover:text-white">
+                            TERMINA
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Feedback bottom sheet -->
+                <div class="fixed inset-0 z-40 pointer-events-none">
+                    <div id="sheet-backdrop" class="absolute inset-0 bg-black/60 backdrop-blur-sm opacity-0 anim"></div>
+                    <div class="absolute inset-x-0 bottom-0 p-2 sm:p-4 safe-b">
+                        <div id="sheet" class="sheet anim pointer-events-auto max-w-4xl mx-auto rounded-2xl border border-white/10 bg-[color:var(--panel)] shadow-[var(--shadow)] overflow-hidden">
+                            <div class="px-4 sm:px-6 py-4 border-b border-white/10 flex items-start justify-between gap-4">
+                                <div>
+                                    <div id="fb-title" class="mono font-bold text-xs tracking-[0.18em] uppercase">STATUS</div>
+                                    <div id="fb-line" class="mt-2 text-white/90">—</div>
+                                    <div id="fb-detail" class="mt-2 text-white/70 leading-relaxed">—</div>
+                                </div>
+                                <button id="btn-close-sheet" class="pill anim rounded-xl px-3 py-2 mono text-xs text-white/70 hover:text-white" aria-label="Chiudi">CHIUDI</button>
+                            </div>
+                            <div class="px-4 sm:px-6 py-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                                <div class="mono text-xs text-white/45">
+                                    Prossimo: <span class="text-white/75">SPAZIO</span> / Tap
+                                    <span class="hidden sm:inline">•</span>
+                                    <span class="block sm:inline">Auto-advance: <span id="auto-adv" class="text-white/75">OFF</span></span>
+                                </div>
+                                <div class="flex-1"></div>
+                                <button id="btn-next" class="anim px-5 py-4 rounded-2xl bg-white text-black mono font-bold hover:brightness-110">
+                                    CONTINUA
+                                    <span class="ml-2 text-black/55 hidden sm:inline">[SPAZIO]</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- RESULTS -->
+            <section id="screen-results" class="hidden">
+                <div class="px-4 sm:px-6 py-8 sm:py-12">
+                    <div class="text-center">
+                        <h1 class="text-3xl sm:text-5xl font-light">Sessione Terminata</h1>
+                        <p class="mono text-white/55 mt-2 tracking-[0.22em] uppercase text-xs sm:text-sm">Statistiche performance mnemonica</p>
+                    </div>
+
+                    <div class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div class="pill rounded-2xl p-6 text-center">
+                            <div class="text-5xl font-semibold text-[color:var(--accent)]" id="res-acc">0%</div>
+                            <div class="mono text-xs text-white/45 mt-2">Accuratezza</div>
+                        </div>
+                        <div class="pill rounded-2xl p-6 text-center">
+                            <div class="text-5xl font-semibold" id="res-correct">0</div>
+                            <div class="mono text-xs text-white/45 mt-2">Corrette</div>
+                        </div>
+                        <div class="pill rounded-2xl p-6 text-center">
+                            <div class="text-5xl font-semibold" id="res-errors">0</div>
+                            <div class="mono text-xs text-white/45 mt-2">Errori</div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-3">
+                        <div class="pill rounded-2xl p-5">
+                            <div class="mono text-xs text-white/45">RIEPILOGO</div>
+                            <div class="mt-3 grid grid-cols-2 gap-3">
+                                <div class="pill rounded-xl p-4">
+                                    <div class="mono text-xs text-white/45">Tempo</div>
+                                    <div class="mt-1 text-lg" id="res-time">—</div>
+                                </div>
+                                <div class="pill rounded-xl p-4">
+                                    <div class="mono text-xs text-white/45">Modalità</div>
+                                    <div class="mt-1 text-lg" id="res-mode">—</div>
+                                </div>
+                                <div class="pill rounded-xl p-4">
+                                    <div class="mono text-xs text-white/45">Best Global</div>
+                                    <div class="mt-1 text-lg" id="res-best">—</div>
+                                </div>
+                                <div class="pill rounded-xl p-4">
+                                    <div class="mono text-xs text-white/45">Combo Max</div>
+                                    <div class="mt-1 text-lg" id="res-maxstreak">—</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pill rounded-2xl p-5">
+                            <div class="mono text-xs text-white/45">AZIONI</div>
+                            <div class="mt-4 flex flex-col gap-3">
+                                <button id="btn-retry" class="anim px-5 py-4 rounded-2xl bg-[color:var(--accent)] text-black mono font-bold hover:brightness-110">
+                                    RIPETI ERRORI
+                                </button>
+                                <button id="btn-review-all" class="anim px-5 py-4 rounded-2xl bg-white/5 border border-white/10 mono font-bold hover:border-[color:var(--accent2)]">
+                                    REVISIONE TOTALE (NUOVA)
+                                </button>
+                                <button id="btn-back-menu" class="anim px-5 py-4 rounded-2xl bg-white/5 border border-white/10 mono font-bold hover:border-white/25">
+                                    TORNA AL MENU
+                                </button>
+                            </div>
+
+                            <div class="mt-5">
+                                <div class="mono text-xs text-white/45">ERRORI DELLA SESSIONE</div>
+                                <div id="errors-list" class="mt-3 max-h-64 overflow-auto rounded-xl border border-white/10 bg-white/3"></div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <!-- SETTINGS MODAL -->
+            <div id="settings" class="fixed inset-0 z-50 hidden">
+                <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" id="settings-backdrop"></div>
+                <div class="absolute inset-0 flex items-center justify-center p-3 safe-b safe-t">
+                    <div class="w-full max-w-xl rounded-2xl border border-white/10 bg-[color:var(--panel)] shadow-[var(--shadow)] overflow-hidden">
+                        <div class="px-5 py-4 border-b border-white/10 flex items-center justify-between">
+                            <div>
+                                <div class="mono text-xs text-white/45">PANNELLO</div>
+                                <div class="text-xl">Impostazioni</div>
+                            </div>
+                            <button id="btn-close-settings" class="pill anim rounded-xl px-3 py-2 mono text-xs text-white/70 hover:text-white">CHIUDI</button>
+                        </div>
+
+                        <div class="p-5 space-y-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <label class="pill rounded-xl p-4 flex items-center justify-between gap-3 cursor-pointer">
+                                    <div>
+                                        <div class="mono text-xs text-white/45">Audio</div>
+                                        <div class="text-white/80 uiText">Effetti sonori (corretto/errore)</div>
+                                    </div>
+                                    <input id="set-sound" type="checkbox" class="accent-[color:var(--accent)] w-5 h-5" />
+                                </label>
+
+                                <label class="pill rounded-xl p-4 flex items-center justify-between gap-3 cursor-pointer">
+                                    <div>
+                                        <div class="mono text-xs text-white/45">Shuffle Opzioni</div>
+                                        <div class="text-white/80 uiText">Mescola le risposte ogni domanda</div>
+                                    </div>
+                                    <input id="set-shuffle-options" type="checkbox" class="accent-[color:var(--accent)] w-5 h-5" />
+                                </label>
+
+                                <label class="pill rounded-xl p-4 flex items-center justify-between gap-3 cursor-pointer">
+                                    <div>
+                                        <div class="mono text-xs text-white/45">Shuffle Domande</div>
+                                        <div class="text-white/80 uiText">Mescola l’ordine delle domande</div>
+                                    </div>
+                                    <input id="set-shuffle-questions" type="checkbox" class="accent-[color:var(--accent)] w-5 h-5" />
+                                </label>
+
+                                <label class="pill rounded-xl p-4 flex items-center justify-between gap-3 cursor-pointer">
+                                    <div>
+                                        <div class="mono text-xs text-white/45">Auto-advance</div>
+                                        <div class="text-white/80 uiText">Avanza da solo dopo risposta corretta</div>
+                                    </div>
+                                    <input id="set-autoadv" type="checkbox" class="accent-[color:var(--accent)] w-5 h-5" />
+                                </label>
+                            </div>
+
+                            <div class="pill rounded-xl p-4">
+                                <div class="mono text-xs text-white/45">Limite domande (Quick Session / Full con limite)</div>
+                                <div class="mt-2 flex items-center gap-2">
+                                    <select id="set-limit" class="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-white focus:border-[color:var(--accent)] anim">
+                                        <option value="0">Nessun limite (tutto)</option>
+                                        <option value="10">10</option>
+                                        <option value="20">20</option>
+                                        <option value="30">30</option>
+                                        <option value="50">50</option>
+                                    </select>
+                                    <button id="btn-reset-stats" class="pill anim rounded-xl px-3 py-3 mono text-xs text-white/70 hover:text-white">RESET STATS</button>
+                                </div>
+                                <div class="mono text-xs text-white/35 mt-2">Nota: il limite si applica dopo lo shuffle delle domande.</div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div class="pill rounded-xl p-4">
+                                    <div class="mono text-xs text-white/45">Dimensione Domanda</div>
+                                    <input id="set-qscale" type="range" min="0.85" max="1.25" step="0.05" class="w-full mt-3" />
+                                    <div class="mono text-xs text-white/35 mt-2">Riduci/ingrandisci il testo della domanda (utile su mobile).</div>
+                                </div>
+                                <div class="pill rounded-xl p-4">
+                                    <div class="mono text-xs text-white/45">Dimensione UI</div>
+                                    <input id="set-uiscale" type="range" min="0.9" max="1.15" step="0.05" class="w-full mt-3" />
+                                    <div class="mono text-xs text-white/35 mt-2">Regola la densità dell’interfaccia.</div>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                <button id="btn-save-settings" class="anim w-full px-5 py-4 rounded-2xl bg-[color:var(--accent)] text-black mono font-bold hover:brightness-110">SALVA</button>
+                                <button id="btn-cancel-settings" class="anim w-full px-5 py-4 rounded-2xl bg-white/5 border border-white/10 mono font-bold hover:border-white/25">ANNULLA</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Toast -->
+            <div class="fixed top-3 left-0 right-0 z-[60] flex justify-center pointer-events-none">
+                <div id="toast" class="toast anim pointer-events-auto max-w-xl w-[calc(100%-1.5rem)] sm:w-auto rounded-2xl border border-white/10 bg-[color:var(--panel)] shadow-[var(--shadow)] px-4 py-3">
+                    <div class="mono text-xs text-white/45" id="toast-title">INFO</div>
+                    <div class="text-white/85" id="toast-msg">—</div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<script>
+    /**
+     * LITERATURA TOTALIS | Mobile+ Edition
+     * - Tailwind UI + custom CSS
+     * - Better mobile layout, bottom-sheet feedback
+     * - Settings + stats + resume session in localStorage
+     * - Correct option shuffling with mapping
+     */
+
+        // ==========================================
+        // DATABASE (originale)
+        // ==========================================
+
+    const database = [
+            // --- 1. NATURALISMO E VERISMO ---
+            {
+                id: "NV-001",
+                topic: "1. Naturalismo e Verismo",
+                q: "In quale periodo storico dominano il Naturalismo e il Verismo?",
+                options: ["Seconda metà dell'Ottocento", "Prima metà dell'Ottocento", "Inizio del Novecento", "Fine del Settecento"],
+                correct: 0,
+                detail: "Dominano la seconda metà dell'Ottocento."
+            },
+            {
+                id: "NV-002",
+                topic: "1. Naturalismo e Verismo",
+                q: "Qual è la base filosofica condivisa da Naturalismo e Verismo?",
+                options: ["Positivismo", "Illuminismo", "Romanticismo", "Idealismo"],
+                correct: 0,
+                detail: "Condividono la base filosofica del Positivismo."
+            },
+            {
+                id: "NV-003",
+                topic: "1. Naturalismo e Verismo",
+                q: "Quali sono i tre pilastri della fiducia Positivista?",
+                options: ["Scienza, progresso, osservazione oggettiva", "Dio, patria, famiglia", "Sentimento, natura, io", "Mito, storia, rivoluzione"],
+                correct: 0,
+                detail: "Fiducia nella scienza, nel progresso e nell'osservazione oggettiva."
+            },
+            {
+                id: "NF-001",
+                topic: "1. Naturalismo Francese",
+                q: "In quali decenni si sviluppa il Naturalismo francese?",
+                options: ["Anni '60-'70 dell'800", "Anni '40-'50 dell'800", "Anni '80-'90 dell'800", "Primi del '900"],
+                correct: 0,
+                detail: "Si sviluppa negli anni '60-'70 dell'Ottocento."
+            },
+            {
+                id: "NF-002",
+                topic: "1. Naturalismo Francese",
+                q: "Chi è considerato l'ideologo del Naturalismo?",
+                options: ["Émile Zola", "Gustave Flaubert", "Victor Hugo", "Guy de Maupassant"],
+                correct: 0,
+                detail: "Émile Zola è l'ideologo principale."
+            },
+            {
+                id: "NF-003",
+                topic: "1. Naturalismo Francese",
+                q: "Come si intitola l'opera teorica fondamentale di Zola?",
+                options: ["Il romanzo sperimentale", "I Rougon-Macquart", "L'Assommoir", "Germinal"],
+                correct: 0,
+                detail: "L'opera teorica è 'Il romanzo sperimentale'."
+            },
+            {
+                id: "NF-004",
+                topic: "1. Naturalismo Francese",
+                q: "In che anno fu pubblicato 'Il romanzo sperimentale'?",
+                options: ["1880", "1870", "1890", "1865"],
+                correct: 0,
+                detail: "Fu pubblicato nel 1880."
+            },
+            {
+                id: "NF-005",
+                topic: "1. Naturalismo Francese",
+                q: "Qual è il contesto sociale tipico del Naturalismo?",
+                options: ["Società industriale avanzata e proletariato urbano", "Campagna feudale", "Corti aristocratiche", "Mondo piccolo-borghese di provincia"],
+                correct: 0,
+                detail: "Si concentra sulla società industriale, proletariato urbano e Parigi."
+            },
+            {
+                id: "NF-006",
+                topic: "1. Naturalismo Francese",
+                q: "Come viene vista la letteratura nel Naturalismo?",
+                options: ["Come una scienza", "Come puro intrattenimento", "Come espressione dell'Io", "Come strumento religioso"],
+                correct: 0,
+                detail: "La letteratura è vista come una scienza."
+            },
+            {
+                id: "NF-007",
+                topic: "1. Naturalismo Francese",
+                q: "A quale figura professionale viene paragonato lo scrittore naturalista?",
+                options: ["A un medico", "A un sacerdote", "A un giudice", "A un politico"],
+                correct: 0,
+                detail: "Lo scrittore agisce come un medico che analizza i mali."
+            },
+            {
+                id: "NF-008",
+                topic: "1. Naturalismo Francese",
+                q: "Quali sono i 'mali' tipici analizzati da Zola?",
+                options: ["Alcolismo, prostituzione, degrado ereditario", "Guerra e pace", "Amori non corrisposti", "Intrighi politici"],
+                correct: 0,
+                detail: "Analizza alcolismo, prostituzione e degrado ereditario."
+            },
+            {
+                id: "NF-009",
+                topic: "1. Naturalismo Francese",
+                q: "Qual è lo scopo della denuncia nel Naturalismo?",
+                options: ["Conoscere i problemi per risolverli (Ottimismo)", "Accettare passivamente il destino", "Deridere le classi inferiori", "Creare scandalo per vendere"],
+                correct: 0,
+                detail: "C'è ottimismo: conoscere i problemi aiuta a risolverli."
+            },
+            {
+                id: "NF-010",
+                topic: "1. Naturalismo Francese",
+                q: "Come si comporta l'autore naturalista rispetto ai fatti?",
+                options: ["Osserva dall'esterno in modo distaccato e clinico", "Partecipa emotivamente", "Giudica moralmente i personaggi", "Si identifica con il protagonista"],
+                correct: 0,
+                detail: "L'autore è uno scienziato che osserva dall'esterno (oggettività)."
+            },
+            {
+                id: "NF-011",
+                topic: "1. Naturalismo Francese",
+                q: "Qual è la scelta linguistica tipica del Naturalismo?",
+                options: ["Francese colto per la narrazione, argot nei dialoghi", "Solo dialetto stretto", "Solo francese aulico", "Linguaggio simbolico e oscuro"],
+                correct: 0,
+                detail: "Francese colto per la narrazione e gergo (argot) solo nei dialoghi."
+            },
+            {
+                id: "VI-001",
+                topic: "1. Verismo Italiano",
+                q: "In quali decenni si sviluppa il Verismo italiano?",
+                options: ["Anni '70-'80 dell'800", "Anni '60-'70 dell'800", "Inizio '900", "Anni '20-'30 dell'800"],
+                correct: 0,
+                detail: "Si sviluppa negli anni '70-'80 dell'Ottocento."
+            },
+            {
+                id: "VI-002",
+                topic: "1. Verismo Italiano",
+                q: "Chi è il TEORICO del Verismo?",
+                options: ["Luigi Capuana", "Giovanni Verga", "Federico De Roberto", "Grazia Deledda"],
+                correct: 0,
+                detail: "Il teorico è Luigi Capuana."
+            },
+            {
+                id: "VI-003",
+                topic: "1. Verismo Italiano",
+                q: "Chi è il MASSIMO ESPONENTE del Verismo?",
+                options: ["Giovanni Verga", "Luigi Capuana", "Gabriele D'Annunzio", "Alessandro Manzoni"],
+                correct: 0,
+                detail: "Il massimo esponente è Giovanni Verga."
+            },
+            {
+                id: "VI-004",
+                topic: "1. Verismo Italiano",
+                q: "Qual è il contesto geografico e sociale del Verismo?",
+                options: ["Italia post-unitaria, Questione Meridionale, mondo contadino", "Milano industriale", "Roma barocca", "Venezia mercantile"],
+                correct: 0,
+                detail: "Contesto: Arretratezza economica, 'Questione Meridionale', mondo contadino (Sicilia)."
+            },
+            {
+                id: "VI-005",
+                topic: "1. Verismo Italiano",
+                q: "Qual è l'atteggiamento del Verismo verso il progresso?",
+                options: ["Pessimismo: manca la fiducia nel progresso", "Ottimismo sfrenato", "Indifferenza", "Entusiasmo futurista"],
+                correct: 0,
+                detail: "Pessimismo: manca la fiducia nel progresso tipica di Zola."
+            },
+            {
+                id: "VI-006",
+                topic: "1. Verismo Italiano",
+                q: "Secondo Verga, cosa domina la società?",
+                options: ["La lotta per la vita che schiaccia i deboli", "La provvidenza divina", "La bontà naturale dell'uomo", "La razionalità scientifica"],
+                correct: 0,
+                detail: "La società è dominata dalla 'lotta per la vita'."
+            },
+            {
+                id: "VI-007",
+                topic: "1. Verismo Italiano",
+                q: "Qual è la funzione della letteratura per Verga?",
+                options: ["Rappresentare la realtà (fotografia statica), non cambiarla", "Modificare la società", "Educare le masse", "Divertire la borghesia"],
+                correct: 0,
+                detail: "La letteratura NON può cambiare la realtà, può solo rappresentarla."
+            },
+            {
+                id: "VI-008",
+                topic: "1. Verismo Italiano",
+                q: "Completa la frase di Verga: 'Chi osserva questo spettacolo...'",
+                options: ["...non ha il diritto di giudicarlo.", "...deve intervenire per migliorarlo.", "...deve piangere per le vittime.", "...deve denunciare i colpevoli."],
+                correct: 0,
+                detail: "Chi osserva questo spettacolo non ha il diritto di giudicarlo."
+            },
+            {
+                id: "VI-009",
+                topic: "1. Verismo Italiano",
+                q: "Cos'è la 'Tecnica dell'Impersonalità' o 'Eclissi dell'Autore'?",
+                options: ["L'autore deve sparire, l'opera deve 'farsi da sé'", "L'autore interviene spesso per spiegare", "L'autore racconta la sua vita", "L'autore giudica i personaggi"],
+                correct: 0,
+                detail: "L'autore deve sparire. Non ci sono giudizi dall'alto."
+            },
+            {
+                id: "VI-010",
+                topic: "1. Verismo Italiano",
+                q: "In cosa consiste la tecnica della 'Regressione'?",
+                options: ["Il narratore regredisce al livello culturale dei personaggi", "Si raccontano fatti del passato remoto", "Si usa un linguaggio infantile", "Si scrivono storie per bambini"],
+                correct: 0,
+                detail: "Si racconta 'dal basso', usando i pregiudizi e la cultura della comunità rappresentata."
+            },
+            {
+                id: "VI-011",
+                topic: "1. Verismo Italiano",
+                q: "Quale lingua usa il Verismo?",
+                options: ["Italiano impastato di sintassi dialettale", "Puro dialetto siciliano", "Italiano accademico puro", "Francese letterario"],
+                correct: 0,
+                detail: "Non puro dialetto, ma una lingua letteraria che imita la sintassi dialettale."
+            },
+
+            // --- 2. GIOVANNI VERGA: NOVELLE ---
+            {
+                id: "GV-001",
+                topic: "2. Giovanni Verga",
+                q: "Da quale raccolta sono tratte 'Cavalleria rusticana' e 'La Lupa'?",
+                options: ["Vita dei campi (1880)", "Novelle rusticane", "I Malavoglia", "Per le vie"],
+                correct: 0,
+                detail: "Sono tratte da Vita dei campi (1880)."
+            },
+            {
+                id: "GV-002",
+                topic: "2. Verga: Cavalleria rusticana",
+                q: "Chi è il protagonista maschile di Cavalleria rusticana?",
+                options: ["Turiddu Macca", "Compare Alfio", "Mastro Don Gesualdo", "Nanni"],
+                correct: 0,
+                detail: "Turiddu Macca."
+            },
+            {
+                id: "GV-003",
+                topic: "2. Verga: Cavalleria rusticana",
+                q: "Da dove è tornato Turiddu all'inizio della storia?",
+                options: ["Dal servizio militare", "Dall'America", "Dal carcere", "Dall'ospedale"],
+                correct: 0,
+                detail: "Tornato dal servizio militare."
+            },
+            {
+                id: "GV-004",
+                topic: "2. Verga: Cavalleria rusticana",
+                q: "Qual è la situazione sentimentale di Lola al ritorno di Turiddu?",
+                options: ["È sposata con Alfio", "Lo sta aspettando fedelmente", "È entrata in convento", "È morta"],
+                correct: 0,
+                detail: "Lola è sposata con il ricco carrettiere Alfio."
+            },
+            {
+                id: "GV-005",
+                topic: "2. Verga: Cavalleria rusticana",
+                q: "Chi corteggia Turiddu per ripicca?",
+                options: ["Santa", "Lola", "La Lupa", "Maricchia"],
+                correct: 0,
+                detail: "Corteggia Santa, figlia di un possidente."
+            },
+            {
+                id: "GV-006",
+                topic: "2. Verga: Cavalleria rusticana",
+                q: "Di chi diventa amante Turiddu mentre corteggia Santa?",
+                options: ["Di Lola", "Di Santa", "Di nessuno", "Della moglie del sindaco"],
+                correct: 0,
+                detail: "Diventa l'amante di Lola (ritorno di fiamma)."
+            },
+            {
+                id: "GV-007",
+                topic: "2. Verga: Cavalleria rusticana",
+                q: "Chi rivela il tradimento ad Alfio?",
+                options: ["Santa, per gelosia", "Un vicino pettegolo", "La madre di Turiddu", "Lola stessa"],
+                correct: 0,
+                detail: "Santa, gelosa, rivela tutto ad Alfio."
+            },
+            {
+                id: "GV-008",
+                topic: "2. Verga: Cavalleria rusticana",
+                q: "Qual è il rituale di sfida tra Turiddu e Alfio?",
+                options: ["Il morsicamento dell'orecchio", "Lo schiaffo con il guanto", "Lo sputo a terra", "Il taglio della barba"],
+                correct: 0,
+                detail: "Il morsicamento dell'orecchio durante l'abbraccio."
+            },
+            {
+                id: "GV-009",
+                topic: "2. Verga: Cavalleria rusticana",
+                q: "Come finisce Cavalleria rusticana?",
+                options: ["Turiddu viene ucciso", "Alfio viene ucciso", "Fanno pace", "Lola scappa con Turiddu"],
+                correct: 0,
+                detail: "Turiddu viene ucciso nel duello."
+            },
+            {
+                id: "GV-010",
+                topic: "2. Verga: Cavalleria rusticana",
+                q: "Tema dell'Onore: come viene lavato?",
+                options: ["Col sangue", "Col denaro", "Con le scuse pubbliche", "Con l'esilio"],
+                correct: 0,
+                detail: "L'onore lavato col sangue è l'unico modo per ristabilire l'equilibrio."
+            },
+            {
+                id: "GV-011",
+                topic: "2. Verga: Cavalleria rusticana",
+                q: "Tema dell'Economia: perché Lola ha sposato Alfio?",
+                options: ["Perché è ricco", "Per amore", "Per costrizione dei genitori", "Perché Turiddu era morto"],
+                correct: 0,
+                detail: "Anche le passioni sono regolate dall'interesse economico (Alfio è ricco)."
+            },
+            {
+                id: "GV-012",
+                topic: "2. Verga: La Lupa",
+                q: "Come si chiama la protagonista detta 'La Lupa'?",
+                options: ["Gnà Pina", "Santa", "Maricchia", "Lola"],
+                correct: 0,
+                detail: "Si chiama Gnà Pina."
+            },
+            {
+                id: "GV-013",
+                topic: "2. Verga: La Lupa",
+                q: "Perché viene chiamata 'La Lupa'?",
+                options: ["Per la sua voracità sessuale", "Perché alleva lupi", "Perché vive nei boschi", "Perché ulula alla luna"],
+                correct: 0,
+                detail: "Per la sua voracità sessuale e aspetto inquietante."
+            },
+            {
+                id: "GV-014",
+                topic: "2. Verga: La Lupa",
+                q: "Di chi si innamora ossessivamente la Lupa?",
+                options: ["Di Nanni", "Di Turiddu", "Del prete", "Di Alfio"],
+                correct: 0,
+                detail: "Di Nanni, un giovane bracciante."
+            },
+            {
+                id: "GV-015",
+                topic: "2. Verga: La Lupa",
+                q: "Cosa fa la Lupa per avere Nanni vicino?",
+                options: ["Gli dà in sposa sua figlia Maricchia", "Lo assume come servo", "Lo paga", "Lo rapisce"],
+                correct: 0,
+                detail: "Gli dà in sposa la figlia Maricchia a patto di vivere con loro."
+            },
+            {
+                id: "GV-016",
+                topic: "2. Verga: La Lupa",
+                q: "Come reagisce Nanni alla seduzione della Lupa?",
+                options: ["Cede, ma la vede come una forza demoniaca", "Resiste eroicamente", "Scappa in America", "La denuncia"],
+                correct: 0,
+                detail: "È incapace di resisterle ma la vede come il diavolo."
+            },
+            {
+                id: "GV-017",
+                topic: "2. Verga: La Lupa",
+                q: "Come muore la Lupa?",
+                options: ["Uccisa da Nanni con una scure", "Di malattia", "Suicida", "Di vecchiaia"],
+                correct: 0,
+                detail: "Nanni la uccide con una scure."
+            },
+            {
+                id: "GV-018",
+                topic: "2. Verga: La Lupa",
+                q: "Come affronta la morte la Lupa?",
+                options: ["Gli va incontro senza paura", "Scappa urlando", "Chiede pietà", "Cerca di difendersi"],
+                correct: 0,
+                detail: "Gli va incontro senza paura, accettando il sacrificio pur di non rinunciare alla passione."
+            },
+            {
+                id: "GV-019",
+                topic: "2. Verga: La Lupa",
+                q: "Quale tema mitico emerge ne 'La Lupa'?",
+                options: ["Eros e Thanatos (Amore e Morte)", "Padri e Figli", "Guerra e Pace", "Natura e Cultura"],
+                correct: 0,
+                detail: "Eros e Thanatos: la passione è una forza distruttiva."
+            },
+
+            // --- 3. GUERRA ---
+            {
+                id: "WW-001",
+                topic: "3. Guerra: Emilio Lussu",
+                q: "Qual è il titolo dell'opera di Emilio Lussu?",
+                options: ["Un anno sull'altipiano", "Niente di nuovo sul fronte occidentale", "Addio alle armi", "La grande guerra"],
+                correct: 0,
+                detail: "Un anno sull'altipiano (1938)."
+            },
+            {
+                id: "WW-002",
+                topic: "3. Guerra: Emilio Lussu",
+                q: "Di quale Brigata fa parte Lussu?",
+                options: ["Brigata Sassari", "Brigata Alpina", "Fanteria Venezia", "Arditi"],
+                correct: 0,
+                detail: "Della Brigata Sassari."
+            },
+            {
+                id: "WW-003",
+                topic: "3. Guerra: Emilio Lussu",
+                q: "Chi è il Generale Leone nel libro di Lussu?",
+                options: ["Emblema dell'incompetenza sadica", "Un eroe nazionale", "Un padre per i soldati", "Un nemico austriaco"],
+                correct: 0,
+                detail: "Rappresenta l'incompetenza e la follia dei generali."
+            },
+            {
+                id: "WW-004",
+                topic: "3. Guerra: Emilio Lussu",
+                q: "Perché Lussu decide di NON sparare all'ufficiale austriaco che beve il caffè?",
+                options: ["Perché gli pare un assassinio sparare a un uomo solo", "Perché finisce le munizioni", "Perché ha paura", "Perché l'ufficiale lo saluta"],
+                correct: 0,
+                detail: "'Sparare a un uomo solo, così... mi parve un assassinio'."
+            },
+            {
+                id: "WW-005",
+                topic: "3. Guerra: Giovanni Comisso",
+                q: "Qual è il titolo dell'opera di Giovanni Comisso?",
+                options: ["Giorni di guerra", "La trincea", "Il deserto dei Tartari", "Guerra sola igiene"],
+                correct: 0,
+                detail: "Giorni di guerra (1930)."
+            },
+            {
+                id: "WW-006",
+                topic: "3. Guerra: Giovanni Comisso",
+                q: "Qual è la differenza principale tra Comisso e Lussu?",
+                options: ["Comisso è fenomenologico e lirico, Lussu etico e politico", "Comisso è pacifista, Lussu interventista", "Comisso è tragico, Lussu comico", "Nessuna differenza"],
+                correct: 0,
+                detail: "Comisso vede la guerra come avventura visiva (lirico/fenomenologico)."
+            },
+            {
+                id: "WW-007",
+                topic: "3. Guerra: Giuseppe Ungaretti",
+                q: "In quale sezione di 'L'Allegria' si trovano Veglia e Soldati?",
+                options: ["Il Porto Sepolto", "Naufragi", "Girovago", "Ultime"],
+                correct: 0,
+                detail: "Nella sezione 'Il Porto Sepolto'."
+            },
+            {
+                id: "WW-008",
+                topic: "3. Guerra: Ungaretti - Veglia",
+                q: "Cosa provoca l'attaccamento alla vita in 'Veglia'?",
+                options: ["La vicinanza fisica con un cadavere massacrato", "La vittoria in battaglia", "La lettera della madre", "L'alba"],
+                correct: 0,
+                detail: "La nottata passata vicino a un compagno massacrato."
+            },
+            {
+                id: "WW-009",
+                topic: "3. Guerra: Ungaretti - Soldati",
+                q: "Qual è il testo completo di 'Soldati'?",
+                options: ["Si sta come / d'autunno / sugli alberi / le foglie", "M'illumino / d'immenso", "Si sta come / d'inverno / sui monti / la neve", "Fratelli / parola tremante"],
+                correct: 0,
+                detail: "Si sta come / d'autunno / sugli alberi / le foglie."
+            },
+            {
+                id: "WW-010",
+                topic: "3. Guerra: Ungaretti - Soldati",
+                q: "Quale figura retorica domina 'Soldati'?",
+                options: ["Similitudine", "Ossimoro", "Sinestesia", "Anafora"],
+                correct: 0,
+                detail: "È una similitudine (introdotta da 'come')."
+            },
+
+            // --- 4. FUTURISMO ---
+            {
+                id: "FUT-001",
+                topic: "4. Futurismo",
+                q: "Chi pubblicò il Manifesto del Futurismo?",
+                options: ["Filippo Tommaso Marinetti", "Umberto Boccioni", "Giacomo Balla", "Luigi Russolo"],
+                correct: 0,
+                detail: "Filippo Tommaso Marinetti."
+            },
+            {
+                id: "FUT-002",
+                topic: "4. Futurismo",
+                q: "Dove e quando fu pubblicato il Manifesto?",
+                options: ["Le Figaro, Parigi, 20 febbraio 1909", "Corriere della Sera, Milano, 1909", "La Voce, Firenze, 1910", "Lacerba, Firenze, 1912"],
+                correct: 0,
+                detail: "Su Le Figaro a Parigi, il 20 febbraio 1909."
+            },
+            {
+                id: "FUT-003",
+                topic: "4. Futurismo",
+                q: "Secondo il manifesto, di cosa si è arricchita la magnificenza del mondo?",
+                options: ["Della bellezza della velocità", "Della giustizia sociale", "Della pace universale", "Del silenzio"],
+                correct: 0,
+                detail: "Una bellezza nuova: la bellezza della velocità."
+            },
+            {
+                id: "FUT-004",
+                topic: "4. Futurismo",
+                q: "Cosa è considerato più bello della Nike di Samotracia?",
+                options: ["Un'automobile ruggente", "Un aereo da caccia", "Una mitragliatrice", "Una locomotiva"],
+                correct: 0,
+                detail: "Un'automobile ruggente (corsa) è più bella dell'arte classica."
+            },
+            {
+                id: "FUT-005",
+                topic: "4. Futurismo",
+                q: "Come viene definita la guerra nel Manifesto?",
+                options: ["Sola igiene del mondo", "Un male necessario", "Una tragedia inutile", "L'ultima spiaggia"],
+                correct: 0,
+                detail: "Guerra sola igiene del mondo."
+            },
+            {
+                id: "FUT-006",
+                topic: "4. Futurismo",
+                q: "Cosa vogliono distruggere i Futuristi?",
+                options: ["Musei e Biblioteche", "Fabbriche e stazioni", "Armi e caserme", "Banche e uffici"],
+                correct: 0,
+                detail: "Vogliono distruggere i Musei, le Biblioteche (il passato)."
+            },
+            {
+                id: "FUT-007",
+                topic: "4. Futurismo",
+                q: "Cosa significa 'Disprezzo per la donna' nel contesto futurista?",
+                options: ["Disprezzo per il sentimentalismo romantico e la debolezza stereotipata", "Odio biologico", "Misoginia medievale", "Rifiuto della maternità"],
+                correct: 0,
+                detail: "È inteso come rifiuto del sentimentalismo romantico dell'800."
+            },
+            {
+                id: "FUT-008",
+                topic: "4. Futurismo (Tecnica)",
+                q: "Quali elementi vengono introdotti nel Manifesto Tecnico (1912)?",
+                options: ["Parole in libertà, distruzione della sintassi, verbi all'infinito", "Rima baciata, sonetto", "Verso libero ma sintassi regolare", "Latino maccheronico"],
+                correct: 0,
+                detail: "Parole in libertà, abolizione aggettivi/avverbi, verbi all'infinito."
+            },
+
+            // --- 5. DECADENTISMO E SIMBOLISMO ---
+            {
+                id: "DEC-001",
+                topic: "5. Decadentismo",
+                q: "Cosa rifiuta il Decadentismo?",
+                options: ["Il Positivismo e la fiducia nella scienza", "La religione cattolica", "L'arte classica", "Il Romanticismo"],
+                correct: 0,
+                detail: "Rifiuta il Positivismo. La ragione non basta per capire la realtà."
+            },
+            {
+                id: "DEC-002",
+                topic: "5. Decadentismo",
+                q: "Quali sono gli strumenti di conoscenza per i decadenti?",
+                options: ["Intuizione, sogno, inconscio", "Logica, deduzione, esperimento", "Fede, preghiera, dogma", "Storia, politica, economia"],
+                correct: 0,
+                detail: "L'intuizione, il sogno, l'inconscio, l'arte."
+            },
+            {
+                id: "DEC-003",
+                topic: "5. Simbolismo",
+                q: "Chi ha scritto la poesia 'Corrispondenze'?",
+                options: ["Charles Baudelaire", "Arthur Rimbaud", "Paul Verlaine", "Stéphane Mallarmé"],
+                correct: 0,
+                detail: "Baudelaire (la natura è una foresta di simboli)."
+            },
+            {
+                id: "DEC-004",
+                topic: "5. Simbolismo",
+                q: "Cosa sostiene Verlaine nella sua Art Poétique?",
+                options: ["La musica prima di ogni altra cosa", "La chiarezza prima di tutto", "La rima deve essere ricca", "La politica è essenziale"],
+                correct: 0,
+                detail: "La musica prima di ogni altra cosa."
+            },
+            {
+                id: "DEC-005",
+                topic: "5. Simbolismo",
+                q: "Cos'è la Sinestesia?",
+                options: ["Fusione di sensazioni diverse (es. suoni colorati)", "Ripetizione di vocali", "Un tipo di rima", "Una metafora politica"],
+                correct: 0,
+                detail: "Associazione di sfere sensoriali diverse (profumi freschi come carni)."
+            },
+
+            // --- 6. OSCAR WILDE ---
+            {
+                id: "OW-001",
+                topic: "6. Oscar Wilde",
+                q: "Di quale movimento è il manifesto la Prefazione al 'Ritratto di Dorian Gray'?",
+                options: ["Estetismo inglese", "Naturalismo francese", "Futurismo", "Romanticismo tedesco"],
+                correct: 0,
+                detail: "È il Manifesto dell'Estetismo inglese."
+            },
+            {
+                id: "OW-002",
+                topic: "6. Oscar Wilde",
+                q: "Qual è la posizione di Wilde su Arte e Morale?",
+                options: ["Separazione totale: non esistono libri morali o immorali", "L'arte deve insegnare il bene", "L'arte deve essere religiosa", "L'arte deve servire la politica"],
+                correct: 0,
+                detail: "Non esistono libri morali o immorali, solo scritti bene o male."
+            },
+            {
+                id: "OW-003",
+                topic: "6. Oscar Wilde",
+                q: "Completa la frase: 'Tutta l'arte è perfettamente...'",
+                options: ["...inutile.'", "...necessaria.'", "...divina.'", "...pericolosa.'"],
+                correct: 0,
+                detail: "Tutta l'arte è perfettamente inutile (esiste solo per la bellezza)."
+            },
+            {
+                id: "OW-004",
+                topic: "6. Wilde: Salomè",
+                q: "Cosa chiede Salomè in cambio della sua danza?",
+                options: ["La testa di Iokanaan su un piatto d'argento", "Metà del regno", "Un gioiello prezioso", "La libertà degli schiavi"],
+                correct: 0,
+                detail: "La testa di Iokanaan (Giovanni Battista)."
+            },
+            {
+                id: "OW-005",
+                topic: "6. Wilde: Salomè",
+                q: "Cosa fa Salomè con la testa mozzata?",
+                options: ["La bacia sulla bocca", "La butta nel fiume", "La seppellisce", "La mostra al popolo"],
+                correct: 0,
+                detail: "Bacia la bocca insanguinata ('Ho baciato la tua bocca')."
+            },
+            {
+                id: "OW-006",
+                topic: "6. Wilde: Salomè",
+                q: "Come muore Salomè?",
+                options: ["Schiacciata sotto gli scudi dei soldati", "Si suicida", "Viene decapitata", "Scappa nel deserto"],
+                correct: 0,
+                detail: "Erode ordina di ucciderla e i soldati la schiacciano sotto gli scudi."
+            },
+
+            // --- 7. SIBILLA ALERAMO ---
+            {
+                id: "SA-001",
+                topic: "7. Sibilla Aleramo",
+                q: "Qual è il titolo del romanzo del 1906 di Sibilla Aleramo?",
+                options: ["Una donna", "La madre", "Canne al vento", "Il marito"],
+                correct: 0,
+                detail: "Una donna (primo romanzo femminista italiano)."
+            },
+            {
+                id: "SA-002",
+                topic: "7. Sibilla Aleramo",
+                q: "Qual è la scelta finale e straziante della protagonista?",
+                options: ["Lasciare la casa coniugale rinunciando al figlio", "Uccidere il marito", "Restare per il bene del figlio", "Farsi suora"],
+                correct: 0,
+                detail: "Lascia la casa, pur sapendo che la legge non le darà il figlio."
+            },
+            {
+                id: "SA-003",
+                topic: "7. Sibilla Aleramo",
+                q: "Perché la protagonista se ne va?",
+                options: ["Per ritrovare la propria dignità e non insegnare la sottomissione", "Perché ha un altro uomo", "Perché vuole diventare ricca", "Per capriccio"],
+                correct: 0,
+                detail: "'Per amare mio figlio devo prima essere me stessa'."
+            },
+            {
+                id: "SA-004",
+                topic: "7. Sibilla Aleramo",
+                q: "Quale modello femminile rifiuta Aleramo?",
+                options: ["La madre sacrificale ottocentesca", "La donna fatale", "La suffragetta", "La lavoratrice"],
+                correct: 0,
+                detail: "Rifiuta il modello della madre che si annulla nel sacrificio."
+            },
+
+            // --- 8. ARTHUR RIMBAUD ---
+            {
+                id: "AR-001",
+                topic: "8. Rimbaud",
+                q: "Cosa rappresenta il 'Battello Ebbro'?",
+                options: ["Il poeta stesso che si emancipa", "Una nave fantasma", "La Francia", "La giovinezza perduta"],
+                correct: 0,
+                detail: "Il battello è metafora del poeta."
+            },
+            {
+                id: "AR-002",
+                topic: "8. Rimbaud",
+                q: "Chi sono i 'guidatori' di cui il battello si libera?",
+                options: ["I Pellirosse (la ragione/le regole)", "Il capitano", "Le ancore", "I venti"],
+                correct: 0,
+                detail: "I 'buoni pellirosse' che vengono uccisi (liberazione dalle regole)."
+            },
+            {
+                id: "AR-003",
+                topic: "8. Rimbaud",
+                q: "Qual è il concetto chiave della 'Lettera del Veggente'?",
+                options: ["Io è un altro (Je est un autre)", "L'arte per l'arte", "Il fanciullino", "La superuomo"],
+                correct: 0,
+                detail: "Io è un altro: il poeta assiste allo svolgersi del proprio pensiero."
+            },
+            {
+                id: "AR-004",
+                topic: "8. Rimbaud",
+                q: "Come si diventa Veggente?",
+                options: ["Attraverso un ragionato sregolamento di tutti i sensi", "Studiando i classici", "Pregando", "Isolandosi nella natura"],
+                correct: 0,
+                detail: "Sregolamento di tutti i sensi (esperire tutto)."
+            },
+
+            // --- 9. GIOVANNI PASCOLI ---
+            {
+                id: "GP-001",
+                topic: "9. Pascoli: Gelsomino notturno",
+                q: "Per quale occasione fu composto 'Il gelsomino notturno'?",
+                options: ["Per le nozze di un amico", "Per la morte del padre", "Per la sorella Maria", "Per un concorso"],
+                correct: 0,
+                detail: "Per le nozze di un amico (Gabriele Briganti)."
+            },
+            {
+                id: "GP-002",
+                topic: "9. Pascoli: Gelsomino notturno",
+                q: "Cosa simboleggia l'ape tardiva che trova le celle occupate?",
+                options: ["Il poeta che arriva tardi alla vita/amore", "La laboriosità", "La primavera", "La morte"],
+                correct: 0,
+                detail: "Il senso di esclusione del poeta dal 'nido' e dall'amore."
+            },
+            {
+                id: "GP-003",
+                topic: "9. Pascoli: Gelsomino notturno",
+                q: "Cosa allude l'immagine del lume che sale le scale e si spegne?",
+                options: ["All'intimità sessuale degli sposi", "Alla morte di qualcuno", "Alla fine della festa", "Al sorgere del sole"],
+                correct: 0,
+                detail: "Allude all'atto del concepimento nel buio della camera."
+            },
+            {
+                id: "GP-004",
+                topic: "9. Pascoli: Italy",
+                q: "Di quale tema sociale tratta il poemetto 'Italy'?",
+                options: ["Emigrazione italiana", "Prima guerra mondiale", "Lotta di classe", "Risorgimento"],
+                correct: 0,
+                detail: "Tratta dell'emigrazione (famiglia che torna da Cincinnati)."
+            },
+            {
+                id: "GP-005",
+                topic: "9. Pascoli: Italy",
+                q: "Qual è la caratteristica linguistica di 'Italy'?",
+                options: ["Mescolanza di italiano, dialetto e inglese maccheronico", "Solo latino", "Inglese perfetto", "Italiano aulico"],
+                correct: 0,
+                detail: "Sperimentalismo: usa l'italiese (es. 'bisini', 'icce')."
+            },
+            {
+                id: "GP-006",
+                topic: "9. Pascoli: Italy",
+                q: "Come saluta Molly alla fine, dimostrando la guarigione/appartenenza?",
+                options: ["Dice 'Sì' invece di 'Yes'", "Dice 'Goodbye'", "Piange", "Canta una canzone"],
+                correct: 0,
+                detail: "Dice 'Sì', accettando infine le sue radici italiane."
+            },
+
+            // --- APPROFONDIMENTI E DETTAGLI ---
+            {
+                id: "EXP-NF-001",
+                topic: "1. Approfondimento Naturalismo",
+                q: "In quale città specifica si ambientano prevalentemente le storie del Naturalismo francese?",
+                options: ["Parigi", "Lione", "Marsiglia", "Bordeaux"],
+                correct: 0,
+                detail: "Il contesto è la società industriale avanzata e, specificamente, Parigi."
+            },
+            {
+                id: "EXP-NF-002",
+                topic: "1. Approfondimento Naturalismo",
+                q: "Secondo Zola, quali sono i tre fattori che determinano l'agire umano (determinismo)?",
+                options: ["Ereditarietà, ambiente sociale, momento storico", "Volontà divina, fortuna, amore", "Denaro, potere, sesso", "Educazione, religione, politica"],
+                correct: 0,
+                detail: "Concetto di 'degrado ereditario' e contesto sociale sono centrali."
+            },
+            {
+                id: "EXP-NF-003",
+                topic: "1. Approfondimento Naturalismo",
+                q: "Quale termine francese viene usato per il gergo nei dialoghi naturalisti?",
+                options: ["Argot", "Patois", "Langue d'oc", "Slang"],
+                correct: 0,
+                detail: "Si usa l'Argot (gergo) nei dialoghi per realismo."
+            },
+            {
+                id: "EXP-VI-001",
+                topic: "1. Approfondimento Verismo",
+                q: "Quale regione italiana è il fulcro delle ambientazioni veriste di Verga?",
+                options: ["Sicilia", "Calabria", "Sardegna", "Campania"],
+                correct: 0,
+                detail: "Il mondo contadino e rurale della Sicilia."
+            },
+            {
+                id: "EXP-VI-002",
+                topic: "1. Approfondimento Verismo",
+                q: "A differenza di Zola, come giudica Verga la possibilità di cambiare la realtà?",
+                options: ["Impossibile: la letteratura non può cambiare la realtà", "Possibile: la denuncia porta riforme", "Dipende dal governo", "Solo la rivoluzione può cambiare tutto"],
+                correct: 0,
+                detail: "Manca la fiducia nel progresso. La letteratura non può cambiare la realtà."
+            },
+            {
+                id: "EXP-VI-003",
+                topic: "1. Approfondimento Verismo",
+                q: "Quale tecnica narrativa prevede che l'autore 'scenda' al livello dei personaggi?",
+                options: ["Regressione", "Progressione", "Onniscienza", "Flusso di coscienza"],
+                correct: 0,
+                detail: "La Regressione: il narratore assume l'orizzonte culturale dei personaggi."
+            },
+            {
+                id: "EXP-VI-004",
+                topic: "1. Approfondimento Verismo",
+                q: "Come deve apparire l'opera verista agli occhi del lettore?",
+                options: ["Come se si fosse fatta da sé", "Come un diario intimo dell'autore", "Come un trattato scientifico", "Come una fiaba"],
+                correct: 0,
+                detail: "L'opera deve sembrare 'essersi fatta da sé' (Impersonalità)."
+            },
+            {
+                id: "EXP-GV-001",
+                topic: "2. Dettagli Cavalleria Rusticana",
+                q: "Qual è il mestiere di Alfio in Cavalleria Rusticana?",
+                options: ["Carrettiere", "Contadino", "Fabbro", "Pastore"],
+                correct: 0,
+                detail: "Alfio è un ricco carrettiere."
+            },
+            {
+                id: "EXP-GV-002",
+                topic: "2. Dettagli Cavalleria Rusticana",
+                q: "Chi è Santa in Cavalleria Rusticana?",
+                options: ["La figlia di un possidente", "La sorella di Lola", "La madre di Turiddu", "La serva del prete"],
+                correct: 0,
+                detail: "Santa è la figlia di un possidente, che Turiddu corteggia per ripicca."
+            },
+            {
+                id: "EXP-GV-003",
+                topic: "2. Dettagli Cavalleria Rusticana",
+                q: "Quale gesto rituale segna l'accettazione della sfida a duello?",
+                options: ["L'abbraccio", "La stretta di mano", "Il bacio sulla guancia", "Il brindisi"],
+                correct: 0,
+                detail: "L'abbraccio, durante il quale avviene il morsicamento dell'orecchio."
+            },
+            {
+                id: "EXP-GV-004",
+                topic: "2. Dettagli Cavalleria Rusticana",
+                q: "Perché Turiddu aveva perso Lola inizialmente?",
+                options: ["Era partito per il servizio militare", "Era povero", "Era malato", "Lola non lo amava"],
+                correct: 0,
+                detail: "Era tornato dal servizio militare e l'aveva trovata sposata."
+            },
+            {
+                id: "EXP-GV-005",
+                topic: "2. Dettagli Cavalleria Rusticana",
+                q: "Qual è lo stile narrativo usato da Verga in questa novella?",
+                options: ["Rapido, essenziale, drammatico", "Lento e descrittivo", "Filosofico e riflessivo", "Ironico e distaccato"],
+                correct: 0,
+                detail: "Stile rapido, essenziale, drammatico (adatto alla riduzione teatrale)."
+            },
+            {
+                id: "EXP-GV-006",
+                topic: "2. Dettagli La Lupa",
+                q: "Quale dettaglio fisico della Lupa viene descritto nel testo?",
+                options: ["Labbra fresche e rosse", "Capelli biondi", "Mani piccole", "Voce dolce"],
+                correct: 0,
+                detail: "Aveva 'due occhi grandi così' e 'labbra fresche e rosse che vi mangiavano'."
+            },
+            {
+                id: "EXP-GV-007",
+                topic: "2. Dettagli La Lupa",
+                q: "Come viene vista la Lupa dalla comunità e da Nanni?",
+                options: ["Come una forza demoniaca", "Come una santa", "Come una vittima", "Come una madre esemplare"],
+                correct: 0,
+                detail: "Nanni la vede come una forza demoniaca (tentazione irresistibile)."
+            },
+            {
+                id: "EXP-GV-008",
+                topic: "2. Dettagli La Lupa",
+                q: "Cosa distrugge la Lupa con il suo comportamento?",
+                options: ["La famiglia della figlia Maricchia", "Il raccolto del paese", "La chiesa", "La casa di Nanni"],
+                correct: 0,
+                detail: "Distrugge la famiglia della figlia seducendo il genero."
+            },
+            {
+                id: "EXP-GV-009",
+                topic: "2. Dettagli La Lupa",
+                q: "Il finale della Lupa ha una valenza...",
+                options: ["Rituale / Sacrificale", "Comica", "Politica", "Aperta"],
+                correct: 0,
+                detail: "Il sacrificio finale ha una valenza quasi rituale."
+            },
+            {
+                id: "EXP-WW-001",
+                topic: "3. Dettagli Lussu",
+                q: "L'opera 'Un anno sull'altipiano' è un diario scritto in trincea?",
+                options: ["No, è un memoriale scritto anni dopo", "Sì, scritto giorno per giorno", "Sì, sono lettere alla madre", "No, è un romanzo di finzione totale"],
+                correct: 0,
+                detail: "È un memoriale (non un diario), scritto nel 1938, anni dopo i fatti."
+            },
+            {
+                id: "EXP-WW-002",
+                topic: "3. Dettagli Lussu",
+                q: "Quale aspetto dei generali italiani critica aspramente Lussu?",
+                options: ["L'incompetenza sadica, l'alcolismo, la follia", "La troppa prudenza", "La corruzione economica", "La simpatia per il nemico"],
+                correct: 0,
+                detail: "Critica l'incompetenza sadica (Generale Leone) e l'alcolismo."
+            },
+            {
+                id: "EXP-WW-003",
+                topic: "3. Dettagli Lussu",
+                q: "Nela scena dell'assalto inutile, qual è la condizione dei reticolati austriaci?",
+                options: ["Intatti", "Distrutti", "Aperti", "Inesistenti"],
+                correct: 0,
+                detail: "I soldati vengono mandati contro reticolati intatti (morte certa)."
+            },
+            {
+                id: "EXP-UNG-001",
+                topic: "3. Dettagli Ungaretti",
+                q: "Luogo e data precisi della poesia 'Veglia'?",
+                options: ["Cima Quattro, 23 dicembre 1915", "Carso, 1916", "Monte San Michele, 1915", "Bosco di Courton, 1918"],
+                correct: 0,
+                detail: "Veglia: Cima Quattro, 23 dicembre 1915."
+            },
+            {
+                id: "EXP-UNG-002",
+                topic: "3. Dettagli Ungaretti",
+                q: "Luogo e data precisi della poesia 'Soldati'?",
+                options: ["Bosco di Courton, luglio 1918", "Cima Quattro, 1915", "Valloncello, 1916", "San Martino, 1917"],
+                correct: 0,
+                detail: "Soldati: Bosco di Courton, luglio 1918."
+            },
+            {
+                id: "EXP-UNG-003",
+                topic: "3. Dettagli Ungaretti",
+                q: "Quale dettaglio fisico del cadavere viene descritto in 'Veglia'?",
+                options: ["La bocca digrignata", "Gli occhi aperti", "Le gambe spezzate", "L'uniforme strappata"],
+                correct: 0,
+                detail: "La bocca digrignata volta al plenilunio."
+            },
+            {
+                id: "EXP-UNG-004",
+                topic: "3. Dettagli Ungaretti",
+                q: "In 'Veglia', quali parole indicano la violenza subita (participi passati)?",
+                options: ["Buttato, massacrato, digrignata, penetrata", "Mangiato, dormito, corso", "Visto, sentito, provato", "Sparato, ucciso, ferito"],
+                correct: 0,
+                detail: "Participi forti: buttato, massacrato, digrignata, penetrata."
+            },
+            {
+                id: "EXP-FUT-001",
+                topic: "4. Dettagli Futurismo",
+                q: "Oltre ai Musei, cosa vogliono distruggere i Futuristi nel primo manifesto?",
+                options: ["Biblioteche", "Chiese", "Parlamenti", "Scuole"],
+                correct: 0,
+                detail: "Musei e Biblioteche (il passato conservato)."
+            },
+            {
+                id: "EXP-FUT-002",
+                topic: "4. Dettagli Futurismo",
+                q: "Quale statua classica viene citata per disprezzo nel Manifesto?",
+                options: ["La Nike di Samotracia", "La Venere di Milo", "Il Laocoonte", "Il David di Michelangelo"],
+                correct: 0,
+                detail: "La Nike di Samotracia è meno bella di un'automobile da corsa."
+            },
+            {
+                id: "EXP-FUT-003",
+                topic: "4. Dettagli Futurismo",
+                q: "Cosa devono cantare i poeti futuristi secondo il manifesto?",
+                options: ["Le grandi folle agitate dal lavoro", "L'amore cortese", "La natura incontaminata", "Il silenzio della notte"],
+                correct: 0,
+                detail: "Cantare le grandi folle agitate dal lavoro, il piacere, la rivolta."
+            },
+            {
+                id: "EXP-FUT-004",
+                topic: "4. Dettagli Futurismo",
+                q: "Nel Manifesto Tecnico (1912), cosa sostituisce la sintassi tradizionale?",
+                options: ["Le parole in libertà", "Il latino", "Il codice morse", "La prosa ritmica"],
+                correct: 0,
+                detail: "Parole in libertà, distruzione della sintassi."
+            },
+            {
+                id: "EXP-FUT-005",
+                topic: "4. Dettagli Futurismo",
+                q: "Quale uso della punteggiatura prevede il Futurismo tecnico?",
+                options: ["Abolizione della punteggiatura", "Uso eccessivo di virgole", "Solo punti esclamativi", "Solo punti interrogativi"],
+                correct: 0,
+                detail: "La distruzione della sintassi comporta spesso l'abolizione della punteggiatura tradizionale."
+            },
+            {
+                id: "EXP-OW-001",
+                topic: "6. Dettagli Wilde",
+                q: "Qual è la relazione tra Vita e Arte secondo Wilde?",
+                options: ["La vita imita l'arte", "L'arte imita la vita", "Sono due cose separate", "L'arte distrugge la vita"],
+                correct: 0,
+                detail: "La vita imita l'arte (l'artista crea un modello superiore)."
+            },
+            {
+                id: "EXP-OW-002",
+                topic: "6. Dettagli Wilde",
+                q: "In 'Salomè', quale sapore sente la protagonista baciando la testa?",
+                options: ["Un sapore amaro (sangue o amore?)", "Un sapore dolce", "Sapore di sale", "Nessun sapore"],
+                correct: 0,
+                detail: "'C'era un sapore amaro... era il sapore del sangue? No! Forse era il sapore dell'amore'."
+            },
+            {
+                id: "EXP-OW-003",
+                topic: "6. Dettagli Wilde",
+                q: "Come reagisce Erode al bacio necrofilo di Salomè?",
+                options: ["Inorridito e spaventato", "Eccitato", "Indifferente", "Divertito"],
+                correct: 0,
+                detail: "Erode è inorridito e ordina 'Uccidete quella donna!'."
+            },
+            {
+                id: "EXP-SA-001",
+                topic: "7. Dettagli Aleramo",
+                q: "Il romanzo 'Una donna' è...",
+                options: ["Autobiografico", "Fantascientifico", "Storico medievale", "Epistolare"],
+                correct: 0,
+                detail: "È il primo romanzo femminista italiano, fortemente autobiografico."
+            },
+            {
+                id: "EXP-SA-002",
+                topic: "7. Dettagli Aleramo",
+                q: "Cosa spinge la protagonista a scrivere il libro?",
+                options: ["Perché il figlio leggendolo da adulto possa capire e perdonare", "Per diventare famosa", "Per guadagnare soldi", "Per vendicarsi del marito"],
+                correct: 0,
+                detail: "Lo scrive per il figlio, sperando che un giorno capisca la sua scelta."
+            },
+            {
+                id: "EXP-SA-003",
+                topic: "7. Dettagli Aleramo",
+                q: "Qual è il 'motivo' scatenante iniziale del matrimonio della protagonista?",
+                options: ["Una violenza subita (matrimonio riparatore)", "Un grande amore", "Un accordo tra famiglie", "La gravidanza voluta"],
+                correct: 0,
+                detail: "Sposa l'uomo che l'ha violentata (logica della riparazione)."
+            },
+            {
+                id: "EXP-AR-001",
+                topic: "8. Dettagli Rimbaud",
+                q: "A che età Rimbaud scrisse 'Il Battello Ebbro'?",
+                options: ["17 anni", "25 anni", "30 anni", "15 anni"],
+                correct: 0,
+                detail: "Scritto a soli 17 anni."
+            },
+            {
+                id: "EXP-AR-002",
+                topic: "8. Dettagli Rimbaud",
+                q: "Cosa desidera il battello alla fine del viaggio visionario?",
+                options: ["La pace di una pozzanghera europea", "Continuare a navigare per sempre", "Volare in cielo", "Affondare nell'oceano"],
+                correct: 0,
+                detail: "Stanco dell'immensità, desidera la pace di una piccola pozzanghera (nostalgia infanzia)."
+            },
+            {
+                id: "EXP-AR-003",
+                topic: "8. Dettagli Rimbaud",
+                q: "A chi è indirizzata la 'Lettera del Veggente'?",
+                options: ["Paul Demeny", "Paul Verlaine", "Victor Hugo", "Sua madre"],
+                correct: 0,
+                detail: "Indirizzata a Paul Demeny."
+            },
+            {
+                id: "EXP-AR-004",
+                topic: "8. Dettagli Rimbaud",
+                q: "Qual è lo scopo del 'sregolamento di tutti i sensi'?",
+                options: ["Arrivare all'Ignoto e riportare visioni", "Divertirsi", "Dimenticare il dolore", "Morire giovani"],
+                correct: 0,
+                detail: "Sperimentare tutto per arrivare all'Ignoto e farsi Veggente."
+            },
+            {
+                id: "EXP-GP-001",
+                topic: "9. Dettagli Pascoli",
+                q: "In 'Italy', qual è la malattia di Molly?",
+                options: ["Tisi (tubercolosi)", "Polmonite", "Malaria", "Febbre spagnola"],
+                correct: 0,
+                detail: "Molly è malata di tisi."
+            },
+            {
+                id: "EXP-GP-002",
+                topic: "9. Dettagli Pascoli",
+                q: "Cosa significa la parola 'baschetto' nel linguaggio di 'Italy'?",
+                options: ["Basket (paniere/cesto)", "Pallacanestro", "Boschetto", "Cappello"],
+                correct: 0,
+                detail: "È l'italiese per 'basket' (cesto/paniere)."
+            },
+            {
+                id: "EXP-GP-003",
+                topic: "9. Dettagli Pascoli",
+                q: "In 'Il gelsomino notturno', cosa indica 'l'odore di fragole rosse'?",
+                options: ["Una sinestesia sensuale", "Che stanno mangiando frutta", "Che c'è un campo di fragole", "Il colore del fiore"],
+                correct: 0,
+                detail: "È una sinestesia (odore + colore/tatto) che evoca sensualità."
+            },
+            {
+                id: "EXP-GP-004",
+                topic: "9. Dettagli Pascoli",
+                q: "In 'Italy', dove viveva la famiglia emigrata?",
+                options: ["Cincinnati", "New York", "Chicago", "Buenos Aires"],
+                correct: 0,
+                detail: "Erano emigrati a Cincinnati."
+            },
+            {
+                id: "EXP-GP-005",
+                topic: "9. Dettagli Pascoli",
+                q: "In 'Italy', come definisce inizialmente Molly l'Italia?",
+                options: ["Bad Italy", "Good Italy", "Poor Italy", "Dirty Italy"],
+                correct: 0,
+                detail: "La disprezza chiamandola 'Bad Italy'."
+            },
+            {
+                id: "AN-NV-001",
+                topic: "1. Analisi Naturalismo/Verismo",
+                q: "Qual è la differenza fondamentale tra l'ottimismo di Zola e il pessimismo di Verga?",
+                options: ["Zola crede che la denuncia risolva i problemi, Verga crede che nulla possa cambiare", "Zola è religioso, Verga è ateo", "Zola ama la campagna, Verga la città", "Zola scrive in versi, Verga in prosa"],
+                correct: 0,
+                detail: "Zola è ottimista (conoscere = risolvere), Verga è pessimista (realtà immutabile)."
+            },
+            {
+                id: "AN-NV-002",
+                topic: "1. Analisi Naturalismo/Verismo",
+                q: "Nel Naturalismo, la letteratura viene equiparata a...",
+                options: ["Una scienza medica", "Una preghiera", "Un gioco d'azzardo", "Un atto politico rivoluzionario"],
+                correct: 0,
+                detail: "La letteratura è vista come una scienza; lo scrittore è un medico sociale."
+            },
+            {
+                id: "AN-NV-003",
+                topic: "1. Analisi Naturalismo/Verismo",
+                q: "Perché il Verismo si definisce una 'fotografia statica'?",
+                options: ["Perché si limita a rappresentare la realtà senza poterla modificare", "Perché usavano le macchine fotografiche", "Perché i personaggi non si muovono", "Perché le descrizioni sono brevi"],
+                correct: 0,
+                detail: "È statica perché priva di evoluzione o speranza di cambiamento (rassegnazione)."
+            },
+            {
+                id: "AN-NV-004",
+                topic: "1. Analisi Naturalismo/Verismo",
+                q: "Qual è lo scopo dell'uso del dialetto (o sintassi dialettale) nel Verismo?",
+                options: ["Realismo e regressione culturale", "Prendere in giro i contadini", "Rendere il testo incomprensibile", "Esaltare l'unità d'Italia"],
+                correct: 0,
+                detail: "Serve alla regressione: raccontare 'dal basso' con la voce della comunità."
+            },
+            {
+                id: "AN-GV-001",
+                topic: "2. Focus Verga",
+                q: "In 'Cavalleria rusticana', perché Turiddu seduce Santa?",
+                options: ["Per ripicca verso Lola", "Perché la ama davvero", "Per i soldi di lei", "Per noia"],
+                correct: 0,
+                detail: "Lo fa per ripicca, per far ingelosire Lola che lo aveva tradito sposando Alfio."
+            },
+            {
+                id: "AN-GV-002",
+                topic: "2. Focus Verga",
+                q: "Quale ruolo gioca l'economia nella passione tra Turiddu e Lola?",
+                options: ["Regola anche le passioni (Lola sposa Alfio perché ricco)", "Nessuno, è puro amore", "Lola sposa Alfio perché povero", "Turiddu è più ricco di Alfio"],
+                correct: 0,
+                detail: "Anche le passioni sono regolate dall'interesse economico."
+            },
+            {
+                id: "AN-GV-003",
+                topic: "2. Focus Verga",
+                q: "Di cosa è simbolo 'La Lupa' rispetto ai canoni femminili dell'epoca?",
+                options: ["Esce dagli schemi della donna angelo o madre", "È la donna angelo perfetta", "È una donna in carriera", "È una figura religiosa"],
+                correct: 0,
+                detail: "È pura sessualità animalesca, opposta alla 'donna angelo'."
+            },
+            {
+                id: "AN-GV-004",
+                topic: "2. Focus Verga",
+                q: "Perché Nanni uccide la Lupa?",
+                options: ["Perché è disperato e incapace di resisterle", "Per rubarle i soldi", "Per ordine del prete", "Per errore"],
+                correct: 0,
+                detail: "La vede come una forza demoniaca e non riesce a liberarsene se non uccidendola."
+            },
+            {
+                id: "AN-GV-005",
+                topic: "2. Focus Verga",
+                q: "Qual è l'atteggiamento della Lupa mentre Nanni impugna la scure?",
+                options: ["Gli va incontro senza paura", "Scappa nel bosco", "Prega", "Chiama aiuto"],
+                correct: 0,
+                detail: "Accetta la morte pur di non rinunciare alla sua ossessione."
+            },
+            {
+                id: "AN-WW-001",
+                topic: "3. Focus Guerra",
+                q: "Qual è l'aggettivo che meglio descrive lo stile di Emilio Lussu?",
+                options: ["Scarno, ironico, privo di retorica", "Eroico e trionfale", "Poetico e oscuro", "Burocratico"],
+                correct: 0,
+                detail: "Stile scarno, ironico, privo di retorica eroica."
+            },
+            {
+                id: "AN-WW-002",
+                topic: "3. Focus Guerra",
+                q: "Per Comisso, la ritirata di Caporetto è vista come...",
+                options: ["Uno spettacolo grandioso e terribile", "Una vergogna nazionale", "Una vittoria strategica", "Un momento di preghiera"],
+                correct: 0,
+                detail: "La sua visione è fenomenologica: anche il disastro è uno 'spettacolo'."
+            },
+            {
+                id: "AN-WW-003",
+                topic: "3. Focus Guerra",
+                q: "In Ungaretti, perché la parola è 'isolata nel bianco della pagina'?",
+                options: ["Per ritrovare il suo significato essenziale", "Per risparmiare inchiostro", "Perché non sapeva cosa scrivere", "Per imitare i futuristi"],
+                correct: 0,
+                detail: "La scarnificazione serve a ridare peso e significato essenziale alla parola."
+            },
+            {
+                id: "AN-WW-004",
+                topic: "3. Focus Guerra",
+                q: "Qual è l'effetto della mancanza di punteggiatura in 'Veglia'?",
+                options: ["Crea un flusso di coscienza continuo", "Rende il testo difficile", "È un errore di stampa", "Indica velocità futurista"],
+                correct: 0,
+                detail: "Assenza di punteggiatura per un flusso continuo di sensazioni."
+            },
+            {
+                id: "AN-WW-005",
+                topic: "3. Focus Guerra",
+                q: "Quale figura retorica è 'Bocca digrignata volta al plenilunio'?",
+                options: ["Immagine espressionista/cruda", "Metafora dolce", "Eufemismo", "Litote"],
+                correct: 0,
+                detail: "È una descrizione cruda, fisica, tipica dell'espressionismo di guerra."
+            },
+            {
+                id: "AN-FUT-001",
+                topic: "4. Focus Futurismo",
+                q: "Perché i Futuristi disprezzano il passato?",
+                options: ["Lo vedono come una tomba che frena il progresso", "Perché non lo conoscono", "Perché odiano la storia", "Perché preferiscono l'America"],
+                correct: 0,
+                detail: "Il passato è una tomba; bisogna guardare solo al futuro e all'industria."
+            },
+            {
+                id: "AN-FUT-002",
+                topic: "4. Focus Futurismo",
+                q: "Cosa si intende per 'Immaginazione senza fili' (implicito nel manifesto tecnico)?",
+                options: ["Libertà assoluta di associare immagini lontane", "Usare la radio", "Sognare ad occhi aperti", "Scrivere senza pensare"],
+                correct: 0,
+                detail: "Le 'parole in libertà' creano associazioni immediate senza i 'fili' della sintassi."
+            },
+            {
+                id: "AN-FUT-003",
+                topic: "4. Focus Futurismo",
+                q: "Qual è il tono linguistico del Manifesto del 1909?",
+                options: ["Violento, imperativo, provocatorio", "Calmo e riflessivo", "Melanconico e triste", "Burocratico e formale"],
+                correct: 0,
+                detail: "Linguaggio violento e imperativo per scuotere il pubblico."
+            },
+            {
+                id: "AN-FUT-004",
+                topic: "4. Focus Futurismo",
+                q: "L'abolizione dell'aggettivo nel Futurismo serve a...",
+                options: ["Rendere il sostantivo essenziale e dinamico", "Semplificare la grammatica", "Risparmiare spazio", "Imitare l'inglese"],
+                correct: 0,
+                detail: "L'aggettivo rallenta; il sostantivo nudo è più veloce."
+            },
+            {
+                id: "AN-DEC-001",
+                topic: "5. Focus Decadentismo",
+                q: "Chi è l''Albatros' nella poesia di Baudelaire (contesto Simbolismo)?",
+                options: ["Il poeta: goffo in terra, re nel cielo", "Un uccello qualsiasi", "La libertà politica", "La natura selvaggia"],
+                correct: 0,
+                detail: "Metafora del poeta: incompreso dalla società (a terra), ma superiore spiritualmente (in cielo)."
+            },
+            {
+                id: "AN-DEC-002",
+                topic: "5. Focus Decadentismo",
+                q: "Cosa si intende per 'Foresta di simboli'?",
+                options: ["Ogni oggetto reale nasconde un significato profondo", "Un bosco vero e proprio", "I libri di una biblioteca", "La confusione mentale"],
+                correct: 0,
+                detail: "La realtà visibile è solo una maschera di significati nascosti (simboli)."
+            },
+            {
+                id: "AN-DEC-003",
+                topic: "5. Focus Decadentismo",
+                q: "Perché Verlaine dice 'La musica prima di ogni altra cosa'?",
+                options: ["Perché il verso deve evocare, non descrivere", "Perché voleva fare il musicista", "Perché odiava la pittura", "Perché la poesia deve essere cantata"],
+                correct: 0,
+                detail: "Il suono della parola è più importante del suo significato logico (suggestione)."
+            },
+            {
+                id: "AN-OW-001",
+                topic: "6. Focus Wilde",
+                q: "Cosa significa 'Non esistono libri morali o immorali'?",
+                options: ["Che l'arte è al di là del bene e del male", "Che tutti i libri sono buoni", "Che la morale cambia sempre", "Che non bisogna leggere libri"],
+                correct: 0,
+                detail: "Separazione totale tra Estetica ed Etica. Conta solo se è scritto bene."
+            },
+            {
+                id: "AN-OW-002",
+                topic: "6. Focus Wilde",
+                q: "In Salomè, l'amore si trasforma in...",
+                options: ["Possesso necrofilo", "Amicizia spirituale", "Odio politico", "Indifferenza"],
+                correct: 0,
+                detail: "L'ossessione per Iokanaan diventa possesso necrofilo (baciare la testa morta)."
+            },
+            {
+                id: "AN-OW-003",
+                topic: "6. Focus Wilde",
+                q: "Chi ordina la morte di Salomè e perché?",
+                options: ["Erode, inorridito dalla mostruosità della scena", "Erodiade, per gelosia", "I soldati, per rivolta", "Iokanaan prima di morire"],
+                correct: 0,
+                detail: "Erode stesso, pur avendola assecondata, è inorridito dal bacio alla testa."
+            },
+            {
+                id: "AN-SA-001",
+                topic: "7. Focus Aleramo",
+                q: "Qual è il conflitto interiore principale in 'Una donna'?",
+                options: ["Dovere materno tradizionale vs Autodeterminazione", "Amore vs Denaro", "Campagna vs Città", "Fede vs Ateismo"],
+                correct: 0,
+                detail: "Il conflitto tra essere una 'madre sacrificale' o essere 'una donna' integra."
+            },
+            {
+                id: "AN-SA-002",
+                topic: "7. Focus Aleramo",
+                q: "La frase 'Per amare mio figlio devo prima essere me stessa' indica...",
+                options: ["Che il sacrificio annulla la dignità e quindi l'amore vero", "Egoismo puro", "Che non vuole bene al figlio", "Che vuole viaggiare"],
+                correct: 0,
+                detail: "Rifiuta l'idea che l'amore sia annullamento di sé."
+            },
+            {
+                id: "AN-AR-001",
+                topic: "8. Focus Rimbaud",
+                q: "Cosa significa 'Io è un altro' (Je est un autre)?",
+                options: ["Il poeta non controlla la poesia, ne è posseduto", "Il poeta ha una doppia personalità clinica", "Il poeta si traveste", "Il poeta copia altri scrittori"],
+                correct: 0,
+                detail: "L'Io soggettivo sparisce, il poeta diventa strumento di una voce ignota."
+            },
+            {
+                id: "AN-AR-002",
+                topic: "8. Focus Rimbaud",
+                q: "Cosa vede il Battello Ebbro durante il suo viaggio?",
+                options: ["Albe come colombe, soli d'argento, ghiacciai", "Città industriali, fabbriche", "Campi di grano, contadini", "Porti sicuri"],
+                correct: 0,
+                detail: "Visioni allucinate: 'J'ai vu...' (albe, ghiacciai, soli d'argento)."
+            },
+            {
+                id: "AN-GP-001",
+                topic: "9. Focus Pascoli",
+                q: "Qual è il tema sotterraneo del 'Gelsomino notturno'?",
+                options: ["L'esclusione sessuale e la fecondazione", "La botanica", "L'amicizia tra uomini", "La morte del padre"],
+                correct: 0,
+                detail: "Sotto la descrizione naturale c'è il tema della sessualità e dell'esclusione del poeta."
+            },
+            {
+                id: "AN-GP-002",
+                topic: "9. Focus Pascoli",
+                q: "Cosa rappresenta l'urna 'molle e segreta'?",
+                options: ["Il grembo femminile / il fiore fecondato", "Un vaso di fiori", "Una tomba", "La casa del poeta"],
+                correct: 0,
+                detail: "Simbolo sessuale velato: il grembo che cova la 'felicità nuova' (vita)."
+            },
+            {
+                id: "AN-GP-003",
+                topic: "9. Focus Pascoli",
+                q: "L'uso di parole come 'bisini' e 'icce' in Italy rappresenta...",
+                options: ["La contaminazione linguistica degli emigranti", "Errori grammaticali", "Un codice segreto", "Dialetto toscano puro"],
+                correct: 0,
+                detail: "Rappresenta il dramma della perdita delle radici linguistiche (Italiese)."
+            },
+            {
+                id: "AN-GP-004",
+                topic: "9. Focus Pascoli",
+                q: "Qual è l'atteggiamento della nonna in 'Italy'?",
+                options: ["Parla solo dialetto lucchese e non capisce la nipote", "Parla inglese perfettamente", "Vuole andare in America", "È muta"],
+                correct: 0,
+                detail: "Rappresenta la tradizione immobile: parla solo dialetto e non comunica con Molly."
+            },
+            {
+                id: "XTRA-001",
+                topic: "Extra: Dettagli",
+                q: "Chi ha scritto 'Il romanzo sperimentale'?",
+                options: ["Émile Zola", "Giovanni Verga", "Luigi Capuana", "Manzoni"],
+                correct: 0,
+                detail: "Zola, 1880."
+            },
+            {
+                id: "XTRA-002",
+                topic: "Extra: Dettagli",
+                q: "Chi ha scritto 'Un anno sull'altipiano'?",
+                options: ["Emilio Lussu", "Giovanni Comisso", "Ungaretti", "Marinetti"],
+                correct: 0,
+                detail: "Lussu."
+            },
+            {
+                id: "XTRA-003",
+                topic: "Extra: Dettagli",
+                q: "Chi ha scritto la poesia 'Soldati'?",
+                options: ["Giuseppe Ungaretti", "Eugenio Montale", "Umberto Saba", "Quasimodo"],
+                correct: 0,
+                detail: "Ungaretti."
+            },
+            {
+                id: "XTRA-004",
+                topic: "Extra: Dettagli",
+                q: "In che anno è stato pubblicato il Manifesto Futurista?",
+                options: ["1909", "1915", "1905", "1918"],
+                correct: 0,
+                detail: "1909."
+            },
+            {
+                id: "XTRA-005",
+                topic: "Extra: Dettagli",
+                q: "Qual è il nome della figlia della Lupa?",
+                options: ["Maricchia", "Lola", "Santa", "Pina"],
+                correct: 0,
+                detail: "Maricchia."
+            },
+            {
+                id: "X-COMP-001",
+                topic: "X. Analisi Comparata",
+                q: "Quale elemento accomuna la 'Lupa' di Verga e 'Salomè' di Wilde?",
+                options: ["L'eros distruttivo che conduce alla morte (Thanatos)", "L'ambientazione rurale", "La fede religiosa", "Il ruolo della madre"],
+                correct: 0,
+                detail: "Entrambe rappresentano l'Eros come forza fatale e distruttiva."
+            },
+            {
+                id: "X-COMP-002",
+                topic: "X. Analisi Comparata",
+                q: "In che modo Rimbaud e i Futuristi sono collegati?",
+                options: ["Entrambi rifiutano la tradizione e cercano un linguaggio nuovo/sregolato", "Sono entrambi italiani", "Amano la guerra", "Sono pacifisti"],
+                correct: 0,
+                detail: "Rimbaud (sregolamento dei sensi) anticipa la rottura col passato tipica delle avanguardie come il Futurismo."
+            },
+            {
+                id: "X-COMP-003",
+                topic: "X. Analisi Comparata",
+                q: "La visione della guerra di Lussu si contrappone a quella di Marinetti. Come?",
+                options: ["Lussu la denuncia come macello assurdo, Marinetti la esalta come 'igiene'", "Lussu la ama, Marinetti la odia", "Entrambi sono indifferenti", "Lussu è un generale, Marinetti un soldato"],
+                correct: 0,
+                detail: "Opposizione totale: Critica razionale/umana (Lussu) vs Esaltazione estetica/violenta (Futurismo)."
+            },
+            {
+                id: "X-COMP-004",
+                topic: "X. Analisi Comparata",
+                q: "Sia Verga che Pascoli (in Italy) usano il linguaggio per...",
+                options: ["Rappresentare una realtà sociale specifica (Regressione vs Italiese)", "Fare ridere", "Dimostrare la loro cultura classica", "Scrivere opere per nobili"],
+                correct: 0,
+                detail: "Entrambi piegano la lingua letteraria per aderire alla realtà sociale (i contadini siciliani o gli emigranti)."
+            },
+            {
+                id: "X-LOGIC-001",
+                topic: "X. Logica Letteraria",
+                q: "Se Zola fosse un medico, Verga sarebbe...",
+                options: ["Un fotografo che non può ritoccare la foto", "Un politico che fa riforme", "Un prete che confessa", "Un giudice che emette sentenze"],
+                correct: 0,
+                detail: "Verga osserva e registra (fotografia) senza intervenire o giudicare (impersonalità)."
+            },
+            {
+                id: "X-LOGIC-002",
+                topic: "X. Logica Letteraria",
+                q: "Il 'morsicamento dell'orecchio' in Cavalleria Rusticana è un esempio di...",
+                options: ["Linguaggio non verbale codificato di una cultura arcaica", "Un attacco di pazzia", "Un gesto d'affetto", "Un errore di stampa"],
+                correct: 0,
+                detail: "È un codice culturale preciso: equivale a una firma su una condanna a morte (sfida accettata)."
+            },
+            {
+                id: "X-LOGIC-003",
+                topic: "X. Logica Letteraria",
+                q: "Perché l'assenza di punteggiatura in 'Veglia' di Ungaretti è 'funzionale'?",
+                options: ["Rende l'idea dell'urgenza e del respiro spezzato", "Perché non aveva tempo", "Perché la tastiera era rotta", "Per risparmiare spazio"],
+                correct: 0,
+                detail: "La forma (assenza di pause grammaticali) specchia il contenuto (flusso di coscienza traumatico)."
+            },
+            {
+                id: "X-LOGIC-004",
+                topic: "X. Logica Letteraria",
+                q: "Qual è il paradosso di Sibilla Aleramo nel finale di 'Una donna'?",
+                options: ["Abbandona il figlio per poterlo amare davvero (insegnandogli la dignità)", "Lo abbandona perché non lo ama", "Lo porta con sé ma lo nasconde", "Resta col marito ma scrive libri"],
+                correct: 0,
+                detail: "Paradosso doloroso: restare significherebbe tradire l'educazione del figlio; partire è l'unico atto d'amore autentico."
+            }
+        ];
+
+    const dbById = new Map(database.map(q => [q.id, q]));
+
+    // ==========================================
+    // Storage
+    // ==========================================
+
+    const LS = {
+        settings: 'lt_settings_v2',
+        stats: 'lt_stats_v2',
+        resume: 'lt_resume_v2'
+    };
+
+    const defaultSettings = {
+        sound: true,
+        shuffleQuestions: true,
+        shuffleOptions: true,
+        limit: 0,
+        autoAdvance: false,
+        qScale: 1,
+        uiScale: 1
+    };
+
+    function loadSettings(){
+        try{
+            const raw = localStorage.getItem(LS.settings);
+            const s = raw ? JSON.parse(raw) : {};
+            return { ...defaultSettings, ...s };
+        }catch{ return { ...defaultSettings }; }
+    }
+
+    function saveSettings(s){
+        localStorage.setItem(LS.settings, JSON.stringify(s));
+    }
+
+    const defaultStats = {
+        bestAccuracy: 0,
+        sessions: 0,
+        answered: 0,
+        correct: 0,
+        maxStreakEver: 0,
+        perTopic: {} // topic => {answered, correct, bestAccuracy}
+    };
+
+    function loadStats(){
+        try{
+            const raw = localStorage.getItem(LS.stats);
+            const st = raw ? JSON.parse(raw) : {};
+            return { ...defaultStats, ...st, perTopic: { ...(defaultStats.perTopic), ...(st.perTopic || {}) } };
+        }catch{ return structuredClone(defaultStats); }
+    }
+
+    function saveStats(st){
+        localStorage.setItem(LS.stats, JSON.stringify(st));
+    }
+
+    function clearStats(){
+        localStorage.removeItem(LS.stats);
+    }
+
+    // ==========================================
+    // Audio (respects settings)
+    // ==========================================
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    let audioCtx;
+
+    function initAudio(){
+        if (!audioCtx) audioCtx = new AudioContext();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function playSound(type){
+        if (!app.settings.sound) return;
+        try{ initAudio(); } catch { return; }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        const t = audioCtx.currentTime;
+
+        const setEnv = (a, b) => {
+            gain.gain.setValueAtTime(a, t);
+            gain.gain.exponentialRampToValueAtTime(0.0001, t + b);
+        };
+
+        if (type === 'correct'){
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(520, t);
+            osc.frequency.exponentialRampToValueAtTime(1080, t + 0.12);
+            setEnv(0.08, 0.32);
+            osc.start();
+            osc.stop(t + 0.32);
+        } else if (type === 'wrong'){
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(170, t);
+            osc.frequency.linearRampToValueAtTime(90, t + 0.18);
+            setEnv(0.09, 0.30);
+            osc.start();
+            osc.stop(t + 0.30);
+        } else if (type === 'click'){
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(760, t);
+            setEnv(0.04, 0.06);
+            osc.start();
+            osc.stop(t + 0.06);
+        }
+    }
+
+    function vibrate(ms=12){
+        if (navigator.vibrate) navigator.vibrate(ms);
+    }
+
+    // ==========================================
+    // App state
+    // ==========================================
+
+    const app = {
+        settings: loadSettings(),
+        stats: loadStats(),
+        state: {
+            queue: [],
+            index: 0,
+            correct: 0,
+            answered: 0,
+            errors: [],
+            streak: 0,
+            maxStreakSession: 0,
+            locked: false,
+            mapping: [],
+            mode: 'study',
+            topic: '—',
+            startedAt: 0,
+            endedAt: 0,
+            lastAnswer: null // {success, chosenOriginal, correctOriginal}
+        },
+        timers: { autoAdv: null, toast: null }
+    };
+
+    // ==========================================
+    // DOM
+    // ==========================================
+
+    const $ = (id) => document.getElementById(id);
+
+    const dom = {
+        screens: {
+            menu: $('screen-menu'),
+            quiz: $('screen-quiz'),
+            results: $('screen-results')
+        },
+        header: {
+            badgeMode: $('badge-mode'),
+            badgeModeText: $('badge-mode-text'),
+            badgeTopic: $('badge-topic'),
+            streakBox: $('streak-box'),
+            streakVal: $('streak-val'),
+            btnSound: $('btn-sound'),
+            soundState: $('sound-state'),
+            btnSettings: $('btn-settings')
+        },
+        menu: {
+            grid: $('topic-grid'),
+            search: $('search'),
+            clear: $('btn-clear'),
+            full: $('btn-full'),
+            quick: $('btn-quick'),
+            resume: $('btn-resume'),
+            resumeMeta: $('resume-meta'),
+            statBest: $('stat-best'),
+            statSessions: $('stat-sessions'),
+            statAnswered: $('stat-answered')
+        },
+        quiz: {
+            exit: $('btn-exit'),
+            meta: $('q-meta'),
+            count: $('q-count'),
+            progress: $('progress'),
+            qText: $('q-text'),
+            qSub: $('q-sub'),
+            context: $('q-context'),
+            options: $('options'),
+            skip: $('btn-skip'),
+            end: $('btn-end')
+        },
+        sheet: {
+            el: $('sheet'),
+            backdrop: $('sheet-backdrop'),
+            title: $('fb-title'),
+            line: $('fb-line'),
+            detail: $('fb-detail'),
+            close: $('btn-close-sheet'),
+            next: $('btn-next'),
+            autoAdv: $('auto-adv')
+        },
+        results: {
+            acc: $('res-acc'),
+            correct: $('res-correct'),
+            errors: $('res-errors'),
+            time: $('res-time'),
+            mode: $('res-mode'),
+            best: $('res-best'),
+            maxstreak: $('res-maxstreak'),
+            retry: $('btn-retry'),
+            reviewAll: $('btn-review-all'),
+            back: $('btn-back-menu'),
+            list: $('errors-list')
+        },
+        settings: {
+            modal: $('settings'),
+            backdrop: $('settings-backdrop'),
+            close: $('btn-close-settings'),
+            cancel: $('btn-cancel-settings'),
+            save: $('btn-save-settings'),
+            resetStats: $('btn-reset-stats'),
+            sound: $('set-sound'),
+            shuffleOptions: $('set-shuffle-options'),
+            shuffleQuestions: $('set-shuffle-questions'),
+            autoAdv: $('set-autoadv'),
+            limit: $('set-limit'),
+            qScale: $('set-qscale'),
+            uiScale: $('set-uiscale')
+        },
+        toast: {
+            el: $('toast'),
+            title: $('toast-title'),
+            msg: $('toast-msg')
+        }
+    };
+
+    // ==========================================
+    // Utilities
+    // ==========================================
+
+    function shuffle(arr){
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
+    function clamp(n, a, b){ return Math.min(b, Math.max(a, n)); }
+
+    function fmtTime(ms){
+        if (!isFinite(ms) || ms < 0) return '—';
+        const sec = Math.round(ms/1000);
+        const m = Math.floor(sec/60);
+        const s = sec%60;
+        return `${m}:${String(s).padStart(2,'0')}`;
+    }
+
+    function setTextScale(){
+        document.documentElement.style.setProperty('--qScale', String(app.settings.qScale));
+        document.documentElement.style.setProperty('--uiScale', String(app.settings.uiScale));
+    }
+
+    function toast(title, msg, ms=1800){
+        dom.toast.title.textContent = title;
+        dom.toast.msg.textContent = msg;
+        dom.toast.el.classList.add('show');
+        clearTimeout(app.timers.toast);
+        app.timers.toast = setTimeout(() => dom.toast.el.classList.remove('show'), ms);
+    }
+
+    function showScreen(name){
+        Object.entries(dom.screens).forEach(([k, el]) => {
+            if (k === name) el.classList.remove('hidden');
+            else el.classList.add('hidden');
+        });
+    }
+
+    function updateHeaderBadges(){
+        dom.header.badgeModeText.textContent = (app.state.mode || 'study').toUpperCase();
+        dom.header.badgeTopic.textContent = app.state.topic || '—';
+    }
+
+    // ==========================================
+    // Context helpers (make FULL review immediately understandable)
+    // ==========================================
+
+    function topicParts(topic){
+        // Example topics:
+        // "9. Pascoli: Italy" => {unit:"9. Pascoli", focus:"Italy"}
+        // "3. Guerra: Ungaretti - Veglia" => {unit:"3. Guerra", focus:"Ungaretti - Veglia"}
+        // "4. Futurismo" => {unit:"4. Futurismo", focus:""}
+        const t = String(topic || '').trim();
+        const idx = t.indexOf(':');
+        if (idx === -1) return { unit: t || '—', focus: '' };
+        return {
+            unit: t.slice(0, idx).trim() || '—',
+            focus: t.slice(idx + 1).trim()
+        };
+    }
+
+    function prettyMode(mode){
+        if (mode === 'full') return 'REVISIONE TOTALE';
+        if (mode === 'topic') return 'TOPIC';
+        if (mode === 'errors') return 'ERRORI';
+        return (mode || 'study').toUpperCase();
+    }
+
+    function renderContextChips(data){
+        if (!dom.quiz.context) return;
+        const parts = topicParts(data?.topic);
+        const label = parts.focus ? `${parts.unit}: ${parts.focus}` : parts.unit;
+
+        const chip = document.createElement('div');
+        chip.className = 'pill rounded-full px-4 py-2 mono text-xs sm:text-sm uiText text-white/80 border-white/15 bg-white/5';
+        chip.textContent = label || '—';
+
+        dom.quiz.context.innerHTML = '';
+        dom.quiz.context.appendChild(chip);
+    }
+
+    function updateStreakUI(){
+        dom.header.streakVal.textContent = String(app.state.streak);
+        if (app.state.streak >= 3) dom.header.streakBox.classList.add('pulse');
+        else dom.header.streakBox.classList.remove('pulse');
+    }
+
+    function updateSoundUI(){
+        dom.header.soundState.textContent = app.settings.sound ? 'ON' : 'OFF';
+        dom.header.btnSound.classList.toggle('border-[color:var(--accent)]', app.settings.sound);
+        dom.header.btnSound.classList.toggle('text-white', app.settings.sound);
+    }
+
+    function updateMenuStatsUI(){
+        dom.menu.statBest.textContent = `${Math.round(app.stats.bestAccuracy)}%`;
+        dom.menu.statSessions.textContent = String(app.stats.sessions);
+        dom.menu.statAnswered.textContent = String(app.stats.answered);
+    }
+
+    function setResumeButton(){
+        const raw = localStorage.getItem(LS.resume);
+        if (!raw){ dom.menu.resume.classList.add('hidden'); return; }
+        try{
+            const rs = JSON.parse(raw);
+            if (!rs || !Array.isArray(rs.queueIds) || typeof rs.index !== 'number') throw new Error('bad');
+            const total = rs.queueIds.length;
+            const idx = clamp(rs.index, 0, total);
+            dom.menu.resumeMeta.textContent = `${idx+1}/${total}`;
+            dom.menu.resume.classList.remove('hidden');
+        }catch{
+            dom.menu.resume.classList.add('hidden');
+        }
+    }
+
+    function saveResume(){
+        // Keep small payload: ids + index + basic counters
+        const payload = {
+            queueIds: app.state.queue.map(q => q.id),
+            index: app.state.index,
+            correct: app.state.correct,
+            answered: app.state.answered,
+            streak: app.state.streak,
+            errorsIds: app.state.errors.map(q => q.id),
+            mode: app.state.mode,
+            topic: app.state.topic,
+            startedAt: app.state.startedAt,
+            settings: app.settings
+        };
+        localStorage.setItem(LS.resume, JSON.stringify(payload));
+        setResumeButton();
+    }
+
+    function clearResume(){
+        localStorage.removeItem(LS.resume);
+        setResumeButton();
+    }
+
+    // ==========================================
+    // Rendering: Menu
+    // ==========================================
+
+    function getTopics(){
+        return [...new Set(database.map(q => q.topic))].sort((a,b)=>a.localeCompare(b,'it'));
+    }
+
+    function topicStats(topic){
+        const st = app.stats.perTopic?.[topic];
+        if (!st) return { answered: 0, correct: 0, bestAccuracy: 0 };
+        return { answered: st.answered || 0, correct: st.correct || 0, bestAccuracy: st.bestAccuracy || 0 };
+    }
+
+    function renderMenu(filter=''){
+        const grid = dom.menu.grid;
+        grid.innerHTML = '';
+        const f = filter.trim().toLowerCase();
+        const topics = getTopics().filter(t => !f || t.toLowerCase().includes(f));
+
+        if (topics.length === 0){
+            const empty = document.createElement('div');
+            empty.className = 'pill rounded-2xl p-6 text-white/75';
+            empty.innerHTML = `<div class="mono text-xs text-white/45">NESSUN RISULTATO</div><div class="mt-2">Prova un termine diverso.</div>`;
+            grid.appendChild(empty);
+            return;
+        }
+
+        for (const topic of topics){
+            const count = database.filter(q => q.topic === topic).length;
+            const st = topicStats(topic);
+            const acc = st.answered ? Math.round((st.correct/st.answered)*100) : null;
+            const best = st.bestAccuracy ? Math.round(st.bestAccuracy) : null;
+
+            const card = document.createElement('button');
+            card.type = 'button';
+            card.className = 'anim opt text-left p-4 sm:p-5';
+            card.setAttribute('aria-label', `Avvia: ${topic}`);
+            card.innerHTML = `
+          <div class="flex items-start justify-between gap-3">
+            <div class="min-w-0">
+              <div class="text-lg font-semibold text-white">${escapeHtml(topic)}</div>
+              <div class="mono text-xs text-white/45 mt-1">${count} DATA POINTS</div>
+            </div>
+            <div class="mono text-xs text-white/55 pill rounded-full px-3 py-1">START</div>
+          </div>
+          <div class="mt-4 grid grid-cols-3 gap-2">
+            <div class="pill rounded-xl p-3">
+              <div class="mono text-[10px] text-white/45">Your Acc</div>
+              <div class="mt-1 text-sm text-white/80">${acc === null ? '—' : acc+'%'}</div>
+            </div>
+            <div class="pill rounded-xl p-3">
+              <div class="mono text-[10px] text-white/45">Best</div>
+              <div class="mt-1 text-sm text-white/80">${best === null ? '—' : best+'%'}</div>
+            </div>
+            <div class="pill rounded-xl p-3">
+              <div class="mono text-[10px] text-white/45">Seen</div>
+              <div class="mt-1 text-sm text-white/80">${st.answered}</div>
+            </div>
+          </div>
+        `;
+
+            let longPressTimer = null;
+            const onLongPress = () => {
+                const msg = st.answered
+                    ? `Risposte: ${st.correct}/${st.answered} (best ${Math.round(st.bestAccuracy||0)}%)`
+                    : 'Nessuna statistica ancora: avvia una sessione.';
+                toast('TOPIC STATS', msg, 2200);
+                vibrate(18);
+            };
+
+            card.addEventListener('pointerdown', () => {
+                longPressTimer = setTimeout(onLongPress, 520);
+            });
+            card.addEventListener('pointerup', () => clearTimeout(longPressTimer));
+            card.addEventListener('pointercancel', () => clearTimeout(longPressTimer));
+
+            card.addEventListener('click', () => {
+                clearTimeout(longPressTimer);
+                playSound('click');
+                startTopic(topic);
+            });
+
+            grid.appendChild(card);
+        }
+    }
+
+    // ==========================================
+    // Quiz engine
+    // ==========================================
+
+    function applyLimit(arr){
+        const lim = Number(app.settings.limit || 0);
+        if (!lim || lim <= 0) return arr;
+        return arr.slice(0, Math.min(lim, arr.length));
+    }
+
+    function newSession(queue, { mode='study', topic='—' } = {}){
+        clearTimeout(app.timers.autoAdv);
+        app.state.queue = queue;
+        app.state.index = 0;
+        app.state.correct = 0;
+        app.state.answered = 0;
+        app.state.errors = [];
+        app.state.streak = 0;
+        app.state.maxStreakSession = 0;
+        app.state.locked = false;
+        app.state.mapping = [];
+        app.state.mode = mode;
+        app.state.topic = topic;
+        app.state.startedAt = Date.now();
+        app.state.endedAt = 0;
+        app.state.lastAnswer = null;
+        updateHeaderBadges();
+        updateStreakUI();
+        dom.sheet.autoAdv.textContent = app.settings.autoAdvance ? 'ON' : 'OFF';
+
+        showScreen('quiz');
+        renderQuestion();
+        saveResume();
+    }
+
+    function startTopic(topic){
+        let q = database.filter(x => x.topic === topic);
+        if (app.settings.shuffleQuestions) q = shuffle([...q]);
+        q = applyLimit(q);
+        newSession(q, { mode: 'topic', topic });
+    }
+
+    function startFull(){
+        let q = [...database];
+        if (app.settings.shuffleQuestions) q = shuffle(q);
+        q = applyLimit(q);
+        // In full review the badge will track the current author/work per question
+        newSession(q, { mode: 'full', topic: 'REVISIONE TOTALE' });
+    }
+
+    function startQuick(){
+        // If limit is 0, default to 20 for quick.
+        const currentLimit = Number(app.settings.limit || 0);
+        const prev = app.settings.limit;
+        if (!currentLimit) app.settings.limit = 20;
+        startFull();
+        app.settings.limit = prev;
+        saveSettings(app.settings);
+        updateSoundUI();
+    }
+
+    function retryErrors(){
+        if (!app.state.errors.length){
+            toast('INFO', 'Nessun errore da ripetere.');
+            return;
+        }
+        let q = [...app.state.errors];
+        if (app.settings.shuffleQuestions) q = shuffle(q);
+        q = applyLimit(q);
+        newSession(q, { mode: 'errors', topic: 'ERRORI' });
+    }
+
+    function accuracy(){
+        const a = app.state.answered;
+        return a ? Math.round((app.state.correct/a)*100) : 0;
+    }
+
+    function renderQuestion(){
+        const i = app.state.index;
+        const total = app.state.queue.length;
+
+        if (i >= total){
+            endSession();
+            return;
+        }
+
+        const data = app.state.queue[i];
+        app.state.locked = false;
+        app.state.lastAnswer = null;
+
+        // Make the context immediately readable (especially in FULL review)
+        const parts = topicParts(data.topic);
+        const focusLabel = parts.focus ? `${parts.unit}: ${parts.focus}` : parts.unit;
+
+        // In FULL mode, keep header badge synced with current author/work
+        if (app.state.mode === 'full'){
+            app.state.topic = focusLabel;
+            updateHeaderBadges();
+        }
+
+        dom.quiz.meta.textContent = `${focusLabel}`;
+        dom.quiz.count.textContent = `${i+1}/${total}`;
+        dom.quiz.progress.style.width = `${((i+1)/total)*100}%`;
+        dom.quiz.qText.textContent = data.q;
+        dom.quiz.qSub.classList.toggle('hidden', !(window.matchMedia('(max-width: 480px)').matches));
+
+        renderContextChips(data);
+        hideSheet();
+
+        // Option mapping
+        const n = data.options.length;
+        let indices = [...Array(n)].map((_, idx) => idx);
+        if (app.settings.shuffleOptions) shuffle(indices);
+        app.state.mapping = indices;
+
+        dom.quiz.options.innerHTML = '';
+        const labels = ['1','2','3','4','5','6','7','8'];
+
+        indices.forEach((originalIndex, visualIndex) => {
+            const optText = data.options[originalIndex];
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'opt anim w-full p-4 sm:p-5 flex items-start gap-3 text-left';
+            btn.setAttribute('data-visual', String(visualIndex));
+            btn.setAttribute('aria-label', `Opzione ${labels[visualIndex]}: ${optText}`);
+
+            btn.innerHTML = `
+          <div class="kbd shrink-0 mt-0.5">${labels[visualIndex]}</div>
+          <div class="flex-1">
+            <div class="text-base sm:text-lg text-white/90" style="font-family: var(--serif);">${escapeHtml(optText)}</div>
+          </div>
+        `;
+
+            btn.addEventListener('click', () => handleAnswer(visualIndex));
+            dom.quiz.options.appendChild(btn);
+        });
+
+        saveResume();
+    }
+
+    function handleAnswer(visualIndex){
+        if (app.state.locked) return;
+        app.state.locked = true;
+
+        const data = app.state.queue[app.state.index];
+        const buttons = Array.from(dom.quiz.options.querySelectorAll('button'));
+
+        const originalIndex = app.state.mapping[visualIndex];
+        const correctOriginal = data.correct;
+        const isCorrect = originalIndex === correctOriginal;
+
+        // Disable all
+        buttons.forEach(b => b.setAttribute('aria-disabled', 'true'));
+
+        const correctVisual = app.state.mapping.indexOf(correctOriginal);
+        if (correctVisual >= 0 && buttons[correctVisual]) buttons[correctVisual].classList.add('good');
+        if (!isCorrect && buttons[visualIndex]) buttons[visualIndex].classList.add('bad');
+
+        app.state.answered++;
+        if (isCorrect){
+            app.state.correct++;
+            app.state.streak++;
+            playSound('correct');
+            vibrate(14);
+        } else {
+            app.state.errors.push(data);
+            app.state.streak = 0;
+            playSound('wrong');
+            vibrate(30);
+        }
+        app.state.maxStreakSession = Math.max(app.state.maxStreakSession, app.state.streak);
+        updateStreakUI();
+
+        app.state.lastAnswer = { success: isCorrect, chosenOriginal: originalIndex, correctOriginal };
+
+        showSheet({
+            success: isCorrect,
+            data,
+            chosenText: data.options[originalIndex],
+            correctText: data.options[correctOriginal]
+        });
+
+        saveResume();
+
+        if (app.settings.autoAdvance && isCorrect){
+            clearTimeout(app.timers.autoAdv);
+            app.timers.autoAdv = setTimeout(() => nextQuestion(), 850);
+        }
+    }
+
+    function skipQuestion(){
+        if (app.state.locked) return;
+        playSound('click');
+        app.state.streak = 0;
+        updateStreakUI();
+        toast('SKIP', 'Domanda saltata (nessun punteggio).', 1400);
+        nextQuestion(true);
+    }
+
+    function markAsError(){
+        const data = app.state.queue[app.state.index];
+        if (!app.state.errors.some(q => q.id === data.id)) app.state.errors.push(data);
+        toast('SEGNALATA', 'Aggiunta agli errori della sessione.', 1500);
+        playSound('click');
+        vibrate(12);
+        saveResume();
+    }
+
+    function nextQuestion(fromSkip=false){
+        clearTimeout(app.timers.autoAdv);
+        playSound('click');
+        hideSheet();
+        app.state.index++;
+        renderQuestion();
+    }
+
+    function endSession(){
+        clearTimeout(app.timers.autoAdv);
+        app.state.endedAt = Date.now();
+        clearResume();
+        persistStats();
+        renderResults();
+        showScreen('results');
+    }
+
+    function persistStats(){
+        const totalAnswered = app.state.answered;
+        const totalCorrect = app.state.correct;
+        const acc = totalAnswered ? (totalCorrect/totalAnswered)*100 : 0;
+
+        app.stats.sessions += 1;
+        app.stats.answered += totalAnswered;
+        app.stats.correct += totalCorrect;
+        app.stats.bestAccuracy = Math.max(app.stats.bestAccuracy, acc);
+        app.stats.maxStreakEver = Math.max(app.stats.maxStreakEver, app.state.maxStreakSession);
+
+        // Per topic (only if the session is a single topic)
+        if (app.state.mode === 'topic' && app.state.topic && app.state.topic !== '—'){
+            const t = app.state.topic;
+            app.stats.perTopic[t] = app.stats.perTopic[t] || { answered: 0, correct: 0, bestAccuracy: 0 };
+            const ts = app.stats.perTopic[t];
+            ts.answered += totalAnswered;
+            ts.correct += totalCorrect;
+            const tAcc = ts.answered ? (ts.correct/ts.answered)*100 : 0;
+            ts.bestAccuracy = Math.max(ts.bestAccuracy, tAcc);
+        }
+
+        saveStats(app.stats);
+        updateMenuStatsUI();
+    }
+
+    function renderResults(){
+        const ans = app.state.answered;
+        const corr = app.state.correct;
+        const errs = app.state.errors.length;
+        const acc = ans ? Math.round((corr/ans)*100) : 0;
+
+        dom.results.acc.textContent = `${acc}%`;
+        dom.results.correct.textContent = String(corr);
+        dom.results.errors.textContent = String(errs);
+
+        dom.results.time.textContent = fmtTime(app.state.endedAt - app.state.startedAt);
+        dom.results.mode.textContent = (app.state.mode || 'study').toUpperCase();
+        dom.results.best.textContent = `${Math.round(app.stats.bestAccuracy)}%`;
+        dom.results.maxstreak.textContent = String(app.state.maxStreakSession);
+
+        // Errors list
+        dom.results.list.innerHTML = '';
+        if (!errs){
+            dom.results.list.innerHTML = `<div class="p-4 text-white/70">Nessun errore: clean run.</div>`;
+            dom.results.retry.disabled = true;
+            dom.results.retry.classList.add('opacity-50');
+        } else {
+            dom.results.retry.disabled = false;
+            dom.results.retry.classList.remove('opacity-50');
+
+            const frag = document.createDocumentFragment();
+            app.state.errors.slice(0, 80).forEach((q, idx) => {
+                const row = document.createElement('div');
+                row.className = 'p-4 border-b border-white/10';
+                row.innerHTML = `
+            <div class="mono text-xs text-white/45">#${idx+1} • ${escapeHtml(q.topic)}</div>
+            <div class="mt-1 text-white/85">${escapeHtml(q.q)}</div>
+            <div class="mt-2 text-white/65 text-sm"><span class="mono text-xs text-white/45">Dettaglio:</span> ${escapeHtml(q.detail)}</div>
+          `;
+                frag.appendChild(row);
+            });
+            dom.results.list.appendChild(frag);
+        }
+    }
+
+    function backToMenu(){
+        playSound('click');
+        hideSheet(true);
+        showScreen('menu');
+        renderMenu(dom.menu.search.value || '');
+    }
+
+    // ==========================================
+    // Sheet / overlay
+    // ==========================================
+
+    function showSheet({ success, data, chosenText, correctText }){
+        dom.sheet.backdrop.classList.add('opacity-100');
+        dom.sheet.backdrop.style.pointerEvents = 'auto';
+        dom.sheet.el.classList.add('show');
+
+        dom.sheet.title.textContent = success ? 'RISPOSTA ESATTA' : 'ERRORE RILEVATO';
+        dom.sheet.title.style.color = success ? 'var(--good)' : 'var(--bad)';
+
+        const headline = success
+            ? `Confermato: ${correctText}`
+            : `Hai scelto: ${chosenText} • Corretta: ${correctText}`;
+
+        dom.sheet.line.textContent = headline;
+        dom.sheet.detail.textContent = data.detail || '';
+
+        dom.sheet.autoAdv.textContent = app.settings.autoAdvance ? 'ON' : 'OFF';
+
+        // Focus next button for keyboard flow
+        setTimeout(() => dom.sheet.next.focus({preventScroll:true}), 0);
+    }
+
+    function hideSheet(force=false){
+        clearTimeout(app.timers.autoAdv);
+        dom.sheet.el.classList.remove('show');
+        dom.sheet.backdrop.classList.remove('opacity-100');
+        dom.sheet.backdrop.style.pointerEvents = 'none';
+        if (force){
+            // no-op
+        }
+    }
+
+    // ==========================================
+    // Resume
+    // ==========================================
+
+    function resumeSession(){
+        const raw = localStorage.getItem(LS.resume);
+        if (!raw){ toast('INFO','Nessuna sessione da riprendere.'); return; }
+        try{
+            const rs = JSON.parse(raw);
+            const queue = (rs.queueIds || []).map(id => dbById.get(id)).filter(Boolean);
+            if (!queue.length) throw new Error('empty');
+
+            // Restore settings snapshot if present
+            if (rs.settings){
+                app.settings = { ...defaultSettings, ...rs.settings };
+                saveSettings(app.settings);
+                updateSoundUI();
+                setTextScale();
+            }
+
+            // Start session with restored values
+            newSession(queue, { mode: rs.mode || 'study', topic: rs.topic || '—' });
+            app.state.index = clamp(rs.index ?? 0, 0, queue.length);
+            app.state.correct = rs.correct ?? 0;
+            app.state.answered = rs.answered ?? 0;
+            app.state.streak = rs.streak ?? 0;
+            app.state.errors = (rs.errorsIds || []).map(id => dbById.get(id)).filter(Boolean);
+            app.state.startedAt = rs.startedAt || Date.now();
+            updateStreakUI();
+            updateHeaderBadges();
+            renderQuestion();
+            toast('RESUME', 'Sessione ripristinata.', 1600);
+        }catch{
+            clearResume();
+            toast('ERRORE', 'Resume non valido: ripulito.', 1800);
+        }
+    }
+
+    // ==========================================
+    // Settings modal
+    // ==========================================
+
+    function openSettings(){
+        dom.settings.sound.checked = !!app.settings.sound;
+        dom.settings.shuffleOptions.checked = !!app.settings.shuffleOptions;
+        dom.settings.shuffleQuestions.checked = !!app.settings.shuffleQuestions;
+        dom.settings.autoAdv.checked = !!app.settings.autoAdvance;
+        dom.settings.limit.value = String(app.settings.limit || 0);
+        dom.settings.qScale.value = String(app.settings.qScale || 1);
+        dom.settings.uiScale.value = String(app.settings.uiScale || 1);
+
+        dom.settings.modal.classList.remove('hidden');
+        dom.settings.close.focus({preventScroll:true});
+    }
+
+    function closeSettings(){
+        dom.settings.modal.classList.add('hidden');
+    }
+
+    function applySettingsFromModal(){
+        app.settings.sound = !!dom.settings.sound.checked;
+        app.settings.shuffleOptions = !!dom.settings.shuffleOptions.checked;
+        app.settings.shuffleQuestions = !!dom.settings.shuffleQuestions.checked;
+        app.settings.autoAdvance = !!dom.settings.autoAdv.checked;
+        app.settings.limit = Number(dom.settings.limit.value || 0);
+        app.settings.qScale = Number(dom.settings.qScale.value || 1);
+        app.settings.uiScale = Number(dom.settings.uiScale.value || 1);
+
+        // sanitize
+        app.settings.limit = Math.max(0, Math.floor(app.settings.limit));
+        app.settings.qScale = clamp(app.settings.qScale, 0.85, 1.25);
+        app.settings.uiScale = clamp(app.settings.uiScale, 0.9, 1.15);
+
+        saveSettings(app.settings);
+        updateSoundUI();
+        setTextScale();
+
+        dom.sheet.autoAdv.textContent = app.settings.autoAdvance ? 'ON' : 'OFF';
+        toast('SALVATO', 'Impostazioni aggiornate.', 1400);
+    }
+
+    // ==========================================
+    // Escaping
+    // ==========================================
+
+    function escapeHtml(str){
+        return String(str)
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#39;');
+    }
+
+    // ==========================================
+    // Keyboard
+    // ==========================================
+
+    function setupKeyboard(){
+        document.addEventListener('keydown', (e) => {
+            const quizActive = !dom.screens.quiz.classList.contains('hidden');
+            const menuActive = !dom.screens.menu.classList.contains('hidden');
+
+            if (e.key === 'Escape'){
+                if (!dom.settings.modal.classList.contains('hidden')){ closeSettings(); return; }
+                if (quizActive){ backToMenu(); return; }
+            }
+
+            if (!quizActive) return;
+
+            if (!app.state.locked){
+                if (['1','2','3','4','5','6','7','8'].includes(e.key)){
+                    const idx = parseInt(e.key, 10) - 1;
+                    const current = app.state.queue[app.state.index];
+                    if (!current) return;
+                    if (idx >= 0 && idx < current.options.length) handleAnswer(idx);
+                }
+                if (e.key.toLowerCase() === 's'){ skipQuestion(); }
+            }
+
+            if (e.code === 'Space'){
+                if (app.state.locked){
+                    e.preventDefault();
+                    nextQuestion();
+                }
+            }
+        });
+
+        // Menu: Enter on search does not start; it filters only
+        dom.menu.search.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter'){
+                e.preventDefault();
+                renderMenu(dom.menu.search.value);
+            }
+        });
+    }
+
+    // ==========================================
+    // Wire up UI
+    // ==========================================
+
+    function bindUI(){
+        dom.menu.full.addEventListener('click', () => { playSound('click'); startFull(); });
+        dom.menu.quick.addEventListener('click', () => { playSound('click'); startQuick(); });
+        dom.menu.resume.addEventListener('click', () => { playSound('click'); resumeSession(); });
+
+        dom.menu.clear.addEventListener('click', () => { playSound('click'); dom.menu.search.value=''; renderMenu(''); dom.menu.search.focus(); });
+        dom.menu.search.addEventListener('input', () => renderMenu(dom.menu.search.value));
+
+        dom.quiz.exit.addEventListener('click', backToMenu);
+        dom.quiz.skip.addEventListener('click', skipQuestion);
+        dom.quiz.end.addEventListener('click', endSession);
+
+        dom.sheet.close.addEventListener('click', () => { hideSheet(); });
+        dom.sheet.next.addEventListener('click', () => { if (app.state.locked) nextQuestion(); });
+        dom.sheet.backdrop.addEventListener('click', () => { hideSheet(); });
+
+        dom.results.retry.addEventListener('click', () => { playSound('click'); retryErrors(); });
+        dom.results.reviewAll.addEventListener('click', () => { playSound('click'); startFull(); });
+        dom.results.back.addEventListener('click', backToMenu);
+
+        dom.header.btnSound.addEventListener('click', () => {
+            app.settings.sound = !app.settings.sound;
+            saveSettings(app.settings);
+            updateSoundUI();
+            toast('AUDIO', app.settings.sound ? 'Attivo' : 'Disattivato', 1200);
+            playSound('click');
+        });
+
+        dom.header.btnSettings.addEventListener('click', () => { playSound('click'); openSettings(); });
+
+        dom.settings.close.addEventListener('click', closeSettings);
+        dom.settings.cancel.addEventListener('click', closeSettings);
+        dom.settings.backdrop.addEventListener('click', closeSettings);
+        dom.settings.save.addEventListener('click', () => { applySettingsFromModal(); closeSettings(); });
+
+        dom.settings.resetStats.addEventListener('click', () => {
+            clearStats();
+            app.stats = loadStats();
+            updateMenuStatsUI();
+            renderMenu(dom.menu.search.value || '');
+            toast('RESET', 'Statistiche cancellate.', 1400);
+        });
+
+        // Hide toast on click
+        dom.toast.el.addEventListener('click', () => dom.toast.el.classList.remove('show'));
+
+        // Prevent accidental pull-to-refresh inside app on mobile by allowing overflow only where needed
+        document.addEventListener('touchmove', (e) => {
+            // no-op; we keep default scroll
+        }, { passive: true });
+
+        // On first interaction, unlock audio on iOS
+        window.addEventListener('pointerdown', () => { if (app.settings.sound) { try{ initAudio(); }catch{} } }, { once: true });
+    }
+
+    // ==========================================
+    // Init
+    // ==========================================
+
+    function init(){
+        setTextScale();
+        updateSoundUI();
+        updateMenuStatsUI();
+        setResumeButton();
+        renderMenu('');
+        bindUI();
+        setupKeyboard();
+        updateHeaderBadges();
+
+        // If reduced motion, disable animations by removing class? (keeps minimal)
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+            document.body.classList.add('reduce-motion');
+        }
+
+        // Informational toast on very small screens
+        if (window.matchMedia('(max-width: 420px)').matches){
+            setTimeout(() => toast('TIP', 'Su mobile: tocchi lunghi sulle cards → stats. In quiz: scorri e tap.', 2600), 600);
+        }
+    }
+
+    window.addEventListener('load', init);
+</script>
+</body>
+</html>
