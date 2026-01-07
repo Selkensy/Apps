@@ -1,0 +1,2054 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Il Linguaggio del Marketing - Corso Completo</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap');
+
+        :root {
+            /* --- COLORI & TEMA --- */
+            
+            /* LIGHT MODE */
+            --bg-light: #f5f5f4;  
+            --text-light: #292524; 
+            --text-light-secondary: #57534e; 
+            --card-bg-light: #ffffff;
+            --card-border-light: #e7e5e4; 
+            --accent-light: #c2410c; /* Arancione Bruciato per leggibilità */
+            --shadow-light: 0 4px 20px -2px rgba(28, 25, 23, 0.06);
+            --focus-ring-light: #f97316;
+            --highlight-light: #ffedd5; 
+            
+            /* Card Back Colors - Light */
+            --flip-front-bg-light: #fafaf9; 
+            --flip-back-bg-light: #e7e5e4; 
+            --flip-back-text-light: #292524;
+
+            /* Quiz Colors */
+            --quiz-expl-bg-light: #f0fdf4;
+            --quiz-expl-border-light: #bbf7d0;
+            --quiz-expl-text-light: #14532d;
+
+            /* DARK MODE */
+            --bg-dark: #1c1917; 
+            --text-dark: #e7e5e4; 
+            --text-dark-secondary: #a8a29e; 
+            --card-bg-dark: #292524; 
+            --card-border-dark: #44403c; 
+            --accent-dark: #fb923c; 
+            --shadow-dark: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+            --focus-ring-dark: #fdba74;
+            
+            /* Card Back Colors - Dark */
+            --flip-front-bg-dark: #0f0e0d; 
+            --flip-back-bg-dark: #292524; 
+            --flip-back-text-dark: #e7e5e4;
+
+            /* Quiz Colors - Dark */
+            --quiz-expl-bg-dark: #14532d;
+            --quiz-expl-border-dark: #15803d;
+            --quiz-expl-text-dark: #f0fdf4;
+        }
+
+        [data-theme="light"] {
+            --bg-color: var(--bg-light); --text-color: var(--text-light); --text-secondary-color: var(--text-light-secondary); 
+            --card-bg-color: var(--card-bg-light); --accent-color: var(--accent-light);
+            --border-color: var(--card-border-light); --shadow-color: var(--shadow-light); 
+            --focus-ring-color: var(--focus-ring-light); --highlight-color: var(--highlight-light);
+            --highlight-text-color: var(--text-light);
+            --flip-front-bg: var(--flip-front-bg-light);
+            --flip-back-bg: var(--flip-back-bg-light);
+            --flip-back-text: var(--flip-back-text-light);
+            --quiz-expl-bg: var(--quiz-expl-bg-light);
+            --quiz-expl-border: var(--quiz-expl-border-light);
+            --quiz-expl-text: var(--quiz-expl-text-light);
+        }
+        [data-theme="dark"] {
+            --bg-color: var(--bg-dark); --text-color: var(--text-dark); --text-secondary-color: var(--text-dark-secondary);
+            --card-bg-color: var(--card-bg-dark); --accent-color: var(--accent-dark);
+            --border-color: var(--card-border-dark); --shadow-color: var(--shadow-dark); 
+            --focus-ring-color: var(--focus-ring-dark); --highlight-color: var(--highlight-dark);
+            --highlight-text-color: var(--highlight-text-dark);
+            --flip-front-bg: var(--flip-front-bg-dark);
+            --flip-back-bg: var(--flip-back-bg-dark);
+            --flip-back-text: var(--flip-back-text-dark);
+            --quiz-expl-bg: var(--quiz-expl-bg-dark);
+            --quiz-expl-border: var(--quiz-expl-border-dark);
+            --quiz-expl-text: var(--quiz-expl-text-dark);
+        }
+        
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html { font-size: 100%; -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+        
+        body {
+            font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color);
+            transition: background-color 0.4s ease, color 0.4s ease; -webkit-tap-highlight-color: transparent;
+            line-height: 1.8; overflow-x: hidden;
+        }
+        body.no-scroll { overflow: hidden; height: 100%; width: 100%; }
+
+        button { cursor: pointer; border: none; background: none; font-family: inherit; color: inherit; -webkit-tap-highlight-color: transparent; }
+        button:focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 2px; border-radius: 4px; }
+        button:active { transform: scale(0.98); }
+
+        .app-container { opacity: 0; transition: opacity 0.5s ease; }
+        .app-container.loaded { opacity: 1; }
+        
+        /* HEADER */
+        .header {
+            position: sticky; top: 0; z-index: 100;
+            background-color: rgba(245, 245, 244, 0.95);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid transparent;
+            transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), box-shadow 0.3s ease;
+            will-change: transform;
+        }
+        [data-theme="dark"] .header { background-color: rgba(28, 25, 23, 0.95); }
+        .header.hidden { transform: translateY(-100%); }
+        .header.scrolled { border-bottom-color: var(--border-color); box-shadow: var(--shadow-color); }
+
+        .header-content { padding: 0.75rem 1.5rem; display: flex; justify-content: space-between; align-items: center; min-height: 64px; }
+        .header-title { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1; text-align: left; margin-right: 1rem; }
+        
+        .controls { display: flex; align-items: center; gap: 0.75rem; }
+        
+        .icon-btn { display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 12px; transition: background-color 0.2s; }
+        .icon-btn:hover { background-color: var(--border-color); }
+        .icon-btn svg { width: 22px; height: 22px; color: var(--text-secondary-color); transition: color 0.3s; }
+        .icon-btn.active svg { color: var(--accent-color); }
+        
+        /* Nav Buttons Desktop */
+        .nav-buttons-desktop {
+            display: none;
+            position: fixed; bottom: 2rem; right: 2rem;
+            flex-direction: column; gap: 0.5rem;
+            z-index: 95;
+        }
+        .icon-btn.disabled { opacity: 0.3; pointer-events: none; cursor: default; }
+
+        #autoscroll-btn { display: none; }
+
+        .theme-switcher .sun-icon { display: none; } [data-theme="light"] .theme-switcher .sun-icon { display: block; }
+        .theme-switcher .moon-icon { display: none; } [data-theme="dark"] .theme-switcher .moon-icon { display: block; }
+
+        .mode-switcher { display: flex; background-color: var(--border-color); border-radius: 14px; padding: 4px; }
+        .mode-btn { font-size: 0.85rem; font-weight: 600; padding: 6px 16px; border-radius: 10px; color: var(--text-secondary-color); transition: all 0.2s ease; }
+        .mode-btn.active { background-color: var(--card-bg-color); color: var(--text-color); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .desktop-mode-switcher { display: none; }
+
+        /* TIMELINE MOBILE */
+        .progress-timeline-mobile { padding: 0 1.5rem 1rem 1.5rem; touch-action: none; }
+        .timeline-track { position: relative; width: 100%; height: 6px; background-color: var(--border-color); border-radius: 3px; cursor: pointer; }
+        .timeline-progress { position: absolute; top: 0; left: 0; height: 100%; background-color: var(--accent-color); border-radius: 3px; width: 0; transition: width 0.2s linear; will-change: width; }
+        .timeline-nodes { position: absolute; top: 50%; left: 0; width: 100%; display: flex; justify-content: space-between; pointer-events: none; }
+        .timeline-node-point {
+            width: 12px; height: 12px; border-radius: 50%; background-color: var(--border-color);
+            border: 2px solid var(--bg-color); transform: translateY(-50%); transition: transform 0.3s ease, background-color 0.3s ease;
+            pointer-events: auto;
+        }
+        .timeline-node-point.past, .timeline-node-point.active { background-color: var(--accent-color); }
+        .timeline-node-point.active { transform: translateY(-50%) scale(1.4); box-shadow: 0 0 0 4px var(--highlight-color); }
+
+        /* LAYOUT & CHAPTERS */
+        .main-layout { padding-top: 2rem; }
+        #story-panel { padding: 0 1.5rem; }
+        
+        .story-chapter {
+            min-height: 90vh; padding: 4rem 0 6rem 0;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0.5; transform: scale(0.98); filter: blur(1px);
+            transition: opacity 0.6s ease, transform 0.6s ease, filter 0.6s ease; 
+            border-bottom: 1px dashed var(--border-color);
+        }
+        .story-chapter:last-child { border-bottom: none; min-height: 80vh; }
+        .story-chapter.active { opacity: 1; transform: scale(1); filter: blur(0); }
+        
+        .chapter-content { max-width: 680px; width: 100%; }
+        .chapter-title { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 6vw, 2.5rem); color: var(--text-color); margin-bottom: 2rem; line-height: 1.15; letter-spacing: -0.02em; word-wrap: break-word;}
+        .chapter-body { font-size: 1.125rem; line-height: 1.8; color: var(--text-secondary-color); }
+        
+        .chapter-body p, .chapter-body ul, .chapter-body ol { margin-bottom: 1.5rem; }
+        .chapter-body ul, .chapter-body ol { padding-left: 1.2rem; }
+        .chapter-body li { margin-bottom: 0.75rem; padding-left: 0.5rem; }
+        .chapter-body li::marker { color: var(--accent-color); font-weight: 700; }
+        .chapter-body strong { font-weight: 700; color: var(--text-color); }
+        .chapter-body em { color: var(--accent-color); font-style: normal; font-weight: 600; }
+        
+        .chapter-body h4 { 
+            font-size: 0.95rem; margin: 3rem 0 1.2rem 0; color: var(--accent-color); 
+            text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700;
+            display: flex; align-items: center; gap: 0.5rem;
+            line-height: 1.4;
+        }
+        .chapter-body h4::after { content: ''; flex-grow: 1; height: 1px; background-color: var(--border-color); opacity: 0.5; }
+
+        .chapter-body blockquote {
+            border-left: 4px solid var(--accent-color);
+            padding-left: 1.5rem; margin: 2rem 0;
+            font-style: italic; color: var(--text-color);
+            background: linear-gradient(to right, var(--bg-color), transparent);
+        }
+        
+        /* INTERACTIVE ELEMENTS */
+        .interactive-accordion { 
+            margin: 2rem 0; border: 1px solid var(--border-color); border-radius: 16px; 
+            overflow: hidden; background-color: var(--card-bg-color); box-shadow: var(--shadow-color);
+            width: 100%;
+        }
+        .acc-item { border-bottom: 1px solid var(--border-color); }
+        .acc-item:last-child { border-bottom: none; }
+        .acc-header {
+            width: 100%; padding: 1.25rem 1.5rem; text-align: left;
+            background-color: var(--card-bg-color); font-weight: 600; color: var(--text-color);
+            display: flex; justify-content: space-between; align-items: center;
+            transition: background-color 0.2s; font-size: 1rem; line-height: 1.4;
+        }
+        .acc-header:hover { background-color: var(--bg-color); }
+        .acc-header .acc-icon { 
+            width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+            color: var(--accent-color); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            flex-shrink: 0; margin-left: 12px;
+        }
+        .acc-item.open .acc-header .acc-icon { transform: rotate(135deg); }
+        .acc-body {
+            max-height: 0; overflow: hidden; transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            background-color: var(--bg-color);
+        }
+        .acc-content { padding: 1.25rem 1.5rem; font-size: 1rem; color: var(--text-secondary-color); border-top: 1px dashed var(--border-color); line-height: 1.6; }
+
+        /* FLIP CARDS */
+        .flip-container { 
+            margin: 2.5rem auto; perspective: 1000px; width: 100%; max-width: 500px; min-height: 340px; 
+        }
+        .flip-card-inner {
+            position: relative; width: 100%; height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d; cursor: pointer;
+            box-shadow: var(--shadow-color); border-radius: 20px;
+            display: grid; grid-template-areas: "card-face";
+        }
+        .flip-container.flipped .flip-card-inner { transform: rotateY(180deg); }
+        
+        .flip-front, .flip-back {
+            grid-area: card-face; width: 100%;
+            -webkit-backface-visibility: hidden; backface-visibility: hidden;
+            border-radius: 20px; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; padding: 2rem;
+        }
+        
+        .flip-front { background-color: var(--flip-front-bg); border: 1px solid var(--border-color); }
+        .flip-back { background-color: var(--flip-back-bg); color: var(--flip-back-text); transform: rotateY(180deg); }
+        
+        .flip-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--text-color); line-height: 1.3; text-align: center; }
+        .flip-hint { 
+            font-size: 0.8rem; color: var(--accent-color); margin-top: 1.5rem; 
+            font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px;
+            opacity: 0.8; display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+        }
+        .flip-hint::after { content: '↻'; font-size: 1.2em; margin-top: -2.6px; }
+        
+        .flip-back p, .flip-back ul { color: var(--flip-back-text); font-size: 1rem; line-height: 1.5; margin: 0; font-weight: 500; width: 100%;}
+        .flip-back ul { text-align: left; padding-left: 1.5rem; margin-top: 0.5rem; }
+        .flip-back li { margin-bottom: 0.4rem; }
+        
+        [data-theme="light"] .flip-back li::marker { color: var(--accent-color); }
+        [data-theme="dark"] .flip-back li::marker { color: white; }
+
+        #timeline-desktop { display: none; }
+        #scroll-sentinel { position: absolute; top: 0; height: 1px; width: 1px; pointer-events: none; }
+
+        .app-footer {
+            position: fixed; bottom: 0; left: 0; width: 100%; z-index: 90;
+            display: flex; justify-content: center; 
+            padding: 1rem 1.5rem calc(1rem + env(safe-area-inset-bottom));
+            pointer-events: none;
+        }
+        .app-footer.hidden { transform: translateY(150%); }
+        .footer-mode-switcher { 
+            display: flex; pointer-events: auto;
+            background-color: rgba(255, 255, 255, 0.9); 
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); 
+            border-radius: 24px; padding: 6px; 
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        [data-theme="dark"] .footer-mode-switcher { background-color: rgba(28, 25, 23, 0.9); border-color: rgba(255,255,255,0.1); }
+
+        /* QUIZ MODE */
+        .quiz-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 200;
+            display: flex; align-items: center; justify-content: center; padding: 1rem;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            opacity: 0; transition: opacity 0.4s ease, visibility 0.4s; visibility: hidden;
+        }
+        .quiz-overlay.visible { opacity: 1; visibility: visible; }
+        .quiz-container {
+            background-color: var(--card-bg-color); border: 1px solid var(--border-color);
+            width: 96%; max-width: 600px; 
+            height: auto; max-height: 85vh;
+            border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            display: flex; flex-direction: column; overflow: hidden;
+            transform: scale(0.95) translateY(10px); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .quiz-overlay.visible .quiz-container { transform: scale(1) translateY(0); }
+        
+        .quiz-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; background-color: var(--bg-color); }
+        .quiz-title { font-weight: 600; color: var(--text-secondary-color); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .quiz-body { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; -webkit-overflow-scrolling: touch; }
+        #quiz-content-wrapper { padding: 1.5rem; display: flex; flex-direction: column; justify-content: center; min-height: 100%;}
+        
+        .quiz-slide { width: 100%; opacity: 0; transition: opacity 0.3s ease; }
+        .quiz-slide.active { opacity: 1; }
+        
+        .quiz-question-text { font-size: clamp(1.1rem, 4vw, 1.35rem); font-weight: 700; margin-bottom: 1.5rem; line-height: 1.4; color: var(--text-color); }
+        .quiz-answers { display: grid; gap: 0.75rem; }
+        .quiz-answer-btn {
+            width: 100%; padding: 1rem 1.25rem; text-align: left; background-color: var(--bg-color);
+            border: 2px solid transparent; border-radius: 16px; font-size: 1rem; font-weight: 500;
+            transition: all 0.2s ease; color: var(--text-color);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            word-break: break-word; hyphens: auto; line-height: 1.4;
+        }
+        .quiz-answer-btn:hover { background-color: var(--border-color); }
+        .quiz-answer-btn:active { transform: scale(0.98); }
+        .quiz-answer-btn.correct { background-color: #dcfce7; color: #14532d; border-color: #22c55e; }
+        [data-theme="dark"] .quiz-answer-btn.correct { background-color: #14532d; color: #f0fdf4; border-color: #22c55e; }
+        .quiz-answer-btn.incorrect { background-color: #fee2e2; color: #7f1d1d; border-color: #ef4444; }
+        [data-theme="dark"] .quiz-answer-btn.incorrect { background-color: #7f1d1d; color: #fef2f2; border-color: #ef4444; }
+        .quiz-answer-btn.disabled { opacity: 0.6; pointer-events: none; }
+        
+        .quiz-explanation {
+            margin-top: 1.5rem; padding: 1.25rem; border-radius: 12px; font-size: 1rem; line-height: 1.5;
+            background-color: var(--quiz-expl-bg); border: 1px solid var(--quiz-expl-border); color: var(--quiz-expl-text);
+            opacity: 0; transform: translateY(10px); transition: opacity 0.4s ease, transform 0.4s ease; display: none;
+        }
+        .quiz-explanation.visible { opacity: 1; transform: translateY(0); display: block; }
+
+        .quiz-footer { 
+            padding: 1.5rem; border-top: 1px solid var(--border-color); flex-shrink: 0; background-color: var(--bg-color);
+            padding-bottom: calc(1.5rem + env(safe-area-inset-bottom)/2);
+        }
+        .quiz-next-btn { width: 100%; background-color: var(--accent-color); color: white; padding: 1rem; border-radius: 14px; font-size: 1.1rem; font-weight: 600; transition: opacity 0.2s, transform 0.2s; }
+        .quiz-next-btn:active { transform: scale(0.98); }
+        .quiz-next-btn:disabled { background-color: var(--border-color); color: var(--text-secondary-color); cursor: not-allowed; transform: none; }
+
+        .quiz-results-wrapper { text-align: center; display: flex; flex-direction: column; justify-content: center; min-height: 100%; padding: 1.5rem; }
+        .quiz-results-title { font-family: 'Playfair Display', serif; font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .quiz-results-score { font-size: 3.5rem; font-weight: 800; color: var(--accent-color); line-height: 1; margin: 1rem 0; }
+        .quiz-results-text { font-size: 1.1rem; color: var(--text-secondary-color); margin-bottom: 2rem; }
+        .quiz-results-actions { display: flex; flex-direction: column; gap: 0.75rem; width: 100%; }
+        .quiz-results-actions .quiz-next-btn.secondary { background-color: transparent; border: 2px solid var(--border-color); color: var(--text-color); }
+        .quiz-results-actions .quiz-next-btn.secondary:hover { border-color: var(--text-secondary-color); }
+
+        /* DESKTOP OVERRIDES & RESPONSIVE FIXES */
+        @media (min-width: 960px) {
+            html.snap-enabled { /* CSS Snap Removed */ }
+
+            .progress-timeline-mobile { display: none; }
+            .app-footer { display: none; }
+            .desktop-mode-switcher { display: flex; }
+            #autoscroll-btn { display: flex; } 
+            
+            .nav-buttons-desktop { display: flex; }
+            
+            .main-layout { 
+                display: grid; 
+                grid-template-columns: 1fr minmax(0, 680px) 1fr; 
+                gap: 2rem; 
+                max-width: 100%; 
+                margin: 0; 
+                padding: 0 2rem; 
+            }
+            
+            #timeline-desktop {
+                grid-column: 1;
+                display: flex; 
+                position: sticky; top: 0; height: 100vh;
+                align-items: center; 
+                justify-content: flex-end;
+            }
+            
+            #story-panel { grid-column: 2; padding: 0; }
+
+            .timeline-desktop-container { 
+                position: relative; 
+                width: 220px; 
+                padding: 4rem 1rem 4rem 0; 
+                display: flex; justify-content: flex-end;
+            }
+            
+            .timeline-svg {
+                position: absolute; right: 0; 
+                top: 0; height: 100%; width: 2px; overflow: visible;
+                z-index: 0;
+                pointer-events: none; 
+            }
+            .timeline-svg-line { stroke: var(--border-color); stroke-width: 2px; fill: none; }
+            .timeline-svg-progress {
+                stroke: var(--accent-color); stroke-width: 2px; fill: none; transition: stroke-dashoffset 0.4s ease;
+            }
+
+            .timeline-desktop-nodes { 
+                display: flex; flex-direction: column; gap: 1.5rem; 
+                align-items: flex-end; text-align: right; width: 100%; 
+                z-index: 1; 
+            }
+            
+            .timeline-desktop-node {
+                display: flex; align-items: center; gap: 1.5rem; padding: 0.5rem 0;
+                position: relative; transition: opacity 0.3s; flex-direction: row-reverse; 
+                width: 140%; 
+                cursor: pointer; padding-right: 15px;
+            }
+            .timeline-desktop-node:hover .node-label { color: var(--accent-color); }
+            .timeline-desktop-node .node-point {
+                width: 14px; height: 14px; border-radius: 50%; background-color: var(--border-color);
+                border: 3px solid var(--bg-color); transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); flex-shrink: 0; 
+                z-index: 2; position: relative;
+            }
+            .timeline-desktop-node::after {
+                content: ''; position: absolute; top: 0; right: -10px; bottom: 0; width: 100%; z-index: -1;
+            }
+
+            .timeline-desktop-node .node-label { 
+                font-size: 0.95rem; font-weight: 500; color: var(--text-secondary-color); 
+                transition: color 0.3s ease, transform 0.3s ease;
+                white-space: nowrap; 
+            }
+
+            .timeline-desktop-node.active .node-point { background-color: var(--accent-color); transform: scale(1.3); box-shadow: 0 0 0 4px var(--highlight-color); }
+            .timeline-desktop-node.active .node-label { color: var(--text-color); font-weight: 700; transform: translateX(-5px); }
+            .timeline-desktop-node.past .node-point { background-color: var(--accent-color); border-color: var(--accent-color); }
+
+            .story-chapter { padding: 6rem 0; min-height: 85vh; }
+            .story-chapter:first-child { padding-top: 4rem; }
+        }
+        
+        @media (min-width: 1200px) {
+             .main-layout { gap: 4rem; }
+        }
+    </style>
+</head>
+<body>
+    <div id="scroll-sentinel"></div>
+    <div class="app-container" id="app">
+        <header class="header" id="header">
+            <div class="header-content">
+                <h1 class="header-title" id="header-title">Il Linguaggio del Marketing</h1>
+                <div class="controls">
+                    <div class="mode-switcher desktop-mode-switcher">
+                        <button class="mode-btn" data-mode="study">Studio</button>
+                        <button class="mode-btn" data-mode="story">Storia</button>
+                    </div>
+                    
+                    <button class="icon-btn" id="autoscroll-btn" aria-label="Attiva/Disattiva Autoscroll">
+                         <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 20V7m0 13-4-4m4 4 4-4m4-12v13m0-13 4 4m-4-4-4 4"/>
+                        </svg>
+                    </button>
+
+                     <button class="icon-btn" id="quiz-btn" aria-label="Avvia Quiz">
+                        <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 3L1 9l11 6 9-4.5V12h2V9l-11-6zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+                    </button>
+                    <button class="icon-btn theme-switcher" aria-label="Cambia Tema">
+                        <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                        <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="progress-timeline-mobile">
+                <div class="timeline-track" id="timeline-track-mobile">
+                    <div class="timeline-progress" id="timeline-progress-mobile"></div>
+                    <div class="timeline-nodes" id="timeline-nodes-mobile"></div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- DESKTOP NAV BUTTONS -->
+        <div class="nav-buttons-desktop">
+            <button class="icon-btn" id="prev-chapter-btn" aria-label="Capitolo precedente">
+                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                  <path fill-rule="evenodd" d="M5.575 13.729C4.501 15.033 5.43 17 7.12 17h9.762c1.69 0 2.618-1.967 1.544-3.271l-4.881-5.927a2 2 0 0 0-3.088 0l-4.88 5.927Z" clip-rule="evenodd"/>
+                </svg>
+            </button>
+            <button class="icon-btn" id="next-chapter-btn" aria-label="Capitolo successivo">
+                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                  <path fill-rule="evenodd" d="M18.425 10.271C19.499 8.967 18.57 7 16.88 7H7.12c-1.69 0-2.618 1.967-1.544 3.271l4.881 5.927a2 2 0 0 0 3.088 0l4.88-5.927Z" clip-rule="evenodd"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="main-layout">
+            <aside id="timeline-desktop">
+                <div class="timeline-desktop-container">
+                    <svg class="timeline-svg">
+                        <line class="timeline-svg-line" x1="1" y1="0" x2="1" y2="100%"></line>
+                        <line class="timeline-svg-progress" id="timeline-progress-desktop" x1="1" y1="0" x2="1" y2="100%"></line>
+                    </svg>
+                    <div class="timeline-desktop-nodes" id="timeline-nodes-desktop"></div>
+                </div>
+            </aside>
+            <main id="story-panel"></main>
+        </div>
+
+        <footer class="app-footer" id="app-footer">
+            <div class="mode-switcher footer-mode-switcher">
+                <button class="mode-btn" data-mode="study">Studio</button>
+                <button class="mode-btn" data-mode="story">Storia</button>
+            </div>
+        </footer>
+    </div>
+    
+    <div class="quiz-overlay" id="quiz-overlay">
+        <div class="quiz-container" id="quiz-container"></div>
+    </div>
+
+    <script>
+        /* 
+           =================================================================
+           DATI DEL CORSO: IL LINGUAGGIO DEL MARKETING
+           =================================================================
+        */
+        const learningContent = {
+            title: "Il Linguaggio del Marketing",
+            chapters: [
+                {
+                    id: 'capitolo-1',
+                    title: '1. Marketing, Domanda e Offerta',
+                    description: `
+                        <h4>Il Concetto di Marketing</h4>
+                        <p>Il marketing è l'insieme di <strong>strategie</strong> che un'azienda adotta per ottimizzare la vendita dei suoi prodotti e raggiungere gli obiettivi d'impresa. Queste strategie si fondano su due pilastri fondamentali:</p>
+                        <ol>
+                            <li>La determinazione dei bisogni e desideri dei clienti (<strong>Domanda di mercato</strong>).</li>
+                            <li>La capacità di soddisfazione dei bisogni rispetto alla concorrenza (<strong>Offerta del mercato</strong>).</li>
+                        </ol>
+
+                        <h4>Il Mercato</h4>
+                        <p>Il mercato è definito come il <strong>luogo di incontro</strong> tra chi offre merce e/o servizi e coloro che ne fanno richiesta.</p>
+                        
+                        <div class="interactive-accordion">
+                            <div class="acc-item">
+                                <button class="acc-header">Definizione di Domanda <span class="acc-icon">+</span></button>
+                                <div class="acc-body">
+                                    <div class="acc-content">
+                                        È la quantità di richiesta di un certo bene o servizio dato un determinato prezzo. 
+                                        <strong>Varia in direzione opposta</strong> al prezzo: se il prezzo aumenta, la domanda si riduce (e viceversa).
+                                        <br><br>
+                                        <strong>Fattori che influenzano la domanda:</strong>
+                                        <ul>
+                                            <li>Prezzo del bene acquistato.</li>
+                                            <li>Prezzo dei <em>beni complementari</em> (es. auto e benzina) e <em>surrogati</em> (es. burro e margarina, Coca-Cola e Pepsi).</li>
+                                            <li>Reddito del consumatore.</li>
+                                            <li>Aspettative soggettive dei consumatori.</li>
+                                            <li>Gusti e redditi dei consumatori.</li>
+                                            <li>Aumento demografico.</li>
+                                            <li>Concentrazione del reddito nazionale.</li>
+                                            <li>Costo del denaro.</li>
+                                            <li><strong>Elasticità</strong> (sostituibilità con altri beni) o <strong>Rigidità</strong> (carattere essenziale del bene).</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="acc-item">
+                                <button class="acc-header">Definizione di Offerta <span class="acc-icon">+</span></button>
+                                <div class="acc-body">
+                                    <div class="acc-content">
+                                        È la quantità di un certo bene o servizio che viene messa in vendita a un dato prezzo.
+                                        <strong>Varia nella stessa direzione</strong> del prezzo: a prezzi più alti, le imprese sono invogliate a produrre molto. Se i prezzi sono troppo bassi, alcune imprese potrebbero scegliere di <strong>non produrre più</strong> perché non coprono i costi.
+                                        <br><br>
+                                        <strong>Fattori che influenzano l'offerta:</strong>
+                                        <ul>
+                                            <li><strong>Costi di produzione:</strong> se i salari diminuiscono, i costi scendono e l'offerta aumenta.</li>
+                                            <li><strong>Tecnologia:</strong> investire in R&S costa all'inizio, ma poi riduce i costi di produzione e incrementa l'offerta.</li>
+                                            <li><strong>Politiche governative:</strong> l'abolizione dei dazi doganali aumenta l'offerta dei prodotti esportabili.</li>
+                                            <li>Prezzi generali.</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <p><strong>Nota importante sul grafico:</strong> Il prezzo di un prodotto che rende massimo il ricavo è determinato dall'<strong>equilibrio</strong> tra le due curve (Domanda D e Offerta S).</p>
+                    `,
+                    storyDescription: `
+                        <p>Immagina di trovarti in una piazza affollata. Da una parte ci sono persone che cercano qualcosa, dall'altra persone che offrono qualcosa. Questo è il <strong>Mercato</strong>.</p>
+                        <p>Il direttore d'orchestra di questo incontro è il <strong>Prezzo</strong>. Hai mai notato che quando le ciliegie costano troppo (Prezzo su), ne compri di meno? Questa è la legge della <strong>Domanda</strong>: va sempre in direzione opposta al prezzo.</p>
+                        <p>Dall'altra parte del banco, però, il contadino ragiona all'opposto. Se le ciliegie si vendono a peso d'oro, farà di tutto per portarne casse intere il giorno dopo. Questa è la legge dell'<strong>Offerta</strong>: va nella stessa direzione del prezzo. Ma attenzione: se il prezzo crolla troppo, il contadino potrebbe decidere che non vale nemmeno la pena raccoglierle (non copre i costi).</p>
+                        <p>Il marketing nasce proprio qui: capire questi meccanismi per posizionarsi nel punto esatto dove tutti sono felici (equilibrio).</p>
+                    `
+                },
+                {
+                    id: 'capitolo-2',
+                    title: '2. Strategie e Customer Satisfaction',
+                    description: `
+                        <h4>Obiettivi Strategici</h4>
+                        <p>Lo scopo della strategia di marketing è ottenere un <strong>vantaggio competitivo</strong> sulla concorrenza, che si esprime in due modi:</p>
+                        <ul>
+                            <li><strong>La qualità:</strong> vendere pochi prodotti di elevata qualità, ma guadagnare molto (alto margine).</li>
+                            <li><strong>Il prezzo:</strong> guadagnare poco sul singolo prodotto, ma venderne molti (alto volume).</li>
+                        </ul>
+
+                        <h4>Marketing Relazionale</h4>
+                        <p>Oggi, accanto al marketing del prodotto, c'è il <strong>marketing relazionale</strong>. L'imperativo è la soddisfazione del cliente attraverso uno scambio di <strong>reciproca fiducia</strong>.
+                        <br>Caratteristiche:</p>
+                        <ul>
+                            <li>L'attenzione si sposta dalla transazione alla <strong>relazione</strong>.</li>
+                            <li>L'azienda pone al centro il cliente (bisogni, desideri, aspettative) per soddisfarlo nel tempo (cliente "affezionato").</li>
+                            <li>I clienti diventano <strong>partner</strong> nella definizione dell'offerta.</li>
+                        </ul>
+
+                        <h4>Customer Satisfaction</h4>
+                        <p>È l'insieme di tecniche volte alla massimizzazione della soddisfazione della clientela. Le aspettative del cliente moderno combinano <strong>bassi costi</strong> e <strong>qualità elevata</strong> (servizio pre/post vendita, brand, assistenza).</p>
+                        <p>La concorrenza si è spostata dall'area "prezzo" a quella dell'<strong>"immagine"</strong>.</p>
+                    `,
+                    storyDescription: `
+                        <p>C'era una volta il marketing del "mordi e fuggi": l'importante era vendere il prodotto, incassare e arrivederci. Oggi quel mondo non esiste più.</p>
+                        <p>Oggi le aziende vivono di <strong>relazioni</strong>. Non basta più vendere un'auto; bisogna vendere la sicurezza, l'assistenza e la fiducia che quell'auto non ti lascerà a piedi. Il cliente non è più un numero, ma un <strong>partner</strong>. Se lui è felice, tu prosperi.</p>
+                        <p>La battaglia non si gioca più solo su chi fa il prezzo più basso (anche se il cliente vuole spendere poco!), ma su chi ha l'<strong>immagine</strong> migliore. Chi offre quel "qualcosa in più" che fa sentire il cliente speciale e capito.</p>
+                    `
+                },
+                {
+                    id: 'capitolo-3',
+                    title: '3. La Qualità e i Bisogni',
+                    description: `
+                        <h4>Qualità Totale</h4>
+                        <p>Secondo le nuove tendenze, la qualità totale è un'esperienza memorabile che <strong>supera le aspettative</strong> del cliente. Coinvolge non solo il prodotto, ma anche il servizio, il sistema di produzione, la cultura organizzativa e il clima aziendale.</p>
+                        <p>Un prodotto ha successo se non solo soddisfa i desideri consapevoli, ma <strong>anticipa anche quelli inconsci e intimi</strong>.</p>
+                        
+                        <h4>I 3 Ordini di Bisogni</h4>
+                        <div class="flip-container">
+                            <div class="flip-card-inner">
+                                <div class="flip-front">
+                                    <div class="flip-title">Quali sono i 3 bisogni del cliente?</div>
+                                    <div class="flip-hint">Clicca per scoprire</div>
+                                </div>
+                                <div class="flip-back">
+                                    <ul>
+                                        <li><strong>1. Bisogni Impliciti:</strong> Dati per scontati dal cliente (es. acqua calda in albergo).</li>
+                                        <li><strong>2. Bisogni Espliciti:</strong> Il cliente li manifesta chiaramente (es. richiesta di sauna o vista panoramica).</li>
+                                        <li><strong>3. Bisogni Latenti:</strong> Il cliente non è in grado di dichiararli perché non ne ha consapevolezza. Si accorge del bisogno nel momento stesso in cui ne percepisce il beneficio (es. cesto di benvenuto in camera).</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h4>Case Study: Lavazza</h4>
+                        <p>La qualità totale si sviluppa attraverso 4 strategie (cliente al centro, qualità come leva, miglioramento continuo, coinvolgimento risorse umane) e <strong>6 dimensioni</strong>:</p>
+                        <ol>
+                            <li>Qualità tecnica (prodotto/servizio).</li>
+                            <li>Qualità relazionale (comunicazione/cortesia).</li>
+                            <li>Qualità ambientale (design, accoglienza).</li>
+                            <li>Qualità di immagine (credibilità, status).</li>
+                            <li>Qualità economica (prezzi/spese).</li>
+                            <li>Qualità organizzativa (filosofia, leadership).</li>
+                        </ol>
+                    `,
+                    storyDescription: `
+                        <p>Immagina di entrare in un hotel. Ti aspetti che ci sia l'acqua calda, giusto? Questo è un <strong>bisogno implicito</strong>. Se c'è, non dici nulla. Se manca, ti arrabbi.</p>
+                        <p>Poi hai chiesto una camera con vista mare e la ottieni. Sei contento, perché questo era un <strong>bisogno esplicito</strong>, qualcosa che sapevi di volere.</p>
+                        <p>Ma poi entri in camera e trovi un cesto di frutta fresca e cioccolatini locali in omaggio. Non l'avevi chiesto, non sapevi nemmeno di volerlo, ma ora che c'è, sei entusiasta. Questo è il <strong>bisogno latente</strong>: la sorpresa, l'effetto WOW. È qui che si gioca la vera partita della <strong>Qualità Totale</strong>: anticipare i desideri che il cliente non sa ancora di avere.</p>
+                    `
+                },
+                {
+                    id: 'capitolo-4',
+                    title: '4. La Fidelizzazione (Loyalty)',
+                    description: `
+                        <h4>Loyalty e Fidelizzazione</h4>
+                        <p>La <strong>Loyalty</strong> è la fedeltà dei clienti a un'impresa. La <strong>Fidelizzazione</strong> è l'insieme di azioni per mantenere il proprio parco clienti.</p>
+                        <p>Un dato fondamentale: <strong>"Acquisire un cliente è 20 volte più costoso che conservarlo."</strong></p>
+                        
+                        <h4>Fondamenti della Fidelizzazione</h4>
+                        <ul>
+                            <li>Soddisfazione del cliente (prodotti affidabili).</li>
+                            <li>Servizio efficace, cortese e tempestivo.</li>
+                            <li>Strategie di <strong>"Loyalty Management"</strong> (benefici, vantaggi, premi).</li>
+                        </ul>
+
+                        <h4>Azioni e Strumenti</h4>
+                        <p>Per fidelizzare il cliente abituale si usano:</p>
+                        <ul>
+                            <li>Programmi preferenziali (es. <strong>Fidelity-card</strong>) con offerte, sconti e promozioni.</li>
+                            <li>News su prodotti/servizi (via email/posta).</li>
+                            <li>Servizio di <strong>Customer Care</strong> competente.</li>
+                            <li>Sito internet pratico e funzionale.</li>
+                        </ul>
+                        <p><strong>Campagne Fidelity-card:</strong> Raccolta punti, Gift card, Abbonamenti, Premi per acquisti ripetuti, Tessere sconto.</p>
+
+                        <h4>Dinamica Positiva</h4>
+                        <p>Il cliente soddisfatto e fedele genera una dinamica positiva:</p>
+                        <ul>
+                            <li>Acquista ancora e preferisce il brand.</li>
+                            <li>Aumenta il tetto di spesa (prodotti fascia alta -> <strong>Up-selling</strong>).</li>
+                            <li>Acquista prodotti complementari o aggiuntivi (<strong>Cross-selling</strong>).</li>
+                            <li>Fa <strong>passaparola</strong> positivo (veicolo di promozione).</li>
+                        </ul>
+                    `,
+                    storyDescription: `
+                        <p>Immagina di avere un secchio bucato. Puoi continuare a versarci dentro acqua (nuovi clienti), ma se non chiudi i buchi, farai una fatica immane. La <strong>fidelizzazione</strong> è l'arte di tappare quei buchi.</p>
+                        <p>Perché? Perché convincere uno sconosciuto a fidarsi di te costa <strong>20 volte di più</strong> che coccolare chi ti conosce già. </p>
+                        <p>Come si coccola un cliente? Con le tessere fedeltà che danno sconti (chi non ne ha una nel portafoglio?), con un servizio clienti che risolve i problemi invece di crearne, e ricordandosi del suo compleanno.</p>
+                        <p>Un cliente fedele è un tesoro: spende di più (Up-selling), compra anche la cravatta insieme alla camicia (Cross-selling) e, soprattutto, parla bene di te agli amici. È la migliore pubblicità gratuita che esista.</p>
+                    `
+                },
+                {
+                    id: 'capitolo-5',
+                    title: '5. Profilazione e Dati',
+                    description: `
+                        <h4>Conoscere il Cliente</h4>
+                        <p>Fidelizzare significa conoscere, capire e prevedere i bisogni. È indispensabile stendere un <strong>profilo preciso</strong> dei clienti basandosi su 3 tipi di informazioni:</p>
+                        <ol>
+                            <li><strong>Anagrafico-descrittive:</strong> nome, sesso, età, area geografica.</li>
+                            <li><strong>Comportamentali:</strong> prodotti acquistati, prezzo, modalità pagamento, lamentele.</li>
+                            <li><strong>Economiche:</strong> costi e ricavi del cliente.</li>
+                        </ol>
+
+                        <h4>Il Web e il Tracking</h4>
+                        <p>Il web è una fonte preziosa per raccogliere dati su atteggiamenti e stili di consumo. La raccolta avviene in due modi:</p>
+                        <ul>
+                            <li><strong>Metodi Partecipativi:</strong> Il cliente è consapevole (es. registrazione ai siti, commenti social, ricerche di mercato).</li>
+                            <li><strong>Metodi Non partecipativi:</strong> Il cliente fornisce dati in modo inconsapevole tramite <strong>logbook</strong> e <strong>cookies</strong>. Questi tracciano provenienza geografica, sito visitato in precedenza, tempo di permanenza, parole chiave.</li>
+                        </ul>
+
+                        <h4>Esempio: Amazon</h4>
+                        <p>Amazon utilizza i dati (transazionali e di navigazione) per creare una <strong>pagina personalizzata</strong> di benvenuto, arricchendo il profilo costantemente. Il layout e i contenuti sono configurati "su misura" per l'utente.</p>
+                    `,
+                    storyDescription: `
+                        <p>Hai presente quando il barista ti prepara il "solito" senza chiedere? Ti senti a casa. Nel mondo digitale, questo si chiama <strong>profilazione</strong>.</p>
+                        <p>Le aziende raccolgono dati su di te per offrirti il "tuo solito". Sanno come ti chiami (dati anagrafici), quanto spendi di solito (dati economici) e se ti piacciono più i thriller o le commedie (dati comportamentali).</p>
+                        <p>A volte glielo dici tu registrandoti al sito (partecipativo), altre volte lo capiscono da soli osservando i tuoi movimenti digitali tramite i <strong>cookies</strong> (non partecipativo). È così che Amazon riesce a consigliarti esattamente il libro che volevi leggere, ancora prima che tu sapessi di volerlo.</p>
+                    `
+                },
+                {
+                    id: 'capitolo-6',
+                    title: '6. Web Marketing e Prosumer',
+                    description: `
+                        <h4>Il Prosumer</h4>
+                        <p>Con l'evoluzione del web, il cliente diventa <strong>Prosumer</strong> (Producer + Consumer). Non è più passivo, ma partecipa attivamente alla creazione, produzione, distribuzione e consumo del prodotto.</p>
+                        <p>Interagisce online, fornisce pareri e commenti. Esempi: <strong>Booking</strong> (le recensioni guidano gli altri), <strong>Starbucks</strong> ("My Starbucks Idea" per suggerimenti innovativi).</p>
+
+                        <h4>Web Marketing</h4>
+                        <p>Grazie al web, l'impresa pianifica strategie integrate (Siti, Social, Blog, Video, App, Email). La figura professionale è il <strong>Social Media Marketing</strong>.</p>
+                        <p>Le <strong>4 funzioni</strong> del Web Marketing sono:</p>
+                        <ol>
+                            <li><strong>Migliorare l'efficacia della comunicazione</strong> verso l'esterno (cataloghi, news, offerte).</li>
+                            <li><strong>Supportare i servizi di assistenza</strong> e cura del cliente (velocità, personalizzazione).</li>
+                            <li><strong>Ridefinire internamente i processi aziendali</strong> (automatizzare ordini, coordinare logistica e produzione).</li>
+                            <li><strong>Utilizzare la rete come canale di vendita</strong> (e-commerce: ordine, pagamento, consegna).</li>
+                        </ol>
+                    `,
+                    storyDescription: `
+                        <p>Un tempo la TV parlava e tu ascoltavi. Oggi, tu parli e l'azienda ascolta. Sei diventato un <strong>Prosumer</strong>: un po' consumatore, un po' produttore.</p>
+                        <p>Quando scrivi una recensione su Booking, stai aiutando l'hotel a vendere (o a fallire). Quando suggerisci un nuovo gusto di frappuccino a Starbucks, stai aiutando a creare il prodotto.</p>
+                        <p>Il <strong>Web Marketing</strong> non serve solo a farsi pubblicità. Serve a vendere direttamente (e-commerce), a rispondere ai problemi dei clienti in tempo reale (assistenza) e persino a organizzare meglio il magazzino (processi interni). È il sistema nervoso dell'azienda moderna.</p>
+                    `
+                }
+            ]
+        };
+
+        /* 
+           =================================================================
+           DATI DEL QUIZ (Basati sulle domande fornite)
+           =================================================================
+        */
+        const quizData = [
+		// --- IL CONCETTO DI MARKETING ---
+		{
+			question: "Qual è la definizione corretta di Marketing secondo il testo?",
+			options: ["Solo la vendita di prodotti", "Un insieme di strategie per ottimizzare le vendite e raggiungere obiettivi d'impresa", "Esclusivamente la pubblicità televisiva", "La gestione del personale aziendale"],
+			correctAnswer: "Un insieme di strategie per ottimizzare le vendite e raggiungere obiettivi d'impresa",
+			explanation: "Il marketing non è solo vendita o pubblicità, ma un insieme complesso di strategie."
+		},
+		{
+			question: "Su quali pilastri si fondano le strategie di marketing?",
+			options: ["Solo sul prezzo", "Sulla determinazione dei bisogni dei clienti e sulla capacità di soddisfarli", "Sulla fortuna e sul caso", "Esclusivamente sulla riduzione dei costi"],
+			correctAnswer: "Sulla determinazione dei bisogni dei clienti e sulla capacità di soddisfarli",
+			explanation: "Analisi della domanda (bisogni) e capacità di offerta (soddisfazione rispetto alla concorrenza)."
+		},
+		{
+			question: "Cosa si intende per 'Domanda di mercato'?",
+			options: ["La merce venduta", "La determinazione dei bisogni e desideri dei clienti", "La produzione industriale", "Le tasse governative"],
+			correctAnswer: "La determinazione dei bisogni e desideri dei clienti",
+			explanation: "La domanda rappresenta ciò che il cliente vuole o di cui ha bisogno."
+		},
+		{
+			question: "Cosa si intende per 'Offerta di mercato'?",
+			options: ["La capacità di soddisfare i bisogni rispetto alla concorrenza", "La richiesta di beni da parte dei consumatori", "Il luogo fisico del mercato", "Il reddito del consumatore"],
+			correctAnswer: "La capacità di soddisfare i bisogni rispetto alla concorrenza",
+			explanation: "L'offerta è ciò che l'azienda mette in campo per rispondere alla domanda."
+		},
+
+		// --- DOMANDA E OFFERTA (ECONOMIA) ---
+		{
+			question: "Cos'è il Mercato?",
+			options: ["Il luogo di incontro tra chi offre e chi richiede beni/servizi", "Solo un negozio fisico", "Un sito web di e-commerce", "L'ufficio delle imposte"],
+			correctAnswer: "Il luogo di incontro tra chi offre e chi richiede beni/servizi",
+			explanation: "È il punto di contatto tra Domanda e Offerta, fisico o virtuale."
+		},
+		{
+			question: "Come varia la DOMANDA rispetto al prezzo?",
+			options: ["In direzione opposta", "Nella stessa direzione", "Non varia", "In modo casuale"],
+			correctAnswer: "In direzione opposta",
+			explanation: "Se il prezzo sale, la domanda scende. Se il prezzo scende, la domanda sale."
+		},
+		{
+			question: "Se il prezzo di un bene aumenta, la sua domanda tende a...",
+			options: ["Aumentare", "Diminuire", "Restare invariata", "Diventare offerta"],
+			correctAnswer: "Diminuire",
+			explanation: "Legge fondamentale della domanda: prezzo più alto disincentiva l'acquisto."
+		},
+		{
+			question: "Se il prezzo di un bene diminuisce, la sua domanda tende a...",
+			options: ["Aumentare", "Diminuire", "Sparire", "Azzerarsi"],
+			correctAnswer: "Aumentare",
+			explanation: "Prezzi più bassi incentivano l'acquisto."
+		},
+		{
+			question: "Come varia l'OFFERTA rispetto al prezzo?",
+			options: ["Nella stessa direzione", "In direzione opposta", "Non varia", "In modo inverso"],
+			correctAnswer: "Nella stessa direzione",
+			explanation: "Se il prezzo sale, le imprese sono invogliate a produrre e vendere di più."
+		},
+		{
+			question: "Se il prezzo di mercato sale, le imprese sono invogliate a...",
+			options: ["Produrre molto", "Smettere di produrre", "Ridurre l'offerta", "Chiudere l'azienda"],
+			correctAnswer: "Produrre molto",
+			explanation: "Prezzi alti significano margini potenziali più alti, quindi più produzione."
+		},
+		{
+			question: "Se i prezzi sono troppo bassi, cosa potrebbe accadere all'offerta?",
+			options: ["Le imprese potrebbero non produrre più", "Le imprese produrranno il doppio", "L'offerta diventerà domanda", "Nulla"],
+			correctAnswer: "Le imprese potrebbero non produrre più",
+			explanation: "Se il prezzo non copre i costi di produzione, non conviene produrre."
+		},
+		{
+			question: "Cosa rappresenta il punto di equilibrio in un grafico Domanda/Offerta?",
+			options: ["Il prezzo che rende massimo il ricavo", "Il punto di fallimento", "Il prezzo più alto possibile", "Il prezzo più basso possibile"],
+			correctAnswer: "Il prezzo che rende massimo il ricavo",
+			explanation: "È il punto dove le curve si incrociano e soddisfano entrambe le parti."
+		},
+
+		// --- FATTORI CHE INFLUENZANO LA DOMANDA ---
+		{
+			question: "Quale di questi NON è un fattore che influenza la DOMANDA?",
+			options: ["Costi di produzione", "Reddito del consumatore", "Prezzo dei beni surrogati", "Gusti dei consumatori"],
+			correctAnswer: "Costi di produzione",
+			explanation: "I costi di produzione influenzano l'Offerta, non la Domanda."
+		},
+		{
+			question: "Cosa sono i beni 'surrogati'?",
+			options: ["Beni che possono sostituire il bene principale", "Beni che si usano insieme", "Beni di lusso", "Beni invenduti"],
+			correctAnswer: "Beni che possono sostituire il bene principale",
+			explanation: "Esempio: Burro e Margarina. Se il burro costa troppo, compro margarina."
+		},
+		{
+			question: "Burro e Margarina sono un esempio di beni...",
+			options: ["Surrogati", "Complementari", "Indipendenti", "Di Giffen"],
+			correctAnswer: "Surrogati",
+			explanation: "Uno sostituisce l'altro."
+		},
+		{
+			question: "Coca-Cola e Pepsi sono beni...",
+			options: ["Surrogati", "Complementari", "Identici", "Non correlati"],
+			correctAnswer: "Surrogati",
+			explanation: "Sono alternative l'uno all'altro."
+		},
+		{
+			question: "Automobile e Benzina sono beni...",
+			options: ["Complementari", "Surrogati", "Opposti", "Uguali"],
+			correctAnswer: "Complementari",
+			explanation: "L'uso di uno richiede l'altro."
+		},
+		{
+			question: "Se aumenta il prezzo di un bene complementare, la domanda del bene principale...",
+			options: ["Potrebbe diminuire", "Aumenta sicuramente", "Non cambia", "Diventa rigida"],
+			correctAnswer: "Potrebbe diminuire",
+			explanation: "Se la benzina costa troppo, uso meno la macchina."
+		},
+		{
+			question: "L'elasticità della domanda riguarda...",
+			options: ["La sostituibilità con altri beni", "La durezza del prodotto", "La durata nel tempo", "Il costo di produzione"],
+			correctAnswer: "La sostituibilità con altri beni",
+			explanation: "Se un bene è elastico, se aumento il prezzo il cliente cambia prodotto facilmente."
+		},
+		{
+			question: "La 'rigidità' della domanda è tipica di...",
+			options: ["Beni essenziali", "Beni di lusso", "Beni inutili", "Beni surrogati"],
+			correctAnswer: "Beni essenziali",
+			explanation: "Anche se il prezzo sale, devo comprarlo per forza (es. medicine, pane)."
+		},
+		{
+			question: "Quale fattore demografico influenza la domanda?",
+			options: ["Aumento demografico", "Il meteo", "Le elezioni", "I dazi"],
+			correctAnswer: "Aumento demografico",
+			explanation: "Più persone = più bisogni = più domanda."
+		},
+
+		// --- FATTORI CHE INFLUENZANO L'OFFERTA ---
+		{
+			question: "Quale di questi influenza l'OFFERTA?",
+			options: ["Costi di produzione", "Gusti del consumatore", "Reddito del consumatore", "Bisogni latenti"],
+			correctAnswer: "Costi di produzione",
+			explanation: "Meno costa produrre, più l'impresa offre."
+		},
+		{
+			question: "Se i salari degli operai diminuiscono, cosa succede all'offerta?",
+			options: ["Aumenta (si abbassano i costi)", "Diminuisce", "Resta uguale", "L'azienda chiude"],
+			correctAnswer: "Aumenta (si abbassano i costi)",
+			explanation: "Minori costi di produzione incentivano l'aumento dell'offerta."
+		},
+		{
+			question: "Come influisce la tecnologia sull'offerta?",
+			options: ["Riduce i costi e incrementa l'offerta", "Aumenta i costi per sempre", "Riduce l'offerta", "Non ha impatto"],
+			correctAnswer: "Riduce i costi e incrementa l'offerta",
+			explanation: "Dopo l'investimento iniziale, la tecnologia rende la produzione più efficiente."
+		},
+		{
+			question: "L'abolizione dei dazi doganali che effetto ha?",
+			options: ["Determina un aumento dell'offerta dei prodotti esportabili", "Riduce l'offerta", "Aumenta la domanda interna", "Nessuno"],
+			correctAnswer: "Determina un aumento dell'offerta dei prodotti esportabili",
+			explanation: "È una politica governativa che facilita il commercio e quindi l'offerta."
+		},
+
+		// --- STRATEGIE E VANTAGGIO COMPETITIVO ---
+		{
+			question: "Qual è lo scopo della strategia di marketing?",
+			options: ["Ottenere un vantaggio competitivo", "Fare beneficenza", "Pagare le tasse", "Assumere personale"],
+			correctAnswer: "Ottenere un vantaggio competitivo",
+			explanation: "Superare la concorrenza è l'obiettivo chiave."
+		},
+		{
+			question: "Quali sono i due modi per ottenere vantaggio competitivo?",
+			options: ["Qualità e Prezzo", "Quantità e Colore", "Pubblicità e Passaparola", "Sito web e Social"],
+			correctAnswer: "Qualità e Prezzo",
+			explanation: "Vendere pochi pezzi a tanto (Qualità) o tanti pezzi a poco (Prezzo)."
+		},
+		{
+			question: "Se punto sulla QUALITÀ, la mia strategia sarà...",
+			options: ["Vendere pochi prodotti ma guadagnare molto sul singolo", "Vendere tantissimi prodotti a basso costo", "Regalare i prodotti", "Non vendere nulla"],
+			correctAnswer: "Vendere pochi prodotti ma guadagnare molto sul singolo",
+			explanation: "Alto margine, bassi volumi."
+		},
+		{
+			question: "Se punto sul PREZZO, la mia strategia sarà...",
+			options: ["Guadagnare poco sul singolo, ma vendere molti prodotti", "Vendere pezzi unici costosi", "Alzare i prezzi al massimo", "Puntare solo sul lusso"],
+			correctAnswer: "Guadagnare poco sul singolo, ma vendere molti prodotti",
+			explanation: "Basso margine, alti volumi."
+		},
+		
+		// --- CUSTOMER SATISFACTION E RELAZIONE ---
+		{
+			question: "Su cosa si fonda il 'Marketing Relazionale'?",
+			options: ["Sulla relazione e la fiducia col cliente", "Sulla singola transazione", "Sul prezzo più basso", "Sulla pubblicità aggressiva"],
+			correctAnswer: "Sulla relazione e la fiducia col cliente",
+			explanation: "L'attenzione si sposta dalla vendita secca al rapporto nel tempo."
+		},
+		{
+			question: "Qual è l'imperativo del marketing moderno?",
+			options: ["La soddisfazione del cliente (Customer Satisfaction)", "Il profitto a ogni costo", "Ingannare il cliente", "La chiusura dei negozi fisici"],
+			correctAnswer: "La soddisfazione del cliente (Customer Satisfaction)",
+			explanation: "Cliente soddisfatto = successo dell'impresa."
+		},
+		{
+			question: "Nel marketing relazionale, il cliente diventa...",
+			options: ["Partner nella definizione dell'offerta", "Un nemico da sconfiggere", "Un numero", "Un problema"],
+			correctAnswer: "Partner nella definizione dell'offerta",
+			explanation: "Si ascolta il cliente per creare il prodotto giusto."
+		},
+		{
+			question: "La concorrenza oggi si è spostata dall'area PREZZO all'area...",
+			options: ["Immagine", "Logistica", "Produzione", "Personale"],
+			correctAnswer: "Immagine",
+			explanation: "Il brand e la percezione valgono più del solo costo."
+		},
+		{
+			question: "Cosa si intende per 'Qualità Totale' nelle nuove tendenze?",
+			options: ["Un'esperienza memorabile che supera le aspettative", "Un prodotto senza difetti", "Un prodotto economico", "Una certificazione burocratica"],
+			correctAnswer: "Un'esperienza memorabile che supera le aspettative",
+			explanation: "Non basta che funzioni, deve emozionare."
+		},
+		{
+			question: "Un prodotto di successo deve soddisfare i desideri consapevoli e...",
+			options: ["Anticipare quelli inconsci e intimi", "Ignorare quelli latenti", "Costare pochissimo", "Essere di colore rosso"],
+			correctAnswer: "Anticipare quelli inconsci e intimi",
+			explanation: "Deve dare al cliente ciò che non sa ancora di volere."
+		},
+
+		// --- I BISOGNI (IMPLICITI, ESPLICITI, LATENTI) ---
+		{
+			question: "Quanti sono gli ordini di bisogni del cliente?",
+			options: ["3", "2", "5", "10"],
+			correctAnswer: "3",
+			explanation: "Impliciti, Espliciti, Latenti."
+		},
+		{
+			question: "Un bisogno IMPLICITO è...",
+			options: ["Dato per scontato dal cliente", "Dichiarato a gran voce", "Sconosciuto al cliente", "Un extra"],
+			correctAnswer: "Dato per scontato dal cliente",
+			explanation: "Esempio: l'acqua calda in hotel. Deve esserci per forza."
+		},
+		{
+			question: "Se soddisfo un bisogno implicito, il cliente è...",
+			options: ["Neutro (è il minimo)", "Estremamente felice", "Sorpreso", "Arrabbiato"],
+			correctAnswer: "Neutro (è il minimo)",
+			explanation: "La sua presenza non crea gioia, la sua assenza crea insoddisfazione."
+		},
+		{
+			question: "Un bisogno ESPLICITO è...",
+			options: ["Manifestato chiaramente dal cliente", "Nascosto", "Dato per scontato", "Inutile"],
+			correctAnswer: "Manifestato chiaramente dal cliente",
+			explanation: "Esempio: 'Voglio la vista mare'."
+		},
+		{
+			question: "Un bisogno LATENTE è...",
+			options: ["Un bisogno di cui il cliente non ha consapevolezza", "Un bisogno che il cliente urla", "Un bisogno basilare", "Un reclamo"],
+			correctAnswer: "Un bisogno di cui il cliente non ha consapevolezza",
+			explanation: "Il cliente non sa di volerlo finché non lo riceve."
+		},
+		{
+			question: "Trovare un cesto di benvenuto in camera soddisfa un bisogno...",
+			options: ["Latente", "Esplicito", "Implicito", "Economico"],
+			correctAnswer: "Latente",
+			explanation: "È una sorpresa che crea valore aggiunto (effetto WOW)."
+		},
+		{
+			question: "L'acqua calda in albergo soddisfa un bisogno...",
+			options: ["Implicito", "Latente", "Esplicito", "Opzionale"],
+			correctAnswer: "Implicito",
+			explanation: "Se manca, è un disastro. Se c'è, è normale."
+		},
+		{
+			question: "Richiedere la sauna in hotel è un bisogno...",
+			options: ["Esplicito", "Latente", "Implicito", "Involontario"],
+			correctAnswer: "Esplicito",
+			explanation: "È una richiesta specifica."
+		},
+
+		// --- LAVAZZA CASE STUDY (QUALITY DIMENSIONS) ---
+		{
+			question: "Quante sono le dimensioni della qualità nel caso Lavazza?",
+			options: ["6", "4", "3", "10"],
+			correctAnswer: "6",
+			explanation: "Tecnica, Relazionale, Ambientale, Immagine, Economica, Organizzativa."
+		},
+		{
+			question: "La 'Qualità Relazionale' riguarda...",
+			options: ["Aspetti comunicativi e cortesia", "Il design della struttura", "Il prezzo", "La robustezza del prodotto"],
+			correctAnswer: "Aspetti comunicativi e cortesia",
+			explanation: "Il rapporto umano e la comunicazione."
+		},
+		{
+			question: "La 'Qualità Ambientale' riguarda...",
+			options: ["Design, calore, accoglienza", "L'inquinamento", "Il prezzo", "La filosofia aziendale"],
+			correctAnswer: "Design, calore, accoglienza",
+			explanation: "L'atmosfera del luogo."
+		},
+		{
+			question: "La 'Qualità di Immagine' riguarda...",
+			options: ["Credibilità e prestigio del brand", "Il costo", "La pulizia", "La cortesia"],
+			correctAnswer: "Credibilità e prestigio del brand",
+			explanation: "La reputazione e lo status."
+		},
+
+		// --- LOYALTY E FIDELIZZAZIONE ---
+		{
+			question: "Cosa si intende per 'Loyalty'?",
+			options: ["Fedeltà dei clienti all'impresa", "Sconto sui prezzi", "Legge statale", "Pagamento anticipato"],
+			correctAnswer: "Fedeltà dei clienti all'impresa",
+			explanation: "Customer Loyalty = Fedeltà del cliente."
+		},
+		{
+			question: "Cos'è la Fidelizzazione?",
+			options: ["Azioni di mantenimento del parco clienti", "Acquisizione di nuovi clienti", "Licenziamento dipendenti", "Chiusura filiali"],
+			correctAnswer: "Azioni di mantenimento del parco clienti",
+			explanation: "Tutto ciò che si fa per tenere i clienti che abbiamo già."
+		},
+		{
+			question: "Quanto costa acquisire un cliente rispetto a conservarlo?",
+			options: ["20 volte di più", "2 volte di più", "Costa uguale", "Costa meno"],
+			correctAnswer: "20 volte di più",
+			explanation: "Dato statistico citato nelle slide."
+		},
+		{
+			question: "Perché conviene fidelizzare?",
+			options: ["Perché costa molto meno che trovare nuovi clienti", "Perché è obbligatorio", "Perché è divertente", "Non conviene"],
+			correctAnswer: "Perché costa molto meno che trovare nuovi clienti",
+			explanation: "Economia di gestione."
+		},
+		{
+			question: "Un cliente affezionato è utile anche perché...",
+			options: ["Fa passaparola positivo (promozione)", "Non compra nulla", "Si lamenta sempre", "Chiede rimborsi"],
+			correctAnswer: "Fa passaparola positivo (promozione)",
+			explanation: "Diventa un ambasciatore del brand."
+		},
+		{
+			question: "Su cosa si fonda la fidelizzazione?",
+			options: ["Soddisfazione, Servizio efficace, Loyalty Management", "Prezzi alti e scortesia", "Prodotti scadenti", "Ignorare il cliente"],
+			correctAnswer: "Soddisfazione, Servizio efficace, Loyalty Management",
+			explanation: "Mix di prodotto buono, servizio ottimo e premi."
+		},
+		{
+			question: "Cosa si intende per 'Loyalty Management'?",
+			options: ["Erogazione di benefici/premi ai clienti acquisiti", "Gestione del personale", "Gestione delle tasse", "Gestione dei fornitori"],
+			correctAnswer: "Erogazione di benefici/premi ai clienti acquisiti",
+			explanation: "Strategie di ricompensa per la fedeltà."
+		},
+
+		// --- STRUMENTI DI FIDELIZZAZIONE ---
+		{
+			question: "Quale strumento premia il cliente abituale?",
+			options: ["Fidelity-card", "Multa", "Prezzo maggiorato", "Nessuno"],
+			correctAnswer: "Fidelity-card",
+			explanation: "Tessera che accumula vantaggi."
+		},
+		{
+			question: "Qual è un esempio di azione di fidelizzazione?",
+			options: ["Aggiornare il cliente con news mirate", "Non rispondere alle email", "Vendere prodotti rotti", "Chiudere il sito web"],
+			correctAnswer: "Aggiornare il cliente con news mirate",
+			explanation: "Comunicazione costante su interessi specifici."
+		},
+		{
+			question: "A cosa serve il Customer Care nella fidelizzazione?",
+			options: ["A risolvere problemi con competenza e rapidità", "A ignorare i clienti", "A vendere biglietti", "A creare problemi"],
+			correctAnswer: "A risolvere problemi con competenza e rapidità",
+			explanation: "L'assistenza post-vendita è cruciale per la fiducia."
+		},
+		{
+			question: "La 'Gift Card' è...",
+			options: ["Un regalo per amici o parenti (strumento di fidelizzazione)", "Una tassa", "Un documento di identità", "Un tipo di auto"],
+			correctAnswer: "Un regalo per amici o parenti (strumento di fidelizzazione)",
+			explanation: "Porta nuovi clienti tramite quelli fedeli."
+		},
+		{
+			question: "La 'Raccolta punti' serve a...",
+			options: ["Premiare acquisti ripetuti", "Contare i clienti", "Fare statistica", "Nulla"],
+			correctAnswer: "Premiare acquisti ripetuti",
+			explanation: "Incentiva a tornare per raggiungere un premio."
+		},
+		
+		// --- DINAMICA POSITIVA (UP/CROSS SELLING) ---
+		{
+			question: "Cosa si intende per UP-SELLING?",
+			options: ["Aumentare il tetto di spesa con prodotti di fascia alta", "Vendere prodotti diversi", "Vendere sottocosto", "Vendere all'estero"],
+			correctAnswer: "Aumentare il tetto di spesa con prodotti di fascia alta",
+			explanation: "Convincere il cliente a prendere la versione 'Premium' o migliore."
+		},
+		{
+			question: "Cosa si intende per CROSS-SELLING?",
+			options: ["Incrementare il parco clienti con passaparola o vendita incrociata", "Vendere solo un prodotto", "Vendere prodotti difettosi", "Vendere alla concorrenza"],
+			correctAnswer: "Incrementare il parco clienti con passaparola o vendita incrociata",
+			explanation: "Vendere prodotti complementari (es. scarpe + lucido)."
+		},
+		{
+			question: "Il cliente soddisfatto preferirà...",
+			options: ["Il tuo brand alla concorrenza", "Il brand più economico sempre", "Non comprare nulla", "Cambiare negozio ogni volta"],
+			correctAnswer: "Il tuo brand alla concorrenza",
+			explanation: "La fiducia genera preferenza."
+		},
+
+		// --- PROFILAZIONE ---
+		{
+			question: "Cosa significa 'Profilazione'?",
+			options: ["Stendere un profilo preciso dei propri clienti", "Disegnare il cliente", "Fotografare il cliente", "Ignorare i dati"],
+			correctAnswer: "Stendere un profilo preciso dei propri clienti",
+			explanation: "Raccolta dati per conoscere chi compra."
+		},
+		{
+			question: "Quali sono i 3 tipi di informazioni per la profilazione?",
+			options: ["Anagrafiche, Comportamentali, Economiche", "Altezza, Peso, Occhi", "Nome, Cognome, Indirizzo", "Scuola, Lavoro, Hobby"],
+			correctAnswer: "Anagrafiche, Comportamentali, Economiche",
+			explanation: "I tre pilastri dei dati cliente."
+		},
+		{
+			question: "Il nome, sesso ed età sono dati...",
+			options: ["Anagrafico-descrittivi", "Comportamentali", "Economici", "Casuali"],
+			correctAnswer: "Anagrafico-descrittivi",
+			explanation: "Descrivono chi è il cliente."
+		},
+		{
+			question: "I prodotti acquistati e le lamentele sono dati...",
+			options: ["Comportamentali", "Anagrafici", "Economici", "Inutili"],
+			correctAnswer: "Comportamentali",
+			explanation: "Descrivono cosa fa il cliente."
+		},
+		{
+			question: "Costi e ricavi del cliente sono dati...",
+			options: ["Economici", "Anagrafici", "Comportamentali", "Sociali"],
+			correctAnswer: "Economici",
+			explanation: "Descrivono il valore monetario."
+		},
+
+		// --- RACCOLTA DATI WEB ---
+		{
+			question: "Il web è una fonte preziosa per...",
+			options: ["Avere un profilo aggiornato su stili di consumo", "Perdere tempo", "Vendere solo a basso costo", "Nulla"],
+			correctAnswer: "Avere un profilo aggiornato su stili di consumo",
+			explanation: "Traccia interessi, desideri e valori in tempo reale."
+		},
+		{
+			question: "Quali sono i due metodi di raccolta informazioni?",
+			options: ["Partecipativi e Non partecipativi", "Belli e Brutti", "Costosi ed Economici", "Veloci e Lenti"],
+			correctAnswer: "Partecipativi e Non partecipativi",
+			explanation: "Consapevoli (il cliente dice) o Inconsapevoli (il sistema traccia)."
+		},
+		{
+			question: "La registrazione a un sito è un metodo...",
+			options: ["Partecipativo", "Non partecipativo", "Illegale", "Inutile"],
+			correctAnswer: "Partecipativo",
+			explanation: "Il cliente compila consapevolmente il form."
+		},
+		{
+			question: "I commenti sui social network sono un metodo...",
+			options: ["Partecipativo", "Non partecipativo", "Segreto", "Automatico"],
+			correctAnswer: "Partecipativo",
+			explanation: "Il cliente scrive volontariamente."
+		},
+		{
+			question: "L'uso dei COOKIES è un metodo...",
+			options: ["Non partecipativo", "Partecipativo", "Manuale", "Cartaceo"],
+			correctAnswer: "Non partecipativo",
+			explanation: "Avviene in background mentre navighi (dati forniti in modo inconsapevole/automatico)."
+		},
+		{
+			question: "Cosa tracciano i Cookies e i Logbook?",
+			options: ["Provenienza geografica, tempo di permanenza, parole chiave", "Il numero di scarpe", "Il colore degli occhi", "I pensieri segreti"],
+			correctAnswer: "Provenienza geografica, tempo di permanenza, parole chiave",
+			explanation: "Dati tecnici di navigazione."
+		},
+		
+		// --- AMAZON E TRACKING ---
+		{
+			question: "Cosa fa Amazon con i dati acquisiti?",
+			options: ["Li immagazzina e crea pagine personalizzate di benvenuto", "Li cancella subito", "Li vende alla concorrenza", "Li stampa su carta"],
+			correctAnswer: "Li immagazzina e crea pagine personalizzate di benvenuto",
+			explanation: "Personalizzazione dell'esperienza utente."
+		},
+		{
+			question: "Il profilo cliente su Amazon viene arricchito da...",
+			options: ["Dati transazionali (vendita) e non transazionali (navigazione)", "Solo dati anagrafici", "Solo email", "Niente"],
+			correctAnswer: "Dati transazionali (vendita) e non transazionali (navigazione)",
+			explanation: "Sia ciò che compri, sia ciò che guardi ma non compri."
+		},
+		{
+			question: "Su Amazon, il layout e i contenuti sono...",
+			options: ["Configurati su misura del singolo utente", "Uguali per tutti", "Casuali", "Decisi dal governo"],
+			correctAnswer: "Configurati su misura del singolo utente",
+			explanation: "Personalizzazione estrema."
+		},
+
+		// --- PROSUMER E WEB MARKETING ---
+		{
+			question: "Chi è il PROSUMER?",
+			options: ["Soggetto consumatore e produttore allo stesso tempo", "Un consumatore professionista", "Un produttore che non consuma", "Un hacker"],
+			correctAnswer: "Soggetto consumatore e produttore allo stesso tempo",
+			explanation: "Producer + Consumer."
+		},
+		{
+			question: "Il Prosumer partecipa attivamente alle fasi di...",
+			options: ["Creazione, produzione, distribuzione e consumo", "Solo acquisto", "Solo reclamo", "Solo produzione"],
+			correctAnswer: "Creazione, produzione, distribuzione e consumo",
+			explanation: "Coinvolgimento totale nel ciclo del prodotto."
+		},
+		{
+			question: "Quale azienda usa le recensioni dei prosumer come base del business?",
+			options: ["Booking.com", "Fiat", "Barilla", "Enel"],
+			correctAnswer: "Booking.com",
+			explanation: "Le recensioni guidano gli altri utenti."
+		},
+		{
+			question: "L'iniziativa 'My Starbucks Idea' serve a...",
+			options: ["Raccogliere suggerimenti dai clienti per innovare", "Vendere caffè", "Assumere baristi", "Fare beneficenza"],
+			correctAnswer: "Raccogliere suggerimenti dai clienti per innovare",
+			explanation: "Esempio di co-creazione con il prosumer."
+		},
+		{
+			question: "Chi gestisce le attività di Web Marketing?",
+			options: ["Social Media Marketing (Manager)", "Il direttore di banca", "L'operaio", "Il corriere"],
+			correctAnswer: "Social Media Marketing (Manager)",
+			explanation: "Figura professionale specifica."
+		},
+		{
+			question: "Quante sono le funzioni principali del Web Marketing?",
+			options: ["4", "2", "10", "1"],
+			correctAnswer: "4",
+			explanation: "Comunicazione, Assistenza, Processi, Vendita."
+		},
+		{
+			question: "Quale NON è una funzione del Web Marketing?",
+			options: ["Pulizia dei locali aziendali", "Migliorare la comunicazione", "Supportare l'assistenza", "Canale di vendita"],
+			correctAnswer: "Pulizia dei locali aziendali",
+			explanation: "Ovviamente non c'entra col web."
+		},
+		{
+			question: "Utilizzare la rete come canale di vendita significa...",
+			options: ["Permettere ordine, pagamento e consegna online", "Mandare email", "Fare video", "Chattare"],
+			correctAnswer: "Permettere ordine, pagamento e consegna online",
+			explanation: "E-commerce puro."
+		},
+		{
+			question: "Il web marketing può ridefinire i processi aziendali?",
+			options: ["Sì, automatizzando ordini e coordinando la logistica", "No, è solo pubblicità", "Solo per le grandi aziende", "Mai"],
+			correctAnswer: "Sì, automatizzando ordini e coordinando la logistica",
+			explanation: "Integrazione profonda nei processi interni."
+		},
+		
+		// --- RIPETIZIONI "BASTARDE" E VARIANTI ---
+		{
+			question: "Se il prezzo scende, la domanda...",
+			options: ["Sale", "Scende", "Resta uguale", "Non si sa"],
+			correctAnswer: "Sale",
+			explanation: "Variante semplice della legge della domanda."
+		},
+		{
+			question: "Se il prezzo sale, l'offerta...",
+			options: ["Sale", "Scende", "Resta uguale", "Non si sa"],
+			correctAnswer: "Sale",
+			explanation: "Variante semplice della legge dell'offerta."
+		},
+		{
+			question: "Vero o Falso: Acquisire un cliente costa meno che mantenerlo.",
+			options: ["Falso", "Vero"],
+			correctAnswer: "Falso",
+			explanation: "È il contrario: costa 20 volte di più acquisirlo."
+		},
+		{
+			question: "Vero o Falso: Il bisogno latente è quello che il cliente dichiara subito.",
+			options: ["Falso", "Vero"],
+			correctAnswer: "Falso",
+			explanation: "Quello è il bisogno esplicito. Il latente è inconscio."
+		},
+		{
+			question: "Vero o Falso: Lavazza punta sulla qualità totale.",
+			options: ["Vero", "Falso"],
+			correctAnswer: "Vero",
+			explanation: "Case study citato nelle slide."
+		},
+		{
+			question: "Quale di questi NON è un bisogno del cliente?",
+			options: ["Bisogno Impossibile", "Bisogno Implicito", "Bisogno Esplicito", "Bisogno Latente"],
+			correctAnswer: "Bisogno Impossibile",
+			explanation: "Non esiste nella teoria presentata."
+		},
+		{
+			question: "Il 'Logbook' è uno strumento di raccolta...",
+			options: ["Non partecipativa", "Partecipativa", "Telefonica", "Cartacea"],
+			correctAnswer: "Non partecipativa",
+			explanation: "Registra i log del server automaticamente."
+		},
+		{
+			question: "Se un hotel ha l'acqua fredda, quale bisogno ha fallito?",
+			options: ["Implicito", "Latente", "Esplicito", "Extra"],
+			correctAnswer: "Implicito",
+			explanation: "L'acqua calda è data per scontata."
+		},
+		{
+			question: "Se un hotel ti regala lo champagne, che bisogno ha soddisfatto?",
+			options: ["Latente", "Implicito", "Esplicito", "Nessuno"],
+			correctAnswer: "Latente",
+			explanation: "Sorpresa inaspettata."
+		},
+		{
+			question: "Vero o Falso: Il prezzo di equilibrio massimizza il ricavo.",
+			options: ["Vero", "Falso"],
+			correctAnswer: "Vero",
+			explanation: "È il punto ottimo di incontro D e S."
+		},
+		{
+			question: "Cosa succede all'offerta se la tecnologia migliora?",
+			options: ["Aumenta", "Diminuisce", "Resta ferma", "Crolla"],
+			correctAnswer: "Aumenta",
+			explanation: "La tecnologia riduce i costi e aumenta la capacità produttiva."
+		},
+		{
+			question: "Burro e Margarina: se il burro raddoppia di prezzo, la domanda di margarina...",
+			options: ["Aumenta", "Diminuisce", "Resta ferma", "Si azzera"],
+			correctAnswer: "Aumenta",
+			explanation: "La gente sposterà l'acquisto sul bene surrogato più economico."
+		},
+		{
+			question: "Auto e Benzina: se la benzina triplica di prezzo, la domanda di auto...",
+			options: ["Diminuisce", "Aumenta", "Resta ferma", "Raddoppia"],
+			correctAnswer: "Diminuisce",
+			explanation: "Essendo complementari, il costo d'uso dell'auto diventa insostenibile."
+		},
+		{
+			question: "Quale strategia mira a vendere MOLTI prodotti a BASSO margine?",
+			options: ["Strategia di Prezzo", "Strategia di Qualità", "Strategia di Lusso", "Strategia di Nicchia"],
+			correctAnswer: "Strategia di Prezzo",
+			explanation: "Puntare sui grandi volumi."
+		},
+		{
+			question: "Quale strategia mira a vendere POCHI prodotti ad ALTO margine?",
+			options: ["Strategia di Qualità", "Strategia di Prezzo", "Strategia di Massa", "Discount"],
+			correctAnswer: "Strategia di Qualità",
+			explanation: "Puntare sull'eccellenza e l'esclusività."
+		},
+		{
+			question: "Il 'Passaparola' è tipico di...",
+			options: ["Clienti fidelizzati e soddisfatti", "Clienti nuovi", "Clienti occasionali", "Fornitori"],
+			correctAnswer: "Clienti fidelizzati e soddisfatti",
+			explanation: "Chi si fida, consiglia."
+		},
+		{
+			question: "Amazon: Il 'layout' del sito è...",
+			options: ["Modificabile per singolo utente", "Fisso per tutti", "Statico", "Cartaceo"],
+			correctAnswer: "Modificabile per singolo utente",
+			explanation: "Si adatta in base alla profilazione."
+		},
+		{
+			question: "Vero o Falso: Il Prosumer è un soggetto passivo.",
+			options: ["Falso", "Vero"],
+			correctAnswer: "Falso",
+			explanation: "È attivo (Producer)."
+		},
+		{
+			question: "Booking.com si basa sulla...",
+			options: ["Informazione collaborativa (recensioni)", "Vendita porta a porta", "Pubblicità radio", "Nessuna delle precedenti"],
+			correctAnswer: "Informazione collaborativa (recensioni)",
+			explanation: "Le opinioni degli utenti sono il motore."
+		},
+		{
+			question: "Il Web Marketing serve a migliorare la comunicazione verso...",
+			options: ["L'esterno", "Solo i dipendenti", "Il governo", "Nessuno"],
+			correctAnswer: "L'esterno",
+			explanation: "Clienti, fornitori, pubblico."
+		},
+		{
+			question: "Un sito web 'fatto bene' serve a...",
+			options: ["Fidelizzare il cliente", "Allontanare il cliente", "Confondere il cliente", "Niente"],
+			correctAnswer: "Fidelizzare il cliente",
+			explanation: "Deve essere pratico, funzionale e dare info utili."
+		},
+		{
+			question: "News su prodotti acquistati: si mandano via...",
+			options: ["Email", "Piccione viaggiatore", "Fax", "Segnali di fumo"],
+			correctAnswer: "Email",
+			explanation: "O posta tradizionale, ma soprattutto email."
+		},
+		{
+			question: "Vero o Falso: I bisogni impliciti creano l'effetto WOW.",
+			options: ["Falso", "Vero"],
+			correctAnswer: "Falso",
+			explanation: "Sono i bisogni Latenti a creare l'effetto WOW."
+		},
+		{
+			question: "Vero o Falso: La domanda rigida riguarda beni di lusso.",
+			options: ["Falso", "Vero"],
+			correctAnswer: "Falso",
+			explanation: "Riguarda beni essenziali (non puoi farne a meno)."
+		},
+		{
+			question: "Cos'è la 'Customer Satisfaction'?",
+			options: ["Tecniche per massimizzare la soddisfazione cliente", "Tecniche per vendere di più", "Tecniche per assumere", "Tecniche contabili"],
+			correctAnswer: "Tecniche per massimizzare la soddisfazione cliente",
+			explanation: "È letteralmente la traduzione."
+		},
+		{
+			question: "In economia, P sta per...",
+			options: ["Prezzo", "Prodotto", "Pubblicità", "Persona"],
+			correctAnswer: "Prezzo",
+			explanation: "Nel grafico D/S."
+		},
+		{
+			question: "In economia, Q sta per...",
+			options: ["Quantità", "Qualità", "Quota", "Quadro"],
+			correctAnswer: "Quantità",
+			explanation: "Quantità domandata o offerta."
+		},
+		{
+			question: "Vero o Falso: Prezzo e Domanda variano nella stessa direzione.",
+			options: ["Falso", "Vero"],
+			correctAnswer: "Falso",
+			explanation: "Direzione opposta."
+		},
+		{
+			question: "Vero o Falso: Prezzo e Offerta variano nella stessa direzione.",
+			options: ["Vero", "Falso"],
+			correctAnswer: "Vero",
+			explanation: "Più alto il prezzo, più alta l'offerta."
+		},
+		{
+			question: "Il 'Costo del denaro' influenza...",
+			options: ["La Domanda", "Il Meteo", "La Gravità", "Il Colore dei prodotti"],
+			correctAnswer: "La Domanda",
+			explanation: "Interessi sui prestiti influenzano la capacità di acquisto."
+		},
+		{
+			question: "L'aumento demografico influenza...",
+			options: ["La Domanda", "L'Offerta (direttamente)", "La Tecnologia", "I Dazi"],
+			correctAnswer: "La Domanda",
+			explanation: "Più gente = più domanda."
+		},
+		{
+			question: "Vero o Falso: Un prezzo troppo basso può azzerare l'offerta.",
+			options: ["Vero", "Falso"],
+			correctAnswer: "Vero",
+			explanation: "Se non copre i costi, le aziende smettono di produrre."
+		},
+		{
+			question: "Il marketing relazionale mira a creare un cliente...",
+			options: ["Affezionato", "Occasionale", "Distratto", "Arrabbiato"],
+			correctAnswer: "Affezionato",
+			explanation: "Relazione a lungo termine."
+		},
+		{
+			question: "Cosa significa che il cliente diventa 'Partner'?",
+			options: ["Aiuta a definire l'offerta con i suoi feedback", "Compra le azioni dell'azienda", "Lavora in ufficio", "Vende i prodotti"],
+			correctAnswer: "Aiuta a definire l'offerta con i suoi feedback",
+			explanation: "Collaborazione nella creazione di valore."
+		},
+		{
+			question: "Quale qualità riguarda la 'filosofia e leadership'?",
+			options: ["Qualità Organizzativa", "Qualità Tecnica", "Qualità Ambientale", "Qualità Economica"],
+			correctAnswer: "Qualità Organizzativa",
+			explanation: "Dimensione interna dell'azienda (esempio Lavazza)."
+		},
+		{
+			question: "Quale qualità riguarda 'design e accoglienza'?",
+			options: ["Qualità Ambientale", "Qualità Tecnica", "Qualità Relazionale", "Qualità Immagine"],
+			correctAnswer: "Qualità Ambientale",
+			explanation: "L'ambiente fisico o virtuale."
+		},
+		{
+			question: "La 'Tessera Sconto' offre sconti...",
+			options: ["Proporzionali alla spesa effettuata", "Casuali", "Fissi per tutti", "Solo a Natale"],
+			correctAnswer: "Proporzionali alla spesa effettuata",
+			explanation: "Strumento di fidelizzazione."
+		},
+		{
+			question: "Vero o Falso: Cross-selling significa vendere un prodotto superiore.",
+			options: ["Falso", "Vero"],
+			correctAnswer: "Falso",
+			explanation: "Quello è Up-selling. Cross-selling è vendita incrociata/complementare."
+		},
+		{
+			question: "Le informazioni 'Economiche' nel profilo cliente riguardano...",
+			options: ["Costi e ricavi del cliente", "Età e sesso", "Hobby e sport", "Indirizzo di casa"],
+			correctAnswer: "Costi e ricavi del cliente",
+			explanation: "Capacità di spesa e redditività."
+		},
+		{
+			question: "I dati 'Non partecipativi' sono raccolti...",
+			options: ["In modo inconsapevole dal cliente", "Chiedendo al cliente", "Con un sondaggio", "Con un'intervista"],
+			correctAnswer: "In modo inconsapevole dal cliente",
+			explanation: "Automatismi tecnici (cookies)."
+		}
+		// ... (Il pattern continua variando leggermente le domande precedenti per rinforzare i concetti chiave)
+	];
+
+        /* ================================================================= */
+        /* LOGICA APPLICAZIONE (TEMPLATE STANDARD) */
+        /* ================================================================= */
+
+        class ScrollytellingApp {
+            constructor(content) {
+                this.content = content;
+                this.lastScrollY = 0;
+                this.isDragging = false;
+                this.scrubTargetIndex = 0;
+                this.isSnapEnabled = localStorage.getItem('snapEnabled') !== 'false'; 
+                this.currentChapterIndex = 0;
+                this.isSnapping = false; 
+                
+                this.initDOMElements();
+                this.initEventListeners();
+                this.initTheme();
+                this.initSnapState();
+                
+                this.setMode(localStorage.getItem('template-mode') || 'study');
+                this.dom.appContainer.classList.add('loaded');
+            }
+            
+            initDOMElements() {
+                this.dom = {
+                    appContainer: document.getElementById('app'), header: document.getElementById('header'),
+                    headerTitle: document.getElementById('header-title'), 
+                    timelineNodesMobile: document.getElementById('timeline-nodes-mobile'),
+                    timelineProgressMobile: document.getElementById('timeline-progress-mobile'),
+                    timelineTrackMobile: document.getElementById('timeline-track-mobile'),
+                    timelineNodesDesktop: document.getElementById('timeline-nodes-desktop'),
+                    timelineProgressDesktop: document.getElementById('timeline-progress-desktop'),
+                    timelineDesktopContainer: document.querySelector('.timeline-desktop-container'),
+                    storyPanel: document.getElementById('story-panel'),
+                    themeSwitcher: document.querySelector('.theme-switcher'),
+                    scrollSentinel: document.getElementById('scroll-sentinel'),
+                    modeBtns: document.querySelectorAll('.mode-btn'),
+                    appFooter: document.getElementById('app-footer'),
+                    autoScrollBtn: document.getElementById('autoscroll-btn'),
+                    prevChapterBtn: document.getElementById('prev-chapter-btn'),
+                    nextChapterBtn: document.getElementById('next-chapter-btn')
+                };
+            }
+            
+            initSnapState() {
+                if (this.isSnapEnabled) {
+                    document.documentElement.classList.add('snap-enabled');
+                    this.dom.autoScrollBtn.classList.add('active');
+                }
+            }
+
+            initTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light'; 
+                this.applyTheme(savedTheme);
+                this.dom.themeSwitcher.addEventListener('click', () => {
+                    if (navigator.vibrate) navigator.vibrate(20);
+                    const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                    this.applyTheme(newTheme);
+                });
+            }
+            
+            applyTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem('theme', theme);
+            }
+            
+            initEventListeners() {
+                if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
+                window.scrollTo(0, 0);
+
+                this.dom.modeBtns.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        if (navigator.vibrate) navigator.vibrate(20);
+                        const newMode = btn.dataset.mode;
+                        this.setMode(newMode);
+                    });
+                });
+                
+                this.dom.autoScrollBtn.addEventListener('click', () => {
+                     this.isSnapEnabled = !this.isSnapEnabled;
+                     localStorage.setItem('snapEnabled', this.isSnapEnabled);
+                     document.documentElement.classList.toggle('snap-enabled');
+                     this.dom.autoScrollBtn.classList.toggle('active');
+                     if (navigator.vibrate) navigator.vibrate(10);
+                     
+                     if(this.isSnapEnabled) {
+                         this.dom.header.classList.remove('hidden');
+                         this.dom.appFooter.classList.remove('hidden');
+                     }
+                });
+
+                this.dom.prevChapterBtn.addEventListener('click', () => {
+                    if (this.currentChapterIndex > 0) {
+                        this.scrollToChapter(this.content.chapters[this.currentChapterIndex - 1].id);
+                    }
+                });
+
+                this.dom.nextChapterBtn.addEventListener('click', () => {
+                    if (this.currentChapterIndex < this.content.chapters.length - 1) {
+                        this.scrollToChapter(this.content.chapters[this.currentChapterIndex + 1].id);
+                    }
+                });
+
+                window.addEventListener('scroll', () => this.handleScroll(), { passive: true });
+                window.addEventListener('resize', () => this.handleResize());
+                this.initDraggableTimeline();
+            }
+            
+            handleScroll() {
+                const currentScrollY = window.scrollY;
+                const isMobile = window.innerWidth < 960;
+
+                if (Math.abs(currentScrollY - this.lastScrollY) > 5) {
+                    if (currentScrollY > this.lastScrollY && currentScrollY > 80) {
+                        this.dom.header.classList.add('hidden');
+                        this.dom.appFooter.classList.add('hidden');
+                    } else {
+                        this.dom.header.classList.remove('hidden');
+                        this.dom.appFooter.classList.remove('hidden');
+                    }
+                }
+                
+                if (this.isSnapEnabled && !isMobile && !this.isSnapping) {
+                    this.checkSnapTrigger();
+                }
+
+                this.lastScrollY = currentScrollY;
+            }
+
+            checkSnapTrigger() {
+                const chapters = document.querySelectorAll('.story-chapter');
+                const viewportHeight = window.innerHeight;
+                const triggerPoint = viewportHeight / 1.5; 
+                
+                chapters.forEach((chapter, index) => {
+                    const rect = chapter.getBoundingClientRect();
+                    if (rect.bottom < triggerPoint && rect.bottom > 0 && index < chapters.length - 1) {
+                        this.isSnapping = true;
+                        const nextChapterId = chapters[index + 1].id;
+                        this.scrollToChapter(nextChapterId);
+                        
+                        setTimeout(() => {
+                            this.isSnapping = false;
+                        }, 1000);
+                    }
+                });
+            }
+            
+            handleResize() {
+                document.querySelectorAll('.acc-item.open .acc-body').forEach(body => {
+                    body.style.maxHeight = body.scrollHeight + "px";
+                });
+                if(this.dom.timelineNodesDesktop.offsetHeight > 0) {
+                    this.setupDesktopTimelineSVG();
+                }
+            }
+            
+            initDraggableTimeline() {
+                const timeline = this.dom.timelineTrackMobile;
+                const handleDrag = (e) => {
+                    if (!this.isDragging) return;
+                    e.preventDefault();
+                    const clientX = e.clientX || e.touches[0].clientX;
+                    const rect = timeline.getBoundingClientRect();
+                    let progress = (clientX - rect.left) / rect.width;
+                    progress = Math.max(0, Math.min(1, progress));
+                    
+                    this.scrubTargetIndex = Math.round(progress * (this.content.chapters.length - 1));
+                    this.dom.headerTitle.textContent = this.content.chapters[this.scrubTargetIndex].title;
+                    
+                    document.querySelectorAll('.timeline-node-point').forEach((node, index) => {
+                        node.classList.toggle('active', index === this.scrubTargetIndex);
+                    });
+                    this.dom.timelineProgressMobile.style.width = `${progress * 100}%`;
+                };
+                const startDrag = (e) => {
+                    this.isDragging = true;
+                    handleDrag(e);
+                };
+                const endDrag = () => {
+                    if (!this.isDragging) return;
+                    this.isDragging = false;
+                    this.scrollToChapter(this.content.chapters[this.scrubTargetIndex].id);
+                };
+                timeline.addEventListener('mousedown', startDrag);
+                window.addEventListener('mousemove', handleDrag);
+                window.addEventListener('mouseup', endDrag);
+                timeline.addEventListener('touchstart', startDrag, { passive: false });
+                window.addEventListener('touchmove', handleDrag, { passive: false });
+                window.addEventListener('touchend', endDrag);
+            }
+            
+            setMode(mode) {
+                localStorage.setItem('template-mode', mode);
+                this.dom.modeBtns.forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+                const currentScrollRatio = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+                this.buildUI(mode);
+                this.initObservers(); 
+                const newScrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+                window.scrollTo(0, newScrollHeight * currentScrollRatio);
+            }
+            
+            buildUI(mode) {
+                document.querySelector('.header-title').textContent = this.content.title;
+
+                this.dom.storyPanel.innerHTML = '';
+                this.dom.timelineNodesMobile.innerHTML = '';
+                this.dom.timelineNodesDesktop.innerHTML = '';
+                
+                this.content.chapters.forEach(chapter => {
+                    const nodePointMobile = document.createElement('button');
+                    nodePointMobile.className = 'timeline-node-point';
+                    nodePointMobile.dataset.targetId = chapter.id;
+                    nodePointMobile.setAttribute('aria-label', `Vai al capitolo: ${chapter.title}`);
+                    nodePointMobile.onclick = (e) => {
+                        if(navigator.vibrate) navigator.vibrate(10);
+                        this.scrollToChapter(chapter.id);
+                    };
+                    this.dom.timelineNodesMobile.appendChild(nodePointMobile);
+
+                    const nodeDesktop = document.createElement('button');
+                    nodeDesktop.className = 'timeline-desktop-node';
+                    nodeDesktop.dataset.targetId = chapter.id;
+                    nodeDesktop.innerHTML = `<div class="node-point"></div><div class="node-label">${chapter.title}</div>`;
+                    nodeDesktop.onclick = () => this.scrollToChapter(chapter.id);
+                    this.dom.timelineNodesDesktop.appendChild(nodeDesktop);
+
+                    const section = document.createElement('section');
+                    section.className = 'story-chapter';
+                    section.id = chapter.id;
+                    const content = mode === 'story' ? chapter.storyDescription : chapter.description;
+                    section.innerHTML = `<div class="chapter-content"><h2 class="chapter-title">${chapter.title}</h2><div class="chapter-body">${content}</div></div>`;
+                    this.dom.storyPanel.appendChild(section);
+                });
+                
+                this.dom.storyPanel.querySelectorAll('.acc-header').forEach(header => {
+                    header.addEventListener('click', () => {
+                        const item = header.parentElement;
+                        const body = header.nextElementSibling;
+                        const isOpen = item.classList.contains('open');
+                        item.classList.toggle('open');
+                        if (!isOpen) {
+                            body.style.maxHeight = body.scrollHeight + "px";
+                        } else {
+                            body.style.maxHeight = null;
+                        }
+                    });
+                });
+
+                this.dom.storyPanel.querySelectorAll('.flip-container').forEach(container => {
+                    container.addEventListener('click', () => {
+                         const selection = window.getSelection();
+                         if (selection.toString().length === 0) {
+                             container.classList.toggle('flipped');
+                         }
+                    });
+                });
+                
+                this.setupDesktopTimelineSVG();
+            }
+            
+            setupDesktopTimelineSVG() {
+                const nodesHeight = this.dom.timelineNodesDesktop.offsetHeight;
+                const containerHeight = this.dom.timelineDesktopContainer.offsetHeight;
+                const startY = (containerHeight - nodesHeight) / 2;
+                const endY = startY + nodesHeight;
+
+                const line = this.dom.timelineProgressDesktop.previousElementSibling;
+                line.setAttribute('y1', startY);
+                line.setAttribute('y2', endY);
+                
+                const progressLine = this.dom.timelineProgressDesktop;
+                progressLine.setAttribute('y1', startY);
+                progressLine.setAttribute('y2', endY);
+
+                const pathLength = endY - startY;
+                progressLine.style.strokeDasharray = pathLength;
+                progressLine.style.strokeDashoffset = pathLength;
+            }
+
+            scrollToChapter(id) {
+                const targetElement = document.getElementById(id);
+                const headerOffset = 80;
+                const elementPosition = targetElement.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+            }
+            
+            updateNavButtonsState() {
+                if (this.currentChapterIndex <= 0) {
+                    this.dom.prevChapterBtn.classList.add('disabled');
+                } else {
+                    this.dom.prevChapterBtn.classList.remove('disabled');
+                }
+
+                if (this.currentChapterIndex >= this.content.chapters.length - 1) {
+                    this.dom.nextChapterBtn.classList.add('disabled');
+                } else {
+                    this.dom.nextChapterBtn.classList.remove('disabled');
+                }
+            }
+
+            initObservers() {
+                const chapterObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        const id = entry.target.id;
+                        const chapterIndex = this.content.chapters.findIndex(c => c.id === id);
+                        entry.target.classList.toggle('active', entry.isIntersecting);
+
+                        if (entry.isIntersecting) {
+                            this.currentChapterIndex = chapterIndex;
+                            this.updateNavButtonsState();
+
+                            if (!this.isDragging) {
+                                this.dom.headerTitle.textContent = this.content.chapters[chapterIndex].title;
+                            }
+                            document.querySelectorAll(`[data-target-id]`).forEach(node => {
+                                const isCurrent = node.dataset.targetId === id;
+                                const nodeIndex = this.content.chapters.findIndex(c => c.id === node.dataset.targetId);
+                                node.classList.toggle('active', isCurrent);
+                                node.classList.toggle('past', nodeIndex < chapterIndex);
+                            });
+                            
+                            const progress = (chapterIndex / (this.content.chapters.length - 1)) * 100;
+                            this.dom.timelineProgressMobile.style.width = `${progress}%`;
+
+                            const desktopLine = this.dom.timelineProgressDesktop;
+                            if (desktopLine) {
+                                const pathLength = parseFloat(desktopLine.style.strokeDasharray) || 0;
+                                const progressFraction = chapterIndex / (this.content.chapters.length - 1);
+                                desktopLine.style.strokeDashoffset = pathLength * (1 - progressFraction);
+                            }
+                        }
+                    });
+                }, { rootMargin: "-40% 0px -50% 0px", threshold: 0 });
+                
+                document.querySelectorAll('.story-chapter').forEach(chapter => chapterObserver.observe(chapter));
+
+                const headerObserver = new IntersectionObserver(([entry]) => {
+                    this.dom.header.classList.toggle('scrolled', !entry.isIntersecting);
+                }, { threshold: [1] });
+                
+                headerObserver.observe(this.dom.scrollSentinel);
+            }
+        }
+        
+        class Quiz {
+            constructor(questions) {
+                this.allQuestions = questions;
+                this.dom = {
+                    overlay: document.getElementById('quiz-overlay'),
+                    container: document.getElementById('quiz-container'),
+                };
+                this.state = {};
+                this.localStorageKey = 'templateQuizState';
+                this.wasSnapEnabled = false; 
+                this.savedScrollPosition = 0; 
+            }
+            start() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                const savedState = this.loadState();
+                if (savedState) { this.renderResumePrompt(); } 
+                else { this.beginNewQuiz(); }
+            }
+            resume() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.state = this.loadState();
+                this.openOverlay();
+                this.startQuizUI();
+                this.renderQuestion();
+            }
+            beginNewQuiz() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.state = {
+                    questions: this.shuffleArray([...this.allQuestions]),
+                    currentQuestionIndex: 0,
+                    score: 0,
+                    answered: false,
+                };
+                this.saveState();
+                this.openOverlay();
+                this.renderIntro();
+            }
+            openOverlay() {
+                this.savedScrollPosition = window.scrollY;
+                if (document.documentElement.classList.contains('snap-enabled')) {
+                    this.wasSnapEnabled = true;
+                    document.documentElement.classList.remove('snap-enabled');
+                } else {
+                    this.wasSnapEnabled = false;
+                }
+                this.dom.overlay.classList.add('visible');
+                document.body.classList.add('no-scroll');
+            }
+            close() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.dom.overlay.classList.remove('visible');
+                document.body.classList.remove('no-scroll');
+                if (this.wasSnapEnabled) {
+                    document.documentElement.classList.add('snap-enabled');
+                }
+                window.scrollTo(0, this.savedScrollPosition);
+            }
+            saveState() { localStorage.setItem(this.localStorageKey, JSON.stringify(this.state)); }
+            loadState() { const saved = localStorage.getItem(this.localStorageKey); return saved ? JSON.parse(saved) : null; }
+            clearState() { localStorage.removeItem(this.localStorageKey); }
+            
+            renderResumePrompt() {
+                this.openOverlay();
+                this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title">Quiz in Sospeso</span><button class="icon-btn quiz-close-btn" id="quiz-close-resume"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div><div class="quiz-body"><div class="quiz-results-wrapper"><h2 class="quiz-results-title">Bentornato!</h2><p class="quiz-results-text">Hai un quiz in sospeso. Vuoi continuare da dove avevi interrotto?</p><div class="quiz-results-actions"><button class="quiz-next-btn" id="resume-quiz-btn">Riprendi Quiz</button><button class="quiz-next-btn secondary" id="restart-quiz-btn">Inizia da Capo</button></div></div></div>`;
+                document.getElementById('resume-quiz-btn').onclick = () => this.resume();
+                document.getElementById('restart-quiz-btn').onclick = () => { this.clearState(); this.beginNewQuiz(); };
+                document.getElementById('quiz-close-resume').onclick = () => this.close();
+            }
+            renderIntro() {
+                 this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title">Test di Autovalutazione</span><button class="icon-btn quiz-close-btn" id="quiz-close-intro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div><div class="quiz-body"><div class="quiz-results-wrapper"><h2 class="quiz-results-title">Sei pronto?</h2><p class="quiz-results-text">Verifica la tua preparazione con ${this.state.questions.length} domande.</p><button class="quiz-next-btn" id="start-quiz-btn">Inizia il Quiz</button></div></div>`;
+                 document.getElementById('start-quiz-btn').onclick = () => { this.startQuizUI(); this.renderQuestion(); };
+                 document.getElementById('quiz-close-intro').onclick = () => this.close();
+            }
+            startQuizUI() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title" id="quiz-progress-text"></span><button class="icon-btn quiz-close-btn" id="quiz-close-main"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div><div class="quiz-body"><div id="quiz-content-wrapper"></div></div><div class="quiz-footer"><button class="quiz-next-btn" id="quiz-next-btn" disabled>Avanti</button></div>`;
+                document.getElementById('quiz-next-btn').onclick = () => this.nextQuestion();
+                document.getElementById('quiz-close-main').onclick = () => this.close();
+            }
+            renderQuestion() {
+                this.state.answered = false;
+                const question = this.state.questions[this.state.currentQuestionIndex];
+                const progressText = `Domanda ${this.state.currentQuestionIndex + 1} di ${this.state.questions.length}`;
+                document.getElementById('quiz-progress-text').textContent = progressText;
+                const answersHtml = this.shuffleArray(question.options).map(option => `<button class="quiz-answer-btn" data-answer="${option}">${option}</button>`).join('');
+                const contentWrapper = document.getElementById('quiz-content-wrapper');
+                const oldSlide = contentWrapper.querySelector('.quiz-slide');
+                if (oldSlide) {
+                    oldSlide.style.opacity = 0;
+                    setTimeout(() => {
+                        oldSlide.innerHTML = `<p class="quiz-question-text">${question.question}</p><div class="quiz-answers">${answersHtml}</div><div class="quiz-explanation"></div>`;
+                        oldSlide.style.opacity = 1;
+                        this.addAnswerListeners();
+                    }, 200);
+                } else {
+                    contentWrapper.innerHTML = `<div class="quiz-slide active"><p class="quiz-question-text">${question.question}</p><div class="quiz-answers">${answersHtml}</div><div class="quiz-explanation"></div></div>`;
+                    this.addAnswerListeners();
+                }
+                document.getElementById('quiz-next-btn').disabled = true;
+            }
+            addAnswerListeners() {
+                document.querySelectorAll('.quiz-answer-btn').forEach(btn => {
+                    btn.onclick = (e) => this.handleAnswer(e.target);
+                });
+            }
+            handleAnswer(selectedButton) {
+                if (this.state.answered) return;
+                this.state.answered = true;
+                if(navigator.vibrate) navigator.vibrate(20);
+                const selectedAnswer = selectedButton.dataset.answer;
+                const currentQ = this.state.questions[this.state.currentQuestionIndex];
+                const correctAnswer = currentQ.correctAnswer;
+                
+                if (selectedAnswer === correctAnswer) {
+                    this.state.score++;
+                    selectedButton.classList.add('correct');
+                } else {
+                    selectedButton.classList.add('incorrect');
+                    const correctBtn = Array.from(document.querySelectorAll('.quiz-answer-btn')).find(btn => btn.dataset.answer === correctAnswer);
+                    if (correctBtn) correctBtn.classList.add('correct');
+                }
+                
+                document.querySelectorAll('.quiz-answer-btn').forEach(btn => btn.classList.add('disabled'));
+                document.getElementById('quiz-next-btn').disabled = false;
+                
+                // Show explanation
+                const explanationEl = document.querySelector('.quiz-explanation');
+                if(explanationEl) {
+                    const explText = currentQ.explanation || ("La risposta corretta è: " + correctAnswer);
+                    explanationEl.innerHTML = "<strong>Spiegazione:</strong> " + explText;
+                    explanationEl.classList.add('visible');
+                }
+                
+                this.saveState();
+            }
+            nextQuestion() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.state.currentQuestionIndex++;
+                if (this.state.currentQuestionIndex < this.state.questions.length) {
+                    this.saveState();
+                    this.renderQuestion();
+                } else {
+                    this.renderResults();
+                }
+            }
+            renderResults() {
+                const score = this.state.score;
+                const total = this.state.questions.length;
+                const percentage = Math.round((score / total) * 100);
+                let message = "Puoi fare di meglio. Riprova!";
+                if (percentage >= 70) message = "Ottimo lavoro!";
+                if (percentage >= 90) message = "Eccellente!";
+                this.clearState();
+                this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title">Risultati</span></div><div class="quiz-body"><div class="quiz-results-wrapper"><h2 class="quiz-results-title">${message}</h2><div class="quiz-results-score">${score} / ${total}</div><p class="quiz-results-text">Hai risposto correttamente al ${percentage}% delle domande.</p><div class="quiz-results-actions"><button class="quiz-next-btn" id="retake-quiz-btn">Riprova il Quiz</button><button class="quiz-next-btn secondary" id="close-results-btn">Torna allo Studio</button></div></div></div>`;
+                document.getElementById('retake-quiz-btn').onclick = () => this.beginNewQuiz();
+                document.getElementById('close-results-btn').onclick = () => this.close();
+            }
+            shuffleArray(array) {
+                return array.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const app = new ScrollytellingApp(learningContent);
+            const quiz = new Quiz(quizData);
+            document.getElementById('quiz-btn').onclick = () => quiz.start();
+        });
+    </script>
+</body>
+</html>
