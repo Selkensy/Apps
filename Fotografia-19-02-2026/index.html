@@ -1,0 +1,1653 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Visione & Composizione - Studio App</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap');
+
+        :root {
+            /* --- COLORI & TEMA --- */
+            
+            /* LIGHT MODE */
+            --bg-light: #f5f5f4;  /* Stone 100 */
+            --text-light: #292524; 
+            --text-light-secondary: #57534e; 
+            --card-bg-light: #ffffff;
+            --card-border-light: #e7e5e4; 
+            --accent-light: #0ea5e9; /* Sky Blue tecnico/artistico */
+            --shadow-light: 0 4px 20px -2px rgba(28, 25, 23, 0.06);
+            --focus-ring-light: #38bdf8;
+            --highlight-light: #e0f2fe; 
+            
+            /* Card Back Colors - Light */
+            --flip-front-bg-light: #fafaf9; 
+            --flip-back-bg-light: #e7e5e4; 
+            --flip-back-text-light: #292524;
+
+            /* Quiz Explanation Colors - Light */
+            --quiz-expl-bg-light: #f0fdf4;
+            --quiz-expl-border-light: #bbf7d0;
+            --quiz-expl-text-light: #14532d;
+
+            /* DARK MODE */
+            --bg-dark: #1c1917; /* Stone 900 */
+            --text-dark: #e7e5e4; 
+            --text-dark-secondary: #a8a29e; 
+            --card-bg-dark: #292524; 
+            --card-border-dark: #44403c; 
+            --accent-dark: #38bdf8; 
+            --shadow-dark: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+            --focus-ring-dark: #7dd3fc;
+            
+            /* Card Back Colors - Dark */
+            --flip-front-bg-dark: #0f0e0d; 
+            --flip-back-bg-dark: #292524; 
+            --flip-back-text-dark: #e7e5e4;
+
+            /* Quiz Explanation Colors - Dark */
+            --quiz-expl-bg-dark: #14532d;
+            --quiz-expl-border-dark: #15803d;
+            --quiz-expl-text-dark: #f0fdf4;
+        }
+
+        [data-theme="light"] {
+            --bg-color: var(--bg-light); --text-color: var(--text-light); --text-secondary-color: var(--text-light-secondary); 
+            --card-bg-color: var(--card-bg-light); --accent-color: var(--accent-light);
+            --border-color: var(--card-border-light); --shadow-color: var(--shadow-light); 
+            --focus-ring-color: var(--focus-ring-light); --highlight-color: var(--highlight-light);
+            --highlight-text-color: var(--text-light);
+            --flip-front-bg: var(--flip-front-bg-light);
+            --flip-back-bg: var(--flip-back-bg-light);
+            --flip-back-text: var(--flip-back-text-light);
+            --quiz-expl-bg: var(--quiz-expl-bg-light);
+            --quiz-expl-border: var(--quiz-expl-border-light);
+            --quiz-expl-text: var(--quiz-expl-text-light);
+        }
+        [data-theme="dark"] {
+            --bg-color: var(--bg-dark); --text-color: var(--text-dark); --text-secondary-color: var(--text-dark-secondary);
+            --card-bg-color: var(--card-bg-dark); --accent-color: var(--accent-dark);
+            --border-color: var(--card-border-dark); --shadow-color: var(--shadow-dark); 
+            --focus-ring-color: var(--focus-ring-dark); --highlight-color: var(--highlight-dark);
+            --highlight-text-color: var(--highlight-text-dark);
+            --flip-front-bg: var(--flip-front-bg-dark);
+            --flip-back-bg: var(--flip-back-bg-dark);
+            --flip-back-text: var(--flip-back-text-dark);
+            --quiz-expl-bg: var(--quiz-expl-bg-dark);
+            --quiz-expl-border: var(--quiz-expl-border-dark);
+            --quiz-expl-text: var(--quiz-expl-text-dark);
+        }
+        
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html { font-size: 100%; -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+        
+        body {
+            font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color);
+            transition: background-color 0.4s ease, color 0.4s ease; -webkit-tap-highlight-color: transparent;
+            line-height: 1.8; overflow-x: hidden;
+        }
+        body.no-scroll { overflow: hidden; height: 100%; width: 100%; }
+
+        button { cursor: pointer; border: none; background: none; font-family: inherit; color: inherit; -webkit-tap-highlight-color: transparent; }
+        button:focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 2px; border-radius: 4px; }
+        button:active { transform: scale(0.98); }
+
+        .app-container { opacity: 0; transition: opacity 0.5s ease; }
+        .app-container.loaded { opacity: 1; }
+        
+        /* HEADER */
+        .header {
+            position: sticky; top: 0; z-index: 100;
+            background-color: rgba(245, 245, 244, 0.9);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid transparent;
+            transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), box-shadow 0.3s ease;
+            will-change: transform;
+        }
+        [data-theme="dark"] .header { background-color: rgba(28, 25, 23, 0.9); }
+        .header.hidden { transform: translateY(-100%); }
+        .header.scrolled { border-bottom-color: var(--border-color); box-shadow: var(--shadow-color); }
+
+        .header-content { padding: 0.75rem 1.5rem; display: flex; justify-content: space-between; align-items: center; min-height: 64px; }
+        .header-title { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1; text-align: left; margin-right: 1rem; }
+        
+        .controls { display: flex; align-items: center; gap: 0.75rem; }
+        
+        .icon-btn { display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 12px; transition: background-color 0.2s; }
+        .icon-btn:hover { background-color: var(--border-color); }
+        .icon-btn svg { width: 22px; height: 22px; color: var(--text-secondary-color); transition: color 0.3s; }
+        .icon-btn.active svg { color: var(--accent-color); }
+        
+        /* Nav Buttons Desktop */
+        .nav-buttons-desktop {
+            display: none;
+            position: fixed; bottom: 2rem; right: 2rem;
+            flex-direction: column; gap: 0.5rem;
+            z-index: 95;
+        }
+        .icon-btn.disabled { opacity: 0.3; pointer-events: none; cursor: default; }
+
+        #autoscroll-btn { display: none; }
+
+        .theme-switcher .sun-icon { display: none; } [data-theme="light"] .theme-switcher .sun-icon { display: block; }
+        .theme-switcher .moon-icon { display: none; } [data-theme="dark"] .theme-switcher .moon-icon { display: block; }
+
+        .mode-switcher { display: flex; background-color: var(--border-color); border-radius: 14px; padding: 4px; }
+        .mode-btn { font-size: 0.85rem; font-weight: 600; padding: 6px 16px; border-radius: 10px; color: var(--text-secondary-color); transition: all 0.2s ease; }
+        .mode-btn.active { background-color: var(--card-bg-color); color: var(--text-color); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .desktop-mode-switcher { display: none; }
+
+        /* TIMELINE MOBILE */
+        .progress-timeline-mobile { padding: 0 1.5rem 1rem 1.5rem; touch-action: none; }
+        .timeline-track { position: relative; width: 100%; height: 6px; background-color: var(--border-color); border-radius: 3px; cursor: pointer; }
+        .timeline-progress { position: absolute; top: 0; left: 0; height: 100%; background-color: var(--accent-color); border-radius: 3px; width: 0; transition: width 0.2s linear; will-change: width; }
+        .timeline-nodes { position: absolute; top: 50%; left: 0; width: 100%; display: flex; justify-content: space-between; pointer-events: none; }
+        .timeline-node-point {
+            width: 12px; height: 12px; border-radius: 50%; background-color: var(--border-color);
+            border: 2px solid var(--bg-color); transform: translateY(-50%); transition: transform 0.3s ease, background-color 0.3s ease;
+            pointer-events: auto;
+        }
+        .timeline-node-point.past, .timeline-node-point.active { background-color: var(--accent-color); }
+        .timeline-node-point.active { transform: translateY(-50%) scale(1.4); box-shadow: 0 0 0 4px var(--highlight-color); }
+
+        /* LAYOUT & CHAPTERS */
+        .main-layout { padding-top: 4rem; }
+        #story-panel { padding: 0 1.5rem; }
+        
+        .story-chapter {
+            min-height: 90vh; padding: 6rem 0;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0.5; transform: scale(0.98); filter: blur(1px);
+            transition: opacity 0.6s ease, transform 0.6s ease, filter 0.6s ease; 
+            border-bottom: 1px dashed var(--border-color);
+        }
+        .story-chapter:last-child { border-bottom: none; min-height: 80vh; }
+        .story-chapter.active { opacity: 1; transform: scale(1); filter: blur(0); }
+        
+        .chapter-content { max-width: 680px; width: 100%; }
+        .chapter-title { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 8vw, 3rem); color: var(--text-color); margin-bottom: 2rem; line-height: 1.15; letter-spacing: -0.02em; word-wrap: break-word;}
+        .chapter-body { font-size: 1.125rem; line-height: 2.1; color: var(--text-secondary-color); }
+        
+        .chapter-body p, .chapter-body ul, .chapter-body ol { margin-bottom: 1.5rem; }
+        .chapter-body ul, .chapter-body ol { padding-left: 1.2rem; }
+        .chapter-body li { margin-bottom: 0.75rem; padding-left: 0.5rem; }
+        .chapter-body li::marker { color: var(--accent-color); font-weight: 700; }
+        .chapter-body strong { font-weight: 700; color: var(--text-color); }
+        .chapter-body h4 { 
+            font-size: 0.95rem; margin: 2.5rem 0 1rem 0; color: var(--accent-color); 
+            text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700;
+            display: flex; align-items: center; gap: 0.5rem;
+            line-height: 1.4;
+        }
+        .chapter-body h4::after { content: ''; flex-grow: 1; height: 1px; background-color: var(--border-color); opacity: 0.5; }
+        
+        /* INTERACTIVE ELEMENTS */
+        .interactive-accordion { 
+            margin: 2rem 0; border: 1px solid var(--border-color); border-radius: 16px; 
+            overflow: hidden; background-color: var(--card-bg-color); box-shadow: var(--shadow-color);
+            width: 100%;
+        }
+        .acc-item { border-bottom: 1px solid var(--border-color); }
+        .acc-item:last-child { border-bottom: none; }
+        .acc-header {
+            width: 100%; padding: 1.25rem 1.5rem; text-align: left;
+            background-color: var(--card-bg-color); font-weight: 600; color: var(--text-color);
+            display: flex; justify-content: space-between; align-items: center;
+            transition: background-color 0.2s; font-size: 1rem; line-height: 1.4;
+        }
+        .acc-header:hover { background-color: var(--bg-color); }
+        .acc-header .acc-icon { 
+            width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+            color: var(--accent-color); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            flex-shrink: 0; margin-left: 12px;
+        }
+        .acc-item.open .acc-header .acc-icon { transform: rotate(135deg); }
+        .acc-body {
+            max-height: 0; overflow: hidden; transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            background-color: var(--bg-color);
+        }
+        .acc-content { padding: 1.25rem 1.5rem; font-size: 1rem; color: var(--text-secondary-color); border-top: 1px dashed var(--border-color); line-height: 1.6; }
+
+        /* FLIP CARDS (ADAPTIVE GRID) */
+        .flip-container { 
+            margin: 2.5rem auto; 
+            perspective: 1000px; 
+            width: 100%; 
+            max-width: 500px; 
+            min-height: 300px; /* Altezza Minima */
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+            cursor: pointer;
+            box-shadow: var(--shadow-color);
+            border-radius: 20px;
+            display: grid;
+            grid-template-areas: "card-face";
+        }
+        .flip-container.flipped .flip-card-inner { transform: rotateY(180deg); }
+        
+        .flip-front, .flip-back {
+            grid-area: card-face; 
+            width: 100%;
+            -webkit-backface-visibility: hidden; 
+            backface-visibility: hidden;
+            border-radius: 20px; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            justify-content: center; 
+            padding: 2rem;
+        }
+        
+        .flip-front { background-color: var(--flip-front-bg); border: 1px solid var(--border-color); }
+        .flip-back {
+            background-color: var(--flip-back-bg); color: var(--flip-back-text); transform: rotateY(180deg);
+        }
+        
+        .flip-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--text-color); line-height: 1.3; }
+        .flip-hint { 
+            font-size: 0.8rem; color: var(--accent-color); margin-top: 1.5rem; 
+            font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px;
+            opacity: 0.8; display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+        }
+        .flip-hint::after { content: '↻'; font-size: 1.2em; margin-top: -2.6px; }
+        
+        .flip-back p, .flip-back ul { color: var(--flip-back-text); font-size: 1.1rem; line-height: 1.6; margin: 0; font-weight: 500; width: 100%;}
+        .flip-back ul { text-align: left; padding-left: 1.5rem; margin-top: 0.5rem; }
+        .flip-back li { margin-bottom: 0.5rem; }
+        
+        [data-theme="light"] .flip-back li::marker { color: var(--accent-color); }
+        [data-theme="dark"] .flip-back li::marker { color: white; }
+
+        #timeline-desktop { display: none; }
+        #scroll-sentinel { position: absolute; top: 0; height: 1px; width: 1px; pointer-events: none; }
+
+        .app-footer {
+            position: fixed; bottom: 0; left: 0; width: 100%; z-index: 90;
+            display: flex; justify-content: center; 
+            padding: 1rem 1.5rem calc(1rem + env(safe-area-inset-bottom));
+            pointer-events: none;
+        }
+        .app-footer.hidden { transform: translateY(150%); }
+        .footer-mode-switcher { 
+            display: flex; pointer-events: auto;
+            background-color: rgba(255, 255, 255, 0.9); 
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); 
+            border-radius: 24px; padding: 6px; 
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        [data-theme="dark"] .footer-mode-switcher { background-color: rgba(28, 25, 23, 0.9); border-color: rgba(255,255,255,0.1); }
+
+        /* QUIZ MODE */
+        .quiz-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 200;
+            display: flex; align-items: center; justify-content: center; padding: 1rem;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            opacity: 0; transition: opacity 0.4s ease, visibility 0.4s; visibility: hidden;
+        }
+        .quiz-overlay.visible { opacity: 1; visibility: visible; }
+        .quiz-container {
+            background-color: var(--card-bg-color); border: 1px solid var(--border-color);
+            width: 96%; max-width: 600px; 
+            height: auto; max-height: 85vh;
+            border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            display: flex; flex-direction: column; overflow: hidden;
+            transform: scale(0.95) translateY(10px); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .quiz-overlay.visible .quiz-container { transform: scale(1) translateY(0); }
+        
+        .quiz-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; background-color: var(--bg-color); }
+        .quiz-title { font-weight: 600; color: var(--text-secondary-color); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .quiz-body { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; -webkit-overflow-scrolling: touch; }
+        #quiz-content-wrapper { padding: 1.5rem; display: flex; flex-direction: column; justify-content: center; min-height: 100%;}
+        
+        .quiz-slide { width: 100%; opacity: 0; transition: opacity 0.3s ease; }
+        .quiz-slide.active { opacity: 1; }
+        
+        .quiz-question-text { font-size: clamp(1.1rem, 4vw, 1.35rem); font-weight: 700; margin-bottom: 1.5rem; line-height: 1.4; color: var(--text-color); }
+        .quiz-answers { display: grid; gap: 0.75rem; }
+        .quiz-answer-btn {
+            width: 100%; padding: 1rem 1.25rem; text-align: left; background-color: var(--bg-color);
+            border: 2px solid transparent; border-radius: 16px; font-size: 1rem; font-weight: 500;
+            transition: all 0.2s ease; color: var(--text-color);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            word-break: break-word; hyphens: auto; line-height: 1.4;
+        }
+        .quiz-answer-btn:hover { background-color: var(--border-color); }
+        .quiz-answer-btn:active { transform: scale(0.98); }
+        .quiz-answer-btn.correct { background-color: #dcfce7; color: #14532d; border-color: #22c55e; }
+        [data-theme="dark"] .quiz-answer-btn.correct { background-color: #14532d; color: #f0fdf4; border-color: #22c55e; }
+        .quiz-answer-btn.incorrect { background-color: #fee2e2; color: #7f1d1d; border-color: #ef4444; }
+        [data-theme="dark"] .quiz-answer-btn.incorrect { background-color: #7f1d1d; color: #fef2f2; border-color: #ef4444; }
+        .quiz-answer-btn.disabled { opacity: 0.6; pointer-events: none; }
+        
+        .quiz-explanation {
+            margin-top: 1.5rem; padding: 1.25rem; border-radius: 12px; font-size: 1rem; line-height: 1.5;
+            background-color: var(--quiz-expl-bg); border: 1px solid var(--quiz-expl-border); color: var(--quiz-expl-text);
+            opacity: 0; transform: translateY(10px); transition: opacity 0.4s ease, transform 0.4s ease; display: none;
+        }
+        .quiz-explanation.visible { opacity: 1; transform: translateY(0); display: block; }
+
+        .quiz-footer { 
+            padding: 1.5rem; border-top: 1px solid var(--border-color); flex-shrink: 0; background-color: var(--bg-color);
+            padding-bottom: calc(1.5rem + env(safe-area-inset-bottom)/2);
+        }
+        .quiz-next-btn { width: 100%; background-color: var(--accent-color); color: white; padding: 1rem; border-radius: 14px; font-size: 1.1rem; font-weight: 600; transition: opacity 0.2s, transform 0.2s; }
+        .quiz-next-btn:active { transform: scale(0.98); }
+        .quiz-next-btn:disabled { background-color: var(--border-color); color: var(--text-secondary-color); cursor: not-allowed; transform: none; }
+
+        .quiz-results-wrapper { text-align: center; display: flex; flex-direction: column; justify-content: center; min-height: 100%; padding: 1.5rem; }
+        .quiz-results-title { font-family: 'Playfair Display', serif; font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .quiz-results-score { font-size: 3.5rem; font-weight: 800; color: var(--accent-color); line-height: 1; margin: 1rem 0; }
+        .quiz-results-text { font-size: 1.1rem; color: var(--text-secondary-color); margin-bottom: 2rem; }
+        .quiz-results-actions { display: flex; flex-direction: column; gap: 0.75rem; width: 100%; }
+        .quiz-results-actions .quiz-next-btn.secondary { background-color: transparent; border: 2px solid var(--border-color); color: var(--text-color); }
+        .quiz-results-actions .quiz-next-btn.secondary:hover { border-color: var(--text-secondary-color); }
+
+        /* DESKTOP OVERRIDES & RESPONSIVE FIXES */
+        @media (min-width: 960px) {
+            html.snap-enabled { /* CSS Snap Removed - JS Logic used */ }
+
+            .progress-timeline-mobile { display: none; }
+            .app-footer { display: none; }
+            .desktop-mode-switcher { display: flex; }
+            #autoscroll-btn { display: flex; } 
+            
+            .nav-buttons-desktop { display: flex; }
+            
+            .main-layout { 
+                display: grid; 
+                /* FIX: minmax for middle column to prevent overflow */
+                grid-template-columns: 1fr minmax(0, 680px) 1fr; 
+                gap: 2rem; 
+                max-width: 100%; 
+                margin: 0; 
+                padding: 0 2rem; 
+            }
+            
+            #timeline-desktop {
+                grid-column: 1;
+                display: flex; 
+                position: sticky; top: 0; height: 100vh;
+                align-items: center; 
+                justify-content: flex-end;
+            }
+            
+            #story-panel { grid-column: 2; padding: 0; }
+
+            .timeline-desktop-container { 
+                position: relative; 
+                width: 220px; 
+                padding: 4rem 1rem 4rem 0; 
+                display: flex; justify-content: flex-end;
+            }
+            
+            .timeline-svg {
+                position: absolute; right: 0; 
+                top: 0; height: 100%; width: 2px; overflow: visible;
+                z-index: 0;
+                pointer-events: none; 
+            }
+            .timeline-svg-line { stroke: var(--border-color); stroke-width: 2px; fill: none; }
+            .timeline-svg-progress {
+                stroke: var(--accent-color); stroke-width: 2px; fill: none; transition: stroke-dashoffset 0.4s ease;
+            }
+
+            .timeline-desktop-nodes { 
+                display: flex; flex-direction: column; gap: 1.5rem; 
+                align-items: flex-end; text-align: right; width: 100%; 
+                z-index: 1; 
+            }
+            
+            .timeline-desktop-node {
+                display: flex; align-items: center; gap: 1.5rem; padding: 0.5rem 0;
+                position: relative; transition: opacity 0.3s; flex-direction: row-reverse; 
+                width: 140%; 
+                cursor: pointer; padding-right: 15px;
+            }
+            .timeline-desktop-node:hover .node-label { color: var(--accent-color); }
+            .timeline-desktop-node .node-point {
+                width: 14px; height: 14px; border-radius: 50%; background-color: var(--border-color);
+                border: 3px solid var(--bg-color); transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); flex-shrink: 0; 
+                z-index: 2; position: relative;
+            }
+            .timeline-desktop-node::after {
+                content: ''; position: absolute; top: 0; right: -10px; bottom: 0; width: 100%; z-index: -1;
+            }
+
+            .timeline-desktop-node .node-label { 
+                font-size: 0.95rem; font-weight: 500; color: var(--text-secondary-color); 
+                transition: color 0.3s ease, transform 0.3s ease;
+                white-space: nowrap; /* Prevent wrap */
+            }
+
+            .timeline-desktop-node.active .node-point { background-color: var(--accent-color); transform: scale(1.3); box-shadow: 0 0 0 4px var(--highlight-color); }
+            .timeline-desktop-node.active .node-label { color: var(--text-color); font-weight: 700; transform: translateX(-5px); }
+            .timeline-desktop-node.past .node-point { background-color: var(--accent-color); border-color: var(--accent-color); }
+
+            .story-chapter { padding: 6rem 0; min-height: 85vh; }
+            .story-chapter:first-child { padding-top: 4rem; }
+        }
+        
+        @media (min-width: 1200px) {
+             .main-layout { gap: 4rem; }
+        }
+    </style>
+</head>
+<body>
+    <div id="scroll-sentinel"></div>
+    <div class="app-container" id="app">
+        <header class="header" id="header">
+            <div class="header-content">
+                <h1 class="header-title" id="header-title">Visione & Composizione</h1>
+                <div class="controls">
+                    <div class="mode-switcher desktop-mode-switcher">
+                        <button class="mode-btn" data-mode="study">Studio</button>
+                        <button class="mode-btn" data-mode="story">Storia</button>
+                    </div>
+                    
+                    <button class="icon-btn" id="autoscroll-btn" aria-label="Attiva/Disattiva Autoscroll">
+                         <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 20V7m0 13-4-4m4 4 4-4m4-12v13m0-13 4 4m-4-4-4 4"/>
+                        </svg>
+                    </button>
+
+                     <button class="icon-btn" id="quiz-btn" aria-label="Avvia Quiz">
+                        <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 3L1 9l11 6 9-4.5V12h2V9l-11-6zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+                    </button>
+                    <button class="icon-btn theme-switcher" aria-label="Cambia Tema">
+                        <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                        <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="progress-timeline-mobile">
+                <div class="timeline-track" id="timeline-track-mobile">
+                    <div class="timeline-progress" id="timeline-progress-mobile"></div>
+                    <div class="timeline-nodes" id="timeline-nodes-mobile"></div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- DESKTOP NAV BUTTONS -->
+        <div class="nav-buttons-desktop">
+            <button class="icon-btn" id="prev-chapter-btn" aria-label="Capitolo precedente">
+                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                  <path fill-rule="evenodd" d="M5.575 13.729C4.501 15.033 5.43 17 7.12 17h9.762c1.69 0 2.618-1.967 1.544-3.271l-4.881-5.927a2 2 0 0 0-3.088 0l-4.88 5.927Z" clip-rule="evenodd"/>
+                </svg>
+            </button>
+            <button class="icon-btn" id="next-chapter-btn" aria-label="Capitolo successivo">
+                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                  <path fill-rule="evenodd" d="M18.425 10.271C19.499 8.967 18.57 7 16.88 7H7.12c-1.69 0-2.618 1.967-1.544 3.271l4.881 5.927a2 2 0 0 0 3.088 0l4.88-5.927Z" clip-rule="evenodd"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="main-layout">
+            <aside id="timeline-desktop">
+                <div class="timeline-desktop-container">
+                    <svg class="timeline-svg">
+                        <line class="timeline-svg-line" x1="1" y1="0" x2="1" y2="100%"></line>
+                        <line class="timeline-svg-progress" id="timeline-progress-desktop" x1="1" y1="0" x2="1" y2="100%"></line>
+                    </svg>
+                    <div class="timeline-desktop-nodes" id="timeline-nodes-desktop"></div>
+                </div>
+            </aside>
+            <main id="story-panel"></main>
+        </div>
+
+        <footer class="app-footer" id="app-footer">
+            <div class="mode-switcher footer-mode-switcher">
+                <button class="mode-btn" data-mode="study">Studio</button>
+                <button class="mode-btn" data-mode="story">Storia</button>
+            </div>
+        </footer>
+    </div>
+    
+    <div class="quiz-overlay" id="quiz-overlay">
+        <div class="quiz-container" id="quiz-container"></div>
+    </div>
+
+    <script>
+        const learningContent = {
+            title: "Visione & Composizione: Dal Cubismo alla Fotografia Digitale",
+            chapters: [
+                {
+                    id: 'capitolo-1',
+                    title: 'Capitolo 1: La Rivoluzione dello Sguardo',
+                    description: `
+                        <h4>Origini e Quarta Dimensione</h4>
+                        <p>Il Cubismo, fondato in Francia (1907) da <strong>Pablo Picasso</strong> (1881-1973) e <strong>Georges Braque</strong>, rappresenta una rottura sismica nell'arte occidentale. Rifiuta la riproduzione meccanica "solo retinica" dell'Impressionismo a favore di un approccio intellettuale: dipingere ciò che la mente conosce, non solo ciò che l'occhio vede.</p>
+                        
+                        <p>Il termine "Cubismo" fu accidentale, coniato dopo che il critico Louis Vauxcelles descrisse i paesaggi di Braque del 1908 come fatti di "piccoli cubi" (bizzarrìe cubiste), un sentimento condiviso da Matisse. Questo movimento introdusse il concetto di <strong>Quarta Dimensione (Tempo)</strong> nell'arte statica. Proprio mentre Albert Einstein formulava la Teoria della Relatività, i Cubisti postulavano che la conoscenza dello spazio e del tempo fosse relativa al punto di vista dell'osservatore.</p>
+
+                        <div class="interactive-accordion">
+                            <div class="acc-item">
+                                <button class="acc-header">Influenze Chiave <span class="acc-icon">+</span></button>
+                                <div class="acc-body">
+                                    <div class="acc-content">
+                                        <p><strong>Primitivismo:</strong> Il fascino per l'arte africana e oceanica (es. <em>Volto negroide</em> di Picasso, 1907) per le sue forme schematiche, la deformazione e l'espressività spirituale, rifiutando la prospettiva occidentale tradizionale.</p>
+                                        <p><strong>Paul Cézanne:</strong> Il precursore che insegnò che la natura dovrebbe essere modellata secondo tre forme fondamentali: la sfera, il cono e il cilindro. La sua geometrizzazione aprì la strada alla frammentazione cubista.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p>I Cubisti scomposero la realtà in piani geometrici e li riassemblarono in un nuovo ordine. Sovrapponendo simultaneamente molteplici punti di vista (fronte, lato, alto), permisero allo spettatore di "muoversi virtualmente" attorno all'oggetto, integrando il fattore tempo nella tela.</p>
+                    `,
+                    storyDescription: `<p>All'inizio del XX secolo, avvenne una rivoluzione visiva. Mentre scienziati come Einstein piegavano il concetto di tempo, gli artisti a Parigi infrangevano lo specchio della realtà. Picasso e Braque decisero che un singolo punto di vista era una menzogna. Perché dipingere un volto solo frontalmente quando sappiamo che ha un lato, una nuca, una profondità?</p>
+                    <p>Frantumarono il mondo in schegge—cubi, coni, cilindri—ispirati dalla forza grezza delle maschere africane e dal rigore geometrico di Paul Cézanne. Non dipingevano solo oggetti; dipingevano l'<em>esperienza</em> di vederli nel tempo. Questa fu la nascita del Cubismo: un'arte dove la tela divenne una collisione di prospettive, un luogo dove la quarta dimensione—il Tempo—divenne finalmente visibile.</p>`
+                },
+                {
+                    id: 'capitolo-2',
+                    title: 'Capitolo 2: Evoluzione e Materiali',
+                    description: `
+                        <h4>Fasi del Cubismo</h4>
+                        <p>Il movimento si evolse rapidamente tra il 1908 e il 1914, diviso in due fasi distinte.</p>
+                        
+                        <div class="flip-container">
+                            <div class="flip-card-inner">
+                                <div class="flip-front">
+                                    <div class="flip-title">Analitico vs Sintetico</div>
+                                    <div class="flip-hint">Scopri la Differenza</div>
+                                </div>
+                                <div class="flip-back">
+                                    <ul>
+                                        <li><strong>Analitico (1908-1912):</strong> Estrema frammentazione delle forme, tavolozze monocromatiche (toni ocra/grigi) e focus sulla struttura piuttosto che sul colore.</li>
+                                        <li><strong>Sintetico (1912-1914):</strong> Un parziale ritorno al colore e a forme riconoscibili. Introduzione dei <em>papiers collés</em> (collage) usando giornali, legno e stoffa per reintrodurre la realtà materiale.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h4>Artisti Chiave oltre a Picasso & Braque</h4>
+                        <p><strong>Juan Gris:</strong> Noto per il suo approccio "cristallino" e logico. Affermava: "Cézanne trasforma una bottiglia in un cilindro; io parto da un cilindro per creare una bottiglia."</p>
+                        <p><strong>Fernand Léger:</strong> Integrò la "civiltà della macchina" nel Cubismo, riducendo le figure a forme tubolari e meccaniche (es. <em>Nudi nella foresta</em>).</p>
+                        <p><strong>Robert Delaunay:</strong> Fondatore del "Cubismo Orfico", concentrato su luce, colore e musicalità, famoso per aver decostruito la Torre Eiffel.</p>
+                        <p><strong>Constantin Brancusi:</strong> Uno scultore alla ricerca dell'essenza assoluta e della purezza della forma (es. <em>Il Bacio</em>, 1907; <em>Uccello nello spazio</em>), muovendosi verso l'astrazione totale.</p>
+                    `,
+                    storyDescription: `<p>L'esperimento cubista non si fermò alla frammentazione. Si evolse. Prima venne la fase "Analitica", dove il mondo fu dissezionato così a fondo da scomparire quasi in cristalli grigi e marroni. Ma la realtà reagì. Nella fase "Sintetica", gli artisti iniziarono a incollare pezzi reali del mondo—giornali, spartiti musicali, stoffa—direttamente sulla tela. L'arte non era più una finestra; era un oggetto in sé.</p>
+                    <p>Altri visionari si unirono alla lotta. Juan Gris portò precisione matematica, Fernand Léger vide il corpo umano come una macchina per la nuova era industriale, e Robert Delaunay infuse il mondo fratturato con colori vibranti e "orfici". Nel frattempo, nella scultura, Brancusi levigava la materia finché non divenne pura essenza—un uccello divenne una scia d'oro, un bacio divenne un blocco di pietra.</p>`
+                },
+                {
+                    id: 'capitolo-3',
+                    title: 'Capitolo 3: L\'Occhio del Fotografo',
+                    description: `
+                        <h4>Dalla Tela al Sensore: Definire la Composizione</h4>
+                        <p>Proprio come i Cubisti organizzavano lo spazio per trasmettere significato, un fotografo digitale deve organizzare gli elementi nell'inquadratura. Una buona fotografia è una sintesi di <strong>Tecnica</strong> (Oggettiva/Definita) e <strong>Composizione</strong> (Soggettiva/Indefinita).</p>
+                        
+                        <p>La composizione è l'atto di organizzare l'immagine per trasmettere una specifica sensazione. Il suo scopo ultimo è creare un equilibrio virtuale tra i soggetti. Gli strumenti compositivi chiave includono inquadratura, prospettiva, illuminazione, movimento e disposizione.</p>
+
+                        <h4>La Regola dei Terzi</h4>
+                        <p>Derivata dalla pittura classica, è la pietra miliare della fotografia moderna. Consiste nel dividere l'immagine con due linee orizzontali e due verticali, creando nove sezioni uguali.</p>
+                         <div class="interactive-accordion">
+                            <div class="acc-item">
+                                <button class="acc-header">Punti di Forza & Linee Guida <span class="acc-icon">+</span></button>
+                                <div class="acc-body">
+                                    <div class="acc-content">
+                                        <p><strong>Punti di Forza (Punti di Fuoco):</strong> Le quattro intersezioni della griglia sono dove l'occhio si posa naturalmente. Posizionare qui il soggetto è più dinamico che centrarlo.</p>
+                                        <p><strong>Linea dell'Orizzonte:</strong> Dovrebbe allinearsi con la linea orizzontale superiore o inferiore per enfatizzare rispettivamente il primo piano o il cielo.</p>
+                                        <p><strong>Linee Guida (di forza):</strong> Usare linee naturali (strade, sguardi, braccia) per guidare l'occhio dell'osservatore verso il punto focale (es. l'uso della direzione dello sguardo in Helmut Newton).</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `,
+                    storyDescription: `<p>Facciamo un salto nell'era digitale. Lo strumento è cambiato dal pennello al sensore, ma la sfida rimane: come organizziamo il caos? Una buona fotografia non è solo perfezione tecnica; è un sentimento, composto.</p>
+                    <p>I fotografi hanno imparato a smettere di centrare tutto. Hanno adottato la "Regola dei Terzi", una griglia che guida l'occhio verso "punti di forza" dove l'energia si aggrega. Posizionando un orizzonte su una linea della griglia o un volto a un'intersezione, l'immagine respira. Guadagna equilibrio. Come i Cubisti, i fotografi usano "linee guida"—una strada, uno sguardo, un'ombra—per controllare dove guarda l'osservatore, costringendolo a esplorare l'immagine esattamente come l'artista intendeva.</p>`
+                },
+                {
+                    id: 'capitolo-4',
+                    title: 'Capitolo 4: Luce e Prospettiva',
+                    description: `
+                        <h4>Prospettiva e Ottica</h4>
+                        <p>La prospettiva è l'angolo di ripresa. Cambiare l'obiettivo altera drammaticamente la percezione di profondità e proporzione:</p>
+                        <ul>
+                            <li><strong>Teleobiettivo:</strong> Comprime i piani distinti, facendo sembrare gli oggetti distanti più vicini e grandi (effetto appiattimento).</li>
+                            <li><strong>Grandangolare:</strong> Dilata i piani distinti, facendo sembrare gli oggetti sullo sfondo molto più lontani (effetto dilatazione).</li>
+                        </ul>
+
+                        <h4>La Meccanica della Luce (Esposizione)</h4>
+                        <p>La luce è composta da luminosità (chiaro/scuro) e colore. Nella fotografia digitale, analizziamo la luce tramite l'<strong>Istogramma</strong>, un grafico che mostra la distribuzione dei pixel dalle ombre (0) alle alte luci (255).</p>
+
+                        <div class="flip-container">
+                            <div class="flip-card-inner">
+                                <div class="flip-front">
+                                    <div class="flip-title">Leggere l'Istogramma</div>
+                                    <div class="flip-hint">Tocca per imparare</div>
+                                </div>
+                                <div class="flip-back">
+                                    <ul>
+                                        <li><strong>Sbilanciato a Sinistra:</strong> Sottoesposta (perdita di dettaglio nelle ombre).</li>
+                                        <li><strong>Sbilanciato a Destra:</strong> Sovraesposta (luci bruciate, bianco puro).</li>
+                                        <li><strong>Centro/Diffuso:</strong> Esposizione corretta con buona gamma dinamica.</li>
+                                        <li><strong>Gamma Dinamica:</strong> L'occhio vede ~12 stop; un sensore 8-bit ne cattura solo ~5.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h4>Qualità della Luce</h4>
+                        <p><strong>Luce Dura:</strong> Fasci paralleli, ombre nette, alto contrasto. Evidenzia dettagli/difetti (spesso evitata nei ritratti se non per effetti drammatici).</p>
+                        <p><strong>Luce Diffusa (Morbida):</strong> Multidirezionale, ombre morbide. Nasconde rughe e difetti, ideale per bellezza e macrofotografia.</p>
+                        <p><strong>Controluce:</strong> Generalmente evitato nei ritratti a meno che non si desideri un effetto silhouette.</p>
+                    `,
+                    storyDescription: `<p>La prospettiva è una bugia raccontata dall'obiettivo. Un grandangolare stira il mondo, spingendo lo sfondo all'infinito, mentre un teleobiettivo schiaccia lo spazio, tirando le montagne lontane proprio dietro al tuo soggetto. È la scelta di realtà del fotografo.</p>
+                    <p>Ma la luce è la materia prima. Il fotografo digitale legge la luce non solo con gli occhi, ma con un Istogramma—una mappa matematica di ombre e luci. L'occhio umano è miracoloso, vede 12 stop di luce; il sensore è limitato a 5. Dobbiamo scegliere cosa sacrificare. Manipoliamo il carattere della luce: l'onestà brutale della "Luce Dura" che rivela ogni poro, o la carezza indulgente della "Luce Morbida" che leviga il mondo. Nei paesaggi, inseguiamo l'Ora d'Oro all'alba e al tramonto, dove le ombre si allungano e rivelano la trama della terra.</p>`
+                },
+                {
+                    id: 'capitolo-5',
+                    title: 'Capitolo 5: Forma, Trama e Tempo',
+                    description: `
+                        <h4>Elementi Visivi</h4>
+                        <p><strong>Forma:</strong> Può essere definita da una silhouette o dal gioco di luci e ombre.</p>
+                        <p><strong>Trama (Texture):</strong> La sensazione visiva della qualità tattile di una superficie (es. vernice scrostata, pietra ruvida), che evoca memorie e suggestioni.</p>
+
+                        <h4>Catturare il Movimento</h4>
+                        <p>La fotografia di solito congela il tempo, ma le tecniche creative possono visualizzare il passaggio del tempo, riecheggiando il fascino cubista per la 4a dimensione.</p>
+                        
+                        <div class="interactive-accordion">
+                            <div class="acc-item">
+                                <button class="acc-header">Tecniche di Movimento <span class="acc-icon">+</span></button>
+                                <div class="acc-body">
+                                    <div class="acc-content">
+                                        <p><strong>Panning:</strong> Seguire il soggetto con la fotocamera durante l'esposizione (min 1/60s). Risultato: Soggetto nitido, sfondo strisciato e mosso.</p>
+                                        <p><strong>Lunga Esposizione:</strong> Usare un treppiede e tempi lenti per trasformare luci in movimento (auto, stelle) in scie o l'acqua corrente in seta. Richiede sperimentazione.</p>
+                                        <p><strong>Sincronizzazione Seconda Tendina:</strong> Il flash scatta alla fine di una lunga esposizione per congelare il soggetto <em>dopo</em> aver catturato la scia di movimento.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h4>Macrofotografia</h4>
+                        <p>Richiede illuminazione diffusa (spesso usando flash anulari) per illuminare soggetti minuscoli come insetti o fiori senza ombre dure.</p>
+                    `,
+                    storyDescription: `<p>In definitiva, la composizione ritorna agli elementi dell'arte: Forma e Trama. Una silhouette contro una finestra, la grana ruvida di una porta arrugginita—queste texture innescano memorie tattili nella mente dell'osservatore.</p>
+                    <p>E infine, torniamo al Tempo. Proprio come il Cubismo cercò di dipingere il tempo, la fotografia può catturarne il passaggio. Attraverso il "Panning", spazziamo la fotocamera con un ciclista in corsa, congelandolo contro un mondo che si dissolve in linee di velocità. Attraverso la "Lunga Esposizione", trasformiamo una strada caotica in fiumi di luce rossa e bianca, o un oceano inquieto in nebbia. La fotografia è sperimentazione. È il congelamento di un momento, o la pittura di un movimento, dimostrando che anche un'immagine ferma può contenere il flusso del tempo.</p>`
+                }
+            ]
+        };
+
+        const quizData = [
+    // --- SEZIONE: CUBISMO (ORIGINI E CONCETTI BASE) ---
+    { 
+        question: "Chi sono considerati i fondatori storici del movimento Cubista?", 
+        options: ["Pablo Picasso e Georges Braque", "Henri Matisse e Pablo Picasso", "Paul Cézanne e Georges Braque", "Juan Gris e Fernand Léger"], 
+        correctAnswer: "Pablo Picasso e Georges Braque",
+        explanation: "Il Cubismo nasce in Francia intorno al 1907 grazie alla collaborazione tra Picasso e Braque, che svilupparono insieme i principi fondamentali della scomposizione della forma." 
+    },
+    { 
+        question: "Da dove deriva il termine 'Cubismo'?", 
+        options: ["Da una critica di Louis Vauxcelles che citava Matisse", "Da un manifesto scritto da Picasso", "Dalla passione di Braque per la geometria euclidea", "Da un termine coniato da Apollinaire"], 
+        correctAnswer: "Da una critica di Louis Vauxcelles che citava Matisse",
+        explanation: "Il termine fu occasionale: nel 1908 Matisse definì alcune opere di Braque come composte da 'piccoli cubi'. Il critico Louis Vauxcelles riprese l'idea parlando di 'bizzarrie cubiste'." 
+    },
+    { 
+        question: "Quale affermazione descrive meglio l'obiettivo principale del Cubismo?", 
+        options: ["Dipingere ciò che la mente conosce, non solo ciò che l'occhio vede", "Riprodurre fedelmente la luce naturale sulla retina", "Esprimere le emozioni interiori attraverso colori violenti", "Rappresentare la velocità e il dinamismo della vita moderna"], 
+        correctAnswer: "Dipingere ciò che la mente conosce, non solo ciò che l'occhio vede",
+        explanation: "Il Cubismo rifiuta la riproduzione meccanica del reale (tipica dell'Impressionismo) per un'interpretazione intellettuale e strutturale della realtà." 
+    },
+    { 
+        question: "Cosa rappresenta la 'Quarta Dimensione' nella pittura cubista?", 
+        options: ["Il fattore Tempo", "La profondità prospettica", "Il colore emotivo", "La spiritualità dell'artista"], 
+        correctAnswer: "Il fattore Tempo",
+        explanation: "La quarta dimensione è il tempo necessario per muoversi attorno all'oggetto e osservarlo da più punti di vista, che vengono poi rappresentati simultaneamente sulla tela." 
+    },
+    { 
+        question: "Quale relazione c'è tra il Cubismo e la Teoria della Relatività di Einstein?", 
+        options: ["Sono fenomeni contemporanei ma senza un nesso di dipendenza diretta", "Picasso studiò la fisica di Einstein per creare il Cubismo", "Einstein si ispirò ai quadri di Braque", "Non c'è alcuna relazione, nemmeno temporale"], 
+        correctAnswer: "Sono fenomeni contemporanei ma senza un nesso di dipendenza diretta",
+        explanation: "Sebbene entrambi i fenomeni postulassero che la conoscenza di spazio e tempo è relativa al punto di osservazione, si svilupparono parallelamente in campi diversi per una comune necessità culturale." 
+    },
+    { 
+        question: "Quale grande maestro post-impressionista è considerato il precursore diretto del Cubismo?", 
+        options: ["Paul Cézanne", "Vincent Van Gogh", "Paul Gauguin", "Claude Monet"], 
+        correctAnswer: "Paul Cézanne",
+        explanation: "Cézanne insegnò a trattare la natura secondo forme geometriche fondamentali (sfera, cono, cilindro), aprendo la strada alla geometrizzazione cubista." 
+    },
+    { 
+        question: "Secondo la celebre lettera di Cézanne, la natura va modellata secondo tre moduli fondamentali. Quali?", 
+        options: ["Sfera, Cono, Cilindro", "Cubo, Piramide, Parallelepipedo", "Linea, Punto, Superficie", "Cerchio, Quadrato, Triangolo"], 
+        correctAnswer: "Sfera, Cono, Cilindro",
+        explanation: "Cézanne scrisse: 'In natura tutto è modellato secondo tre moduli fondamentali: la sfera, il cono e il cilindro'." 
+    },
+    { 
+        question: "Quale influenza ebbe l'arte primitiva (africana e oceanica) sul Cubismo?", 
+        options: ["Fornì esempi di forme schematiche, deformate e libere dalla prospettiva", "Introdusse l'uso di colori pastello e sfumati", "Insegnò ai cubisti la tecnica della pittura a olio", "Non ebbe alcuna influenza significativa"], 
+        correctAnswer: "Fornì esempi di forme schematiche, deformate e libere dalla prospettiva",
+        explanation: "L'arte primitiva interessava per la sua capacità espressiva, la sintesi formale e la libertà dalle regole accademiche occidentali." 
+    },
+
+    // --- SEZIONE: FASI DEL CUBISMO ---
+    { 
+        question: "In quale ordine cronologico si sono succedute le fasi del Cubismo?", 
+        options: ["Cubismo Analitico -> Cubismo Sintetico", "Cubismo Sintetico -> Cubismo Analitico", "Cubismo Orfico -> Cubismo Analitico", "Cubismo Primitivo -> Cubismo Geometrico"], 
+        correctAnswer: "Cubismo Analitico -> Cubismo Sintetico",
+        explanation: "Il Cubismo Analitico (1908-1912) precede la fase Sintetica (1912-1914)." 
+    },
+    { 
+        question: "Qual è una caratteristica distintiva del Cubismo Analitico?", 
+        options: ["Frammentazione accentuata e uso di colori spenti (monocromo)", "Uso di collage e materiali reali", "Colori vivaci e forme circolari", "Rappresentazione fedele della prospettiva rinascimentale"], 
+        correctAnswer: "Frammentazione accentuata e uso di colori spenti (monocromo)",
+        explanation: "Nella fase analitica, l'oggetto viene disintegrato in mille sfaccettature e il colore viene quasi eliminato per concentrarsi sulla struttura." 
+    },
+    { 
+        question: "Cosa introduce il Cubismo Sintetico rispetto alla fase precedente?", 
+        options: ["Un parziale recupero del colore e l'uso di materiali incollati (collage)", "Una maggiore astrazione e perdita del soggetto", "Il ritorno alla prospettiva tradizionale", "L'uso esclusivo del bianco e nero"], 
+        correctAnswer: "Un parziale recupero del colore e l'uso di materiali incollati (collage)",
+        explanation: "Il Cubismo Sintetico (1912-1914) reintroduce forme più ampie, colori e tecniche polimateriche come i 'papiers collés'." 
+    },
+    { 
+        question: "Come si chiamano le tecniche che prevedono l'impiego di materiali diversi (sabbia, legno, carta) sulla tela?", 
+        options: ["Polimateriche", "Polifoniche", "Politecniche", "Polistirene"], 
+        correctAnswer: "Polimateriche",
+        explanation: "Le tecniche polimateriche mirano a restituire la sensazione tattile della realtà incollando materiali reali direttamente sull'opera." 
+    },
+    { 
+        question: "TRABOCCHETTO: Quale di queste affermazioni sul Cubismo Analitico è FALSA?", 
+        options: ["Utilizzava colori molto vivaci e brillanti", "Scomponeva l'oggetto in molteplici piani", "Rinunciava alla distinzione tra figura e sfondo", "Fu la prima fase del movimento"], 
+        correctAnswer: "Utilizzava colori molto vivaci e brillanti",
+        explanation: "Falso. Il Cubismo Analitico era caratterizzato da tonalità spente, ocra e grigie (monocromatismo)." 
+    },
+
+    // --- SEZIONE: PROTAGONISTI DEL CUBISMO ---
+    { 
+        question: "Quale artista affermò: 'Cézanne di una bottiglia fa un cilindro, io parto dal cilindro per dipingere una bottiglia'?", 
+        options: ["Juan Gris", "Pablo Picasso", "Georges Braque", "Fernand Léger"], 
+        correctAnswer: "Juan Gris",
+        explanation: "Juan Gris era noto per il suo approccio deduttivo, logico e matematico alla composizione cubista." 
+    },
+    { 
+        question: "Chi è il principale esponente del 'Cubismo Orfico'?", 
+        options: ["Robert Delaunay", "Fernand Léger", "Juan Gris", "Constantin Brancusi"], 
+        correctAnswer: "Robert Delaunay",
+        explanation: "Delaunay interpretò il cubismo attraverso la luce e il colore puro, creando uno stile musicale e poetico definito 'orfico' da Apollinaire." 
+    },
+    { 
+        question: "Quale artista introdusse la 'civiltà della macchina' e le forme tubolari nel Cubismo?", 
+        options: ["Fernand Léger", "Robert Delaunay", "Georges Braque", "Constantin Brancusi"], 
+        correctAnswer: "Fernand Léger",
+        explanation: "Léger ridusse le forme a elementi meccanici e tubolari, celebrando la modernità industriale." 
+    },
+    { 
+        question: "Qual è l'obiettivo della scultura di Constantin Brancusi?", 
+        options: ["La purezza della forma e l'essenzialità", "Il realismo anatomico dettagliato", "La rappresentazione del movimento veloce", "L'uso di materiali poveri e grezzi"], 
+        correctAnswer: "La purezza della forma e l'essenzialità",
+        explanation: "Brancusi cercava l'essenza assoluta delle cose, arrivando a forme estremamente levigate e sintetiche (es. 'L'uccello nello spazio')." 
+    },
+
+    // --- SEZIONE: FOTOGRAFIA (DEFINIZIONI E COMPOSIZIONE) ---
+    { 
+        question: "Qual è la definizione di una 'buona fotografia' secondo il materiale didattico?", 
+        options: ["Una sintesi di Tecnica (Oggettiva) e Composizione (Soggettiva)", "Il possesso della fotocamera più costosa", "Un'immagine perfettamente a fuoco", "L'uso esclusivo della modalità manuale"], 
+        correctAnswer: "Una sintesi di Tecnica (Oggettiva) e Composizione (Soggettiva)",
+        explanation: "La fotografia artistica nasce dall'unione della padronanza tecnica (definita) e della sensibilità compositiva (indefinita)." 
+    },
+    { 
+        question: "Qual è lo scopo ultimo della composizione fotografica?", 
+        options: ["Creare un equilibrio virtuale per trasmettere una sensazione", "Riempire tutto lo spazio disponibile", "Seguire rigidamente tutte le regole matematiche", "Assicurarsi che il soggetto sia sempre al centro"], 
+        correctAnswer: "Creare un equilibrio virtuale per trasmettere una sensazione",
+        explanation: "La composizione serve a organizzare gli elementi in modo funzionale al messaggio o all'emozione che si vuole comunicare." 
+    },
+    { 
+        question: "In cosa consiste la 'Regola dei Terzi'?", 
+        options: ["Dividere l'immagine in 9 sezioni con 2 linee orizzontali e 2 verticali", "Dividere l'immagine in 3 strisce verticali", "Posizionare sempre il soggetto nel terzo inferiore", "Scattare tre foto dello stesso soggetto"], 
+        correctAnswer: "Dividere l'immagine in 9 sezioni con 2 linee orizzontali e 2 verticali",
+        explanation: "È la griglia fondamentale della composizione. Le intersezioni delle linee sono i 'punti di forza'." 
+    },
+    { 
+        question: "Dove si trovano i 'Punti di Forza' (o Punti di Fuoco) nella Regola dei Terzi?", 
+        options: ["Alle intersezioni delle linee della griglia", "Al centro esatto dei 9 riquadri", "Lungo i bordi esterni della foto", "Negli angoli estremi dell'immagine"], 
+        correctAnswer: "Alle intersezioni delle linee della griglia",
+        explanation: "Sono i 4 punti dove l'occhio umano tende a posarsi naturalmente; posizionare lì il soggetto rende l'immagine più dinamica." 
+    },
+    { 
+        question: "Cos'è una 'Linea di Guida' (o linea di forza) in fotografia?", 
+        options: ["Un elemento che dirige l'occhio dell'osservatore verso il soggetto", "Una linea disegnata sulla lente", "Il cavo che collega il flash", "L'orizzonte quando è storto"], 
+        correctAnswer: "Un elemento che dirige l'occhio dell'osservatore verso il soggetto",
+        explanation: "Può essere una strada, uno sguardo, un braccio o una prospettiva architettonica che accompagna la lettura dell'immagine." 
+    },
+    { 
+        question: "TRABOCCHETTO: Se vuoi dare importanza al cielo in un paesaggio, dove posizioni l'orizzonte secondo la Regola dei Terzi?", 
+        options: ["Sulla linea orizzontale INFERIORE (1° terzo)", "Sulla linea orizzontale SUPERIORE (2° terzo)", "Esattamente al centro", "In diagonale"], 
+        correctAnswer: "Sulla linea orizzontale INFERIORE (1° terzo)",
+        explanation: "Abbassando l'orizzonte al primo terzo (in basso), lasci due terzi dell'immagine al cielo, enfatizzandolo." 
+    },
+
+    // --- SEZIONE: FOTOGRAFIA (OTTICA E PROSPETTIVA) ---
+    { 
+        question: "Cos'è l'inquadratura?", 
+        options: ["Ciò che entra nel rettangolo del fotogramma", "La cornice fisica che si mette alla foto stampata", "La messa a fuoco del soggetto", "La quantità di luce nella scena"], 
+        correctAnswer: "Ciò che entra nel rettangolo del fotogramma",
+        explanation: "L'inquadratura è la porzione di spazio delimitata dall'obiettivo e dal sensore/pellicola." 
+    },
+    { 
+        question: "Quale effetto prospettico produce un Teleobiettivo?", 
+        options: ["Schiaccia i piani prospettici (avvicina lo sfondo)", "Dilata i piani prospettici (allontana lo sfondo)", "Curva le linee ai bordi", "Rende tutto nitido da 0 a infinito"], 
+        correctAnswer: "Schiaccia i piani prospettici (avvicina lo sfondo)",
+        explanation: "Il teleobiettivo comprime la profondità apparente, facendo sembrare gli oggetti distanti molto più grandi e vicini al primo piano." 
+    },
+    { 
+        question: "Quale effetto prospettico produce un Grandangolare?", 
+        options: ["Dilata i piani prospettici (allontana lo sfondo)", "Schiaccia i piani prospettici", "Crea un effetto bokeh molto spinto", "Ingrandisce i dettagli lontani"], 
+        correctAnswer: "Dilata i piani prospettici (allontana lo sfondo)",
+        explanation: "Il grandangolo esaspera le distanze, facendo apparire gli oggetti in secondo piano molto più lontani di quanto siano in realtà." 
+    },
+    { 
+        question: "Cos'è la prospettiva in fotografia?", 
+        options: ["L'angolo di ripresa (posizione da cui si inquadra)", "La capacità di vedere il futuro", "La correzione del colore in post-produzione", "La nitidezza dello sfondo"], 
+        correctAnswer: "L'angolo di ripresa (posizione da cui si inquadra)",
+        explanation: "La prospettiva è determinata dalla posizione fisica del fotografo rispetto al soggetto e dalla scelta dell'obiettivo." 
+    },
+
+    // --- SEZIONE: FOTOGRAFIA (LUCE E ISTOGRAMMA) ---
+    { 
+        question: "Quali sono le due sfaccettature della luce nella composizione?", 
+        options: ["Esposizione e Disposizione della luce", "Intensità e Colore", "Naturale e Artificiale", "Flash e Continua"], 
+        correctAnswer: "Esposizione e Disposizione della luce",
+        explanation: "Bisogna considerare sia la quantità tecnica di luce (esposizione) sia come essa cade sul soggetto (disposizione/qualità)." 
+    },
+    { 
+        question: "Cosa rappresenta l'asse orizzontale (ascissa) dell'Istogramma?", 
+        options: ["I valori di luminosità da 0 (nero) a 255 (bianco)", "Il numero di pixel per ogni valore", "La saturazione dei colori", "La temperatura colore"], 
+        correctAnswer: "I valori di luminosità da 0 (nero) a 255 (bianco)",
+        explanation: "L'asse X mostra la scala tonale: sinistra = ombre/neri, destra = luci/bianchi." 
+    },
+    { 
+        question: "Cosa rappresenta l'asse verticale (ordinata) dell'Istogramma?", 
+        options: ["Il numero di pixel (quantità) che hanno quel valore di luminosità", "L'intensità della luce", "Il contrasto dell'immagine", "La nitidezza"], 
+        correctAnswer: "Il numero di pixel (quantità) che hanno quel valore di luminosità",
+        explanation: "L'asse Y indica quanti pixel nell'immagine possiedono la luminosità indicata sull'asse X." 
+    },
+    { 
+        question: "Se l'istogramma è tutto schiacciato a SINISTRA, la foto è:", 
+        options: ["Sottoesposta (scura)", "Sovraesposta (chiara)", "Correttamente esposta", "A basso contrasto"], 
+        correctAnswer: "Sottoesposta (scura)",
+        explanation: "Una concentrazione di dati a sinistra indica predominanza di toni scuri o neri, con perdita di dettaglio nelle ombre." 
+    },
+    { 
+        question: "Se l'istogramma tocca il bordo a DESTRA ('bruciando' i dati), la foto è:", 
+        options: ["Sovraesposta", "Sottoesposta", "Nitida", "Mossa"], 
+        correctAnswer: "Sovraesposta",
+        explanation: "Significa che ci sono aree di bianco puro (255) prive di dettaglio (alte luci bruciate)." 
+    },
+    { 
+        question: "Qual è la differenza di Gamma Dinamica tra l'occhio umano e un sensore standard?", 
+        options: ["L'occhio vede circa 12 stop, il sensore circa 5 stop", "Il sensore vede più dell'occhio", "Sono identici", "L'occhio vede in bianco e nero al buio"], 
+        correctAnswer: "L'occhio vede circa 12 stop, il sensore circa 5 stop",
+        explanation: "L'occhio umano ha una capacità molto superiore di distinguere dettagli contemporaneamente in piena luce e in ombra rispetto a un sensore digitale (riferimento a sensori 8-bit standard del testo)." 
+    },
+
+    // --- SEZIONE: QUALITÀ DELLA LUCE ---
+    { 
+        question: "Che effetto produce la 'Luce Dura'?", 
+        options: ["Ombre nette, scure e alto contrasto", "Ombre sfumate e transizioni morbide", "Assenza di ombre", "Effetto silhouette"], 
+        correctAnswer: "Ombre nette, scure e alto contrasto",
+        explanation: "La luce dura (es. sole diretto, faretto) esalta i dettagli ma anche i difetti, creando ombre dai bordi taglienti." 
+    },
+    { 
+        question: "Per quale tipo di soggetto è ideale la 'Luce Diffusa' (morbida)?", 
+        options: ["Ritratti di bellezza e macrofotografia", "Paesaggi drammatici", "Foto di architettura ad alto contrasto", "Silhouette al tramonto"], 
+        correctAnswer: "Ritratti di bellezza e macrofotografia",
+        explanation: "La luce morbida nasconde le rughe e i difetti della pelle, ed è essenziale nella macro per evitare ombre nere che nascondono i dettagli." 
+    },
+    { 
+        question: "Perché il controluce è generalmente da evitare nel ritratto (salvo effetti voluti)?", 
+        options: ["Perché oscura il volto del soggetto o crea silhouette", "Perché brucia lo sfondo", "Perché cambia il colore degli occhi", "Perché richiede tempi di scatto troppo lunghi"], 
+        correctAnswer: "Perché oscura il volto del soggetto o crea silhouette",
+        explanation: "Se la luce è dietro il soggetto, il viso rimane in ombra, a meno che non sia l'effetto creativo cercato." 
+    },
+    { 
+        question: "Quando sono le ore migliori per fotografare un paesaggio?", 
+        options: ["Alba e tramonto (luce radente)", "Mezzogiorno (luce zenitale)", "Pomeriggio inoltrato", "Notte fonda"], 
+        correctAnswer: "Alba e tramonto (luce radente)",
+        explanation: "La luce radente crea ombre lunghe che enfatizzano la tridimensionalità e la profondità del paesaggio." 
+    },
+
+    // --- SEZIONE: MOVIMENTO E TECNICHE CREATIVE ---
+    { 
+        question: "Cos'è il 'Panning'?", 
+        options: ["Seguire il soggetto in movimento con la fotocamera durante lo scatto", "Usare un tempo di scatto velocissimo per congelare tutto", "Ruotare la fotocamera su se stessa", "Fare una panoramica video"], 
+        correctAnswer: "Seguire il soggetto in movimento con la fotocamera durante lo scatto",
+        explanation: "Questa tecnica mantiene il soggetto nitido mentre lo sfondo viene mosso/strisciato nella direzione del movimento." 
+    },
+    { 
+        question: "Quale tempo di scatto è consigliato come base di partenza per il Panning a mano libera?", 
+        options: ["Circa 1/60 di secondo", "1/1000 di secondo", "30 secondi", "1/500 di secondo"], 
+        correctAnswer: "Circa 1/60 di secondo",
+        explanation: "Un tempo troppo veloce congela lo sfondo (niente effetto), uno troppo lento rende tutto mosso. 1/60 è un buon compromesso iniziale." 
+    },
+    { 
+        question: "Cosa permette di ottenere la tecnica dei 'tempi lunghi' (Long Exposure)?", 
+        options: ["Scie di luce, effetto seta dell'acqua, movimento creativo", "Congelamento istantaneo dell'azione sportiva", "Ritratti nitidissimi senza treppiede", "Aumento della risoluzione del sensore"], 
+        correctAnswer: "Scie di luce, effetto seta dell'acqua, movimento creativo",
+        explanation: "Tenendo l'otturatore aperto a lungo, tutto ciò che si muove diventa una scia o una sfocatura eterea." 
+    },
+    { 
+        question: "Cos'è la 'sincronizzazione sulla seconda tendina' (o lenta) col flash?", 
+        options: ["Il flash scatta alla fine dell'esposizione lunga", "Il flash scatta all'inizio dell'esposizione", "Il flash lampeggia due volte", "Il flash non scatta affatto"], 
+        correctAnswer: "Il flash scatta alla fine dell'esposizione lunga",
+        explanation: "Questo crea una scia di movimento *dietro* al soggetto, che viene congelato dal flash solo all'ultimo istante, dando un senso di velocità naturale." 
+    },
+    { 
+        question: "Cos'è la 'Trama' (Texture) in fotografia?", 
+        options: ["La sensazione tattile che una superficie trasmette visivamente", "La risoluzione della foto", "Il rumore digitale ad alti ISO", "La griglia dei terzi"], 
+        correctAnswer: "La sensazione tattile che una superficie trasmette visivamente",
+        explanation: "È la qualità che permette di 'sentire' con gli occhi la ruvidità della pietra, la morbidezza del velluto o la ruggine del metallo." 
+    },
+    { 
+        question: "TRABOCCHETTO: Nella macrofotografia, qual è l'illuminazione preferita?", 
+        options: ["Diffusa (es. flash anulare)", "Dura e diretta (spot)", "Controluce forte", "Nessuna luce artificiale"], 
+        correctAnswer: "Diffusa (es. flash anulare)",
+        explanation: "Dato che il soggetto è minuscolo, una luce diffusa è essenziale per illuminare ogni dettaglio senza creare ombre nere e profonde." 
+    },
+
+    // --- DOMANDE MISTE E DI RINFORZO (VARIAZIONI) ---
+    { 
+        question: "Se voglio 'schiacciare' la prospettiva e far sembrare le montagne vicine a un edificio, uso:", 
+        options: ["Un Teleobiettivo", "Un Grandangolare", "Un obiettivo Macro", "Un obiettivo Fisheye"], 
+        correctAnswer: "Un Teleobiettivo",
+        explanation: "Il teleobiettivo riduce la distanza apparente tra i piani." 
+    },
+    { 
+        question: "Chi ha dipinto 'Les Demoiselles d'Avignon' (anche se non citato esplicitamente, è l'autore principale del cubismo)?", 
+        options: ["Picasso", "Braque", "Monet", "Dali"], 
+        correctAnswer: "Picasso",
+        explanation: "Picasso è il co-fondatore del Cubismo." 
+    },
+    { 
+        question: "Vero o Falso: Il Cubismo Sintetico è caratterizzato dall'assenza totale di colore.", 
+        options: ["Falso", "Vero"], 
+        correctAnswer: "Falso",
+        explanation: "Il Cubismo Sintetico RECUPERA il colore e introduce materiali reali, a differenza di quello Analitico che era monocromo." 
+    },
+    { 
+        question: "Quale linea dell'istogramma indica i toni medi?", 
+        options: ["La parte centrale dell'asse orizzontale", "La parte alta dell'asse verticale", "Il bordo sinistro", "Il bordo destro"], 
+        correctAnswer: "La parte centrale dell'asse orizzontale",
+        explanation: "Il centro del grafico rappresenta i grigi medi e i toni intermedi." 
+    },
+    { 
+        question: "Cosa significa 'fotografare in luce radente'?", 
+        options: ["Che la luce arriva lateralmente rispetto al soggetto", "Che la luce arriva dall'alto", "Che la luce è frontale", "Che non c'è luce"], 
+        correctAnswer: "Che la luce arriva lateralmente rispetto al soggetto",
+        explanation: "La luce laterale/radente (alba/tramonto) esalta la texture." 
+    },
+    { 
+        question: "Se uso un tempo di scatto di 1/1000s, cosa succede a un soggetto in movimento?", 
+        options: ["Viene 'congelato' (nitido)", "Viene mosso (effetto scia)", "Scompare", "Diventa trasparente"], 
+        correctAnswer: "Viene 'congelato' (nitido)",
+        explanation: "Tempi rapidi bloccano l'azione." 
+    },
+    { 
+        question: "Quale scultore ha creato 'Il Bacio' (1907) in forma cubista/essenziale?", 
+        options: ["Constantin Brancusi", "Auguste Rodin", "Michelangelo", "Donatello"], 
+        correctAnswer: "Constantin Brancusi",
+        explanation: "Brancusi cercava la forma pura, bloccata, anti-romantica." 
+    },
+    { 
+        question: "Cosa si intende per 'Papiers collés'?", 
+        options: ["Carte incollate (collage)", "Carte dipinte", "Carte bruciate", "Carte fotografiche"], 
+        correctAnswer: "Carte incollate (collage)",
+        explanation: "Tecnica tipica del Cubismo Sintetico." 
+    },
+    { 
+        question: "Se il soggetto guarda verso destra, dove dovresti lasciare più 'aria' (spazio vuoto)?", 
+        options: ["A destra (nella direzione dello sguardo)", "A sinistra (dietro la testa)", "Sopra la testa", "Sotto i piedi"], 
+        correctAnswer: "A destra (nella direzione dello sguardo)",
+        explanation: "Bisogna lasciare spazio nella direzione in cui il soggetto guarda o si muove (Active Space)." 
+    },
+    { 
+        question: "Il formato RAW (non citato esplicitamente ma implicito nella gamma dinamica) o un sensore migliore aiuta a:", 
+        options: ["Recuperare dettagli nelle ombre e nelle luci (Gamma Dinamica)", "Migliorare la composizione", "Scegliere il soggetto", "Mettere a fuoco automaticamente"], 
+        correctAnswer: "Recuperare dettagli nelle ombre e nelle luci (Gamma Dinamica)",
+        explanation: "Una maggiore gamma dinamica permette di registrare informazioni sia nelle zone molto chiare che in quelle molto scure." 
+    },
+    { 
+        question: "Cosa faceva Cézanne per 'costruire' i suoi dipinti?", 
+        options: ["Geometrizzava le forme naturali", "Copiava fotografie", "Usava solo il colore nero", "Dipingeva a occhi chiusi"], 
+        correctAnswer: "Geometrizzava le forme naturali",
+        explanation: "Riduceva la complessità della natura a forme solide geometriche." 
+    },
+    { 
+        question: "TRABOCCHETTO: Un 'Istogramma corretto' ha sempre una forma a campana perfetta al centro?", 
+        options: ["No, dipende dalla scena (es. neve o notte)", "Sì, sempre", "Sì, altrimenti la foto è da buttare", "Solo se si usa il flash"], 
+        correctAnswer: "No, dipende dalla scena (es. neve o notte)",
+        explanation: "Non esiste una forma 'perfetta'. Una foto notturna avrà l'istogramma a sinistra (ed è corretto), una sulla neve a destra. L'importante è non tagliare dati involontariamente." 
+    },
+    { 
+        question: "Chi ha dipinto 'Nudi nella foresta' (1909) con forme tubolari?", 
+        options: ["Fernand Léger", "Picasso", "Braque", "Gris"], 
+        correctAnswer: "Fernand Léger",
+        explanation: "Léger è associato al 'Tubismo' o cubismo meccanico." 
+    },
+    { 
+        question: "La 'composizione' è definita come:", 
+        options: ["Soggettiva e indefinita", "Oggettiva e definita", "Meccanica e automatica", "Irrilevante"], 
+        correctAnswer: "Soggettiva e indefinita",
+        explanation: "A differenza della tecnica (oggettiva), la composizione dipende dall'occhio e dalla sensibilità dell'autore." 
+    },
+    { 
+        question: "Quale obiettivo useresti per includere un vasto panorama in una sola foto?", 
+        options: ["Grandangolare", "Teleobiettivo", "Macro", "50mm"], 
+        correctAnswer: "Grandangolare",
+        explanation: "Il grandangolo ha un ampio angolo di campo." 
+    },
+    { 
+        question: "Quale movimento artistico ha influenzato il Cubismo col rifiuto della prospettiva?", 
+        options: ["Primitivismo", "Rinascimento", "Barocco", "Neoclassicismo"], 
+        correctAnswer: "Primitivismo",
+        explanation: "L'arte tribale non usava la prospettiva scientifica, cosa che affascinò i cubisti." 
+    },
+    { 
+        question: "Cosa succede se usi un tempo lento senza cavalletto?", 
+        options: ["La foto viene mossa (micromosso)", "La foto viene scura", "La foto viene in bianco e nero", "Si rompe l'obiettivo"], 
+        correctAnswer: "La foto viene mossa (micromosso)",
+        explanation: "Le vibrazioni della mano vengono registrate dal sensore se il tempo è lungo." 
+    },
+    { 
+        question: "Juan Gris è noto per essere:", 
+        options: ["Logico e cristallino", "Caotico e impulsivo", "Impressionista", "Scultore"], 
+        correctAnswer: "Logico e cristallino",
+        explanation: "Il suo cubismo era molto calcolato e pulito." 
+    },
+    { 
+        question: "Qual è il nemico principale della fotografia di ritratto in esterni a mezzogiorno?", 
+        options: ["Luce dura zenitale (ombre sotto gli occhi)", "Troppa saturazione", "Poca luce", "Il vento"], 
+        correctAnswer: "Luce dura zenitale (ombre sotto gli occhi)",
+        explanation: "Il sole a picco crea ombre sgradevoli ('occhi da panda') e alto contrasto difficile da gestire." 
+    },
+    { 
+        question: "Cosa si intende per 'Visione Simultanea' nel Cubismo?", 
+        options: ["Vedere l'oggetto da più lati contemporaneamente sulla tela", "Guardare due quadri alla volta", "Dipingere con due mani", "Usare specchi per dipingere"], 
+        correctAnswer: "Vedere l'oggetto da più lati contemporaneamente sulla tela",
+        explanation: "È il concetto chiave: superare la visione fissa rinascimentale." 
+    },
+    {
+        question: "Se l'istogramma mostra un picco altissimo contro il lato destro e nulla a sinistra, l'immagine è probabilmente:",
+        options: ["High Key (molto chiara) o Sovraesposta", "Low Key (molto scura)", "A basso contrasto", "Ben bilanciata"],
+        correctAnswer: "High Key (molto chiara) o Sovraesposta",
+        explanation: "Tanti pixel chiari. Se toccano il bordo, sono bruciati. Se non lo toccano, è una foto molto chiara (High Key)."
+    },
+    {
+        question: "Chi ha realizzato l'opera 'Natura morta con sedia impagliata'?",
+        options: ["Picasso", "Braque", "Gris", "Cézanne"],
+        correctAnswer: "Picasso",
+        explanation: "È una delle prime e più famose opere con inserti polimaterici (corda, tela cerata)."
+    },
+    {
+        question: "Nella fotografia di paesaggio, cosa aiuta a dare il senso di 'profondità' oltre alla luce?",
+        options: ["Includere un primo piano interessante", "Usare un teleobiettivo spinto", "Scattare a mezzogiorno", "Eliminare le ombre"],
+        correctAnswer: "Includere un primo piano interessante",
+        explanation: "Avere elementi su piani diversi (primo piano, medio, sfondo) aiuta l'occhio a percepire la tridimensionalità."
+    },
+    {
+        question: "Cosa significa 'ISO' (anche se citato marginalmente nei dati EXIF)?",
+        options: ["La sensibilità del sensore alla luce", "La velocità dell'otturatore", "L'apertura del diaframma", "La marca della fotocamera"],
+        correctAnswer: "La sensibilità del sensore alla luce",
+        explanation: "Nei dati EXIF delle slide si vede ISO 200. Più è alto, più il sensore amplifica la luce (e il rumore)."
+    },
+    {
+        question: "Vero o Falso: Il Cubismo Orfico si concentrava sul monocromatismo.",
+        options: ["Falso", "Vero"],
+        correctAnswer: "Falso",
+        explanation: "L'Orfismo (Delaunay) era incentrato proprio sul colore vibrante e sulla luce, al contrario del Cubismo Analitico."
+    },
+    {
+        question: "Per ottenere l'effetto 'seta' sull'acqua di una cascata, devi usare:",
+        options: ["Tempi lunghi (es. 1 secondo o più)", "Tempi brevi (es. 1/1000)", "Diaframma tutto aperto", "ISO altissimi"],
+        correctAnswer: "Tempi lunghi (es. 1 secondo o più)",
+        explanation: "L'acqua scorre durante l'esposizione, creando una scia morbida."
+    },
+    {
+        question: "Quale elemento NON fa parte della tecnica fotografica (oggettiva)?",
+        options: ["La sensazione che si desidera trasmettere", "La messa a fuoco", "L'esposizione", "Il bilanciamento del bianco"],
+        correctAnswer: "La sensazione che si desidera trasmettere",
+        explanation: "La sensazione è parte della Composizione (Soggettiva), non della Tecnica pura."
+    },
+    {
+        question: "Braque dipinse 'Case a l'Estaque' (1908). Perché è importante?",
+        options: ["Ispirò il termine 'Cubismo'", "Fu il primo quadro astratto", "Era un ritratto di Picasso", "Era una scultura"],
+        correctAnswer: "Ispirò il termine 'Cubismo'",
+        explanation: "È l'opera che fece dire a Matisse e Vauxcelles che era fatta di 'piccoli cubi'."
+    },
+    {
+        question: "Cosa si intende per 'Silhouette'?",
+        options: ["Soggetto nero contro sfondo chiaro", "Soggetto chiaro contro sfondo nero", "Soggetto a fuoco e sfondo sfocato", "Foto in bianco e nero"],
+        correctAnswer: "Soggetto nero contro sfondo chiaro",
+        explanation: "Si ottiene esponendo per lo sfondo luminoso (controluce), lasciando il soggetto in sottoesposizione totale."
+    },
+    {
+        question: "Quale di questi NON è un consiglio per la composizione citato?",
+        options: ["Usare sempre il flash", "Regola dei terzi", "Linee di fuga", "Taglio della foto"],
+        correctAnswer: "Usare sempre il flash",
+        explanation: "Il flash è uno strumento di illuminazione, non una regola compositiva obbligatoria."
+    }
+];
+
+        /* ================================================================= */
+        /* LOGICA APPLICAZIONE */
+        /* ================================================================= */
+
+        class ScrollytellingApp {
+            constructor(content) {
+                this.content = content;
+                this.lastScrollY = 0;
+                this.isDragging = false;
+                this.scrubTargetIndex = 0;
+                this.isSnapEnabled = localStorage.getItem('snapEnabled') !== 'false'; 
+                this.currentChapterIndex = 0;
+                this.isSnapping = false; 
+                
+                this.initDOMElements();
+                this.initEventListeners();
+                this.initTheme();
+                this.initSnapState();
+                
+                this.setMode(localStorage.getItem('template-mode') || 'study');
+                this.dom.appContainer.classList.add('loaded');
+            }
+            
+            initDOMElements() {
+                this.dom = {
+                    appContainer: document.getElementById('app'), header: document.getElementById('header'),
+                    headerTitle: document.getElementById('header-title'), 
+                    timelineNodesMobile: document.getElementById('timeline-nodes-mobile'),
+                    timelineProgressMobile: document.getElementById('timeline-progress-mobile'),
+                    timelineTrackMobile: document.getElementById('timeline-track-mobile'),
+                    timelineNodesDesktop: document.getElementById('timeline-nodes-desktop'),
+                    timelineProgressDesktop: document.getElementById('timeline-progress-desktop'),
+                    timelineDesktopContainer: document.querySelector('.timeline-desktop-container'),
+                    storyPanel: document.getElementById('story-panel'),
+                    themeSwitcher: document.querySelector('.theme-switcher'),
+                    scrollSentinel: document.getElementById('scroll-sentinel'),
+                    modeBtns: document.querySelectorAll('.mode-btn'),
+                    appFooter: document.getElementById('app-footer'),
+                    autoScrollBtn: document.getElementById('autoscroll-btn'),
+                    prevChapterBtn: document.getElementById('prev-chapter-btn'),
+                    nextChapterBtn: document.getElementById('next-chapter-btn')
+                };
+            }
+            
+            initSnapState() {
+                if (this.isSnapEnabled) {
+                    document.documentElement.classList.add('snap-enabled');
+                    this.dom.autoScrollBtn.classList.add('active');
+                }
+            }
+
+            initTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light'; 
+                this.applyTheme(savedTheme);
+                this.dom.themeSwitcher.addEventListener('click', () => {
+                    if (navigator.vibrate) navigator.vibrate(20);
+                    const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                    this.applyTheme(newTheme);
+                });
+            }
+            
+            applyTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem('theme', theme);
+            }
+            
+            initEventListeners() {
+                if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
+                window.scrollTo(0, 0);
+
+                this.dom.modeBtns.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        if (navigator.vibrate) navigator.vibrate(20);
+                        const newMode = btn.dataset.mode;
+                        this.setMode(newMode);
+                    });
+                });
+                
+                this.dom.autoScrollBtn.addEventListener('click', () => {
+                     this.isSnapEnabled = !this.isSnapEnabled;
+                     localStorage.setItem('snapEnabled', this.isSnapEnabled);
+                     document.documentElement.classList.toggle('snap-enabled');
+                     this.dom.autoScrollBtn.classList.toggle('active');
+                     if (navigator.vibrate) navigator.vibrate(10);
+                     
+                     if(this.isSnapEnabled) {
+                         this.dom.header.classList.remove('hidden');
+                         this.dom.appFooter.classList.remove('hidden');
+                     }
+                });
+
+                this.dom.prevChapterBtn.addEventListener('click', () => {
+                    if (this.currentChapterIndex > 0) {
+                        this.scrollToChapter(this.content.chapters[this.currentChapterIndex - 1].id);
+                    }
+                });
+
+                this.dom.nextChapterBtn.addEventListener('click', () => {
+                    if (this.currentChapterIndex < this.content.chapters.length - 1) {
+                        this.scrollToChapter(this.content.chapters[this.currentChapterIndex + 1].id);
+                    }
+                });
+
+                window.addEventListener('scroll', () => this.handleScroll(), { passive: true });
+                window.addEventListener('resize', () => this.handleResize());
+                this.initDraggableTimeline();
+            }
+            
+            handleScroll() {
+                const currentScrollY = window.scrollY;
+                const isMobile = window.innerWidth < 960;
+
+                // Header Logic: Always allow hiding/showing
+                if (Math.abs(currentScrollY - this.lastScrollY) > 5) {
+                    if (currentScrollY > this.lastScrollY && currentScrollY > 80) {
+                        this.dom.header.classList.add('hidden');
+                        this.dom.appFooter.classList.add('hidden');
+                    } else {
+                        this.dom.header.classList.remove('hidden');
+                        this.dom.appFooter.classList.remove('hidden');
+                    }
+                }
+                
+                // Custom JS Snap Logic
+                if (this.isSnapEnabled && !isMobile && !this.isSnapping) {
+                    this.checkSnapTrigger();
+                }
+
+                this.lastScrollY = currentScrollY;
+            }
+
+            checkSnapTrigger() {
+                const chapters = document.querySelectorAll('.story-chapter');
+                const viewportHeight = window.innerHeight;
+                const triggerPoint = viewportHeight / 1.5; 
+                
+                chapters.forEach((chapter, index) => {
+                    const rect = chapter.getBoundingClientRect();
+                    
+                    if (rect.bottom < triggerPoint && rect.bottom > 0 && index < chapters.length - 1) {
+                        this.isSnapping = true;
+                        const nextChapterId = chapters[index + 1].id;
+                        this.scrollToChapter(nextChapterId);
+                        
+                        setTimeout(() => {
+                            this.isSnapping = false;
+                        }, 1000);
+                    }
+                });
+            }
+            
+            handleResize() {
+                document.querySelectorAll('.acc-item.open .acc-body').forEach(body => {
+                    body.style.maxHeight = body.scrollHeight + "px";
+                });
+                if(this.dom.timelineNodesDesktop.offsetHeight > 0) {
+                    this.setupDesktopTimelineSVG();
+                }
+            }
+            
+            initDraggableTimeline() {
+                const timeline = this.dom.timelineTrackMobile;
+                const handleDrag = (e) => {
+                    if (!this.isDragging) return;
+                    e.preventDefault();
+                    const clientX = e.clientX || e.touches[0].clientX;
+                    const rect = timeline.getBoundingClientRect();
+                    let progress = (clientX - rect.left) / rect.width;
+                    progress = Math.max(0, Math.min(1, progress));
+                    
+                    this.scrubTargetIndex = Math.round(progress * (this.content.chapters.length - 1));
+                    this.dom.headerTitle.textContent = this.content.chapters[this.scrubTargetIndex].title;
+                    
+                    document.querySelectorAll('.timeline-node-point').forEach((node, index) => {
+                        node.classList.toggle('active', index === this.scrubTargetIndex);
+                    });
+                    this.dom.timelineProgressMobile.style.width = `${progress * 100}%`;
+                };
+                const startDrag = (e) => {
+                    this.isDragging = true;
+                    handleDrag(e);
+                };
+                const endDrag = () => {
+                    if (!this.isDragging) return;
+                    this.isDragging = false;
+                    this.scrollToChapter(this.content.chapters[this.scrubTargetIndex].id);
+                };
+                timeline.addEventListener('mousedown', startDrag);
+                window.addEventListener('mousemove', handleDrag);
+                window.addEventListener('mouseup', endDrag);
+                timeline.addEventListener('touchstart', startDrag, { passive: false });
+                window.addEventListener('touchmove', handleDrag, { passive: false });
+                window.addEventListener('touchend', endDrag);
+            }
+            
+            setMode(mode) {
+                localStorage.setItem('template-mode', mode);
+                this.dom.modeBtns.forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+                const currentScrollRatio = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+                this.buildUI(mode);
+                this.initObservers(); 
+                const newScrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+                window.scrollTo(0, newScrollHeight * currentScrollRatio);
+            }
+            
+            buildUI(mode) {
+                document.querySelector('.header-title').textContent = this.content.title;
+
+                this.dom.storyPanel.innerHTML = '';
+                this.dom.timelineNodesMobile.innerHTML = '';
+                this.dom.timelineNodesDesktop.innerHTML = '';
+                
+                this.content.chapters.forEach(chapter => {
+                    const nodePointMobile = document.createElement('button');
+                    nodePointMobile.className = 'timeline-node-point';
+                    nodePointMobile.dataset.targetId = chapter.id;
+                    nodePointMobile.setAttribute('aria-label', `Vai al capitolo: ${chapter.title}`);
+                    nodePointMobile.onclick = (e) => {
+                        if(navigator.vibrate) navigator.vibrate(10);
+                        this.scrollToChapter(chapter.id);
+                    };
+                    this.dom.timelineNodesMobile.appendChild(nodePointMobile);
+
+                    const nodeDesktop = document.createElement('button');
+                    nodeDesktop.className = 'timeline-desktop-node';
+                    nodeDesktop.dataset.targetId = chapter.id;
+                    nodeDesktop.innerHTML = `<div class="node-point"></div><div class="node-label">${chapter.title}</div>`;
+                    nodeDesktop.onclick = () => this.scrollToChapter(chapter.id);
+                    this.dom.timelineNodesDesktop.appendChild(nodeDesktop);
+
+                    const section = document.createElement('section');
+                    section.className = 'story-chapter';
+                    section.id = chapter.id;
+                    const content = mode === 'story' ? chapter.storyDescription : chapter.description;
+                    section.innerHTML = `<div class="chapter-content"><h2 class="chapter-title">${chapter.title}</h2><div class="chapter-body">${content}</div></div>`;
+                    this.dom.storyPanel.appendChild(section);
+                });
+                
+                this.dom.storyPanel.querySelectorAll('.acc-header').forEach(header => {
+                    header.addEventListener('click', () => {
+                        const item = header.parentElement;
+                        const body = header.nextElementSibling;
+                        const isOpen = item.classList.contains('open');
+                        item.classList.toggle('open');
+                        if (!isOpen) {
+                            body.style.maxHeight = body.scrollHeight + "px";
+                        } else {
+                            body.style.maxHeight = null;
+                        }
+                    });
+                });
+
+                this.dom.storyPanel.querySelectorAll('.flip-container').forEach(container => {
+                    container.addEventListener('click', () => {
+                         const selection = window.getSelection();
+                         if (selection.toString().length === 0) {
+                             container.classList.toggle('flipped');
+                         }
+                    });
+                });
+                
+                this.setupDesktopTimelineSVG();
+            }
+            
+            setupDesktopTimelineSVG() {
+                const nodesHeight = this.dom.timelineNodesDesktop.offsetHeight;
+                const containerHeight = this.dom.timelineDesktopContainer.offsetHeight;
+                const startY = (containerHeight - nodesHeight) / 2;
+                const endY = startY + nodesHeight;
+
+                const line = this.dom.timelineProgressDesktop.previousElementSibling;
+                line.setAttribute('y1', startY);
+                line.setAttribute('y2', endY);
+                
+                const progressLine = this.dom.timelineProgressDesktop;
+                progressLine.setAttribute('y1', startY);
+                progressLine.setAttribute('y2', endY);
+
+                const pathLength = endY - startY;
+                progressLine.style.strokeDasharray = pathLength;
+                progressLine.style.strokeDashoffset = pathLength;
+            }
+
+            scrollToChapter(id) {
+                const targetElement = document.getElementById(id);
+                const headerOffset = 80;
+                const elementPosition = targetElement.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+            }
+            
+            updateNavButtonsState() {
+                if (this.currentChapterIndex <= 0) {
+                    this.dom.prevChapterBtn.classList.add('disabled');
+                } else {
+                    this.dom.prevChapterBtn.classList.remove('disabled');
+                }
+
+                if (this.currentChapterIndex >= this.content.chapters.length - 1) {
+                    this.dom.nextChapterBtn.classList.add('disabled');
+                } else {
+                    this.dom.nextChapterBtn.classList.remove('disabled');
+                }
+            }
+
+            initObservers() {
+                const chapterObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        const id = entry.target.id;
+                        const chapterIndex = this.content.chapters.findIndex(c => c.id === id);
+                        entry.target.classList.toggle('active', entry.isIntersecting);
+
+                        if (entry.isIntersecting) {
+                            this.currentChapterIndex = chapterIndex;
+                            this.updateNavButtonsState();
+
+                            if (!this.isDragging) {
+                                this.dom.headerTitle.textContent = this.content.chapters[chapterIndex].title;
+                            }
+                            document.querySelectorAll(`[data-target-id]`).forEach(node => {
+                                const isCurrent = node.dataset.targetId === id;
+                                const nodeIndex = this.content.chapters.findIndex(c => c.id === node.dataset.targetId);
+                                node.classList.toggle('active', isCurrent);
+                                node.classList.toggle('past', nodeIndex < chapterIndex);
+                            });
+                            
+                            const progress = (chapterIndex / (this.content.chapters.length - 1)) * 100;
+                            this.dom.timelineProgressMobile.style.width = `${progress}%`;
+
+                            const desktopLine = this.dom.timelineProgressDesktop;
+                            if (desktopLine) {
+                                const pathLength = parseFloat(desktopLine.style.strokeDasharray) || 0;
+                                const progressFraction = chapterIndex / (this.content.chapters.length - 1);
+                                desktopLine.style.strokeDashoffset = pathLength * (1 - progressFraction);
+                            }
+                        }
+                    });
+                }, { rootMargin: "-40% 0px -50% 0px", threshold: 0 });
+                
+                document.querySelectorAll('.story-chapter').forEach(chapter => chapterObserver.observe(chapter));
+
+                const headerObserver = new IntersectionObserver(([entry]) => {
+                    this.dom.header.classList.toggle('scrolled', !entry.isIntersecting);
+                }, { threshold: [1] });
+                
+                headerObserver.observe(this.dom.scrollSentinel);
+            }
+        }
+        
+        class Quiz {
+            constructor(questions) {
+                this.allQuestions = questions;
+                this.dom = {
+                    overlay: document.getElementById('quiz-overlay'),
+                    container: document.getElementById('quiz-container'),
+                };
+                this.state = {};
+                this.localStorageKey = 'templateQuizState';
+                this.wasSnapEnabled = false; 
+                this.savedScrollPosition = 0; 
+            }
+            start() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                const savedState = this.loadState();
+                if (savedState) { this.renderResumePrompt(); } 
+                else { this.beginNewQuiz(); }
+            }
+            resume() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.state = this.loadState();
+                this.openOverlay();
+                this.startQuizUI();
+                this.renderQuestion();
+            }
+            beginNewQuiz() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.state = {
+                    questions: this.shuffleArray([...this.allQuestions]),
+                    currentQuestionIndex: 0,
+                    score: 0,
+                    answered: false,
+                };
+                this.saveState();
+                this.openOverlay();
+                this.renderIntro();
+            }
+            openOverlay() {
+                this.savedScrollPosition = window.scrollY;
+                if (document.documentElement.classList.contains('snap-enabled')) {
+                    this.wasSnapEnabled = true;
+                    document.documentElement.classList.remove('snap-enabled');
+                } else {
+                    this.wasSnapEnabled = false;
+                }
+                this.dom.overlay.classList.add('visible');
+                document.body.classList.add('no-scroll');
+            }
+            close() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.dom.overlay.classList.remove('visible');
+                document.body.classList.remove('no-scroll');
+                if (this.wasSnapEnabled) {
+                    document.documentElement.classList.add('snap-enabled');
+                }
+                window.scrollTo(0, this.savedScrollPosition);
+            }
+            saveState() { localStorage.setItem(this.localStorageKey, JSON.stringify(this.state)); }
+            loadState() { const saved = localStorage.getItem(this.localStorageKey); return saved ? JSON.parse(saved) : null; }
+            clearState() { localStorage.removeItem(this.localStorageKey); }
+            
+            renderResumePrompt() {
+                this.openOverlay();
+                this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title">Quiz in Sospeso</span><button class="icon-btn quiz-close-btn" id="quiz-close-resume"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div><div class="quiz-body"><div class="quiz-results-wrapper"><h2 class="quiz-results-title">Bentornato!</h2><p class="quiz-results-text">Hai un quiz in sospeso. Vuoi continuare da dove avevi interrotto?</p><div class="quiz-results-actions"><button class="quiz-next-btn" id="resume-quiz-btn">Riprendi Quiz</button><button class="quiz-next-btn secondary" id="restart-quiz-btn">Inizia da Capo</button></div></div></div>`;
+                document.getElementById('resume-quiz-btn').onclick = () => this.resume();
+                document.getElementById('restart-quiz-btn').onclick = () => { this.clearState(); this.beginNewQuiz(); };
+                document.getElementById('quiz-close-resume').onclick = () => this.close();
+            }
+            renderIntro() {
+                 this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title">Test di Autovalutazione</span><button class="icon-btn quiz-close-btn" id="quiz-close-intro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div><div class="quiz-body"><div class="quiz-results-wrapper"><h2 class="quiz-results-title">Sei pronto?</h2><p class="quiz-results-text">Verifica la tua preparazione con ${this.state.questions.length} domande.</p><button class="quiz-next-btn" id="start-quiz-btn">Inizia il Quiz</button></div></div>`;
+                 document.getElementById('start-quiz-btn').onclick = () => { this.startQuizUI(); this.renderQuestion(); };
+                 document.getElementById('quiz-close-intro').onclick = () => this.close();
+            }
+            startQuizUI() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title" id="quiz-progress-text"></span><button class="icon-btn quiz-close-btn" id="quiz-close-main"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div><div class="quiz-body"><div id="quiz-content-wrapper"></div></div><div class="quiz-footer"><button class="quiz-next-btn" id="quiz-next-btn" disabled>Avanti</button></div>`;
+                document.getElementById('quiz-next-btn').onclick = () => this.nextQuestion();
+                document.getElementById('quiz-close-main').onclick = () => this.close();
+            }
+            renderQuestion() {
+                this.state.answered = false;
+                const question = this.state.questions[this.state.currentQuestionIndex];
+                const progressText = `Domanda ${this.state.currentQuestionIndex + 1} di ${this.state.questions.length}`;
+                document.getElementById('quiz-progress-text').textContent = progressText;
+                const answersHtml = this.shuffleArray(question.options).map(option => `<button class="quiz-answer-btn" data-answer="${option}">${option}</button>`).join('');
+                const contentWrapper = document.getElementById('quiz-content-wrapper');
+                const oldSlide = contentWrapper.querySelector('.quiz-slide');
+                if (oldSlide) {
+                    oldSlide.style.opacity = 0;
+                    setTimeout(() => {
+                        oldSlide.innerHTML = `<p class="quiz-question-text">${question.question}</p><div class="quiz-answers">${answersHtml}</div><div class="quiz-explanation"></div>`;
+                        oldSlide.style.opacity = 1;
+                        this.addAnswerListeners();
+                    }, 200);
+                } else {
+                    contentWrapper.innerHTML = `<div class="quiz-slide active"><p class="quiz-question-text">${question.question}</p><div class="quiz-answers">${answersHtml}</div><div class="quiz-explanation"></div></div>`;
+                    this.addAnswerListeners();
+                }
+                document.getElementById('quiz-next-btn').disabled = true;
+            }
+            addAnswerListeners() {
+                document.querySelectorAll('.quiz-answer-btn').forEach(btn => {
+                    btn.onclick = (e) => this.handleAnswer(e.target);
+                });
+            }
+            handleAnswer(selectedButton) {
+                if (this.state.answered) return;
+                this.state.answered = true;
+                if(navigator.vibrate) navigator.vibrate(20);
+                const selectedAnswer = selectedButton.dataset.answer;
+                const currentQ = this.state.questions[this.state.currentQuestionIndex];
+                const correctAnswer = currentQ.correctAnswer;
+                
+                if (selectedAnswer === correctAnswer) {
+                    this.state.score++;
+                    selectedButton.classList.add('correct');
+                } else {
+                    selectedButton.classList.add('incorrect');
+                    const correctBtn = Array.from(document.querySelectorAll('.quiz-answer-btn')).find(btn => btn.dataset.answer === correctAnswer);
+                    if (correctBtn) correctBtn.classList.add('correct');
+                }
+                
+                document.querySelectorAll('.quiz-answer-btn').forEach(btn => btn.classList.add('disabled'));
+                document.getElementById('quiz-next-btn').disabled = false;
+                
+                // Show explanation
+                const explanationEl = document.querySelector('.quiz-explanation');
+                if(explanationEl) {
+                    const explText = currentQ.explanation || ("La risposta corretta è: " + correctAnswer);
+                    explanationEl.innerHTML = "<strong>Spiegazione:</strong> " + explText;
+                    explanationEl.classList.add('visible');
+                }
+                
+                this.saveState();
+            }
+            nextQuestion() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.state.currentQuestionIndex++;
+                if (this.state.currentQuestionIndex < this.state.questions.length) {
+                    this.saveState();
+                    this.renderQuestion();
+                } else {
+                    this.renderResults();
+                }
+            }
+            renderResults() {
+                const score = this.state.score;
+                const total = this.state.questions.length;
+                const percentage = Math.round((score / total) * 100);
+                let message = "Puoi fare di meglio. Riprova!";
+                if (percentage >= 70) message = "Ottimo lavoro!";
+                if (percentage >= 90) message = "Eccellente!";
+                this.clearState();
+                this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title">Risultati</span></div><div class="quiz-body"><div class="quiz-results-wrapper"><h2 class="quiz-results-title">${message}</h2><div class="quiz-results-score">${score} / ${total}</div><p class="quiz-results-text">Hai risposto correttamente al ${percentage}% delle domande.</p><div class="quiz-results-actions"><button class="quiz-next-btn" id="retake-quiz-btn">Riprova il Quiz</button><button class="quiz-next-btn secondary" id="close-results-btn">Torna allo Studio</button></div></div></div>`;
+                document.getElementById('retake-quiz-btn').onclick = () => this.beginNewQuiz();
+                document.getElementById('close-results-btn').onclick = () => this.close();
+            }
+            shuffleArray(array) {
+                return array.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const app = new ScrollytellingApp(learningContent);
+            const quiz = new Quiz(quizData);
+            document.getElementById('quiz-btn').onclick = () => quiz.start();
+        });
+    </script>
+</body>
+</html>
