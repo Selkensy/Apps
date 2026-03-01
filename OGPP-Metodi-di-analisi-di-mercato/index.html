@@ -1,0 +1,2767 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Metodi di Analisi di Mercato - Template Studio</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap');
+
+        :root {
+            /* --- COLORI & TEMA (NON TOCCARE SE NON VUOI CAMBIARE STILE) --- */
+            
+            /* LIGHT MODE */
+            --bg-light: #f5f5f4;  /* Stone 100 */
+            --text-light: #292524; 
+            --text-light-secondary: #57534e; 
+            --card-bg-light: #ffffff;
+            --card-border-light: #e7e5e4; 
+            --accent-light: #d97706; /* Colore principale (Arancione/Ambra) */
+            --shadow-light: 0 4px 20px -2px rgba(28, 25, 23, 0.06);
+            --focus-ring-light: #f59e0b;
+            --highlight-light: #ffedd5; 
+            
+            /* Card Back Colors - Light */
+            --flip-front-bg-light: #fafaf9; 
+            --flip-back-bg-light: #e7e5e4; 
+            --flip-back-text-light: #292524;
+
+            /* Quiz Explanation Colors - Light */
+            --quiz-expl-bg-light: #f0fdf4;
+            --quiz-expl-border-light: #bbf7d0;
+            --quiz-expl-text-light: #14532d;
+
+            /* DARK MODE */
+            --bg-dark: #1c1917; /* Stone 900 */
+            --text-dark: #e7e5e4; 
+            --text-dark-secondary: #a8a29e; 
+            --card-bg-dark: #292524; 
+            --card-border-dark: #44403c; 
+            --accent-dark: #fb923c; 
+            --shadow-dark: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+            --focus-ring-dark: #fdba74;
+            
+            /* Card Back Colors - Dark */
+            --flip-front-bg-dark: #0f0e0d; 
+            --flip-back-bg-dark: #292524; 
+            --flip-back-text-dark: #e7e5e4;
+
+            /* Quiz Explanation Colors - Dark */
+            --quiz-expl-bg-dark: #14532d;
+            --quiz-expl-border-dark: #15803d;
+            --quiz-expl-text-dark: #f0fdf4;
+        }
+
+        [data-theme="light"] {
+            --bg-color: var(--bg-light); --text-color: var(--text-light); --text-secondary-color: var(--text-light-secondary); 
+            --card-bg-color: var(--card-bg-light); --accent-color: var(--accent-light);
+            --border-color: var(--card-border-light); --shadow-color: var(--shadow-light); 
+            --focus-ring-color: var(--focus-ring-light); --highlight-color: var(--highlight-light);
+            --highlight-text-color: var(--text-light);
+            --flip-front-bg: var(--flip-front-bg-light);
+            --flip-back-bg: var(--flip-back-bg-light);
+            --flip-back-text: var(--flip-back-text-light);
+            --quiz-expl-bg: var(--quiz-expl-bg-light);
+            --quiz-expl-border: var(--quiz-expl-border-light);
+            --quiz-expl-text: var(--quiz-expl-text-light);
+        }
+        [data-theme="dark"] {
+            --bg-color: var(--bg-dark); --text-color: var(--text-dark); --text-secondary-color: var(--text-dark-secondary);
+            --card-bg-color: var(--card-bg-dark); --accent-color: var(--accent-dark);
+            --border-color: var(--card-border-dark); --shadow-color: var(--shadow-dark); 
+            --focus-ring-color: var(--focus-ring-dark); --highlight-color: var(--highlight-dark);
+            --highlight-text-color: var(--highlight-text-dark);
+            --flip-front-bg: var(--flip-front-bg-dark);
+            --flip-back-bg: var(--flip-back-bg-dark);
+            --flip-back-text: var(--flip-back-text-dark);
+            --quiz-expl-bg: var(--quiz-expl-bg-dark);
+            --quiz-expl-border: var(--quiz-expl-border-dark);
+            --quiz-expl-text: var(--quiz-expl-text-dark);
+        }
+        
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html { font-size: 100%; -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+        
+        body {
+            font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color);
+            transition: background-color 0.4s ease, color 0.4s ease; -webkit-tap-highlight-color: transparent;
+            line-height: 1.8; overflow-x: hidden;
+        }
+        body.no-scroll { overflow: hidden; height: 100%; width: 100%; }
+
+        button { cursor: pointer; border: none; background: none; font-family: inherit; color: inherit; -webkit-tap-highlight-color: transparent; }
+        button:focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 2px; border-radius: 4px; }
+        button:active { transform: scale(0.98); }
+
+        .app-container { opacity: 0; transition: opacity 0.5s ease; }
+        .app-container.loaded { opacity: 1; }
+        
+        /* HEADER */
+        .header {
+            position: sticky; top: 0; z-index: 100;
+            background-color: rgba(245, 245, 244, 0.9);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid transparent;
+            transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), box-shadow 0.3s ease;
+            will-change: transform;
+        }
+        [data-theme="dark"] .header { background-color: rgba(28, 25, 23, 0.9); }
+        .header.hidden { transform: translateY(-100%); }
+        .header.scrolled { border-bottom-color: var(--border-color); box-shadow: var(--shadow-color); }
+
+        .header-content { padding: 0.75rem 1.5rem; display: flex; justify-content: space-between; align-items: center; min-height: 64px; }
+        .header-title { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1; text-align: left; margin-right: 1rem; }
+        
+        .controls { display: flex; align-items: center; gap: 0.75rem; }
+        
+        .icon-btn { display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 12px; transition: background-color 0.2s; }
+        .icon-btn:hover { background-color: var(--border-color); }
+        .icon-btn svg { width: 22px; height: 22px; color: var(--text-secondary-color); transition: color 0.3s; }
+        .icon-btn.active svg { color: var(--accent-color); }
+        
+        /* Nav Buttons Desktop */
+        .nav-buttons-desktop {
+            display: none;
+            position: fixed; bottom: 2rem; right: 2rem;
+            flex-direction: column; gap: 0.5rem;
+            z-index: 95;
+        }
+        .icon-btn.disabled { opacity: 0.3; pointer-events: none; cursor: default; }
+
+        #autoscroll-btn { display: none; }
+
+        .theme-switcher .sun-icon { display: none; } [data-theme="light"] .theme-switcher .sun-icon { display: block; }
+        .theme-switcher .moon-icon { display: none; } [data-theme="dark"] .theme-switcher .moon-icon { display: block; }
+
+        .mode-switcher { display: flex; background-color: var(--border-color); border-radius: 14px; padding: 4px; }
+        .mode-btn { font-size: 0.85rem; font-weight: 600; padding: 6px 16px; border-radius: 10px; color: var(--text-secondary-color); transition: all 0.2s ease; }
+        .mode-btn.active { background-color: var(--card-bg-color); color: var(--text-color); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .desktop-mode-switcher { display: none; }
+
+        /* TIMELINE MOBILE */
+        .progress-timeline-mobile { padding: 0 1.5rem 1rem 1.5rem; touch-action: none; }
+        .timeline-track { position: relative; width: 100%; height: 6px; background-color: var(--border-color); border-radius: 3px; cursor: pointer; }
+        .timeline-progress { position: absolute; top: 0; left: 0; height: 100%; background-color: var(--accent-color); border-radius: 3px; width: 0; transition: width 0.2s linear; will-change: width; }
+        .timeline-nodes { position: absolute; top: 50%; left: 0; width: 100%; display: flex; justify-content: space-between; pointer-events: none; }
+        .timeline-node-point {
+            width: 12px; height: 12px; border-radius: 50%; background-color: var(--border-color);
+            border: 2px solid var(--bg-color); transform: translateY(-50%); transition: transform 0.3s ease, background-color 0.3s ease;
+            pointer-events: auto;
+        }
+        .timeline-node-point.past, .timeline-node-point.active { background-color: var(--accent-color); }
+        .timeline-node-point.active { transform: translateY(-50%) scale(1.4); box-shadow: 0 0 0 4px var(--highlight-color); }
+
+        /* LAYOUT & CHAPTERS */
+        .main-layout { padding-top: 4rem; }
+        #story-panel { padding: 0 1.5rem; }
+        
+        .story-chapter {
+            min-height: 90vh; padding: 6rem 0;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0.5; transform: scale(0.98); filter: blur(1px);
+            transition: opacity 0.6s ease, transform 0.6s ease, filter 0.6s ease; 
+            border-bottom: 1px dashed var(--border-color);
+        }
+        .story-chapter:last-child { border-bottom: none; min-height: 80vh; }
+        .story-chapter.active { opacity: 1; transform: scale(1); filter: blur(0); }
+        
+        .chapter-content { max-width: 680px; width: 100%; }
+        .chapter-title { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 8vw, 3rem); color: var(--text-color); margin-bottom: 2rem; line-height: 1.15; letter-spacing: -0.02em; word-wrap: break-word;}
+        .chapter-body { font-size: 1.125rem; line-height: 2.1; color: var(--text-secondary-color); }
+        
+        .chapter-body p, .chapter-body ul, .chapter-body ol { margin-bottom: 1.5rem; }
+        .chapter-body ul, .chapter-body ol { padding-left: 1.2rem; }
+        .chapter-body li { margin-bottom: 0.75rem; padding-left: 0.5rem; }
+        .chapter-body li::marker { color: var(--accent-color); font-weight: 700; }
+        .chapter-body strong { font-weight: 700; color: var(--text-color); }
+        .chapter-body h4 { 
+            font-size: 0.95rem; margin: 2.5rem 0 1rem 0; color: var(--accent-color); 
+            text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700;
+            display: flex; align-items: center; gap: 0.5rem;
+            line-height: 1.4;
+        }
+        .chapter-body h4::after { content: ''; flex-grow: 1; height: 1px; background-color: var(--border-color); opacity: 0.5; }
+        
+        /* INTERACTIVE ELEMENTS */
+        .interactive-accordion { 
+            margin: 2rem 0; border: 1px solid var(--border-color); border-radius: 16px; 
+            overflow: hidden; background-color: var(--card-bg-color); box-shadow: var(--shadow-color);
+            width: 100%;
+        }
+        .acc-item { border-bottom: 1px solid var(--border-color); }
+        .acc-item:last-child { border-bottom: none; }
+        .acc-header {
+            width: 100%; padding: 1.25rem 1.5rem; text-align: left;
+            background-color: var(--card-bg-color); font-weight: 600; color: var(--text-color);
+            display: flex; justify-content: space-between; align-items: center;
+            transition: background-color 0.2s; font-size: 1rem; line-height: 1.4;
+        }
+        .acc-header:hover { background-color: var(--bg-color); }
+        .acc-header .acc-icon { 
+            width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+            color: var(--accent-color); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            flex-shrink: 0; margin-left: 12px;
+        }
+        .acc-item.open .acc-header .acc-icon { transform: rotate(135deg); }
+        .acc-body {
+            max-height: 0; overflow: hidden; transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            background-color: var(--bg-color);
+        }
+        .acc-content { padding: 1.25rem 1.5rem; font-size: 1rem; color: var(--text-secondary-color); border-top: 1px dashed var(--border-color); line-height: 1.6; }
+
+        /* FLIP CARDS (ADAPTIVE GRID) */
+        .flip-container { 
+            margin: 2.5rem auto; 
+            perspective: 1000px; 
+            width: 100%; 
+            max-width: 500px; 
+            min-height: 300px; 
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+            cursor: pointer;
+            box-shadow: var(--shadow-color);
+            border-radius: 20px;
+            display: grid;
+            grid-template-areas: "card-face";
+        }
+        .flip-container.flipped .flip-card-inner { transform: rotateY(180deg); }
+        
+        .flip-front, .flip-back {
+            grid-area: card-face; 
+            width: 100%;
+            -webkit-backface-visibility: hidden; 
+            backface-visibility: hidden;
+            border-radius: 20px; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            justify-content: center; 
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .flip-front { background-color: var(--flip-front-bg); border: 1px solid var(--border-color); }
+        .flip-back {
+            background-color: var(--flip-back-bg); color: var(--flip-back-text); transform: rotateY(180deg);
+        }
+        
+        .flip-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--text-color); line-height: 1.3; }
+        .flip-hint { 
+            font-size: 0.8rem; color: var(--accent-color); margin-top: 1.5rem; 
+            font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px;
+            opacity: 0.8; display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+        }
+        .flip-hint::after { content: '↻'; font-size: 1.2em; margin-top: -2.6px; }
+        
+        .flip-back p, .flip-back ul { color: var(--flip-back-text); font-size: 1.1rem; line-height: 1.6; margin: 0; font-weight: 500; width: 100%; text-align: left;}
+        .flip-back ul { padding-left: 1.5rem; margin-top: 0.5rem; }
+        .flip-back li { margin-bottom: 0.5rem; }
+        
+        [data-theme="light"] .flip-back li::marker { color: var(--accent-color); }
+        [data-theme="dark"] .flip-back li::marker { color: white; }
+
+        #timeline-desktop { display: none; }
+        #scroll-sentinel { position: absolute; top: 0; height: 1px; width: 1px; pointer-events: none; }
+
+        .app-footer {
+            position: fixed; bottom: 0; left: 0; width: 100%; z-index: 90;
+            display: flex; justify-content: center; 
+            padding: 1rem 1.5rem calc(1rem + env(safe-area-inset-bottom));
+            pointer-events: none;
+        }
+        .app-footer.hidden { transform: translateY(150%); }
+        .footer-mode-switcher { 
+            display: flex; pointer-events: auto;
+            background-color: rgba(255, 255, 255, 0.9); 
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); 
+            border-radius: 24px; padding: 6px; 
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        [data-theme="dark"] .footer-mode-switcher { background-color: rgba(28, 25, 23, 0.9); border-color: rgba(255,255,255,0.1); }
+
+        /* QUIZ MODE */
+        .quiz-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 200;
+            display: flex; align-items: center; justify-content: center; padding: 1rem;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            opacity: 0; transition: opacity 0.4s ease, visibility 0.4s; visibility: hidden;
+        }
+        .quiz-overlay.visible { opacity: 1; visibility: visible; }
+        .quiz-container {
+            background-color: var(--card-bg-color); border: 1px solid var(--border-color);
+            width: 96%; max-width: 600px; 
+            height: auto; max-height: 85vh;
+            border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            display: flex; flex-direction: column; overflow: hidden;
+            transform: scale(0.95) translateY(10px); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .quiz-overlay.visible .quiz-container { transform: scale(1) translateY(0); }
+        
+        .quiz-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; background-color: var(--bg-color); }
+        .quiz-title { font-weight: 600; color: var(--text-secondary-color); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .quiz-body { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; -webkit-overflow-scrolling: touch; }
+        #quiz-content-wrapper { padding: 1.5rem 1.5rem 2.5rem 1.5rem; display: flex; flex-direction: column; justify-content: flex-start; flex-grow: 1; min-height: 100%;}
+        
+        .quiz-slide { width: 100%; opacity: 0; transition: opacity 0.3s ease; margin: auto 0; padding-bottom: 2.5rem; }
+        .quiz-slide.active { opacity: 1; }
+        
+        .quiz-question-text { font-size: clamp(1.1rem, 4vw, 1.35rem); font-weight: 700; margin-bottom: 1.5rem; line-height: 1.4; color: var(--text-color); }
+        .quiz-answers { display: grid; gap: 0.75rem; }
+        .quiz-answer-btn {
+            width: 100%; padding: 1rem 1.25rem; text-align: left; background-color: var(--bg-color);
+            border: 2px solid transparent; border-radius: 16px; font-size: 1rem; font-weight: 500;
+            transition: all 0.2s ease; color: var(--text-color);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            word-break: break-word; hyphens: auto; line-height: 1.4;
+        }
+        .quiz-answer-btn:hover { background-color: var(--border-color); }
+        .quiz-answer-btn:active { transform: scale(0.98); }
+        .quiz-answer-btn.correct { background-color: #dcfce7; color: #14532d; border-color: #22c55e; }
+        [data-theme="dark"] .quiz-answer-btn.correct { background-color: #14532d; color: #f0fdf4; border-color: #22c55e; }
+        .quiz-answer-btn.incorrect { background-color: #fee2e2; color: #7f1d1d; border-color: #ef4444; }
+        [data-theme="dark"] .quiz-answer-btn.incorrect { background-color: #7f1d1d; color: #fef2f2; border-color: #ef4444; }
+        .quiz-answer-btn.disabled { opacity: 0.6; pointer-events: none; }
+        
+        .quiz-explanation {
+            margin-top: 1.5rem; padding: 1.25rem; border-radius: 12px; font-size: 1rem; line-height: 1.5;
+            background-color: var(--quiz-expl-bg); border: 1px solid var(--quiz-expl-border); color: var(--quiz-expl-text);
+            opacity: 0; transform: translateY(10px); transition: opacity 0.4s ease, transform 0.4s ease; display: none;
+        }
+        .quiz-explanation.visible { opacity: 1; transform: translateY(0); display: block; }
+
+        .quiz-footer { 
+            padding: 1.5rem; border-top: 1px solid var(--border-color); flex-shrink: 0; background-color: var(--bg-color);
+            padding-bottom: calc(1.5rem + env(safe-area-inset-bottom)/2);
+        }
+        .quiz-next-btn { width: 100%; background-color: var(--accent-color); color: white; padding: 1rem; border-radius: 14px; font-size: 1.1rem; font-weight: 600; transition: opacity 0.2s, transform 0.2s; }
+        .quiz-next-btn:active { transform: scale(0.98); }
+        .quiz-next-btn:disabled { background-color: var(--border-color); color: var(--text-secondary-color); cursor: not-allowed; transform: none; }
+
+        .quiz-results-wrapper { text-align: center; display: flex; flex-direction: column; justify-content: center; min-height: 100%; padding: 1.5rem; }
+        .quiz-results-title { font-family: 'Playfair Display', serif; font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .quiz-results-score { font-size: 3.5rem; font-weight: 800; color: var(--accent-color); line-height: 1; margin: 1rem 0; }
+        .quiz-results-text { font-size: 1.1rem; color: var(--text-secondary-color); margin-bottom: 2rem; }
+        .quiz-results-actions { display: flex; flex-direction: column; gap: 0.75rem; width: 100%; }
+        .quiz-results-actions .quiz-next-btn.secondary { background-color: transparent; border: 2px solid var(--border-color); color: var(--text-color); }
+        .quiz-results-actions .quiz-next-btn.secondary:hover { border-color: var(--text-secondary-color); }
+
+        /* DESKTOP OVERRIDES & RESPONSIVE FIXES */
+        @media (min-width: 960px) {
+            .progress-timeline-mobile { display: none; }
+            .app-footer { display: none; }
+            .desktop-mode-switcher { display: flex; }
+            #autoscroll-btn { display: flex; } 
+            
+            .nav-buttons-desktop { display: flex; }
+            
+            .main-layout { 
+                display: grid; 
+                grid-template-columns: 1fr minmax(0, 680px) 1fr; 
+                gap: 2rem; 
+                max-width: 100%; 
+                margin: 0; 
+                padding: 0 2rem; 
+            }
+            
+            #timeline-desktop {
+                grid-column: 1;
+                display: flex; 
+                position: sticky; top: 0; height: 100vh;
+                align-items: center; 
+                justify-content: flex-end;
+            }
+            
+            #story-panel { grid-column: 2; padding: 0; }
+
+            .timeline-desktop-container { 
+                position: relative; 
+                width: 220px; 
+                padding: 4rem 1rem 4rem 0; 
+                display: flex; justify-content: flex-end;
+            }
+            
+            .timeline-svg {
+                position: absolute; right: 0; 
+                top: 0; height: 100%; width: 2px; overflow: visible;
+                z-index: 0;
+                pointer-events: none; 
+            }
+            .timeline-svg-line { stroke: var(--border-color); stroke-width: 2px; fill: none; }
+            .timeline-svg-progress {
+                stroke: var(--accent-color); stroke-width: 2px; fill: none; transition: stroke-dashoffset 0.4s ease;
+            }
+
+            .timeline-desktop-nodes { 
+                display: flex; flex-direction: column; gap: 1.5rem; 
+                align-items: flex-end; text-align: right; width: 100%; 
+                z-index: 1; 
+            }
+            
+            .timeline-desktop-node {
+                display: flex; align-items: center; gap: 1.5rem; padding: 0.5rem 0;
+                position: relative; transition: opacity 0.3s; flex-direction: row-reverse; 
+                width: 140%; 
+                cursor: pointer; padding-right: 15px;
+            }
+            .timeline-desktop-node:hover .node-label { color: var(--accent-color); }
+            .timeline-desktop-node .node-point {
+                width: 14px; height: 14px; border-radius: 50%; background-color: var(--border-color);
+                border: 3px solid var(--bg-color); transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); flex-shrink: 0; 
+                z-index: 2; position: relative;
+            }
+            .timeline-desktop-node::after {
+                content: ''; position: absolute; top: 0; right: -10px; bottom: 0; width: 100%; z-index: -1;
+            }
+
+            .timeline-desktop-node .node-label { 
+                font-size: 0.95rem; font-weight: 500; color: var(--text-secondary-color); 
+                transition: color 0.3s ease, transform 0.3s ease;
+                white-space: nowrap; 
+            }
+
+            .timeline-desktop-node.active .node-point { background-color: var(--accent-color); transform: scale(1.3); box-shadow: 0 0 0 4px var(--highlight-color); }
+            .timeline-desktop-node.active .node-label { color: var(--text-color); font-weight: 700; transform: translateX(-5px); }
+            .timeline-desktop-node.past .node-point { background-color: var(--accent-color); border-color: var(--accent-color); }
+
+            .story-chapter { padding: 6rem 0; min-height: 85vh; }
+            .story-chapter:first-child { padding-top: 4rem; }
+        }
+        
+        @media (min-width: 1200px) {
+             .main-layout { gap: 4rem; }
+        }
+    </style>
+</head>
+<body>
+    <div id="scroll-sentinel"></div>
+    <div class="app-container" id="app">
+        <header class="header" id="header">
+            <div class="header-content">
+                <h1 class="header-title" id="header-title">Metodi di Analisi di Mercato</h1>
+                <div class="controls">
+                    <div class="mode-switcher desktop-mode-switcher">
+                        <button class="mode-btn" data-mode="study">Studio</button>
+                        <button class="mode-btn" data-mode="story">Storia</button>
+                    </div>
+                    
+                    <button class="icon-btn" id="autoscroll-btn" aria-label="Attiva/Disattiva Autoscroll">
+                         <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 20V7m0 13-4-4m4 4 4-4m4-12v13m0-13 4 4m-4-4-4 4"/>
+                        </svg>
+                    </button>
+
+                     <button class="icon-btn" id="quiz-btn" aria-label="Avvia Quiz">
+                        <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 3L1 9l11 6 9-4.5V12h2V9l-11-6zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+                    </button>
+                    <button class="icon-btn theme-switcher" aria-label="Cambia Tema">
+                        <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                        <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="progress-timeline-mobile">
+                <div class="timeline-track" id="timeline-track-mobile">
+                    <div class="timeline-progress" id="timeline-progress-mobile"></div>
+                    <div class="timeline-nodes" id="timeline-nodes-mobile"></div>
+                </div>
+            </div>
+        </header>
+        
+        <div class="nav-buttons-desktop">
+            <button class="icon-btn" id="prev-chapter-btn" aria-label="Capitolo precedente">
+                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                  <path fill-rule="evenodd" d="M5.575 13.729C4.501 15.033 5.43 17 7.12 17h9.762c1.69 0 2.618-1.967 1.544-3.271l-4.881-5.927a2 2 0 0 0-3.088 0l-4.88 5.927Z" clip-rule="evenodd"/>
+                </svg>
+            </button>
+            <button class="icon-btn" id="next-chapter-btn" aria-label="Capitolo successivo">
+                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                  <path fill-rule="evenodd" d="M18.425 10.271C19.499 8.967 18.57 7 16.88 7H7.12c-1.69 0-2.618 1.967-1.544 3.271l4.881 5.927a2 2 0 0 0 3.088 0l4.88-5.927Z" clip-rule="evenodd"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="main-layout">
+            <aside id="timeline-desktop">
+                <div class="timeline-desktop-container">
+                    <svg class="timeline-svg">
+                        <line class="timeline-svg-line" x1="1" y1="0" x2="1" y2="100%"></line>
+                        <line class="timeline-svg-progress" id="timeline-progress-desktop" x1="1" y1="0" x2="1" y2="100%"></line>
+                    </svg>
+                    <div class="timeline-desktop-nodes" id="timeline-nodes-desktop"></div>
+                </div>
+            </aside>
+            <main id="story-panel"></main>
+        </div>
+
+        <footer class="app-footer" id="app-footer">
+            <div class="mode-switcher footer-mode-switcher">
+                <button class="mode-btn" data-mode="study">Studio</button>
+                <button class="mode-btn" data-mode="story">Storia</button>
+            </div>
+        </footer>
+    </div>
+    
+    <div class="quiz-overlay" id="quiz-overlay">
+        <div class="quiz-container" id="quiz-container"></div>
+    </div>
+
+    <script>
+        const learningContent = {
+            title: "Metodi di Analisi di Mercato",
+            chapters: [
+                {
+                    id: 'capitolo-1',
+                    title: 'I Fattori Produttivi',
+                    description: `
+                        <p>Per poter ottenere i beni o i servizi da immettere sul mercato, l'impresa ha bisogno di una serie di strumenti. I <strong>fattori produttivi</strong> sono tutti gli strumenti che l'impresa impiega per produrre beni e servizi.</p>
+                        
+                        <h4>Le categorie dei fattori produttivi</h4>
+                        <p>Secondo l'economia classica, i fattori produttivi sono raggruppati in tre categorie principali, a cui le teorie economiche più recenti ne aggiungono altre due.</p>
+                        
+                        <div class="interactive-accordion">
+                            <div class="acc-item">
+                                <button class="acc-header">1. Terra (Natura) <span class="acc-icon">+</span></button>
+                                <div class="acc-body"><div class="acc-content">
+                                    Comprende la superficie coltivabile, le materie fornite alla produzione (minerali, petrolio, acqua, ecc.) e le condizioni ambientali che rendono possibile la produzione (clima, fattori meteorologici).
+                                </div></div>
+                            </div>
+                            <div class="acc-item">
+                                <button class="acc-header">2. Lavoro <span class="acc-icon">+</span></button>
+                                <div class="acc-body"><div class="acc-content">
+                                    È rappresentato dalle energie psicofisiche che alcune persone mettono a disposizione di altri in cambio di un compenso detto <strong>salario</strong>.
+                                </div></div>
+                            </div>
+                            <div class="acc-item">
+                                <button class="acc-header">3. Capitale <span class="acc-icon">+</span></button>
+                                <div class="acc-body"><div class="acc-content">
+                                    Comprende il denaro e gli altri beni prodotti dall'uomo in passato ed attualmente impiegati nel processo produttivo. Si distingue in:
+                                    <ul>
+                                        <li><strong>Capitale circolante:</strong> beni che partecipano una sola volta al processo produttivo (es. materie prime, combustibili).</li>
+                                        <li><strong>Capitale fisso:</strong> beni che partecipano più volte al processo (es. capannoni, impianti, macchinari, automezzi). Tali beni tendono a logorarsi o divenire obsoleti e andranno sostituiti tramite le <strong>quote di ammortamento</strong>.</li>
+                                    </ul>
+                                </div></div>
+                            </div>
+                            <div class="acc-item">
+                                <button class="acc-header">4. Organizzazione <span class="acc-icon">+</span></button>
+                                <div class="acc-body"><div class="acc-content">
+                                    È l'attività svolta dall'imprenditore per coordinare i fattori produttivi nel modo più efficace per ottenere il miglior risultato. Un'organizzazione non efficace porta al fallimento. Il compenso spettante all'imprenditore prende il nome di <strong>profitto</strong>.
+                                </div></div>
+                            </div>
+                            <div class="acc-item">
+                                <button class="acc-header">5. Attività dello Stato <span class="acc-icon">+</span></button>
+                                <div class="acc-body"><div class="acc-content">
+                                    Costituisce indirettamente un fattore produttivo poiché, attraverso le sue leggi, fissa il quadro istituzionale nel quale l'impresa opera.
+                                </div></div>
+                            </div>
+                        </div>
+                    `,
+                    storyDescription: `
+                        <p>Marco ha un sogno: aprire una fabbrica di scarpe artigianali. Tuttavia, un'idea non basta per creare un prodotto. Marco ha bisogno di strumenti concreti, che in economia chiamiamo <strong>fattori produttivi</strong>.</p>
+                        <p>Innanzitutto, gli serve la <strong>Terra</strong>: uno spazio fisico dove costruire il capannone, ma anche le pelli e l'acqua necessaria alla concia, fornite dalla natura. Poi, non può fare tutto da solo. Assume degli artigiani, mettendo a frutto il loro <strong>Lavoro</strong> (le loro energie psicofisiche) in cambio di uno stipendio regolare, detto salario.</p>
+                        <p>Ma per far lavorare gli artigiani servono macchinari e materiali. Marco investe il suo <strong>Capitale</strong>. Compra il cuoio e la colla, che userà una volta sola per ogni paio di scarpe (questo è il <em>capitale circolante</em>). Poi compra i grandi macchinari da cucito, che dureranno anni e verranno usati per migliaia di scarpe (questo è il <em>capitale fisso</em>). Sa bene che queste macchine, col tempo, si usureranno, quindi inizia già a mettere da parte dei soldi ogni anno per poterle ricomprare in futuro: le sue prime quote di ammortamento.</p>
+                        <p>Avere tutto questo non basta se c'è il caos. La capacità di Marco di far funzionare insieme operai e macchinari è l'<strong>Organizzazione</strong>, e la sua ricompensa finale, se tutto andrà bene, sarà il suo profitto. Infine, Marco deve rispettare le norme sulla sicurezza sul lavoro e pagare le tasse: l'<strong>Attività dello Stato</strong> fa da cornice a tutto il suo progetto imprenditoriale.</p>
+                    `
+                },
+                {
+                    id: 'capitolo-2',
+                    title: 'Utili, Costi e Ricavi',
+                    description: `
+                        <p>L'utile è l'eccedenza dei ricavi sui costi che si ottiene da un'attività di impresa. La formula fondamentale è:</p>
+                        <p style="text-align: center; font-size: 1.5rem; font-weight: bold; color: var(--accent-color);">UTILE = RICAVI - COSTI</p>
+                        
+                        <h4>La terminologia aziendale</h4>
+                        <ul>
+                            <li>Al posto di <strong>utili</strong>, si parla anche di guadagni o di profitti.</li>
+                            <li>Al posto di <strong>ricavi</strong>, si parla anche di entrate o di fatturato.</li>
+                            <li>Le spese sono una parte dei <strong>costi</strong>.</li>
+                        </ul>
+
+                        <div class="interactive-accordion">
+                            <div class="acc-item">
+                                <button class="acc-header">Prezzo e calcolo dei Ricavi <span class="acc-icon">+</span></button>
+                                <div class="acc-body"><div class="acc-content">
+                                    Il <strong>prezzo</strong> è il valore economico di un singolo prodotto (bene o servizio).<br>
+                                    Il <strong>ricavo</strong> conseguente dalla vendita è dato da: <strong>RICAVO = PREZZO DEL SINGOLO PRODOTTO * QUANTITÀ DI PRODOTTI VENDUTI</strong>.
+                                </div></div>
+                            </div>
+                            <div class="acc-item">
+                                <button class="acc-header">Il Profitto e la Remunerazione Aleatoria <span class="acc-icon">+</span></button>
+                                <div class="acc-body"><div class="acc-content">
+                                    Il <strong>profitto</strong> è il reddito che l'imprenditore percepisce per la sua attività di organizzazione e di gestione. Rappresenta una <strong>remunerazione aleatoria</strong>: l'imprenditore non ha la sicurezza che conseguirà un profitto né sa con certezza quale sarà la sua entità (è legato al rischio d'impresa). Eventi imprevisti o errori di valutazione possono portare a perdite se i costi superano i ricavi.
+                                </div></div>
+                            </div>
+                            <div class="acc-item">
+                                <button class="acc-header">Massimizzazione del profitto <span class="acc-icon">+</span></button>
+                                <div class="acc-body"><div class="acc-content">
+                                    L'imprenditore tende sempre a rendere massimo il suo profitto. Quindi sceglierà il livello di produzione che, tenuto conto dei fattori produttivi di cui dispone e delle richieste del mercato, gli permetterà di raggiungere tale obiettivo.
+                                </div></div>
+                            </div>
+                        </div>
+                    `,
+                    storyDescription: `
+                        <p>La fabbrica di scarpe di Marco è finalmente operativa e inizia a produrre. Ma l'obiettivo finale di Marco non è solo produrre scarpe, è fare in modo che l'azienda sopravviva e prosperi. Per farlo, deve comprendere tre concetti chiave: Utili, Costi e Ricavi.</p>
+                        <p>Marco fissa il <strong>Prezzo</strong> delle sue scarpe a 100 euro al paio. Questo è il valore economico di una singola unità. Alla fine del mese, vende 50 paia di scarpe. Il suo <strong>Ricavo</strong> (o fatturato) è facile da calcolare: 100 euro moltiplicati per 50 paia, per un totale di 5.000 euro di entrate.</p>
+                        <p>Tuttavia, questi 5.000 euro non sono tutti soldi che Marco può mettersi in tasca. Per produrre quelle scarpe ha dovuto pagare il cuoio, la luce, gli operai e l'affitto del capannone. La somma di tutte queste spese costituisce i suoi <strong>Costi</strong>.</p>
+                        <p>La differenza tra i 5.000 euro incassati e tutti i costi sostenuti genera il suo <strong>Utile</strong> (o Profitto). Marco capisce subito una dura lezione dell'imprenditoria: il suo profitto è una <strong>remunerazione aleatoria</strong>. Se un mese il costo della pelle aumenta improvvisamente, o se i clienti comprano meno scarpe del previsto, il suo guadagno si riduce o sparisce del tutto, trasformandosi in una perdita. Non c'è nessuno stipendio fisso per lui, il suo guadagno dipende unicamente dalla sua capacità di tenere i ricavi costantemente al di sopra dei costi.</p>
+                    `
+                },
+                {
+                    id: 'capitolo-3',
+                    title: 'I Costi di Produzione',
+                    description: `
+                        <p>I <strong>costi di produzione</strong> sono tutti i costi che l’impresa deve sostenere per realizzare una determinata produzione. Ovviamente l'imprenditore ha interesse a contenere al massimo i costi, ma non sempre conviene acquistare materie prime più economiche se questo compromette la qualità e l'immagine aziendale.</p>
+                        
+                        <h4>Classificazione dei Costi (Costi Totali = Costi Fissi + Costi Variabili)</h4>
+                        
+                        <div class="flip-container">
+                            <div class="flip-card-inner">
+                                <div class="flip-front">
+                                    <div class="flip-title">Costi Fissi (CF)</div>
+                                    <div class="flip-hint">Tocca per girare</div>
+                                </div>
+                                <div class="flip-back">
+                                    <p>Non dipendono dalla quantità di prodotti realizzati (entro certi limiti).</p>
+                                    <ul>
+                                        <li>Affitti dei locali.</li>
+                                        <li>Salari fissi dei dipendenti.</li>
+                                        <li>Interessi sui mutui.</li>
+                                        <li>Ammortamento macchinari.</li>
+                                    </ul>
+                                    <p>Hanno un tipico andamento "a scala" (se serve un nuovo capannone, fanno uno scatto).</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flip-container">
+                            <div class="flip-card-inner">
+                                <div class="flip-front">
+                                    <div class="flip-title">Costi Variabili (CV)</div>
+                                    <div class="flip-hint">Tocca per girare</div>
+                                </div>
+                                <div class="flip-back">
+                                    <p>Variano al variare della quantità prodotta.</p>
+                                    <ul>
+                                        <li>Materie prime.</li>
+                                        <li>Energia elettrica per la produzione.</li>
+                                        <li>Combustibili.</li>
+                                        <li>Costo del lavoro a chiamata.</li>
+                                    </ul>
+                                    <p>Crescono all'aumentare della produzione (prima lentamente, poi esponenzialmente alla saturazione degli impianti).</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="interactive-accordion">
+                            <div class="acc-item">
+                                <button class="acc-header">Costo Marginale e Costo Medio <span class="acc-icon">+</span></button>
+                                <div class="acc-body"><div class="acc-content">
+                                    <ul>
+                                        <li><strong>Costo Marginale:</strong> È il costo aggiuntivo che si deve sostenere ogni volta che si deve produrre una singola unità di prodotto in più rispetto alla precedente. I costi variabili sono dati dalla somma dei costi marginali.</li>
+                                        <li><strong>Costo Medio:</strong> Indica qual è il costo dell’unità di prodotto se si ripartisce il costo su tutta la produzione (Costo Totale / Quantità di output prodotta).</li>
+                                    </ul>
+                                </div></div>
+                            </div>
+                            <div class="acc-item">
+                                <button class="acc-header">Breve e Lungo Periodo <span class="acc-icon">+</span></button>
+                                <div class="acc-body"><div class="acc-content">
+                                    I costi fissi non variano al variare della quantità prodotta solo nel <strong>breve periodo</strong> (periodo in cui non si modificano le dimensioni degli impianti). Nel <strong>lungo periodo</strong>, se la domanda cresce, l'impresa deve espandersi, aumentando anche i costi fissi. Quindi, nel lungo periodo, <em>tutti i costi sono variabili</em>.
+                                </div></div>
+                            </div>
+                            <div class="acc-item">
+                                <button class="acc-header">L'Ammortamento dei beni strumentali <span class="acc-icon">+</span></button>
+                                <div class="acc-body"><div class="acc-content">
+                                    Per ammortamento si intende un procedimento contabile con cui si ripartisce il costo di un bene strumentale sul numero di anni di presumibile utilizzo.
+                                    <br><br>
+                                    <strong>QUOTA ANNUA AMMORTAMENTO</strong> = COSTO ACQUISTO / ANNI DI VITA PRODUTTIVA.
+                                    <br><br>
+                                    La quota annua di ammortamento è, quindi, un <strong>costo fisso</strong>.
+                                </div></div>
+                            </div>
+                        </div>
+                    `,
+                    storyDescription: `
+                        <p>Per massimizzare il suo profitto, Marco deve analizzare a fondo i suoi conti, separando i suoi esborsi in due categorie nettamente diverse: i costi fissi e i costi variabili.</p>
+                        <p>Alla fine del mese, indipendentemente dal fatto che Marco produca 0 scarpe o 500 scarpe, il padrone del capannone esige l'affitto, la banca chiede gli interessi sul mutuo, e i dipendenti fissi reclamano lo stipendio. Questi sono i <strong>Costi Fissi</strong>. Non cambiano, a meno che Marco non decida di espandere enormemente la fabbrica prendendo un secondo capannone (il classico salto o "andamento a scala" dei costi fissi nel lungo periodo).</p>
+                        <p>Al contrario, la pelle per le scarpe, la colla, il filo e l'elettricità usata dai macchinari sono <strong>Costi Variabili</strong>. Se la fabbrica resta chiusa, Marco non consuma pelle. Se produce una scarpa in più, deve comprare esattamente la pelle necessaria per quella singola scarpa aggiuntiva. Questo costo extra per ogni singola unità addizionale si chiama <strong>Costo Marginale</strong>.</p>
+                        <p>Marco affronta anche il problema del macchinario principale, costato 10.000 euro. Visto che durerà circa 10 anni, non ha senso registrare 10.000 euro di perdita nel primo anno. Contabilmente, Marco ripartisce la spesa: 1.000 euro all'anno per dieci anni. Questa tecnica si chiama <strong>Ammortamento</strong>, e quella quota annuale di 1.000 euro diventa un altro Costo Fisso nel suo bilancio.</p>
+                    `
+                },
+                {
+                    id: 'capitolo-4',
+                    title: 'Diagramma di Redditività e BEP',
+                    description: `
+                        <p>L'impresa consegue un profitto solamente se i ricavi totali superano i costi totali. È fondamentale stabilire qual è il livello della produzione che permette di uguagliarli: tale livello si dice <strong>produzione di equilibrio</strong>.</p>
+                        
+                        <h4>Il Break Even Point (Punto di Rottura)</h4>
+                        <p>Il <strong>Break Even Point (B.E.P.)</strong> rappresenta il volume di produzione che consente di avere un livello di ricavi pari ai costi sostenuti. Si rappresenta attraverso il <strong>diagramma di redditività</strong>.</p>
+                        
+                        <div class="interactive-accordion">
+                            <div class="acc-item">
+                                <button class="acc-header">Costruzione del Grafico <span class="acc-icon">+</span></button>
+                                <div class="acc-body"><div class="acc-content">
+                                    <ul>
+                                        <li><strong>Asse X (Ascisse):</strong> Volume di produzione (Q).</li>
+                                        <li><strong>Asse Y (Ordinate):</strong> Costi e Ricavi.</li>
+                                        <li><strong>Retta Costi Fissi (CF):</strong> Parallela all'asse delle ascisse (es. 10.000 euro sempre).</li>
+                                        <li><strong>Retta Costi Variabili (CV):</strong> Passa per l'origine e cresce all'aumentare di Q.</li>
+                                        <li><strong>Retta Costi Totali (CT):</strong> Parte dal livello dei Costi Fissi (sull'asse Y) e cresce in parallelo ai Costi Variabili.</li>
+                                        <li><strong>Retta Ricavi Totali (RT):</strong> Passa per l'origine. Cresce in maniera proporzionale in base al prezzo unitario.</li>
+                                    </ul>
+                                </div></div>
+                            </div>
+                            <div class="acc-item">
+                                <button class="acc-header">Analisi delle Aree (Perdite vs Profitti) <span class="acc-icon">+</span></button>
+                                <div class="acc-body"><div class="acc-content">
+                                    Il punto di incontro tra la retta dei Costi Totali e la retta dei Ricavi Totali è il <strong>BEP</strong> (Q).
+                                    <ul>
+                                        <li><strong>Area delle perdite:</strong> Se la produzione è inferiore a Q. L'impresa sostiene più costi rispetto ai ricavi. Graficamente si trova a sinistra del BEP.</li>
+                                        <li><strong>Area dei profitti:</strong> Se la produzione è superiore a Q. I ricavi sono superiori ai costi. Graficamente si trova a destra del BEP.</li>
+                                    </ul>
+                                </div></div>
+                            </div>
+                        </div>
+
+                        <h4>Come calcolare il punto di pareggio (Esempio Pratico)</h4>
+                        <p>Supponiamo che un'impresa abbia i seguenti dati:</p>
+                        <ul>
+                            <li>Costi Fissi (CF) = 10.000 euro</li>
+                            <li>Costi Variabili unitari (cv) = 10 euro</li>
+                            <li>Prezzo di vendita unitario (p) = 20 euro</li>
+                        </ul>
+                        <p>Il punto di equilibrio si trova quando: <strong>RT = CT</strong></p>
+                        <p>Sapendo che <em>RT = p * Q</em> e che <em>CT = CF + (cv * Q)</em>, sostituiamo i valori dell'esempio:</p>
+                        <p><strong>20Q = 10.000 + 10Q</strong></p>
+                        <p>Risolvendo l'equazione:</p>
+                        <ul>
+                            <li>20Q - 10Q = 10.000</li>
+                            <li>10Q = 10.000</li>
+                            <li>Q = 10.000 / 10</li>
+                            <li><strong>Q = 1.000 unità</strong></li>
+                        </ul>
+                        <p>La quantità minima da produrre per coprire i costi è 1.000. Sopra le 1.000 unità l'impresa conseguirà utili.</p>
+                    `,
+                    storyDescription: `
+                        <p>Arrivati a fine anno, Marco fa un bilancio. Ha un dubbio assillante: "Quante scarpe devo produrre e vendere ogni anno, come minimo assoluto, solo per non perdere soldi?".</p>
+                        <p>Per rispondere, decide di disegnare un grafico su un foglio: il <strong>Diagramma di Redditività</strong>. Sull'asse orizzontale mette il numero di scarpe prodotte, sull'asse verticale i soldi (sia i costi che i ricavi).</p>
+                        <p>Traccia una linea orizzontale piatta a quota 10.000 euro: sono i suoi affitti e le rate dei macchinari. Questa linea non sale mai, sono i Costi Fissi. Poi disegna i costi dei materiali (Costi Variabili) e somma tutto per ottenere la linea dei Costi Totali, che parte da 10.000 e va su obliqua.</p>
+                        <p>Infine, disegna la linea dei Ricavi Totali, partendo dallo zero assoluto. Se non vende, non incassa. Ma man mano che vende scarpe a 20 euro l'una (a fronte di 10 euro di materiali), la linea dei ricavi sale ripidamente.</p>
+                        <p>Il punto esatto in cui la linea dei Ricavi incrocia dal basso la linea dei Costi Totali e la supera, si chiama <strong>Break Even Point (Punto di Rottura o Pareggio)</strong>. Sotto quel punto, Marco è nella temutissima "Area delle Perdite". I costi sono più alti degli incassi. Ma superato quel magico incrocio, entra nell'"Area dei Profitti". Facendo due rapidi calcoli algebrici (20Q = 10000 + 10Q), Marco sorride: deve vendere esattamente 1.000 paia di scarpe. La numero 1.001 genererà il suo primissimo vero profitto netto.</p>
+                    `
+                },
+                {
+                    id: 'capitolo-5',
+                    title: 'Le Economie di Scala',
+                    description: `
+                        <p>Le <strong>economie di scala</strong> sono quelle economie legate ai costi marginali che diminuiscono all'aumentare della quantità prodotta.</p>
+                        
+                        <h4>Come si ottengono?</h4>
+                        <ul>
+                            <li>Acquistando più materie prime si possono ottenere dei prezzi sulle stesse inferiori (sconti sulle grandi quantità).</li>
+                            <li>Poiché spesso la produzione industriale comporta degli scarti (non tutte le materie prime diventano prodotto), al crescere della produzione gli scarti tendono percentualmente a diminuire o vengono ottimizzati.</li>
+                        </ul>
+                        
+                        <p>A causa delle economie di scala, il costo aggiuntivo (costo marginale) per produrre le unità aggiuntive sarà inferiore di quello per produrre le precedenti. Riguardando la definizione di costo marginale si capisce che tale costo, grazie alle economie di scala, tende a diminuire graficamente col tempo.</p>
+                    `,
+                    storyDescription: `
+                        <p>Sono passati tre anni. La fabbrica di scarpe di Marco va a gonfie vele. Ora produce migliaia di scarpe. Si accorge di un fenomeno interessante: produrre le scarpe oggi gli costa meno rispetto all'inizio. Come è possibile?</p>
+                        <p>La risposta è nelle <strong>Economie di Scala</strong>.</p>
+                        <p>Quando Marco produceva poche scarpe, comprava la pelle dal grossista a prezzo pieno. Ora che ordina tonnellate di pelle al mese, il fornitore gli fa sconti altissimi. Inoltre, i suoi operai hanno imparato a tagliare la pelle meglio, riducendo drasticamente gli scarti di materiale.</p>
+                        <p>Questo significa che se oggi Marco decide di produrre una scarpa extra, il materiale necessario gli costa meno di quanto gli costava tre anni fa. Il <strong>Costo Marginale</strong> di ogni singola scarpa aggiuntiva è sceso grazie all'ottimizzazione e ai grandi volumi. È la magia dell'industria: crescendo di dimensioni, l'impresa diventa strutturalmente più efficiente e redditizia.</p>
+                    `
+                }
+            ]
+        };
+
+		const quizData = [
+			{
+				question: "Quale tra questi elementi NON è considerato un 'fattore produttivo' secondo le teorie economiche più recenti, pur essendo fondamentale per l'azienda?",
+				options: [
+					"Il fatturato mensile",
+					"L'attività dello Stato",
+					"La superficie coltivabile",
+					"L'organizzazione imprenditoriale"
+				],
+				correctAnswer: "Il fatturato mensile",
+				explanation: "Il fatturato (ricavo) è il risultato della produzione, non uno strumento (fattore) impiegato per produrre. I fattori sono Terra, Lavoro, Capitale, Organizzazione e Stato."
+			},
+			{
+				question: "Un'azienda acquista un macchinario all'avanguardia che userà per 5 anni. Il costo di questo acquisto, nel bilancio del primo anno, viene registrato come:",
+				options: [
+					"Una frazione del costo totale, tramite l'ammortamento",
+					"Un costo variabile, poiché dipenderà dall'uso mensile",
+					"Interamente come costo fisso del primo anno",
+					"Un capitale circolante a lungo termine"
+				],
+				correctAnswer: "Una frazione del costo totale, tramite l'ammortamento",
+				explanation: "Il macchinario è capitale fisso. Non grava per intero nel primo anno, ma viene ripartito tramite il procedimento contabile dell'ammortamento."
+			},
+			{
+				question: "Il 'profitto' è una remunerazione garantita che spetta all'imprenditore in cambio della sua attività organizzativa?",
+				options: [
+					"Falso, è una remunerazione aleatoria legata al rischio d'impresa",
+					"Vero, ma solo se l'azienda supera il Break Even Point",
+					"Vero, è l'equivalente del salario per i dipendenti",
+					"Falso, il profitto spetta allo Stato sotto forma di imposte"
+				],
+				correctAnswer: "Falso, è una remunerazione aleatoria legata al rischio d'impresa",
+				explanation: "L'imprenditore non ha alcuna certezza di ottenere un profitto. Esso dipende esclusivamente dalla sua capacità di mantenere i ricavi superiori ai costi (rischio d'impresa)."
+			},
+			{
+				question: "Se l'impresa si ferma e la produzione è esattamente pari a zero, quale affermazione è matematicamente certa nel breve periodo?",
+				options: [
+					"I costi totali coincidono esattamente con i costi fissi",
+					"L'azienda è in perfetto equilibrio (Break Even Point)",
+					"I costi variabili sono pari ai costi fissi",
+					"L'utile è pari a zero"
+				],
+				correctAnswer: "I costi totali coincidono esattamente con i costi fissi",
+				explanation: "Se la produzione è zero, i costi variabili sono nulli. Poiché Costi Totali = Costi Fissi + Costi Variabili, a produzione zero rimangono solo i Costi Fissi."
+			},
+			{
+				question: "Nel grafico del Break Even Point, la retta dei Ricavi Totali e quella dei Costi Variabili:",
+				options: [
+					"Partono entrambe dall'origine degli assi",
+					"Sono sempre parallele tra loro",
+					"Si incrociano sempre nel punto di rottura",
+					"Partono entrambe dal livello dei costi fissi"
+				],
+				correctAnswer: "Partono entrambe dall'origine degli assi",
+				explanation: "Sia i ricavi totali che i costi variabili sono pari a zero quando la quantità prodotta è zero, quindi entrambe le rette partono dal punto (0,0)."
+			},
+			{
+				question: "Quale inganno concettuale si nasconde dietro la definizione di 'Capitale Circolante'?",
+				options: [
+					"Include sia il denaro contante che le materie prime consumate una sola volta",
+					"Comprende i furgoni per le consegne perché 'circolano' su strada",
+					"Rappresenta l'ammortamento dei macchinari",
+					"È sinonimo di capitale umano (i lavoratori)"
+				],
+				correctAnswer: "Include sia il denaro contante che le materie prime consumate una sola volta",
+				explanation: "Il termine 'circolante' si riferisce ai beni che partecipano una sola volta al processo produttivo (come materie prime o combustibili), non al fatto fisico di muoversi."
+			},
+			{
+				question: "Secondo la definizione economica, il 'costo marginale' tende sempre ad aumentare all'aumentare della produzione?",
+				options: [
+					"Falso, grazie alle economie di scala tende a diminuire",
+					"Vero, perché i macchinari si usurano più velocemente",
+					"Vero, ma solo dopo aver superato il Break Even Point",
+					"Falso, perché i costi fissi lo assorbono completamente"
+				],
+				correctAnswer: "Falso, grazie alle economie di scala tende a diminuire",
+				explanation: "Il costo marginale (il costo per un'unità aggiuntiva) tende a diminuire all'aumentare dei volumi grazie all'ottimizzazione degli scarti e agli sconti sull'acquisto di materie prime (economie di scala)."
+			},
+			{
+				question: "Se un'azienda produce 100 unità con un costo fisso di 1000€ e costi variabili totali di 500€, qual è il suo Costo Medio per unità?",
+				options: [
+					"15€",
+					"10€",
+					"5€",
+					"500€"
+				],
+				correctAnswer: "15€",
+				explanation: "Il Costo Totale è 1500€ (1000 + 500). Il Costo Medio si ottiene dividendo il Costo Totale per le unità prodotte (1500 / 100 = 15€)."
+			},
+			{
+				question: "Un'impresa decide di espandersi assumendo operai con contratto 'a chiamata' in base alle commesse. Questo costo del lavoro sarà classificato come:",
+				options: [
+					"Costo Variabile",
+					"Costo Fisso a gradini",
+					"Quota di ammortamento",
+					"Costo Marginale fisso"
+				],
+				correctAnswer: "Costo Variabile",
+				explanation: "Se il costo del lavoro dipende strettamente dalla quantità di prodotti realizzati (come nel lavoro a chiamata), è un costo variabile. Solo i salari fissi sono considerati costi fissi."
+			},
+			{
+				question: "Cosa succede ai 'Costi Fissi' nel lungo periodo, secondo le teorie economiche?",
+				options: [
+					"Diventano tutti Costi Variabili",
+					"Si azzerano grazie all'ammortamento completo",
+					"Crescono linearmente con l'inflazione",
+					"Rimangono fissi ma cambiano proporzione sul fatturato"
+				],
+				correctAnswer: "Diventano tutti Costi Variabili",
+				explanation: "Nel lungo periodo, l'impresa può modificare le dimensioni degli impianti (es. affittare nuovi capannoni o chiuderli). Quindi, poiché le strutture possono cambiare per adattarsi alla produzione, tutti i costi sono considerati variabili."
+			},
+			{
+				question: "L'area situata a sinistra del Break Even Point (BEP) sul diagramma di redditività indica che l'azienda è destinata al fallimento imminente?",
+				options: [
+					"No, indica solo che per quei volumi di produzione l'impresa opera in perdita",
+					"Sì, perché significa che i costi variabili sono superiori ai prezzi di vendita",
+					"Sì, perché l'imprenditore sta subendo l'alea del rischio d'impresa",
+					"No, indica la zona di massimizzazione del profitto"
+				],
+				correctAnswer: "No, indica solo che per quei volumi di produzione l'impresa opera in perdita",
+				explanation: "L'area delle perdite significa semplicemente che i costi superano i ricavi per quei livelli di Q. Non implica un fallimento immediato se l'azienda prevede di aumentare le vendite spostandosi a destra del BEP."
+			},
+			{
+				question: "Il concetto di 'natura' nei fattori produttivi include esclusivamente le risorse fisiche estraibili (come minerali e petrolio)?",
+				options: [
+					"Falso, include anche le condizioni ambientali e meteorologiche",
+					"Vero, il clima non influisce sui costi di produzione industriali",
+					"Falso, include unicamente i terreni edificabili",
+					"Vero, l'acqua non è considerata risorsa naturale economica"
+				],
+				correctAnswer: "Falso, include anche le condizioni ambientali e meteorologiche",
+				explanation: "Il fattore Terra/Natura comprende la superficie coltivabile, i materiali forniti alla produzione, ma anche il clima e i fattori meteorologici che rendono possibile la produzione."
+			},
+			{
+				question: "L'imprenditore decide di raddoppiare il prezzo di vendita. Quale linea del diagramma di redditività cambierà inclinazione?",
+				options: [
+					"La retta dei Ricavi Totali diventerà più ripida",
+					"La retta dei Costi Marginali si abbasserà",
+					"La retta dei Costi Fissi subirà un andamento a scala",
+					"La retta dei Costi Totali si inclinerà maggiormente"
+				],
+				correctAnswer: "La retta dei Ricavi Totali diventerà più ripida",
+				explanation: "I ricavi dipendono dal prezzo moltiplicato per la quantità. Aumentando il prezzo unitario, a parità di vendite, i ricavi cresceranno molto più in fretta, rendendo la linea più pendente."
+			},
+			{
+				question: "Se i ricavi totali sono 50.000€, i costi fissi 20.000€ e i costi variabili totali 35.000€, in quale area del diagramma di redditività si trova l'impresa?",
+				options: [
+					"Nell'area delle perdite",
+					"Sul Break Even Point esatto",
+					"Nell'area dei profitti",
+					"Nella zona delle economie di scala"
+				],
+				correctAnswer: "Nell'area delle perdite",
+				explanation: "Costi Totali = 20.000 (Fissi) + 35.000 (Variabili) = 55.000€. Poiché i Ricavi (50.000) sono inferiori ai Costi Totali (55.000), c'è una perdita di 5.000€."
+			},
+			{
+				question: "Qual è la differenza fondamentale tra 'costo marginale' e 'costo variabile'?",
+				options: [
+					"Il costo variabile totale è la somma di tutti i costi marginali",
+					"Il costo marginale è un costo fisso, il costo variabile dipende dalla quantità",
+					"Nessuna, sono due termini interscambiabili in economia",
+					"Il costo marginale include l'ammortamento, il costo variabile no"
+				],
+				correctAnswer: "Il costo variabile totale è la somma di tutti i costi marginali",
+				explanation: "Il costo marginale è il costo dell'ultima singola unità aggiuntiva prodotta. Sommati insieme, tutti i costi marginali di tutte le unità formano il costo variabile totale."
+			},
+			{
+				question: "Lo Stato interviene come fattore produttivo fornendo macchinari alle imprese?",
+				options: [
+					"Falso, interviene indirettamente fissando il quadro istituzionale",
+					"Vero, attraverso sussidi a fondo perduto per il capitale fisso",
+					"Vero, ma solo per le imprese che operano nel lungo periodo",
+					"Falso, lo Stato è considerato un costo variabile, non un fattore"
+				],
+				correctAnswer: "Falso, interviene indirettamente fissando il quadro istituzionale",
+				explanation: "Lo Stato costituisce un fattore produttivo indiretto: non fornisce mezzi fisici (di norma), ma detta le regole e le leggi (quadro istituzionale) entro cui la produzione può avvenire."
+			},
+			{
+				question: "Un'impresa registra una perdita. Questo significa che i suoi ricavi sono stati pari a zero?",
+				options: [
+					"Falso, significa solo che i Costi Totali sono stati superiori ai Ricavi Totali",
+					"Vero, non c'è altro modo di registrare una perdita",
+					"Falso, significa che i Costi Fissi erano inferiori ai Costi Variabili",
+					"Vero, a meno che non si tratti di un'impresa in monopolio"
+				],
+				correctAnswer: "Falso, significa solo che i Costi Totali sono stati superiori ai Ricavi Totali",
+				explanation: "L'impresa può avere incassato milioni di euro di ricavi, ma se i costi totali ammontano a una cifra superiore, l'impresa opererà comunque in perdita."
+			},
+			{
+				question: "L'affermazione: 'Il costo del lavoro è sempre un costo variabile' è:",
+				options: [
+					"Falsa, dipende dal tipo di retribuzione (fissa vs a chiamata)",
+					"Vera, perché i dipendenti possono licenziarsi in qualsiasi momento",
+					"Vera, perché il lavoro umano è un fattore psicofisico",
+					"Falsa, il lavoro è sempre un costo fisso per legge"
+				],
+				correctAnswer: "Falsa, dipende dal tipo di retribuzione (fissa vs a chiamata)",
+				explanation: "Se i dipendenti percepiscono uno stipendio mensile fisso indipendentemente dalla produzione, è un costo fisso. Se sono pagati a cottimo o a chiamata (proporzionalmente a quanto producono), è un costo variabile."
+			},
+			{
+				question: "Un imprenditore geniale azzera tutti i costi di produzione sfruttando materiali gratuiti. Quale retta coincide ora con l'asse delle ascisse (orizzontale) nel diagramma?",
+				options: [
+					"La retta dei Costi Totali",
+					"La retta dei Ricavi Totali",
+					"La retta del Costo Medio",
+					"Il Break Even Point scompare del tutto"
+				],
+				correctAnswer: "La retta dei Costi Totali",
+				explanation: "Se i Costi Totali (fissi + variabili) sono zero per ogni livello di produzione, la retta dei costi totali giace piatta e sovrapposta all'asse orizzontale delle quantità."
+			},
+			{
+				question: "Cosa descrive la curva a forma di 'scalinata' (andamento a scala) in economia aziendale?",
+				options: [
+					"L'aumento dei costi fissi quando si supera il limite di capacità di un impianto",
+					"La diminuzione dei costi marginali per via delle economie di scala",
+					"La crescita progressiva del prezzo di vendita al dettaglio",
+					"L'aumento dell'utile al variare del Break Even Point"
+				],
+				correctAnswer: "L'aumento dei costi fissi quando si supera il limite di capacità di un impianto",
+				explanation: "I costi fissi restano immutati fino a un certo volume. Se serve un nuovo capannone per produrre di più, i costi fissi fanno un brusco salto in alto, creando graficamente un gradino (scala)."
+			},
+			{
+				question: "Se il Break Even Point di un'azienda è 500 unità, e attualmente ne produce 500 esatte, qual è il suo Utile?",
+				options: [
+					"Zero",
+					"500 euro",
+					"Dipende dal margine di profitto",
+					"Massimo possibile per quella capacità"
+				],
+				correctAnswer: "Zero",
+				explanation: "Al punto di rottura (BEP), i Ricavi Totali equivalgono esattamente ai Costi Totali. Poiché Utile = Ricavi - Costi, l'utile è matematicamente zero."
+			},
+			{
+				question: "Le 'energie psicofisiche' menzionate nei fattori produttivi a quale categoria appartengono?",
+				options: [
+					"Al fattore Lavoro",
+					"Al fattore Organizzazione",
+					"Al capitale umano circolante",
+					"Al fattore Terra/Natura"
+				],
+				correctAnswer: "Al fattore Lavoro",
+				explanation: "Il Lavoro è esplicitamente definito come l'insieme delle energie psicofisiche che le persone mettono a disposizione di altri in cambio del salario."
+			},
+			{
+				question: "Se l'equazione del BEP è pQ = CF + cvQ, cosa succede se il prezzo (p) è inferiore al costo variabile unitario (cv)?",
+				options: [
+					"Il BEP non sarà mai raggiunto, l'azienda perderà sempre soldi per ogni unità prodotta",
+					"Il BEP si sposterà molto più a sinistra, riducendo le perdite",
+					"L'ammortamento assorbirà la differenza generando un profitto marginale",
+					"I costi fissi dovranno necessariamente annullarsi"
+				],
+				correctAnswer: "Il BEP non sarà mai raggiunto, l'azienda perderà sempre soldi per ogni unità prodotta",
+				explanation: "Se cv > p, ogni singola unità prodotta e venduta costa in materiali più di quanto incassi. La perdita aumenterà ad ogni vendita, rendendo impossibile raggiungere il pareggio."
+			},
+			{
+				question: "Nel calcolo dei costi variabili, si può affermare che all'approssimarsi della saturazione degli impianti:",
+				options: [
+					"Essi crescono in maniera esponenziale",
+					"Essi diminuiscono grazie alle economie di scala",
+					"Diventano costi fissi",
+					"Si azzerano temporaneamente"
+				],
+				correctAnswer: "Essi crescono in maniera esponenziale",
+				explanation: "I costi variabili inizialmente crescono lentamente o proporzionalmente, ma quando si spingono gli impianti oltre il limite ottimale (saturazione), subentrano inefficienze, guasti o straordinari costosi, causando una crescita esponenziale."
+			},
+			{
+				question: "Una fattoria possiede 10 ettari di terreno, 3 trattori e 5 braccianti. I trattori fanno parte del fattore Terra?",
+				options: [
+					"Falso, i trattori sono considerati Capitale Fisso",
+					"Vero, essendo usati per lavorare la terra appartengono a quella categoria",
+					"Falso, i trattori sono considerati Organizzazione aziendale",
+					"Falso, i trattori sono Capitale Circolante poiché consumano carburante"
+				],
+				correctAnswer: "Falso, i trattori sono considerati Capitale Fisso",
+				explanation: "I trattori sono beni prodotti dall'uomo impiegati nel processo produttivo ripetutamente. Rientrano nel Capitale Fisso, non nella Terra (natura)."
+			},
+			{
+				question: "Un fornitore ti offre il 50% di sconto se compri 10.000 litri di vernice invece di 100 litri. Questo è un chiaro esempio di:",
+				options: [
+					"Economie di scala",
+					"Riduzione dei costi fissi",
+					"Alterazione del Break Even Point a gradini",
+					"Ammortamento del capitale circolante"
+				],
+				correctAnswer: "Economie di scala",
+				explanation: "Acquistare materie prime in grandi quantità ottenendo prezzi inferiori porta a una riduzione del costo marginale per le unità aggiuntive, il principio base delle economie di scala."
+			},
+			{
+				question: "Se l'utile è definito come Ricavi - Costi, il profitto è definito come:",
+				options: [
+					"Esattamente la stessa cosa dell'utile",
+					"L'utile moltiplicato per i fattori produttivi",
+					"I Ricavi Totali meno i soli Costi Variabili",
+					"La quota annua di ammortamento sottratta all'utile netto"
+				],
+				correctAnswer: "Esattamente la stessa cosa dell'utile",
+				explanation: "Nel testo è specificato chiaramente che 'al posto di utili, si parla anche di guadagni o di profitti'. Sono usati come sinonimi in questo contesto."
+			},
+			{
+				question: "Cosa distingue l'organizzazione (imprenditoria) dal semplice lavoro (salariato)?",
+				options: [
+					"L'organizzazione ha l'obiettivo di coordinare i fattori e la sua remunerazione (profitto) è aleatoria e non garantita",
+					"L'organizzazione è un costo fisso, il lavoro è sempre variabile",
+					"Il lavoro si occupa del capitale fisso, l'organizzazione di quello circolante",
+					"Il compenso per l'organizzazione è il salario mensile garantito"
+				],
+				correctAnswer: "L'organizzazione ha l'obiettivo di coordinare i fattori e la sua remunerazione (profitto) è aleatoria e non garantita",
+				explanation: "L'attività organizzativa dell'imprenditore mira a coordinare i fattori. A differenza del salario (fisso per chi lo riceve), il compenso per questa attività (profitto) è incerto."
+			},
+			{
+				question: "La quota annua di ammortamento rappresenta un flusso di denaro che ogni anno esce fisicamente dall'azienda per pagare la banca?",
+				options: [
+					"Falso, è un accantonamento contabile (una ripartizione del costo) per far fronte alla futura sostituzione del bene",
+					"Vero, è l'interesse passivo pagato sui mutui accesi",
+					"Vero, rappresenta il costo di smaltimento dei materiali obsoleti",
+					"Falso, è una tassa pagata allo Stato per l'uso dei macchinari"
+				],
+				correctAnswer: "Falso, è un accantonamento contabile (una ripartizione del costo) per far fronte alla futura sostituzione del bene",
+				explanation: "L'ammortamento non è un esborso di cassa mensile, ma un procedimento contabile con cui si ripartisce nel tempo un grande costo già sostenuto, per conservare la capacità di ricomprare il bene a fine vita."
+			},
+			{
+				question: "Nel grafico del diagramma di redditività, la retta azzurra e la retta rossa si incontrano al punto Bep. Se l'azienda produce esattamente a quel livello, ha coperto tutti i suoi costi variabili ma non quelli fissi?",
+				options: [
+					"Falso, ha coperto sia i costi variabili che quelli fissi (Costi Totali)",
+					"Vero, per coprire i costi fissi deve trovarsi a destra del Bep",
+					"Falso, al Bep non ha coperto nessun costo, ha solo azzerato i ricavi",
+					"Vero, il Bep uguaglia solo i Ricavi e i Costi Marginale"
+				],
+				correctAnswer: "Falso, ha coperto sia i costi variabili che quelli fissi (Costi Totali)",
+				explanation: "Al BEP, Ricavi Totali = Costi Totali. Poiché i Costi Totali includono sia i Costi Fissi che quelli Variabili, in quel punto l'impresa ha coperto integralmente tutte le sue spese."
+			},
+			{
+				question: "Quale tra le seguenti è l'equazione matematica corretta per trovare la quantità di equilibrio (Q) conoscendo Costi Fissi (CF), Prezzo (p) e Costo Variabile unitario (cv)?",
+				options: [
+					"Q = CF / (p - cv)",
+					"Q = (p * cv) + CF",
+					"Q = CF * p / cv",
+					"Q = (CF - cv) * p"
+				],
+				correctAnswer: "Q = CF / (p - cv)",
+				explanation: "Deriva da pQ = CF + cvQ -> pQ - cvQ = CF -> Q(p - cv) = CF -> Q = CF / (p - cv)."
+			},
+			{
+				question: "Se i beni che partecipano una sola volta al processo produttivo costituiscono il Capitale Circolante, quale di questi NON vi rientra?",
+				options: [
+					"L'impianto di refrigerazione della fabbrica",
+					"Il carburante dei furgoni",
+					"L'inchiostro della macchina da stampa",
+					"La farina per un panificio"
+				],
+				correctAnswer: "L'impianto di refrigerazione della fabbrica",
+				explanation: "L'impianto di refrigerazione è un bene durevole che partecipa più volte (anni) al processo, quindi è Capitale Fisso, non circolante."
+			},
+			{
+				question: "L'imprenditore decide di assumere 50 nuovi operai a stipendio fisso mensile. Nel diagramma di redditività, quale effetto visivo produrrà questa scelta?",
+				options: [
+					"La retta orizzontale dei Costi Fissi si alzerà verso l'alto (traslazione)",
+					"La retta dei Costi Variabili diventerà esponenziale più rapidamente",
+					"La pendenza della retta dei Ricavi diminuirà",
+					"La retta orizzontale dei Costi Fissi rimarrà identica ma cambierà il BEP"
+				],
+				correctAnswer: "La retta orizzontale dei Costi Fissi si alzerà verso l'alto (traslazione)",
+				explanation: "Poiché sono assunti a stipendio fisso, diventano un nuovo Costo Fisso. Graficamente, la linea orizzontale dei CF si sposterà più in alto (aumentando anche i CT e spostando il BEP a destra)."
+			},
+			{
+				question: "Il costo del lavoro è sempre e solo catalogato tra i costi variabili?",
+				options: [
+					"Falso, dipende dal tipo di contratto: se fisso mensile o dipendente dalla quantità prodotta (es. a chiamata)",
+					"Vero, le persone non sono macchinari e quindi non possono essere considerate 'fisse'",
+					"Falso, è catalogato sotto la voce 'Ammortamento del Capitale Circolante'",
+					"Vero, perché le dimissioni possono rendere il costo altalenante"
+				],
+				correctAnswer: "Falso, dipende dal tipo di contratto: se fisso mensile o dipendente dalla quantità prodotta (es. a chiamata)",
+				explanation: "Il testo specifica chiaramente che il costo del lavoro può essere fisso (retribuzioni fisse dei dipendenti) o variabile (retribuzione a chiamata o legata ai volumi)."
+			},
+			{
+				question: "Quando un bene strumentale diventa 'obsoleto', cosa significa economicamente per l'azienda?",
+				options: [
+					"Che è stato superato tecnologicamente e dovrà essere sostituito",
+					"Che il suo ammortamento è diventato un ricavo",
+					"Che è stato trasformato da capitale fisso a capitale circolante",
+					"Che l'azienda ha raggiunto il Break Even Point grazie ad esso"
+				],
+				correctAnswer: "Che è stato superato tecnologicamente e dovrà essere sostituito",
+				explanation: "L'obsolescenza significa che il bene, pur funzionando magari ancora, è tecnologicamente superato e non competitivo, rendendone necessaria la sostituzione (coperta dalle quote di ammortamento prese in passato)."
+			},
+			{
+				question: "Nel breve periodo, l'impresa ha bisogno di produrre il doppio del normale per un picco di domanda improvviso. I suoi costi fissi (es. affitto) si raddoppieranno istantaneamente per compensare?",
+				options: [
+					"Falso, nel breve periodo le dimensioni degli impianti non cambiano e i costi fissi rimangono tali",
+					"Vero, perché se raddoppia la produzione raddoppiano matematicamente tutti i costi",
+					"Vero, altrimenti i macchinari subirebbero un'obsolescenza accelerata",
+					"Falso, nel breve periodo tutti i costi si trasformano in ricavi"
+				],
+				correctAnswer: "Falso, nel breve periodo le dimensioni degli impianti non cambiano e i costi fissi rimangono tali",
+				explanation: "Per definizione, il breve periodo è l'arco di tempo in cui l'azienda non modifica la dimensione dei suoi impianti. Di conseguenza, i costi fissi non variano all'aumentare o diminuire della produzione entro quei limiti."
+			},
+			{
+				question: "Il 'profitto' può esistere in un mercato reale se l'azienda produce una quantità di beni Q situata esattamente sul punto Bep?",
+				options: [
+					"No, sul punto Bep il profitto è zero",
+					"Sì, ma solo se l'imprenditore decide di non ammortizzare le macchine",
+					"Sì, perché i ricavi hanno ormai superato i costi variabili",
+					"No, perché in quel punto si è nell'area delle perdite assolute"
+				],
+				correctAnswer: "No, sul punto Bep il profitto è zero",
+				explanation: "Al Break Even Point l'uguaglianza RT = CT comporta un utile pari a zero. Nessun profitto, nessuna perdita: un semplice pareggio."
+			},
+			{
+				question: "Quali due curve devono essere sommate per disegnare graficamente la curva (retta) dei Costi Totali?",
+				options: [
+					"La curva dei Costi Fissi e quella dei Costi Variabili",
+					"La retta dei Ricavi e quella dei Costi Marginali",
+					"L'ammortamento e il prezzo unitario",
+					"Il profitto e i Costi Variabili totali"
+				],
+				correctAnswer: "La curva dei Costi Fissi e quella dei Costi Variabili",
+				explanation: "Poiché CT = CF + CV, graficamente la retta dei CT si disegna spostando la retta dei CV verso l'alto di un ammontare pari ai Costi Fissi."
+			},
+			{
+				question: "Se i ricavi di un'impresa ammontano a 1.000€ e le spese di quell'anno ammontano a 1.200€, l'impresa ha un utile di -200€, o in altre parole:",
+				options: [
+					"Ha conseguito una perdita",
+					"Ha ammortizzato 200€ di macchinari",
+					"Ha raggiunto un Break Even Point negativo",
+					"Si è trasformata in un'azienda pubblica sovvenzionata dallo Stato"
+				],
+				correctAnswer: "Ha conseguito una perdita",
+				explanation: "Un 'utile negativo' si verifica quando i costi superano i ricavi, prendendo il nome tecnico e comune di 'perdita'."
+			},
+			{
+				question: "L'affermazione 'i costi marginali tendono a diminuire grazie alle economie di scala' implica che:",
+				options: [
+					"Producendo su vasta scala, ogni pezzo in più costa meno in termini di materie e inefficienze rispetto ai pezzi precedenti",
+					"I lavoratori ricevono uno stipendio marginale sempre più basso per legge",
+					"L'azienda riduce l'affitto dei locali proporzionalmente alle merci vendute",
+					"Il prezzo di vendita viene abbassato automaticamente dal mercato"
+				],
+				correctAnswer: "Producendo su vasta scala, ogni pezzo in più costa meno in termini di materie e inefficienze rispetto ai pezzi precedenti",
+				explanation: "Le economie di scala permettono sconti sui grandi volumi di fornitura e riducono l'incidenza percentuale degli scarti, abbassando così il costo aggiuntivo (marginale) per fabbricare unità ulteriori."
+			},
+			{
+				question: "Un'azienda acquista 10 computer per i propri uffici al costo totale di 15.000€, stimando di usarli per 3 anni. Quale sarà la quota di ammortamento annuale inserita nel bilancio?",
+				options: [
+					"5.000€ all'anno",
+					"15.000€ il primo anno e 0€ nei successivi",
+					"1.500€ all'anno",
+					"Dipende da quanti documenti verranno stampati"
+				],
+				correctAnswer: "5.000€ all'anno",
+				explanation: "Quota Annua Ammortamento = Costo Acquisto (15.000) / Anni Vita Produttiva (3) = 5.000€ all'anno come costo fisso."
+			},
+			{
+				question: "Nel lungo periodo, un'azienda che produce un milione di magliette deve aprire tre nuovi stabilimenti. Cosa succede ai suoi costi fissi?",
+				options: [
+					"Subiscono variazioni, dimostrando che nel lungo periodo diventano di fatto costi variabili",
+					"Rimangono identici a prima, perché l'affitto non può mai cambiare in nessun arco temporale",
+					"Si azzerano, essendo ammortizzati dai tre nuovi stabilimenti",
+					"Vengono pagati interamente dallo Stato per favorire l'occupazione"
+				],
+				correctAnswer: "Subiscono variazioni, dimostrando che nel lungo periodo diventano di fatto costi variabili",
+				explanation: "Il lungo periodo si definisce proprio come l'orizzonte temporale nel quale i fattori produttivi fissi (e i relativi costi) possono essere modificati e variati in base alle esigenze, rendendo tutti i costi variabili."
+			},
+			{
+				question: "Se CV è la sigla per i Costi Variabili Totali, come si possono ottenere matematicamente partendo dai Costi Marginali?",
+				options: [
+					"Calcolando la somma (Σ) di tutti i Costi Marginali",
+					"Dividendo i Costi Marginali per la quantità prodotta (Q)",
+					"Sottraendo i Costi Fissi dai Costi Marginali medi",
+					"Moltiplicando il Prezzo per il Costo Marginale"
+				],
+				correctAnswer: "Calcolando la somma (Σ) di tutti i Costi Marginali",
+				explanation: "Il testo afferma esplicitamente: 'I costi variabili sono dati dalla somma dei costi marginali. COSTI VARIABILI = Σ COSTI MARGINALI'."
+			},
+			{
+				question: "Cosa si deduce se, in un diagramma di redditività, la linea dei Costi Totali (CT) e quella dei Costi Fissi (CF) corrono perfettamente parallele senza mai allontanarsi all'aumentare di Q?",
+				options: [
+					"Che i Costi Variabili unitari sono pari a zero",
+					"Che l'azienda è in perdita certa",
+					"Che l'imprenditore ha sbagliato a calcolare il BEP",
+					"Che i macchinari non si usurano mai"
+				],
+				correctAnswer: "Che i Costi Variabili unitari sono pari a zero",
+				explanation: "Se CT = CF + CV, e CT resta sempre alla stessa identica distanza da zero di CF per qualunque Q, vuol dire che CV = 0. Non ci sono costi variabili, cosa teoricamente assurda ma matematicamente l'unica spiegazione."
+			},
+			{
+				question: "Un panettiere vende i suoi filoni di pane a 2€ ciascuno. L'incasso di 200€ a fine giornata rappresenta:",
+				options: [
+					"Il suo Ricavo Totale",
+					"Il suo Utile Netto",
+					"Il suo Profitto Aleatorio",
+					"Il suo Break Even Point giornaliero"
+				],
+				correctAnswer: "Il suo Ricavo Totale",
+				explanation: "I 200€ incassati (prezzo x quantità venduta = 2 x 100 filoni) sono le 'entrate' o 'ricavi'. L'utile sarebbe questo valore meno le spese per farina, forno, affitto, ecc."
+			},
+			{
+				question: "È più conveniente acquistare sempre la materia prima che ha il costo minore in assoluto?",
+				options: [
+					"No, perché la scarsa qualità delle materie prime ridurrà la qualità del prodotto e, a lungo andare, danneggerà l'immagine e la domanda dell'azienda",
+					"Sì, perché massimizza istantaneamente la distanza tra Ricavi e Costi riducendo il Break Even Point",
+					"Sì, perché i costi variabili diventano nulli più rapidamente nel breve periodo",
+					"No, perché per legge non si possono acquistare materie prime al di sotto del costo marginale"
+				],
+				correctAnswer: "No, perché la scarsa qualità delle materie prime ridurrà la qualità del prodotto e, a lungo andare, danneggerà l'immagine e la domanda dell'azienda",
+				explanation: "L'interesse a contenere i costi ha un limite strategico: se la scarsa qualità riduce le vendite future, il profitto crollerà nonostante il risparmio sui materiali."
+			},
+			{
+				question: "Quando un'azienda calcola il Costo Medio dividendo il Costo Totale per la Quantità prodotta, l'importo risultante è sempre fisso per ogni livello di produzione?",
+				options: [
+					"Falso, cambia al variare della quantità, proprio perché i costi fissi si spalmano su più o meno unità prodotte",
+					"Vero, essendo una 'media' rimane fissa a prescindere dal volume",
+					"Vero, a meno che l'azienda non fallisca entrando nell'area delle perdite",
+					"Falso, ma solo se i dipendenti vengono pagati in nero"
+				],
+				correctAnswer: "Falso, cambia al variare della quantità, proprio perché i costi fissi si spalmano su più o meno unità prodotte",
+				explanation: "All'aumentare della Q, i costi fissi si dividono per un numero più grande, facendo scendere il Costo Medio (fino a quando le inefficienze dei costi variabili non lo fanno risalire)."
+			},
+			{
+				question: "Come viene definito il compenso per l'imprenditore se non ha la certezza di conseguirlo e non sa in anticipo a quanto ammonterà?",
+				options: [
+					"Remunerazione Aleatoria (Profitto)",
+					"Salario Fisso Garantito",
+					"Quota Variabile d'Ammortamento",
+					"Premio Marginale"
+				],
+				correctAnswer: "Remunerazione Aleatoria (Profitto)",
+				explanation: "Il termine tecnico citato è 'remunerazione aleatoria'. È soggetta al rischio: errori, eventi imprevisti o incidenti possono decimarla o trasformarla in perdita."
+			},
+			{
+				question: "Secondo la definizione classica, quale fattore produttivo è rappresentato interamente dalle energie umane scambiate con un salario?",
+				options: [
+					"Il Lavoro",
+					"L'Organizzazione",
+					"Il Capitale",
+					"L'Attività dello Stato"
+				],
+				correctAnswer: "Il Lavoro",
+				explanation: "Il Lavoro raggruppa le energie psicofisiche messe a disposizione da terzi dietro pagamento di un compenso chiamato salario."
+			},
+			{
+				question: "In che modo l'Organizzazione differisce dal fattore Lavoro se entrambi prevedono attività umane?",
+				options: [
+					"L'organizzazione coordina tutti gli altri fattori per ottenere il miglior risultato, assumendosi il rischio e ricevendo il profitto; il lavoro fornisce energia fisica o mentale ricevendo un salario fisso.",
+					"Non vi è differenza, sono sinonimi scissi solo nelle teorie pre-classiche",
+					"L'organizzazione si occupa solo delle vendite, il lavoro solo della produzione in fabbrica",
+					"L'organizzazione è un fattore tangibile, il lavoro è intangibile"
+				],
+				correctAnswer: "L'organizzazione coordina tutti gli altri fattori per ottenere il miglior risultato, assumendosi il rischio e ricevendo il profitto; il lavoro fornisce energia fisica o mentale ricevendo un salario fisso.",
+				explanation: "L'organizzazione è il coordinamento strategico (imprenditore). Il lavoro è l'energia ceduta dal dipendente. Rischio e remunerazione sono completamente diversi."
+			},
+			{
+				question: "Se i ricavi totali sono 10.000€ e i costi totali sono 10.000€, cosa è lecito affermare?",
+				options: [
+					"L'impresa si trova esattamente sul Break Even Point e il suo profitto è 0",
+					"L'impresa deve cessare immediatamente l'attività per fallimento",
+					"L'impresa non ha coperto i costi variabili marginali",
+					"L'impresa sta beneficiando del massimo livello di economie di scala possibili"
+				],
+				correctAnswer: "L'impresa si trova esattamente sul Break Even Point e il suo profitto è 0",
+				explanation: "Uguaglianza tra CT e RT indica che la quantità venduta è esattamente Q di equilibrio (BEP). Nessuna perdita, ma nemmeno utile."
+			},
+			{
+				question: "L'energia elettrica consumata dalle macchine durante la lavorazione del prodotto come viene classificata?",
+				options: [
+					"Costo Variabile",
+					"Costo Fisso, se la bolletta è bimestrale",
+					"Capitale Fisso Naturale",
+					"Costo Marginale Ammortizzato"
+				],
+				correctAnswer: "Costo Variabile",
+				explanation: "L'energia necessaria per far funzionare i macchinari e produrre i beni varia direttamente in base a quanto si produce (se la fabbrica è ferma, i macchinari non consumano), quindi è un costo variabile."
+			},
+			{
+				question: "Il Capitale Circolante partecipa al processo produttivo:",
+				options: [
+					"Una sola volta, trasformandosi o esaurendosi",
+					"Più volte per almeno un triennio fiscale",
+					"Infinitamente finché non diventa tecnologicamente obsoleto",
+					"Solamente se l'azienda si trova oltre il punto di rottura (BEP)"
+				],
+				correctAnswer: "Una sola volta, trasformandosi o esaurendosi",
+				explanation: "Definizione esatta: il capitale circolante è formato dai beni che partecipano una sola volta al processo produttivo (materie prime, combustibili)."
+			},
+			{
+				question: "Quale affermazione è VERA riguardo alle Economie di Scala e alla diminuzione degli scarti industriali?",
+				options: [
+					"Al crescere della produzione gli scarti tendono, percentualmente, a diminuire o ottimizzarsi, abbassando il costo unitario",
+					"Gli scarti tendono ad aumentare esponenzialmente rendendo inutile produrre su vasta scala",
+					"Le economie di scala trasformano gli scarti in nuovi costi fissi",
+					"La diminuzione degli scarti comporta un aumento automatico del prezzo di vendita"
+				],
+				correctAnswer: "Al crescere della produzione gli scarti tendono, percentualmente, a diminuire o ottimizzarsi, abbassando il costo unitario",
+				explanation: "La grande produzione spesso comporta metodi più efficienti che riducono la proporzione di materie sprecate, contribuendo al fenomeno delle economie di scala (minori costi aggiuntivi)."
+			},
+			{
+				question: "Per calcolare il ricavo totale che deriva dalla vendita di scarpe a 50€ il paio, avendo venduto 100 paia, si procede con quale operazione?",
+				options: [
+					"50 * 100 = 5.000€",
+					"(50 + 100) * 2 = 300€",
+					"50 / 100 = 0.5€",
+					"100 - 50 = 50€"
+				],
+				correctAnswer: "50 * 100 = 5.000€",
+				explanation: "RICAVO = PREZZO DEL SINGOLO PRODOTTO * QUANTITA' VENDUTA. 50 * 100 = 5000."
+			},
+			{
+				question: "In presenza di una grave calamità (alluvione) che distrugge un capannone, la remunerazione dell'imprenditore come reagirà?",
+				options: [
+					"Probabilmente subirà un duro colpo, tramutandosi in perdita, poiché il profitto è aleatorio e assorbe il rischio d'impresa",
+					"Non subirà variazioni perché lo Stato interviene come fattore compensativo al 100%",
+					"L'imprenditore percepirà comunque il suo 'salario' organizzativo mensile",
+					"Il Break Even Point si sposterà a sinistra azzerando i costi fissi distrutti"
+				],
+				correctAnswer: "Probabilmente subirà un duro colpo, tramutandosi in perdita, poiché il profitto è aleatorio e assorbe il rischio d'impresa",
+				explanation: "Errori, crolli o eventi non prevedibili accidentali (come calamità) possono portare i costi molto sopra il previsto, distruggendo l'utile atteso. Il rischio ricade tutto sull'imprenditore."
+			},
+			{
+				question: "L'asse delle ordinate (Y) nel diagramma di redditività cosa misura esattamente?",
+				options: [
+					"Entrambi Costi e Ricavi in termini monetari",
+					"Solo i Costi Fissi e Variabili",
+					"Esclusivamente la Quantità (Q) di unità prodotte",
+					"Il tempo in anni di vita utile del macchinario"
+				],
+				correctAnswer: "Entrambi Costi e Ricavi in termini monetari",
+				explanation: "Sull'asse Y (verticale) si indicano i valori in denaro: l'altezza delle rette rappresenta quanto ammontano i costi e i ricavi."
+			},
+			{
+				question: "L'asse delle ascisse (X) nel diagramma di redditività cosa misura?",
+				options: [
+					"Il volume (quantità) di produzione",
+					"I profitti massimizzati al netto delle perdite",
+					"L'usura dei fattori della Natura",
+					"I mesi dell'anno solare in cui si produce"
+				],
+				correctAnswer: "Il volume (quantità) di produzione",
+				explanation: "L'asse orizzontale X traccia il numero di unità (volume di produzione) che man mano l'azienda realizza (es. 0, 100, 500, 1000 pezzi)."
+			},
+			{
+				question: "Una teoria economica recente sostiene che senza regole e leggi, la produzione industriale moderna non potrebbe operare o finirebbe nel caos. Quale fattore produttivo è invocato in questa teoria?",
+				options: [
+					"L'Attività dello Stato",
+					"L'Organizzazione manageriale",
+					"Il Capitale Circolante legislativo",
+					"Il Costo Marginale etico"
+				],
+				correctAnswer: "L'Attività dello Stato",
+				explanation: "Lo Stato fornisce indirettamente il 'quadro istituzionale' (leggi, tribunali, norme) che rende sicuro e possibile produrre e commerciare."
+			},
+			{
+				question: "Un'azienda ha CF = 1.000, cv = 2, prezzo p = 4. Qual è la quantità di Break Even Point (Q)?",
+				options: [
+					"500 unità",
+					"1000 unità",
+					"250 unità",
+					"4000 unità"
+				],
+				correctAnswer: "500 unità",
+				explanation: "Q = CF / (p - cv). Q = 1000 / (4 - 2) -> Q = 1000 / 2 = 500."
+			},
+			{
+				question: "Cosa accade ai costi variabili (CV) quando la fabbrica chiude i battenti per le ferie estive producendo zero per tutto il mese?",
+				options: [
+					"I CV di quel mese sono pari a zero",
+					"I CV rimangono costanti per inerzia",
+					"Si trasformano temporaneamente in Costi Fissi",
+					"Aumentano a causa dell'obsolescenza rapida dei materiali in magazzino"
+				],
+				correctAnswer: "I CV di quel mese sono pari a zero",
+				explanation: "Non essendoci produzione (Q=0), non si consumano materie prime né energia per i macchinari, quindi i costi variabili si azzerano totalmente in quel frangente."
+			},
+			{
+				question: "Nel bilancio aziendale la voce 'Salari per 5 dirigenti assunti a tempo indeterminato' rappresenta:",
+				options: [
+					"Un Costo Fisso totale",
+					"Un Costo Variabile proporzionale alle loro decisioni",
+					"L'utile prelevato dai titolari a fine mese",
+					"La quota di ammortamento delle loro auto aziendali"
+				],
+				correctAnswer: "Un Costo Fisso totale",
+				explanation: "Essendo assunti con salario mensile fisso, slegato da quanti pezzi la fabbrica produce giorno per giorno, questo costo è un tipico Costo Fisso."
+			},
+			{
+				question: "Una retta passante per l'origine degli assi (0,0) che diventa via via più alta procedendo verso destra rappresenta graficamente:",
+				options: [
+					"I Ricavi Totali oppure i Costi Variabili",
+					"Sempre e solo i Costi Fissi",
+					"Il Costo Medio in caso di Break Even Point negativo",
+					"L'area delle perdite a scalinata"
+				],
+				correctAnswer: "I Ricavi Totali oppure i Costi Variabili",
+				explanation: "Entrambi partono da zero (se Q=0 non ci sono né ricavi né consumi variabili) e crescono in diagonale all'aumentare di Q."
+			},
+			{
+				question: "Quale tra i seguenti concetti viene espresso dall'acronimo B.E.P.?",
+				options: [
+					"Break Even Point",
+					"Business Entry Profit",
+					"Basic Energy Process",
+					"Balance Equivalence Production"
+				],
+				correctAnswer: "Break Even Point",
+				explanation: "Nel testo è chiaramente indicato: B.E.P. sta per Break Even Point (Punto di rottura o equilibrio)."
+			},
+			{
+				question: "Il Break Even Point si definisce come 'Punto di Rottura' perché:",
+				options: [
+					"Rappresenta il momento in cui si 'rompe' il predominio dei costi e iniziano gli utili",
+					"È il livello al quale i macchinari si rompono per l'eccesso di produzione (saturazione)",
+					"Indica la rottura dei contratti con lo Stato per via dei costi eccessivi",
+					"È il punto di rottura psicologica dell'imprenditore davanti al rischio d'impresa"
+				],
+				correctAnswer: "Rappresenta il momento in cui si 'rompe' il predominio dei costi e iniziano gli utili",
+				explanation: "Il punto di rottura segna lo spartiacque: prima di esso dominavano le perdite, superandolo si entra nella zona verde dell'area dei profitti."
+			},
+			{
+				question: "Il 'Denaro' impiegato nel processo produttivo a quale fattore classico appartiene?",
+				options: [
+					"Al Capitale",
+					"Alla Terra (come materia coniata)",
+					"All'Organizzazione",
+					"Alle Energie Psicofisiche dello Stato"
+				],
+				correctAnswer: "Al Capitale",
+				explanation: "Il capitale comprende il denaro e tutti gli altri beni prodotti dall'uomo in passato ed attualmente usati per produrre."
+			},
+			{
+				question: "L'Ammortamento di un capannone lungo 20 anni trasforma una grossa spesa iniziale in:",
+				options: [
+					"20 piccole quote annuali registrate come Costi Fissi nel bilancio",
+					"Un costo marginale crescente da sommare ai ricavi",
+					"Una perdita netta dichiarata al Break Even Point",
+					"Un costo variabile per ogni mese di attività svolta"
+				],
+				correctAnswer: "20 piccole quote annuali registrate come Costi Fissi nel bilancio",
+				explanation: "La grande spesa una tantum non grava tutta in un anno, ma è spalmata in quote annuali per tutta la durata presunta del bene. Essendo indipendenti da quanto si produce quell'anno, queste quote sono costi fissi."
+			},
+			{
+				question: "I costi variabili tendono a crescere in maniera esponenziale in quale momento specifico?",
+				options: [
+					"Quando si è prossimi alla saturazione degli impianti e l'efficienza inizia a calare rapidamente",
+					"Quando l'azienda si trova a sinistra del Break Even Point",
+					"Appena si supera la Q di equilibrio (B.E.P.) innescando l'inflazione",
+					"Subito all'inizio della produzione per via dello sprint iniziale"
+				],
+				correctAnswer: "Quando si è prossimi alla saturazione degli impianti e l'efficienza inizia a calare rapidamente",
+				explanation: "Il testo dice che i costi variabili crescono dapprima lentamente, poi più rapidamente e infine, prossimi alla saturazione (sforzo massimo), crescono in maniera esponenziale."
+			},
+			{
+				question: "Nell'esempio del calcolo del punto di pareggio fornito nel testo, i ricavi si calcolano moltiplicando:",
+				options: [
+					"20 (p) per Q",
+					"10 (cv) per Q",
+					"10.000 (CF) per 20",
+					"10 (cv) diviso 20 (p)"
+				],
+				correctAnswer: "20 (p) per Q",
+				explanation: "Il ricavo totale (RT) si ottiene sempre moltiplicando il prezzo del singolo prodotto per la quantità. Nell'esempio, p=20, quindi RT = 20Q."
+			},
+			{
+				question: "Qual è il rischio intrinseco insito nell'essere un 'imprenditore' che cerca il profitto?",
+				options: [
+					"L'azienda potrebbe non riuscire mai a coprire i costi sostenuti con i ricavi generati, finendo in fallimento",
+					"Le quote di ammortamento potrebbero diventare costi marginali variabili bloccando il B.E.P.",
+					"Lo Stato potrebbe confiscare il capitale circolante senza preavviso",
+					"Gli operai potrebbero rifiutarsi di accettare il salario e pretendere il profitto aleatorio"
+				],
+				correctAnswer: "L'azienda potrebbe non riuscire mai a coprire i costi sostenuti con i ricavi generati, finendo in fallimento",
+				explanation: "L'attività organizzativa deve essere efficace: se non sa coprire i costi con i ricavi (errori o cattiva gestione), a lungo andare porta al fallimento."
+			},
+			{
+				question: "Le Economie di Scala dimostrano matematicamente che:",
+				options: [
+					"È possibile che il Costo Marginale dell'unità #10.000 sia inferiore al Costo Marginale dell'unità #100",
+					"Il Prezzo di vendita al pubblico deve sempre aumentare col volume",
+					"L'ammortamento dei macchinari non ha senso in una grande azienda",
+					"La Terra non è un fattore produttivo rilevante per produzioni oltre le 5000 unità"
+				],
+				correctAnswer: "È possibile che il Costo Marginale dell'unità #10.000 sia inferiore al Costo Marginale dell'unità #100",
+				explanation: "Le economie di scala fanno sì che produrre unità aggiuntive (costo marginale) diventi progressivamente più economico (costi minori grazie a sconti materie prime e meno scarti)."
+			},
+			{
+				question: "Nella formula RT = pQ, il termine 'Q' indica esattamente la stessa grandezza della formula CT = CF + cvQ?",
+				options: [
+					"Sì, Q rappresenta in entrambi i casi la Quantità di prodotti, che si ipotizza sia prodotta e totalmente venduta",
+					"No, nel primo caso è la Qualità del prodotto, nel secondo è la Quantità",
+					"Sì, ma solo se l'azienda è in area perdite",
+					"No, la Q dei ricavi è sempre minore della Q dei costi fissi"
+				],
+				correctAnswer: "Sì, Q rappresenta in entrambi i casi la Quantità di prodotti, che si ipotizza sia prodotta e totalmente venduta",
+				explanation: "Nella costruzione del grafico semplificato del BEP si ipotizza sempre che tutta la quantità prodotta (Q dei costi) coincida perfettamente con la quantità venduta (Q dei ricavi)."
+			},
+			{
+				question: "L'Azienda X vende a 50€ e ha 20€ di costi variabili unitari. L'Azienda Y vende a 50€ e ha 40€ di costi variabili unitari. Entrambe hanno CF=10.000€. Quale necessiterà di vendere meno pezzi per pareggiare?",
+				options: [
+					"L'Azienda X, perché ha un divario maggiore (margine) tra prezzo e costo variabile con cui coprire più velocemente i Costi Fissi",
+					"L'Azienda Y, perché i suoi costi variabili alti la spingono automaticamente a destra del Bep",
+					"Parieranno esattamente nello stesso momento, avendo uguali CF e Prezzo",
+					"Nessuna delle due riuscirà a pareggiare perché 50€ è inferiore a 10.000€"
+				],
+				correctAnswer: "L'Azienda X, perché ha un divario maggiore (margine) tra prezzo e costo variabile con cui coprire più velocemente i Costi Fissi",
+				explanation: "La differenza tra p e cv (qui 50-20=30 per X, contro 50-40=10 per Y) serve a coprire i costi fissi. X guadagna 30€ su ogni pezzo per ripagare i CF, pareggiando molto prima (10000/30=333 pezzi) di Y (10000/10=1000 pezzi)."
+			},
+			{
+				question: "Un'azienda ha Costi Fissi = 50.000. Il Prezzo unitario è 10 e il Costo Variabile unitario è 10. A che quota Q raggiungerà il Break Even Point?",
+				options: [
+					"Non lo raggiungerà mai matematicamente",
+					"A Q = 5.000",
+					"A Q = 50.000",
+					"Dipende dal costo medio marginale ammortizzato"
+				],
+				correctAnswer: "Non lo raggiungerà mai matematicamente",
+				explanation: "Se p = cv, il margine (p-cv) è zero. L'equazione diventa Q(10-10) = 50.000, ossia 0 = 50.000 (impossibile). I ricavi e i costi variabili si annullano a vicenda, lasciando i Costi Fissi perennemente scoperti."
+			},
+			{
+				question: "Tutti i beni impiegati in azienda tendono a usurarsi nel tempo o a divenire tecnologicamente superati. Questo fenomeno giustifica quale operazione contabile?",
+				options: [
+					"La ripartizione in quote annuali di ammortamento per prevederne la futura sostituzione",
+					"La vendita immediata al Break Even Point per massimizzare il profitto aleatorio",
+					"L'aumento vertiginoso del costo marginale per le economie di scala inverse",
+					"La trasformazione del Capitale in Fattore Natura ecologico"
+				],
+				correctAnswer: "La ripartizione in quote annuali di ammortamento per prevederne la futura sostituzione",
+				explanation: "L'ammortamento serve proprio a spalmare il costo di un bene su più anni, creando un fondo contabile (o riducendo il valore dell'utile su carta) per avere i mezzi di riacquistarlo quando sarà obsoleto o rotto."
+			},
+			{
+				question: "Se l'impresa 'coordina nel modo più efficace possibile i fattori di cui dispone' per massimizzare il profitto, di quale specifico fattore si sta parlando in questa definizione?",
+				options: [
+					"L'Organizzazione",
+					"L'Attività dello Stato",
+					"Il Lavoro subordinato",
+					"Il Capitale Fisso d'eccellenza"
+				],
+				correctAnswer: "L'Organizzazione",
+				explanation: "L'Organizzazione è definita esattamente come l'attività svolta dall'imprenditore al fine di coordinare, nel modo più efficace possibile, i fattori produttivi."
+			},
+			{
+				question: "Per calcolare il Costo Totale da inserire nel grafico del diagramma di redditività, la formula base richiede:",
+				options: [
+					"Costi Fissi e Costi Variabili",
+					"Solamente la somma totale dei Costi Marginali del semestre precedente",
+					"Il Prezzo di vendita moltiplicato per l'Ammortamento Fisso",
+					"L'utile dell'anno trascorso meno il salario dei dipendenti a chiamata"
+				],
+				correctAnswer: "Costi Fissi e Costi Variabili",
+				explanation: "I costi totali (CT) sono dati unicamente dalla somma dei costi fissi (CF) e dei costi variabili (CV). È il pilastro di tutto il diagramma di redditività."
+			},
+			{
+				question: "Un lavoratore dipendente riceve il proprio compenso fisso a fine mese. L'imprenditore lo riceve in base agli utili (profitto). Si può dedurre che:",
+				options: [
+					"Il lavoratore non subisce il rischio d'impresa direttamente sul suo salario fisso mensile",
+					"Il lavoratore guadagna segretamente anche con l'ammortamento",
+					"L'imprenditore ruba il salario ai lavoratori per trasformarlo in quota fissa",
+					"Il compenso dell'imprenditore (profitto) è sempre matematicamente superiore al salario"
+				],
+				correctAnswer: "Il lavoratore non subisce il rischio d'impresa direttamente sul suo salario fisso mensile",
+				explanation: "Il salario del lavoratore dipendente (fisso) è certo e contrattualizzato. Il profitto dell'imprenditore è aleatorio e legato al rischio (può persino essere negativo, cioè una perdita), mentre il salario deve essere pagato in ogni caso."
+			},
+			{
+				question: "Cosa accadrebbe nel diagramma di redditività se lo Stato dimezzasse a sorpresa le imposte fisse (affitti governativi) concesse a un'impresa in concessione?",
+				options: [
+					"La linea dei Costi Fissi si abbasserebbe, trascinando in basso i Costi Totali e spostando il B.E.P. verso sinistra (meno pezzi per pareggiare)",
+					"La linea dei Ricavi Totali diverrebbe meno ripida annullando l'aiuto di Stato",
+					"I Costi Variabili esploderebbero in modo esponenziale per pareggiare il risparmio",
+					"L'area delle perdite sparirebbe del tutto dal grafico per sempre"
+				],
+				correctAnswer: "La linea dei Costi Fissi si abbasserebbe, trascinando in basso i Costi Totali e spostando il B.E.P. verso sinistra (meno pezzi per pareggiare)",
+				explanation: "Riducendo i Costi Fissi (la quota di partenza dei costi totali), la retta CT parte da un punto più basso, incrociando i Ricavi Totali più in fretta (cioè per un Q minore)."
+			},
+			{
+				question: "Un'economia classica sosteneva l'esistenza di soli tre fattori produttivi. Quali erano?",
+				options: [
+					"Terra, Lavoro, Capitale",
+					"Stato, Organizzazione, Mercato",
+					"Uomini, Macchine, Soldi",
+					"Variabili, Fissi, Marginali"
+				],
+				correctAnswer: "Terra, Lavoro, Capitale",
+				explanation: "Secondo l'economia classica originale, i fattori erano raggruppati unicamente in Terra, Lavoro e Capitale. Organizzazione e Stato sono state aggiunte da teorie successive."
+			},
+			{
+				question: "L'affitto di un grande capannone dismesso dove non si produce nulla, costa ugualmente 5.000€ al mese all'impresa. Dal punto di vista della classificazione:",
+				options: [
+					"Rappresenta un costo fisso puro, perché sostenuto indipendentemente dalle unità prodotte (anche se pari a zero)",
+					"È un costo variabile sprecato",
+					"Rientra nell'Ammortamento Circolante per cessata attività",
+					"Diventa un Ricavo in perdita per via dell'area di scarto del B.E.P."
+				],
+				correctAnswer: "Rappresenta un costo fisso puro, perché sostenuto indipendentemente dalle unità prodotte (anche se pari a zero)",
+				explanation: "Il costo si presenta anche a produzione zero: questa è la definizione empirica perfetta del costo fisso."
+			},
+			{
+				question: "Quando i costi marginali si fanno via via più piccoli per una mega-fabbrica di automobili che acquista tonnellate di acciaio in blocco, la fabbrica sta manifestando:",
+				options: [
+					"Le economie di scala",
+					"Un Break Even Point fallace e invertito",
+					"L'obsolescenza immediata del suo Capitale Circolante",
+					"L'incompetenza dell'organizzazione nel gestire i prezzi alti"
+				],
+				correctAnswer: "Le economie di scala",
+				explanation: "Acquistare materie prime su vastissima scala fa calare i prezzi unitari di fornitura, facendo abbassare il costo marginale per le macchine successive. Questa è l'economia di scala."
+			},
+			{
+				question: "Il Break Event Point (notare l'errore di ortografia 'Event' spesso confuso con 'Even') è anche abbreviato in italiano come:",
+				options: [
+					"Punto di Pareggio o di Rottura",
+					"Bilancio delle Entrate e delle Perdite",
+					"Breve Evento Progressivo",
+					"Base Equa Produttiva"
+				],
+				correctAnswer: "Punto di Pareggio o di Rottura",
+				explanation: "Viene chiamato in italiano punto di pareggio o punto di rottura, che indica l'eguaglianza tra Costi e Ricavi."
+			},
+			{
+				question: "Nel grafico B.E.P., la zona detta 'Area dei Profitti' si sviluppa visivamente:",
+				options: [
+					"A forma di cuneo (o imbuto) che si allarga man mano che ci si sposta a destra, dopo il punto di incrocio",
+					"A forma di rettangolo confinato sotto la retta dei costi fissi",
+					"A forma di semicerchio che termina nel punto di pareggio esatto",
+					"Sopra la retta dei Ricavi ma sotto quella dei Costi Totali"
+				],
+				correctAnswer: "A forma di cuneo (o imbuto) che si allarga man mano che ci si sposta a destra, dopo il punto di incrocio",
+				explanation: "Dopo l'incrocio, la linea dei Ricavi (più ripida) si distacca e vola sopra quella dei Costi Totali. Questa distanza tra le due linee si allarga sempre di più, formando l'area dei profitti (fucsia nei grafici tipici)."
+			},
+			{
+				question: "Affinché la costruzione del diagramma B.E.P. abbia un senso logico, quale di queste affermazioni è presa come ipotesi implicita?",
+				options: [
+					"Tutta la quantità prodotta (Q) deve essere anche interamente venduta",
+					"Il prodotto deve essere immagazzinato per un anno senza venderlo",
+					"L'imprenditore non deve percepire il suo profitto personale se non nel lungo periodo",
+					"L'ammortamento non deve mai incidere sui costi di produzione, figurando solo come tassa"
+				],
+				correctAnswer: "Tutta la quantità prodotta (Q) deve essere anche interamente venduta",
+				explanation: "Il testo dice esplicitamente: 'Nella costruzione del grafico si ipotizza che tutta la quantità prodotta sia anche venduta', altrimenti la retta dei Ricavi non sarebbe tracciabile sulla stessa base delle quantità prodotte."
+			},
+			{
+				question: "La farina usata da un panificio entra nel ciclo produttivo, viene cotta, e diventa pane in modo irreversibile. Questa farina fa parte del:",
+				options: [
+					"Capitale Circolante, perché consumata e usata una sola volta per quel prodotto",
+					"Fattore Lavoro, poiché senza la fatica del panettiere non diverrebbe mai pane",
+					"Capitale Fisso, perché essenziale e fissa ogni singolo giorno di produzione",
+					"Costo Fisso, se viene stipulato un contratto annuale di consegna"
+				],
+				correctAnswer: "Capitale Circolante, perché consumata e usata una sola volta per quel prodotto",
+				explanation: "Materie prime e combustibili si distruggono o si trasformano perdendo la loro forma originale in un singolo ciclo: questo definisce il Capitale Circolante."
+			},
+			{
+				question: "In presenza di zero unità vendute, l'azienda registra comunque dei ricavi perché ha stipulato accordi commerciali segreti. Questa affermazione in base al grafico base è:",
+				options: [
+					"Falsa, il modello teorico di base impone che Ricavi = P * Q. Se Q=0, Ricavi=0.",
+					"Vera, perché il Break Even Point garantisce un minimo vitale prima del fallimento",
+					"Falsa, i Ricavi partono da un asintoto negativo dei costi fissi distrutti",
+					"Vera, la retta dei ricavi non parte mai dall'origine degli assi cartesiani"
+				],
+				correctAnswer: "Falsa, il modello teorico di base impone che Ricavi = P * Q. Se Q=0, Ricavi=0.",
+				explanation: "Nel diagramma di redditività classico descritto dal testo, se la produzione e vendita è nulla (Q=0), i ricavi sono nulli (0 * prezzo = 0)."
+			},
+			{
+				question: "L'Azienda Z non registra nessun utile quest'anno. È corretto dedurre che:",
+				options: [
+					"I suoi Ricavi hanno esattamente coperto i Costi (utile zero) oppure i Costi hanno superato i Ricavi (perdita)",
+					"L'imprenditore non si è avvalso del fattore Organizzazione fallendo in partenza",
+					"Tutti i beni di Capitale Fisso hanno esaurito prematuramente il loro ciclo di Ammortamento",
+					"L'azienda si trova a destra del Break Even Point in area di stallo"
+				],
+				correctAnswer: "I suoi Ricavi hanno esattamente coperto i Costi (utile zero) oppure i Costi hanno superato i Ricavi (perdita)",
+				explanation: "Se l'utile non c'è, o è 0 (pareggio) o è negativo (perdita). Questo significa che i ricavi non sono riusciti ad essere superiori ai costi."
+			},
+			{
+				question: "Se l'azienda riduce il prezzo di vendita per battere la concorrenza, la pendenza della retta dei Ricavi nel diagramma si abbasserà. Cosa comporterà questo al Break Even Point (BEP)?",
+				options: [
+					"Si sposterà verso destra: occorrerà vendere una quantità (Q) molto maggiore per raggiungere l'equilibrio",
+					"Si sposterà verso sinistra: sarà più facile per l'azienda raggiungere l'equilibrio prima di finire in perdita",
+					"Rimarrebbe al suo posto, perché il Prezzo di Vendita non influenza i Costi Totali orizzontali",
+					"Si annullerebbe, rendendo il profitto infinito fin dal primo pezzo prodotto e svenduto a ribasso"
+				],
+				correctAnswer: "Si sposterà verso destra: occorrerà vendere una quantità (Q) molto maggiore per raggiungere l'equilibrio",
+				explanation: "Se il prezzo scende, si guadagna meno su ogni singola unità. Occorreranno quindi molte più vendite (spostamento di Q verso destra lungo l'asse) per coprire il masso enorme dei Costi Fissi."
+			},
+			{
+				question: "Cosa si intende per 'remunerazione aleatoria' nel contesto dell'attività d'impresa?",
+				options: [
+					"Che l'entità del profitto per l'imprenditore non è prevedibile con sicurezza, dipendendo dal reale andamento del mercato e dal rischio assunto",
+					"Che il salario dei lavoratori viene estratto a sorte mensilmente",
+					"Che lo Stato tassa i Ricavi in modo casuale alterando in modo imprevedibile il Costo Marginale",
+					"Che i macchinari si rompono ad intervalli randomici invalidando il grafico del BEP e i suoi assunti di base"
+				],
+				correctAnswer: "Che l'entità del profitto per l'imprenditore non è prevedibile con sicurezza, dipendendo dal reale andamento del mercato e dal rischio assunto",
+				explanation: "Aleatorio deriva dal latino 'alea' (dado) che significa incerto, legato alla sorte e al rischio. Il profitto dell'imprenditore è l'unica fetta non garantita."
+			},
+			{
+				question: "Se il Costo Marginale continua a diminuire in una enorme fabbrica siderurgica grazie ad enormi acquisti di carbone, si sta sperimentando l'effetto:",
+				options: [
+					"Delle economie di scala (costo unitario aggiuntivo in calo sui grandi volumi)",
+					"Dell'ammortamento circolare a zero costi di capitale fisso obsoleto",
+					"Della conversione dei Ricavi in Utili prima del Break Even Point teorico",
+					"Della totale obliterazione della curva del costo medio a forma di U invertita"
+				],
+				correctAnswer: "Delle economie di scala (costo unitario aggiuntivo in calo sui grandi volumi)",
+				explanation: "Quando un'espansione del volume produttivo causa una sistematica riduzione del costo aggiuntivo di ciascuna unità (tramite sconti o minori scarti), è la definizione esatta delle economie di scala citata dal testo."
+			},
+			{
+				question: "Se i ricavi crescono in 'maniera proporzionale' al crescere della quantità venduta, quale forma avrà la loro rappresentazione grafica?",
+				options: [
+					"Una retta",
+					"Una curva esponenziale",
+					"Un grafico a gradini paralleli all'asse x",
+					"Un asintoto che sfiora senza toccare mai l'origine"
+				],
+				correctAnswer: "Una retta",
+				explanation: "Una crescita strettamente proporzionale, dove ogni pezzo aggiunto frutta esattamente la stessa quantità fissa (il prezzo), si traccia come una perfetta linea retta (y = mx)."
+			},
+			{
+				question: "Cosa distingue nettamente il 'Capitale Circolante' dai 'Costi Fissi' in termini di concezione?",
+				options: [
+					"Il Capitale Circolante partecipa una sola volta al processo (è legato ai pezzi prodotti ed è variabile), mentre i Costi Fissi derivano da capitale fisso pluriennale slegato dalla singola produzione",
+					"Il Capitale Circolante è formato da persone (lavoratori mobili), mentre i Costi Fissi sono fabbricati",
+					"Il Capitale Circolante viene tassato in proporzione al profitto aleatorio; i Costi Fissi no",
+					"Il Capitale Circolante non influisce in nessun modo reale sui Costi Totali aziendali e sulla stesura del diagramma"
+				],
+				correctAnswer: "Il Capitale Circolante partecipa una sola volta al processo (è legato ai pezzi prodotti ed è variabile), mentre i Costi Fissi derivano da capitale fisso pluriennale slegato dalla singola produzione",
+				explanation: "I beni che compongono il capitale circolante formano i costi variabili. Il capitale fisso, invece, origina le quote di ammortamento e le spese slegate dalla quantità giornaliera, rientrando nei Costi Fissi."
+			},
+			{
+				question: "La teoria classica raggruppa 'Terra, Lavoro e Capitale' ignorando completamente 'Organizzazione e Stato'. Se consideriamo quest'ultimo assente, cosa verrebbe a mancare all'impresa secondo le teorie più recenti?",
+				options: [
+					"Il quadro istituzionale legislativo entro il quale l'impresa può operare in modo sicuro e regolato",
+					"I finanziamenti a fondo perduto che sostituiscono al 100% i ricavi del Break Even Point aziendale",
+					"Il salario per i dirigenti (Organizzazione) incamerato dal Ministero del Tesoro",
+					"Tutti i macchinari complessi che solo i governi statali centrali sono in grado di fabbricare"
+				],
+				correctAnswer: "Il quadro istituzionale legislativo entro il quale l'impresa può operare in modo sicuro e regolato",
+				explanation: "L'Attività dello Stato non dà solitamente macchine o soldi diretti (in senso lato classico), ma emana le leggi necessarie (quadro istituzionale) per il funzionamento dell'impresa."
+			},
+			{
+				question: "L'affermazione 'i Costi Marginali misurano il costo dell'unità precedente' è vera?",
+				options: [
+					"Falsa, misura il costo aggiuntivo sostenuto per produrre una singola unità IN PIU' rispetto alla precedente",
+					"Vera, calcola esattamente a ritroso le spese fatte per sommare i ricavi e individuare così il B.E.P. reale",
+					"Falsa, il Costo Marginale è identico al Costo Fisso diviso per i ricavi lordi",
+					"Vera, perché senza l'unità precedente l'ammortamento azzera la variabile"
+				],
+				correctAnswer: "Falsa, misura il costo aggiuntivo sostenuto per produrre una singola unità IN PIU' rispetto alla precedente",
+				explanation: "Marginale si riferisce al 'margine', all'ultimo confine della produzione: l'unità extra, la successiva, e quanto è costata specificamente."
+			},
+			{
+				question: "Nella formula del BEP '10Q = 10.000', il numero 10 rappresenta algebricamente:",
+				options: [
+					"Il Margine di Contribuzione Unitario (Prezzo - Costo Variabile Unitario)",
+					"I Costi Totali divisi per 1.000 (coefficiente correttivo)",
+					"I Costi Variabili totali in migliaia di euro sommati al Break Even",
+					"Il numero di dipendenti assunti a chiamata (lavoro variabile puro)"
+				],
+				correctAnswer: "Il Margine di Contribuzione Unitario (Prezzo - Costo Variabile Unitario)",
+				explanation: "Deriva dal passaggio Q(p - cv) = CF. Se p=20 e cv=10, p-cv fa 10. Quindi 10Q = 10.000. È il profitto lordo di singola unità destinato a pagare l'ammasso dei CF."
+			},
+			{
+				question: "Se il 'Costo Medio' ci dice qual è il costo dell'unità ripartendolo su tutta la produzione, la sua formula è:",
+				options: [
+					"Costo Totale / Quantità di output prodotta",
+					"Costo Fisso / Quantità + Costo Marginale Unitario",
+					"Costo Marginale * Ricavi / Quantità",
+					"Ricavi Totali / Costi Variabili"
+				],
+				correctAnswer: "Costo Totale / Quantità di output prodotta",
+				explanation: "Il testo cita esattamente: 'Il costo medio ci dice qual è il costo dell’unità di prodotto se si ripartisce il costo su tutta la produzione. Ed è uguale al costo totale diviso la quantità di output prodotta'."
+			},
+			{
+				question: "Se l'azienda non ha affitti, stipendi fissi né rate bancarie in corso, nel suo diagramma di redditività si noterà che:",
+				options: [
+					"La retta dei Costi Totali partirà esattamente dall'origine (0,0) essendo sovrapposta a quella dei Costi Variabili",
+					"L'area delle perdite sarà enorme e insuperabile prima del raggiungimento della milionesima unità prodotta",
+					"La retta dei Ricavi non incrocerà mai i Costi Variabili, restando per sempre parallela",
+					"Non sarà mai possibile tracciare il grafico a causa dell'assenza completa di Costi Fissi base"
+				],
+				correctAnswer: "La retta dei Costi Totali partirà esattamente dall'origine (0,0) essendo sovrapposta a quella dei Costi Variabili",
+				explanation: "Se Costi Fissi = 0, allora Costi Totali (0 + CV) coincidono perfettamente con i Costi Variabili. Pertanto partiranno da zero insieme all'aumentare di Q."
+			},
+			{
+				question: "L'acquisto di materie prime è sempre un costo marginale?",
+				options: [
+					"Falso, ogni singolo acquisto materiale aggiunto alla Q prodotta contribuisce al Costo Marginale e confluisce nei Costi Variabili totali",
+					"Vero, le materie prime sono l'unica voce ammessa sotto l'etichetta Costi Marginali",
+					"Vero, a patto che non generino scarti di alcun tipo a fine ciclo",
+					"Falso, la materia prima è sempre e categoricamente un Costo Fisso pluriennale"
+				],
+				correctAnswer: "Falso, ogni singolo acquisto materiale aggiunto alla Q prodotta contribuisce al Costo Marginale e confluisce nei Costi Variabili totali",
+				explanation: "Il costo della singola dose di materia per un'unità è il costo marginale (insieme ad energia e lavoro extra). Tutti questi formano i CV totali."
+			},
+			{
+				question: "Quale affermazione è falsa riguardo all'area in Giallo (sinistra del Q di equilibrio) e Fucsia (destra) descritte in un classico diagramma?",
+				options: [
+					"A destra si registrano le perdite dell'imprenditore causate dall'eccedenza dei costi marginali sui prezzi",
+					"A sinistra si registrano le perdite (Giallo), a destra gli utili (Fucsia)",
+					"L'area sinistra esiste perché i Costi Fissi 'pesano' troppo sulle pochissime vendite iniziali",
+					"L'area destra esiste perché i Ricavi salgono più velocemente dei Costi Totali superando l'incrocio"
+				],
+				correctAnswer: "A destra si registrano le perdite dell'imprenditore causate dall'eccedenza dei costi marginali sui prezzi",
+				explanation: "È falso che a destra si registrino perdite. A destra del BEP l'impresa consegue l'utile, poiché la retta dei ricavi corre al di sopra della retta dei costi."
+			},
+			{
+				question: "Se un evento accidentale (es. incendio parziale che rovina alcuni macchinari ma non ne interrompe il mutuo in banca) riduce le scorte e aumenta la spesa mensile per l'azienda, quale sarà l'effetto ultimo sull'imprenditore?",
+				options: [
+					"Il suo Profitto aleatorio si ridurrà sensibilmente o si trasformerà in perdita diretta",
+					"Nessuno, l'evento accidentale farà scattare la clausola governativa sul rischio d'impresa che garantisce il salario",
+					"Unicamente un calo dei Ricavi Totali per la merce bruciata, ma i costi resteranno fissi e gestibili sul B.E.P.",
+					"Il Costo Marginale diventerà paradossalmente negativo grazie alle inattese economie di scala generate"
+				],
+				correctAnswer: "Il suo Profitto aleatorio si ridurrà sensibilmente o si trasformerà in perdita diretta",
+				explanation: "Gli eventi non prevedibili e accidentali ricadono tutti sotto l'alea del rischio d'impresa. L'imprenditore è l'ultimo a essere pagato: se ci sono perdite impreviste, il suo guadagno evapora."
+			},
+			{
+				question: "Secondo la descrizione dell'Ammortamento, se una macchina costa 100.000€ e durerà 5 anni, l'anno dell'acquisto il bilancio registrerà una passività totale di 100.000€ sui costi operativi annuali dell'attività?",
+				options: [
+					"Falso, la contabilità caricherà sui costi solo 20.000€ l'anno per cinque anni, non i 100.000€ in un colpo solo",
+					"Vero, i principi contabili impongono la dichiarazione immediata del Capitale Circolante acquistato",
+					"Falso, registrerà un Costo Variabile di 100.000 diviso per la Q prodotta quell'anno, non un ammortamento fisso",
+					"Vero, ma se si entra in area perdite la banca restituirà l'anticipo versato"
+				],
+				correctAnswer: "Falso, la contabilità caricherà sui costi solo 20.000€ l'anno per cinque anni, non i 100.000€ in un colpo solo",
+				explanation: "Il procedimento contabile dell'ammortamento vieta di caricare un acquisto pluriennale (Capitale Fisso) in un solo anno, perché falserebbe del tutto l'utile o la perdita. Si divide 100k / 5 = 20k all'anno."
+			},
+			{
+				question: "Perché un'azienda non dovrebbe sempre comprare la materia prima più economica del mercato pur di abbassare i suoi costi marginali?",
+				options: [
+					"Perché il minor costo, se dovuto a scarsa qualità, produce beni scadenti che riducono la domanda e rovinano l'immagine aziendale annientando i ricavi futuri",
+					"Perché lo Stato lo vieta nel suo quadro istituzionale di protezione della concorrenza sleale dei prezzi medi",
+					"Perché così i Costi Fissi apparirebbero visivamente troppo alti rispetto ai Costi Variabili sul grafico falsandolo del tutto",
+					"Perché l'eccessivo risparmio impedirebbe il calcolo corretto della formula 10Q=10.000 e delle annesse economie di scala"
+				],
+				correctAnswer: "Perché il minor costo, se dovuto a scarsa qualità, produce beni scadenti che riducono la domanda e rovinano l'immagine aziendale annientando i ricavi futuri",
+				explanation: "Come sottolineato nel testo, la scarsa qualità delle materie danneggia la qualità del prodotto e allontana i clienti nel lungo periodo, distruggendo le vendite."
+			},
+			{
+				question: "L'insieme di energie 'psicofisiche' viene definito nel testo come:",
+				options: [
+					"Il fattore Lavoro, retribuito con il salario",
+					"Il fattore Organizzazione, retribuito col profitto puro",
+					"Il fattore Capitale umano e circolante",
+					"Il Break Even emotivo dei lavoratori stressati"
+				],
+				correctAnswer: "Il fattore Lavoro, retribuito con il salario",
+				explanation: "Il Lavoro è rappresentato dalle energie psicofisiche che alcune persone mettono a disposizione di altri in cambio di un compenso detto salario."
+			},
+			{
+				question: "Cosa dimostra il fatto che 'nel lungo periodo tutti i costi sono variabili'?",
+				options: [
+					"Che col tempo sufficiente un'impresa può e deve modificare le dimensioni fisiche degli impianti e delle strutture di base",
+					"Che l'inflazione renderà i contratti a stipendio fisso non validi dopo dieci anni massimi per legge",
+					"Che il Break Even Point è matematicamente incalcolabile se proiettato in un arco superiore a un trimestre o due mesi",
+					"Che le economie di scala cancellano definitivamente l'ammortamento dei vecchi macchinari ormai obsoleti"
+				],
+				correctAnswer: "Che col tempo sufficiente un'impresa può e deve modificare le dimensioni fisiche degli impianti e delle strutture di base",
+				explanation: "Nel breve periodo l'impresa è prigioniera delle mura e dei contratti attuali (Costi Fissi). Se la domanda sale stabilmente negli anni, apre nuove fabbriche o ne chiude (Lungo Periodo): anche i muri diventano una 'variabile' dipendente dalla volontà."
+			},
+			{
+				question: "Qual è il rapporto tra Costi Variabili totali e Costi Marginali?",
+				options: [
+					"I Costi Variabili sono dati dalla somma di tutti i Costi Marginali di ciascuna unità prodotta",
+					"I Costi Variabili sono l'esatto contrario dei Costi Marginali sul piano cartesiano delle ordinate a scala",
+					"Non vi è alcun rapporto diretto poiché l'uno si riferisce alle materie, l'altro ai salari a chiamata fissa",
+					"I Costi Marginali sono dati dalla sottrazione tra Costi Variabili e Costi Fissi al netto dell'area rossa"
+				],
+				correctAnswer: "I Costi Variabili sono dati dalla somma di tutti i Costi Marginali di ciascuna unità prodotta",
+				explanation: "Ogniqualvolta si crea una nuova unità, si spende un costo aggiuntivo isolato (costo marginale). Mettendoli in un cesto tutti insieme, si ottiene la cifra massiccia del Costo Variabile."
+			},
+			{
+				question: "Cosa accadrebbe alla retta dei Costi Fissi se, invece di un affitto mensile per locale, l'impresa avesse un accordo speciale di locazione che si paga 1€ in più per ogni pezzo venduto ma zero euro se non vende?",
+				options: [
+					"Non sarebbe più un Costo Fisso, ma un Costo Variabile, e la retta originaria orizzontale dei CF sparirebbe per essere incorporata nella diagonale azzurra dei CV",
+					"La retta rimarrebbe orizzontale ma passerebbe per l'1 sull'asse delle ordinate annullando del tutto il calcolo del B.E.P.",
+					"L'imprenditore fallirebbe prima del raggiungimento della quota Q per via dei troppi ricavi da conteggiare",
+					"Sarebbe catalogato obbligatoriamente come 'Quota Annua Ammortamento a Cottimo Fiscale'"
+				],
+				correctAnswer: "Non sarebbe più un Costo Fisso, ma un Costo Variabile, e la retta originaria orizzontale dei CF sparirebbe per essere incorporata nella diagonale azzurra dei CV",
+				explanation: "Se dipende dalla quantità (nessun affitto se Q=0, tanto affitto se Q=1000), per definizione diviene un Costo Variabile e agisce matematicamente e graficamente come tale."
+			},
+			{
+				question: "Se CV = 0 quando Q = 0, quanto valgono i CT?",
+				options: [
+					"Sono perfettamente uguali ai Costi Fissi (CF) per definizione della formula CT = CF + CV",
+					"Sono zero anche loro, garantendo un'area perdite assente per un avvio sereno",
+					"Sono superiori ai Ricavi Totali, ma inferiori al profitto potenziale dell'area azzurra",
+					"Equivalgono ai Ricavi Totali, dato che l'azienda è chiusa al punto di origine esatto"
+				],
+				correctAnswer: "Sono perfettamente uguali ai Costi Fissi (CF) per definizione della formula CT = CF + CV",
+				explanation: "Sostituendo CV con lo zero: CT = CF + 0, ne consegue banalmente che Costi Totali e Costi Fissi sono la stessa cifra."
+			},
+			{
+				question: "Un lavoratore riceve uno stipendio basato unicamente sui pezzi lavorati ('cottimo' o chiamata). Quale affermazione lo descrive correttamente nel diagramma di redditività?",
+				options: [
+					"Il suo compenso spingerà in alto la curva diagonale dei Costi Variabili ad ogni pezzo extra prodotto",
+					"Il suo compenso traslerà in alto la retta orizzontale piatta dei Costi Fissi, allontanando tragicamente il BEP",
+					"Il lavoratore non rientra in alcun modo tra i 'Fattori Produttivi' ma rappresenta un rischio imprenditoriale a carico dello Stato",
+					"Il costo orario genererà un abbassamento permanente dei Costi Marginali grazie alle mancate economie in scala"
+				],
+				correctAnswer: "Il suo compenso spingerà in alto la curva diagonale dei Costi Variabili ad ogni pezzo extra prodotto",
+				explanation: "Non essendo un salario fisso ma legato strettamente alle unità lavorate, è la perfetta declinazione di Costo Variabile: più produce, più costa (e più alza la retta azzurra)."
+			},
+			{
+				question: "Secondo la frase 'il compenso per la sua attività organizzativa prende il nome di profitto', chi è il soggetto della frase?",
+				options: [
+					"L'imprenditore",
+					"Il dipendente",
+					"Lo Stato",
+					"Il Fornitore di Capitale Circolante"
+				],
+				correctAnswer: "L'imprenditore",
+				explanation: "L'imprenditore compie l'azione di coordinare (Organizzazione) ed è l'unico che, affrontando il rischio, spera di estrarre dal mercato il Profitto (utile finale)."
+			},
+			{
+				question: "Perché un costo che l'azienda sostiene per un intero impianto in più viene definito 'andamento a scala' sui grafici?",
+				options: [
+					"Perché il costo fisso resta piatto fino al limite di produzione possibile con un capannone; se se ne apre un altro balza improvvisamente verso l'alto tracciando uno scalino visibile",
+					"Perché nel lungo periodo tutti i costi raddoppiano e decrescono simulando una rampa scivolosa o scala verso il Break Even",
+					"Perché l'ammortamento si paga a scalate decrescenti annuali verso la banca tramite il mutuo concordato e lo Stato",
+					"Perché l'imprenditore guadagna un salario mensile che sale di livello come in una gerarchia aziendale militare"
+				],
+				correctAnswer: "Perché il costo fisso resta piatto fino al limite di produzione possibile con un capannone; se se ne apre un altro balza improvvisamente verso l'alto tracciando uno scalino visibile",
+				explanation: "Il testo dice: 'Se è necessario affittare un altro capannone (...) i costi aumentano seppure in una misura fissa. I costi fissi hanno un tipico andamento a scala'."
+			},
+			{
+				question: "La parola 'Natura' nei fattori produttivi è considerata sinonimo della parola:",
+				options: [
+					"Terra",
+					"Capitale Circolante idrico",
+					"Spazio fisico per i magazzini di Lavoro",
+					"Quadro istituzionale meteorologico"
+				],
+				correctAnswer: "Terra",
+				explanation: "All'inizio del testo si afferma direttamente: 'La terra viene detta anche natura'."
+			},
+			{
+				question: "Cosa rappresenta visivamente la linea retta che parte dall'origine (0,0) ma cresce più rapidamente e con pendenza maggiore di quella dei costi variabili?",
+				options: [
+					"La retta dei Ricavi Totali (RT)",
+					"La retta dei Costi Marginali Ammortizzati",
+					"La scala dei Costi Fissi lungo il Periodo Corto",
+					"La curva del Profitto Inverso in area Rossa"
+				],
+				correctAnswer: "La retta dei Ricavi Totali (RT)",
+				explanation: "La retta dei ricavi deve essere più ripida di quella dei CV altrimenti non li incrocerebbe e non supererebbe mai i Costi Totali (sarebbe una perdita perenne e impossibile matematicamente il BEP se p < cv)."
+			},
+			{
+				question: "Nel grafico dell'Economia di Scala è descritta una curva di Costo Marginale. Come si comporterà questa curva sul lungo periodo a fronte di altissime produzioni?",
+				options: [
+					"Tenderà a diminuire gradualmente per ogni unità addizionale grazie all'abbattimento degli sprechi",
+					"S'impennerà fino a toccare il tetto massimo del Break Even Point causando un inevitabile fallimento istantaneo",
+					"Si manterrà assolutamente piatta e costante trasformandosi in un Capitale Fisso irreversibile",
+					"Diventerà una curva dei Ricavi grazie agli interventi normativi dello Stato sul quadro istituzionale"
+				],
+				correctAnswer: "Tenderà a diminuire gradualmente per ogni unità addizionale grazie all'abbattimento degli sprechi",
+				explanation: "La grande produzione sconta prezzi materie più bassi e meno % di scarti: produrre il decimillesimo pezzo costa in vivo meno del centesimo. Il costo marginale quindi cala (tende a diminuire)."
+			},
+			{
+				question: "L'Azienda K vende 1 unità di merce a 50€. I suoi costi per quell'unità consistono in 20€ materie, 10€ manodopera e 20.000€ l'affitto dei locali. L'azienda ha realizzato un profitto di 20€ per il mese in cui ha operato con una sola unità?",
+				options: [
+					"Falso, ha incassato 50€ ma l'esborso è stato 20.030€ (Costi Fissi e Variabili per Q=1), incassando una drammatica perdita.",
+					"Vero, l'affitto non entra nei Costi Variabili quindi viene dedotto dalla quota d'ammortamento statale garantendo 20€ puliti",
+					"Falso, i costi marginali si calcolano sul totale delle vendite mensili che devono pareggiare",
+					"Vero, l'utile si calcola come Ricavo Totale meno materie: 50 - 30 = 20."
+				],
+				correctAnswer: "Falso, ha incassato 50€ ma l'esborso è stato 20.030€ (Costi Fissi e Variabili per Q=1), incassando una drammatica perdita.",
+				explanation: "Utile = Ricavi - CT. Ricavi = 50. CT = 20.000 + 30. L'utile è clamorosamente negativo (20.030 - 50). L'azienda è a sinistra del BEP."
+			},
+			{
+				question: "Il Break Even Point è calcolato quando 'i ricavi totali sono ESATTAMENTE UGUALI ai costi totali sostenuti'. C'è profitto in questa precisa equazione?",
+				options: [
+					"No, per ottenere profitto bisogna vendere la quantità immediatamente successiva al B.E.P. ed allontanarsi a destra di esso",
+					"Sì, un piccolo profitto marginale derivato dallo scorporo dei Costi Fissi dalla linea",
+					"No, in quel punto scatta l'obbligo di fallimento o ristrutturazione per saturazione fissa",
+					"Sì, ma solo per l'Ammortamento che si trasforma contabilisticamente in incasso"
+				],
+				correctAnswer: "No, per ottenere profitto bisogna vendere la quantità immediatamente successiva al B.E.P. ed allontanarsi a destra di esso",
+				explanation: "Il BEP significa letteralmente pareggio perfetto, utile nullo. Bisogna oltrepassarlo per cominciare a intascare il primo euro netto."
+			},
+			{
+				question: "La 'superficie coltivabile' è nominata esplicitamente nel testo come esempio di quale dei fattori classici?",
+				options: [
+					"Terra (o Natura)",
+					"Capitale Fisso immobiliare",
+					"Attività di base Statale",
+					"Costo Marginale d'area rurale"
+				],
+				correctAnswer: "Terra (o Natura)",
+				explanation: "È il primo esempio sotto la voce Terra (anche detta natura): 'la superficie coltivabile, le materie fornite (minerali, acqua)...'."
+			},
+			{
+				question: "Come influiscono le inefficienze o l'usura macchinari nel calcolo del 'prossimi alla saturazione degli impianti'?",
+				options: [
+					"Fanno crescere all'improvviso i Costi Variabili in maniera esponenziale invece che lentamente",
+					"Generano un repentino calo del Prezzo unitario di vendita abbattendo l'area Fucsia",
+					"Lasciano i Costi Variabili intatti, ma azzerano le quote decennali di ammortamento fisso dei muri",
+					"Innescano in positivo le Economie di Scala abbattendo i Costi Marginali ai livelli minimi possibili previsti dalla teoria"
+				],
+				correctAnswer: "Fanno crescere all'improvviso i Costi Variabili in maniera esponenziale invece che lentamente",
+				explanation: "Quando si spreme troppo l'impianto verso i suoi limiti massimi fisici (saturazione), gli operai fanno costosi straordinari o avvengono guasti: il costo variabile esplode."
+			},
+			{
+				question: "Il 'Prezzo' in economia è sempre coincidente con il 'Ricavo Totale' dell'impresa?",
+				options: [
+					"Falso, il prezzo si riferisce al valore economico di una singola unità, il Ricavo Totale è il prezzo moltiplicato per l'intera quantità venduta",
+					"Vero, ma soltanto al raggiungimento esatto del Punto di Pareggio aziendale",
+					"Vero, a patto che non vi siano costi variabili da dedurre alla fine del mese solare",
+					"Falso, il prezzo coincide con il Costo Fisso diviso in parti uguali mensili d'ammortamento"
+				],
+				correctAnswer: "Falso, il prezzo si riferisce al valore economico di una singola unità, il Ricavo Totale è il prezzo moltiplicato per l'intera quantità venduta",
+				explanation: "Il prezzo è il cartellino sul singolo prodotto. Il ricavo totale è il fatturato intero della giornata o anno di vendite continue."
+			},
+			{
+				question: "Se l'azienda riduce l'Orario di lavoro settimanale dimezzando l'attività della fabbrica, quale dei seguenti costi NON ne trarrà alcun beneficio a fine mese?",
+				options: [
+					"La quota annuale del mutuo acceso col fido in banca (Costo Fisso puro)",
+					"I consumi della bolletta dell'energia elettrica dei macchinari pesanti industriali",
+					"Le materie prime consumate sulle catene di stampaggio resina",
+					"Il costo dei lavoratori reclutati a cottimo o chiamata per rimpiazzare l'invenduto"
+				],
+				correctAnswer: "La quota annuale del mutuo acceso col fido in banca (Costo Fisso puro)",
+				explanation: "Il mutuo va pagato per la quota esatta pattuita, a prescindere se l'azienda lavora 10, 50 o zero ore a settimana. Gli altri scendono producendo e consumando meno."
+			},
+			{
+				question: "L'Organizzazione è cruciale: 'se un'organizzazione non è efficace può portare l'impresa a non essere in grado di coprire con i ricavi...'",
+				options: [
+					"I costi sostenuti, portando a lungo andare al fallimento dell'impresa",
+					"Le quote d'ammortamento circolante derivate dal Lavoro e dalla Terra svalorizzata",
+					"Il Break Even Point che si sposta sempre e unicamente a sinistra azzerando i Costi Marginali del Prezzo unitario",
+					"Le sanzioni emesse dal quadro legislativo statale sui materiali della fabbrica dismessa"
+				],
+				correctAnswer: "I costi sostenuti, portando a lungo andare al fallimento dell'impresa",
+				explanation: "È il rischio del non saper incastrare tutto (o vendere il prodotto male, o farsi derubare sui materiali): i costi mangiano i ricavi e la fabbrica va verso il tracollo per via dell'alea (perdite sostenute e debito)."
+			},
+			{
+				question: "Se un'azienda subisce un improvviso crollo dei prezzi di vendita imposti dal mercato, per mantenere inalterato il suo Break Even Point (le stesse Q) cosa deve riuscire miracolosamente a fare?",
+				options: [
+					"Ridurre con identica intensità i propri Costi Fissi e Costi Variabili, abbassando la linea dei Costi Totali per farsi re-incontrare dalla retta azzoppata dei Ricavi nello stesso punto x",
+					"Aumentare l'ammortamento per far figurare un utile superiore e calmare così i lavoratori col salario finto",
+					"Modificare in alto l'area Gialla delle perdite così da scivolare fuori dall'Economia di Scala",
+					"Nulla: il B.E.P. non si schioda mai dal suo posizionamento originale per dogma economico e la quantità non oscilla mai"
+				],
+				correctAnswer: "Ridurre con identica intensità i propri Costi Fissi e Costi Variabili, abbassando la linea dei Costi Totali per farsi re-incontrare dalla retta azzoppata dei Ricavi nello stesso punto x",
+				explanation: "Se la pendenza dei ricavi scende (prezzo giù), la X del pareggio andrà a destra. L'unico modo per tenere Q ferma è abbassare i costi proporzionalmente (CF e/o CV) per far intersecare le rette di nuovo allo stesso livello Q."
+			},
+			{
+				question: "I fattori meteorologici, secondo la divisione classica, rientrano sorprendentemente nel capitale aziendale?",
+				options: [
+					"Falso, rientrano esplicitamente nella categoria Terra (anche detta natura)",
+					"Vero, se usati a scopo di profitto come nel caso di pannelli solari fissi che generano energia per la vendita",
+					"Vero, perché le tempeste sono catalogate tra gli ammortamenti accidentali non governabili",
+					"Falso, non rientrano mai tra i fattori produttivi perché immateriali e incontrollabili, al contrario dello Stato e delle leggi scritte"
+				],
+				correctAnswer: "Falso, rientrano esplicitamente nella categoria Terra (anche detta natura)",
+				explanation: "Il testo dice che la Terra/Natura comprende le condizioni ambientali che rendono possibile la produzione (clima e fattori meteorologici inclusi)."
+			},
+			{
+				question: "L'Azienda Beta ha Costi Marginali in costante ascesa anziché in discesa. Questo esclude matematicamente in partenza quale beneficio della teoria economica sul lungo periodo?",
+				options: [
+					"L'esistenza positiva o l'instaurarsi di valide 'Economie di Scala'",
+					"L'apertura tempestiva verso il Break Even Point a quota fissa",
+					"La divisione del capitale fisso e di quello variabile circolante netto",
+					"La riscossione aleatoria e parziale dei salari verso l'organizzazione di base statale"
+				],
+				correctAnswer: "L'esistenza positiva o l'instaurarsi di valide 'Economie di Scala'",
+				explanation: "Le economie di scala implicano che i Costi Marginali decrescano (il centesimo pezzo ti costa meno in materiali del primo perché ne ottimizzi la fornitura e riduci gli scarti). Se salgono, hai una diseconomia."
+			},
+			{
+				question: "Quale frase spiega meglio l'assenza di sicurezza imprenditoriale citata sotto 'REMUNERAZIONE ALEATORIA'?",
+				options: [
+					"L'imprenditore non ha la garanzia che i ricavi copriranno i costi: un evento fortuito o un errore possono generare una perdita al posto del profitto",
+					"Il salario è casuale e non dipende dalla mansione svolta dall'imprenditore bensì dall'età anagrafica ed estrazione sociale d'appartenenza",
+					"Se i costi scendono troppo velocemente, lo Stato subentra assorbendo obbligatoriamente il profitto per livellare l'imprevisto all'alea media calcolata in partenza",
+					"L'ammortamento si gioca con procedure di estrazione per alleggerire solo le aziende fortunate che sorteggiano quote vantaggiose fiscali ogni biennio"
+				],
+				correctAnswer: "L'imprenditore non ha la garanzia che i ricavi copriranno i costi: un evento fortuito o un errore possono generare una perdita al posto del profitto",
+				explanation: "A differenza del dipendente che ha lo stipendio sicuro pattuito, l'imprenditore incassa il netto tra entrate e uscite, e se i calcoli sbagliano per un accidente o un mancato incasso, il netto può essere negativo a suo carico (perde soldi propri)."
+			},
+			{
+				question: "Nella visualizzazione del diagramma (con p > cv), perché le linee di Ricavo e Costo non corrono mai parallele bensì sono destinate ad incrociarsi matematicamente?",
+				options: [
+					"Perché il prezzo p è un moltiplicatore più grande del costo variabile cv: la linea del Ricavo (verde o azzurra a seconda) sale con maggior pendenza recuperando il divario iniziale dei CF orizzontali e colmando il buco Giallo in favore di quello Fucsia",
+					"Perché la quantità venduta oscilla misteriosamente ed artificialmente rallentando apposta i Ricavi nel lungo periodo",
+					"Perché i Costi Fissi iniziali scendono a zero toccando l'asse X e causando la deviazione della rotta del Ricavo asintotica ma reale",
+					"Non si incrociano: si toccano e corrono vicine fino alla fine dei tempi del Break Even Point originato dalle quote dell'ammortamento e dal salario a cottimo"
+				],
+				correctAnswer: "Perché il prezzo p è un moltiplicatore più grande del costo variabile cv: la linea del Ricavo (verde o azzurra a seconda) sale con maggior pendenza recuperando il divario iniziale dei CF orizzontali e colmando il buco Giallo in favore di quello Fucsia",
+				explanation: "La retta dei CT parte più alta di quella dei RT, ma essendo RT più pendente (prezzo > costo vivo pezzo), ad un certo punto RT la supererà inevitabilmente per pura geometria, originando il miracolo del B.E.P."
+			},
+			{
+				question: "L'Azienda Gamma ha raggiunto la magica 'Zona Fucsia' (Area Profitti). Ora decide di pagare il 100% in più gli operai al cottimo per premiarli dei risultati. Questo causerà:",
+				options: [
+					"Un impennarsi drastico dei Costi Variabili, chiudendo prematuramente l'angolo dell'Area Fucsia o perfino riportandola pericolosamente verso un Break Even molto in ritardo sulla quantità (Q spinto assurdamente a destra)",
+					"Nessun effetto perché nell'area Fucsia i Costi Fissi sono ormai annichiliti o azzerati e quelli variabili resi inerti dalla saturazione felice degli impianti e della Terra",
+					"Un drastico sgonfiarsi immediato delle Economie di Scala in quanto le materie prime subiscono il contraccolpo inverso del salario a cottimo statalizzato da procedure fallimentari pre-stampa",
+					"La discesa dell'Ammortamento che si converte automaticamente in un nuovo Ricavo supplementare garantito a vita su tutta la retta e il piano cartesiano"
+				],
+				correctAnswer: "Un impennarsi drastico dei Costi Variabili, chiudendo prematuramente l'angolo dell'Area Fucsia o perfino riportandola pericolosamente verso un Break Even molto in ritardo sulla quantità (Q spinto assurdamente a destra)",
+				explanation: "Se aumenta drasticamente il salario al cottimo, i costi variabili per ogni scarpa si impennano, la pendenza di CT si avvicina a quella dei Ricavi e l'angolo di profitto tra i due si chiude stringendo il margine o divorandolo."
+			},
+			{
+				question: "Quanti anni occorrono in contabilità standard perché la quota annuale di ammortamento si fermi?",
+				options: [
+					"Tanti quanti sono stati preventivati all'inizio come 'anni di presumibile utilizzo (vita produttiva utile)' del bene originario acquistato e registrato contabilmente a scalare decennale o triennale.",
+					"Dipende dal raggiungimento del Break Even Point: se i Ricavi non bastano l'ammortamento prosegue a tempo illimitato generando area Gialla perdite asintotica permanente.",
+					"Solo un anno a scelta: il fisco non impone nessun limite ma preferisce il Breve Periodo per ragioni legate ai capitali circolanti non consumati in tempo per il Break Even.",
+					"Dieci anni esatti e inamovibili per ogni macchina indipendentemente dalla funzione svolta (es. pc e trattori sono uguali a 10 anni fissi per comodità e scala)."
+				],
+				correctAnswer: "Tanti quanti sono stati preventivati all'inizio come 'anni di presumibile utilizzo (vita produttiva utile)' del bene originario acquistato e registrato contabilmente a scalare decennale o triennale.",
+				explanation: "L'ammortamento spalma il capitale fisso su un calcolo preventivo chiamato 'vita utile'. Se stimi un pc dura 3 anni, l'ammortamento si esaurisce in 3 rate annuali."
+			},
+			{
+				question: "Un furgone adibito alle consegne in tutta Italia consuma pneumatici a rotta di collo ogni mese. Gli pneumatici logorati sono Capitale Fisso?",
+				options: [
+					"No, rientrano più verosimilmente nel Capitale Circolante e Costo Variabile poiché si consumano proporzionalmente in base a quanto si percorre o produce scartando materia, a differenza del furgone di per sé che dura svariati anni (Fisso).",
+					"Sì, perché formano un corpo solido con il furgone e sono quindi legati irrevocabilmente all'ammortamento su base quindicennale.",
+					"No, sono classificati come 'Costo Medio Naturale' per via del fatto che toccano la Terra (fattore 1) usurando la quota del rischio d'impresa sul piano orizzontale B.E.P.",
+					"Sì, i pneumatici non variano mai il loro prezzo anche in base all'acquisto sulle economie di scala."
+				],
+				correctAnswer: "No, rientrano più verosimilmente nel Capitale Circolante e Costo Variabile poiché si consumano proporzionalmente in base a quanto si percorre o produce scartando materia, a differenza del furgone di per sé che dura svariati anni (Fisso).",
+				explanation: "Tutto ciò che si consuma in proporzione (carburante, batterie veloci, gomme se le usi a km) fluisce nei Costi Variabili d'esercizio. Il furgone di per sé è il Capitale Fisso da ammortizzare."
+			},
+			{
+				question: "Se i ricavi scendono e i costi fissi si impennano a dismisura prima che si venda la prima unità, cosa fa graficamente il B.E.P.?",
+				options: [
+					"Scappa velocissimamente verso destra (ci vorranno quantità immense per pareggiare) o addirittura diviene irraggiungibile prima del collasso",
+					"Si sposta comodamente verso l'origine (sinistra) avvicinando la prospettiva di un profitto stellare rapido e indolore a chiunque ne detenga l'impresa",
+					"Punta dritto verso il basso incuneandosi nell'asse delle Quantità fino a divenire negativo (vendite negative impossibili da arginare se non con la natura e lo stato assente a causa della perdita strutturale base B.E.P. invertita).",
+					"Rimane granitico fermo dove si era originariamente posto, in ossequio alla legge ineluttabile di stabilità dell'ammortamento pluriennale."
+				],
+				correctAnswer: "Scappa velocissimamente verso destra (ci vorranno quantità immense per pareggiare) o addirittura diviene irraggiungibile prima del collasso",
+				explanation: "Se hai una montagna di costi fissi di partenza immensa, e i ricavi non tirano più con la stessa pendenza alta di prima, la linea dei CT alta e faticosa verrà 'raggiunta' dai Ricavi deboli solo lontanissimo, in una valle di lacrime (enormi Q per sperare in un pareggio)."
+			},
+			{
+				question: "Nell'ambito dei Costi, quale ruolo ha lo scarto (spreco o non-qualità) della merce durante la fabbricazione a livello di Economie di Scala?",
+				options: [
+					"Sotto certi regimi e crescendo di volume la % di scarto ottimizzata diviene molto minore abbattendo il costo marginale per le ultime unità generate a catena.",
+					"Lo scarto viene contato come Utile puro e Ricavo poichè lo Stato tassa solamente le merci effettivamente rivendute non conteggiando i rotti a terra nel diagramma.",
+					"Non c'è collegamento né reale né fittizio: gli scarti sono una problematica ascrivibile interamente al Lavoro e alle sue energie psicofisiche alterate e non quantificabili mai economicamente.",
+					"Lo scarto è un Costo Fisso puro poiché un'azienda romperà matematicamente e ineluttabilmente lo stesso numero di oggetti ogni 10 anni esatti a prescindere dal totale di macchinari comprati per le scale B.E.P."
+				],
+				correctAnswer: "Sotto certi regimi e crescendo di volume la % di scarto ottimizzata diviene molto minore abbattendo il costo marginale per le ultime unità generate a catena.",
+				explanation: "Le economie di scala citano esplicitamente che 'spesso la produzione industriale comporta degli scarti... al crescere della produzione gli scarti tendono percentualmente a diminuire', incidendo positivamente sull'abbassamento dei Costi Marginali."
+			},
+			{
+				question: "Un diagramma presenta una retta rossa dei Costi Fissi sovrapposta all'asse orizzontale Q (zero). Cosa manca all'azienda in questo folle schema teorico?",
+				options: [
+					"Non possiede macchinari ammortizzati, non paga affitti e non stipendia lavoratori a tempo pieno fisso",
+					"Non possiede operai a cottimo per la manodopera",
+					"Non possiede materie prime (Capitale Circolante)",
+					"Non percepisce profitti e fatturati"
+				],
+				correctAnswer: "Non possiede macchinari ammortizzati, non paga affitti e non stipendia lavoratori a tempo pieno fisso",
+				explanation: "Se Costi Fissi è zero (linea sovrapposta all'asse base), significa nessuna spesa strutturale o invariabile (affitti, macchine fisse in ammortamento o dipendenti base). Ha solo CV e RT."
+			},
+			{
+				question: "Il 'Prezzo' (p) fa parte intrinseca di quale grande aggregato utile per calcolare l'area Fucsia dei Profitti?",
+				options: [
+					"Dei Ricavi Totali (essendo moltiplicato per Q forma i Ricavi)",
+					"Dei Costi Totali mediati sul lungo periodo aleatorio d'impresa",
+					"Dell'Ammortamento decennale a scalinata",
+					"Dei Costi Marginali legati alle economie del mercato naturale statale"
+				],
+				correctAnswer: "Dei Ricavi Totali (essendo moltiplicato per Q forma i Ricavi)",
+				explanation: "L'area Fucsia si forma laddove i Ricavi sormontano i CT. La formula della retta verde o azzurra è banalmente RT = Prezzo * Q. Il prezzo è l'ossatura (e la pendenza) del Ricavo Totale."
+			}
+		];
+
+        class ScrollytellingApp {
+            constructor(content) {
+                this.content = content;
+                this.lastScrollY = 0;
+                this.isDragging = false;
+                this.scrubTargetIndex = 0;
+                this.isSnapEnabled = localStorage.getItem('snapEnabled') !== 'false'; 
+                this.currentChapterIndex = 0;
+                this.isSnapping = false; 
+                
+                this.initDOMElements();
+                this.initEventListeners();
+                this.initTheme();
+                this.initSnapState();
+                
+                this.setMode(localStorage.getItem('template-mode') || 'study');
+                this.dom.appContainer.classList.add('loaded');
+            }
+            
+            initDOMElements() {
+                this.dom = {
+                    appContainer: document.getElementById('app'), header: document.getElementById('header'),
+                    headerTitle: document.getElementById('header-title'), 
+                    timelineNodesMobile: document.getElementById('timeline-nodes-mobile'),
+                    timelineProgressMobile: document.getElementById('timeline-progress-mobile'),
+                    timelineTrackMobile: document.getElementById('timeline-track-mobile'),
+                    timelineNodesDesktop: document.getElementById('timeline-nodes-desktop'),
+                    timelineProgressDesktop: document.getElementById('timeline-progress-desktop'),
+                    timelineDesktopContainer: document.querySelector('.timeline-desktop-container'),
+                    storyPanel: document.getElementById('story-panel'),
+                    themeSwitcher: document.querySelector('.theme-switcher'),
+                    scrollSentinel: document.getElementById('scroll-sentinel'),
+                    modeBtns: document.querySelectorAll('.mode-btn'),
+                    appFooter: document.getElementById('app-footer'),
+                    autoScrollBtn: document.getElementById('autoscroll-btn'),
+                    prevChapterBtn: document.getElementById('prev-chapter-btn'),
+                    nextChapterBtn: document.getElementById('next-chapter-btn')
+                };
+            }
+            
+            initSnapState() {
+                if (this.isSnapEnabled) {
+                    document.documentElement.classList.add('snap-enabled');
+                    this.dom.autoScrollBtn.classList.add('active');
+                }
+            }
+
+            initTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light'; 
+                this.applyTheme(savedTheme);
+                this.dom.themeSwitcher.addEventListener('click', () => {
+                    if (navigator.vibrate) navigator.vibrate(20);
+                    const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                    this.applyTheme(newTheme);
+                });
+            }
+            
+            applyTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem('theme', theme);
+            }
+            
+            initEventListeners() {
+                if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
+                window.scrollTo(0, 0);
+
+                this.dom.modeBtns.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        if (navigator.vibrate) navigator.vibrate(20);
+                        const newMode = btn.dataset.mode;
+                        this.setMode(newMode);
+                    });
+                });
+                
+                this.dom.autoScrollBtn.addEventListener('click', () => {
+                     this.isSnapEnabled = !this.isSnapEnabled;
+                     localStorage.setItem('snapEnabled', this.isSnapEnabled);
+                     document.documentElement.classList.toggle('snap-enabled');
+                     this.dom.autoScrollBtn.classList.toggle('active');
+                     if (navigator.vibrate) navigator.vibrate(10);
+                     
+                     if(this.isSnapEnabled) {
+                         this.dom.header.classList.remove('hidden');
+                         this.dom.appFooter.classList.remove('hidden');
+                     }
+                });
+
+                this.dom.prevChapterBtn.addEventListener('click', () => {
+                    if (this.currentChapterIndex > 0) {
+                        this.scrollToChapter(this.content.chapters[this.currentChapterIndex - 1].id);
+                    }
+                });
+
+                this.dom.nextChapterBtn.addEventListener('click', () => {
+                    if (this.currentChapterIndex < this.content.chapters.length - 1) {
+                        this.scrollToChapter(this.content.chapters[this.currentChapterIndex + 1].id);
+                    }
+                });
+
+                window.addEventListener('scroll', () => this.handleScroll(), { passive: true });
+                window.addEventListener('resize', () => this.handleResize());
+                this.initDraggableTimeline();
+            }
+            
+            handleScroll() {
+                const currentScrollY = window.scrollY;
+                const isMobile = window.innerWidth < 960;
+
+                if (Math.abs(currentScrollY - this.lastScrollY) > 5) {
+                    if (currentScrollY > this.lastScrollY && currentScrollY > 80) {
+                        this.dom.header.classList.add('hidden');
+                        this.dom.appFooter.classList.add('hidden');
+                    } else {
+                        this.dom.header.classList.remove('hidden');
+                        this.dom.appFooter.classList.remove('hidden');
+                    }
+                }
+                
+                if (this.isSnapEnabled && !isMobile && !this.isSnapping) {
+                    this.checkSnapTrigger();
+                }
+
+                this.lastScrollY = currentScrollY;
+            }
+
+            checkSnapTrigger() {
+                const chapters = document.querySelectorAll('.story-chapter');
+                const viewportHeight = window.innerHeight;
+                const triggerPoint = viewportHeight / 1.5; 
+                
+                chapters.forEach((chapter, index) => {
+                    const rect = chapter.getBoundingClientRect();
+                    
+                    if (rect.bottom < triggerPoint && rect.bottom > 0 && index < chapters.length - 1) {
+                        this.isSnapping = true;
+                        const nextChapterId = chapters[index + 1].id;
+                        this.scrollToChapter(nextChapterId);
+                        
+                        setTimeout(() => {
+                            this.isSnapping = false;
+                        }, 1000);
+                    }
+                });
+            }
+            
+            handleResize() {
+                document.querySelectorAll('.acc-item.open .acc-body').forEach(body => {
+                    body.style.maxHeight = body.scrollHeight + "px";
+                });
+                if(this.dom.timelineNodesDesktop.offsetHeight > 0) {
+                    this.setupDesktopTimelineSVG();
+                }
+            }
+            
+            initDraggableTimeline() {
+                const timeline = this.dom.timelineTrackMobile;
+                const handleDrag = (e) => {
+                    if (!this.isDragging) return;
+                    e.preventDefault();
+                    const clientX = e.clientX || e.touches[0].clientX;
+                    const rect = timeline.getBoundingClientRect();
+                    let progress = (clientX - rect.left) / rect.width;
+                    progress = Math.max(0, Math.min(1, progress));
+                    
+                    this.scrubTargetIndex = Math.round(progress * (this.content.chapters.length - 1));
+                    this.dom.headerTitle.textContent = this.content.chapters[this.scrubTargetIndex].title;
+                    
+                    document.querySelectorAll('.timeline-node-point').forEach((node, index) => {
+                        node.classList.toggle('active', index === this.scrubTargetIndex);
+                    });
+                    this.dom.timelineProgressMobile.style.width = `${progress * 100}%`;
+                };
+                const startDrag = (e) => {
+                    this.isDragging = true;
+                    handleDrag(e);
+                };
+                const endDrag = () => {
+                    if (!this.isDragging) return;
+                    this.isDragging = false;
+                    this.scrollToChapter(this.content.chapters[this.scrubTargetIndex].id);
+                };
+                timeline.addEventListener('mousedown', startDrag);
+                window.addEventListener('mousemove', handleDrag);
+                window.addEventListener('mouseup', endDrag);
+                timeline.addEventListener('touchstart', startDrag, { passive: false });
+                window.addEventListener('touchmove', handleDrag, { passive: false });
+                window.addEventListener('touchend', endDrag);
+            }
+            
+            setMode(mode) {
+                localStorage.setItem('template-mode', mode);
+                this.dom.modeBtns.forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+                const currentScrollRatio = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+                this.buildUI(mode);
+                this.initObservers(); 
+                const newScrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+                window.scrollTo(0, newScrollHeight * currentScrollRatio);
+            }
+            
+            buildUI(mode) {
+                document.querySelector('.header-title').textContent = this.content.title;
+
+                this.dom.storyPanel.innerHTML = '';
+                this.dom.timelineNodesMobile.innerHTML = '';
+                this.dom.timelineNodesDesktop.innerHTML = '';
+                
+                this.content.chapters.forEach(chapter => {
+                    const nodePointMobile = document.createElement('button');
+                    nodePointMobile.className = 'timeline-node-point';
+                    nodePointMobile.dataset.targetId = chapter.id;
+                    nodePointMobile.setAttribute('aria-label', `Vai al capitolo: ${chapter.title}`);
+                    nodePointMobile.onclick = (e) => {
+                        if(navigator.vibrate) navigator.vibrate(10);
+                        this.scrollToChapter(chapter.id);
+                    };
+                    this.dom.timelineNodesMobile.appendChild(nodePointMobile);
+
+                    const nodeDesktop = document.createElement('button');
+                    nodeDesktop.className = 'timeline-desktop-node';
+                    nodeDesktop.dataset.targetId = chapter.id;
+                    nodeDesktop.innerHTML = `<div class="node-point"></div><div class="node-label">${chapter.title}</div>`;
+                    nodeDesktop.onclick = () => this.scrollToChapter(chapter.id);
+                    this.dom.timelineNodesDesktop.appendChild(nodeDesktop);
+
+                    const section = document.createElement('section');
+                    section.className = 'story-chapter';
+                    section.id = chapter.id;
+                    const content = mode === 'story' ? chapter.storyDescription : chapter.description;
+                    section.innerHTML = `<div class="chapter-content"><h2 class="chapter-title">${chapter.title}</h2><div class="chapter-body">${content}</div></div>`;
+                    this.dom.storyPanel.appendChild(section);
+                });
+                
+                this.dom.storyPanel.querySelectorAll('.masked-term').forEach(term => {
+                    term.addEventListener('click', () => {
+                        if(!term.classList.contains('revealed')) {
+                            term.classList.add('revealed');
+                            if (navigator.vibrate) navigator.vibrate(10);
+                        }
+                    });
+                });
+
+                this.dom.storyPanel.querySelectorAll('.acc-header').forEach(header => {
+                    header.addEventListener('click', () => {
+                        const item = header.parentElement;
+                        const body = header.nextElementSibling;
+                        const isOpen = item.classList.contains('open');
+                        item.classList.toggle('open');
+                        if (!isOpen) {
+                            body.style.maxHeight = body.scrollHeight + "px";
+                        } else {
+                            body.style.maxHeight = null;
+                        }
+                    });
+                });
+
+                this.dom.storyPanel.querySelectorAll('.flip-container').forEach(container => {
+                    container.addEventListener('click', () => {
+                         const selection = window.getSelection();
+                         if (selection.toString().length === 0) {
+                             container.classList.toggle('flipped');
+                         }
+                    });
+                });
+                
+                this.setupDesktopTimelineSVG();
+            }
+            
+            setupDesktopTimelineSVG() {
+                const nodesHeight = this.dom.timelineNodesDesktop.offsetHeight;
+                const containerHeight = this.dom.timelineDesktopContainer.offsetHeight;
+                const startY = (containerHeight - nodesHeight) / 2;
+                const endY = startY + nodesHeight;
+
+                const line = this.dom.timelineProgressDesktop.previousElementSibling;
+                line.setAttribute('y1', startY);
+                line.setAttribute('y2', endY);
+                
+                const progressLine = this.dom.timelineProgressDesktop;
+                progressLine.setAttribute('y1', startY);
+                progressLine.setAttribute('y2', endY);
+
+                const pathLength = endY - startY;
+                progressLine.style.strokeDasharray = pathLength;
+                progressLine.style.strokeDashoffset = pathLength;
+            }
+
+            scrollToChapter(id) {
+                const targetElement = document.getElementById(id);
+                const headerOffset = 80;
+                const elementPosition = targetElement.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+            }
+            
+            updateNavButtonsState() {
+                if (this.currentChapterIndex <= 0) {
+                    this.dom.prevChapterBtn.classList.add('disabled');
+                } else {
+                    this.dom.prevChapterBtn.classList.remove('disabled');
+                }
+
+                if (this.currentChapterIndex >= this.content.chapters.length - 1) {
+                    this.dom.nextChapterBtn.classList.add('disabled');
+                } else {
+                    this.dom.nextChapterBtn.classList.remove('disabled');
+                }
+            }
+
+            initObservers() {
+                const chapterObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        const id = entry.target.id;
+                        const chapterIndex = this.content.chapters.findIndex(c => c.id === id);
+                        entry.target.classList.toggle('active', entry.isIntersecting);
+
+                        if (entry.isIntersecting) {
+                            this.currentChapterIndex = chapterIndex;
+                            this.updateNavButtonsState();
+
+                            if (!this.isDragging) {
+                                this.dom.headerTitle.textContent = this.content.chapters[chapterIndex].title;
+                            }
+                            document.querySelectorAll(`[data-target-id]`).forEach(node => {
+                                const isCurrent = node.dataset.targetId === id;
+                                const nodeIndex = this.content.chapters.findIndex(c => c.id === node.dataset.targetId);
+                                node.classList.toggle('active', isCurrent);
+                                node.classList.toggle('past', nodeIndex < chapterIndex);
+                            });
+                            
+                            const progress = (chapterIndex / (this.content.chapters.length - 1)) * 100;
+                            this.dom.timelineProgressMobile.style.width = `${progress}%`;
+
+                            const desktopLine = this.dom.timelineProgressDesktop;
+                            if (desktopLine) {
+                                const pathLength = parseFloat(desktopLine.style.strokeDasharray) || 0;
+                                const progressFraction = chapterIndex / (this.content.chapters.length - 1);
+                                desktopLine.style.strokeDashoffset = pathLength * (1 - progressFraction);
+                            }
+                        }
+                    });
+                }, { rootMargin: "-40% 0px -50% 0px", threshold: 0 });
+                
+                document.querySelectorAll('.story-chapter').forEach(chapter => chapterObserver.observe(chapter));
+
+                const headerObserver = new IntersectionObserver(([entry]) => {
+                    this.dom.header.classList.toggle('scrolled', !entry.isIntersecting);
+                }, { threshold: [1] });
+                
+                headerObserver.observe(this.dom.scrollSentinel);
+            }
+        }
+        
+        class Quiz {
+            constructor(questions) {
+                this.allQuestions = questions;
+                this.dom = {
+                    overlay: document.getElementById('quiz-overlay'),
+                    container: document.getElementById('quiz-container'),
+                };
+                this.state = {};
+                this.localStorageKey = 'templateQuizState';
+                this.wasSnapEnabled = false; 
+                this.savedScrollPosition = 0; 
+            }
+            start() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                const savedState = this.loadState();
+                if (savedState) { this.renderResumePrompt(); } 
+                else { this.beginNewQuiz(); }
+            }
+            resume() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.state = this.loadState();
+                this.openOverlay();
+                this.startQuizUI();
+                this.renderQuestion();
+            }
+            beginNewQuiz() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.state = {
+                    questions: this.shuffleArray([...this.allQuestions]),
+                    currentQuestionIndex: 0,
+                    score: 0,
+                    answered: false,
+                };
+                this.saveState();
+                this.openOverlay();
+                this.renderIntro();
+            }
+            openOverlay() {
+                this.savedScrollPosition = window.scrollY;
+                if (document.documentElement.classList.contains('snap-enabled')) {
+                    this.wasSnapEnabled = true;
+                    document.documentElement.classList.remove('snap-enabled');
+                } else {
+                    this.wasSnapEnabled = false;
+                }
+                this.dom.overlay.classList.add('visible');
+                document.body.classList.add('no-scroll');
+            }
+            close() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.dom.overlay.classList.remove('visible');
+                document.body.classList.remove('no-scroll');
+                if (this.wasSnapEnabled) {
+                    document.documentElement.classList.add('snap-enabled');
+                }
+                window.scrollTo(0, this.savedScrollPosition);
+            }
+            saveState() { localStorage.setItem(this.localStorageKey, JSON.stringify(this.state)); }
+            loadState() { const saved = localStorage.getItem(this.localStorageKey); return saved ? JSON.parse(saved) : null; }
+            clearState() { localStorage.removeItem(this.localStorageKey); }
+            
+            renderResumePrompt() {
+                this.openOverlay();
+                this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title">Quiz in Sospeso</span><button class="icon-btn quiz-close-btn" id="quiz-close-resume"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div><div class="quiz-body"><div class="quiz-results-wrapper"><h2 class="quiz-results-title">Bentornato!</h2><p class="quiz-results-text">Hai un quiz in sospeso. Vuoi continuare da dove avevi interrotto?</p><div class="quiz-results-actions"><button class="quiz-next-btn" id="resume-quiz-btn">Riprendi Quiz</button><button class="quiz-next-btn secondary" id="restart-quiz-btn">Inizia da Capo</button></div></div></div>`;
+                document.getElementById('resume-quiz-btn').onclick = () => this.resume();
+                document.getElementById('restart-quiz-btn').onclick = () => { this.clearState(); this.beginNewQuiz(); };
+                document.getElementById('quiz-close-resume').onclick = () => this.close();
+            }
+            renderIntro() {
+                 this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title">Test di Autovalutazione</span><button class="icon-btn quiz-close-btn" id="quiz-close-intro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div><div class="quiz-body"><div class="quiz-results-wrapper"><h2 class="quiz-results-title">Sei pronto?</h2><p class="quiz-results-text">Verifica la tua preparazione con ${this.state.questions.length} domande.</p><button class="quiz-next-btn" id="start-quiz-btn">Inizia il Quiz</button></div></div>`;
+                 document.getElementById('start-quiz-btn').onclick = () => { this.startQuizUI(); this.renderQuestion(); };
+                 document.getElementById('quiz-close-intro').onclick = () => this.close();
+            }
+            startQuizUI() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title" id="quiz-progress-text"></span><button class="icon-btn quiz-close-btn" id="quiz-close-main"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div><div class="quiz-body"><div id="quiz-content-wrapper"></div></div><div class="quiz-footer"><button class="quiz-next-btn" id="quiz-next-btn" disabled>Avanti</button></div>`;
+                document.getElementById('quiz-next-btn').onclick = () => this.nextQuestion();
+                document.getElementById('quiz-close-main').onclick = () => this.close();
+            }
+            renderQuestion() {
+                this.state.answered = false;
+                const question = this.state.questions[this.state.currentQuestionIndex];
+                const progressText = `Domanda ${this.state.currentQuestionIndex + 1} di ${this.state.questions.length}`;
+                document.getElementById('quiz-progress-text').textContent = progressText;
+                const answersHtml = this.shuffleArray(question.options).map(option => `<button class="quiz-answer-btn" data-answer="${option}">${option}</button>`).join('');
+                const contentWrapper = document.getElementById('quiz-content-wrapper');
+                const oldSlide = contentWrapper.querySelector('.quiz-slide');
+                if (oldSlide) {
+                    oldSlide.style.opacity = 0;
+                    setTimeout(() => {
+                        oldSlide.innerHTML = `<p class="quiz-question-text">${question.question}</p><div class="quiz-answers">${answersHtml}</div><div class="quiz-explanation"></div>`;
+                        oldSlide.style.opacity = 1;
+                        this.addAnswerListeners();
+                    }, 200);
+                } else {
+                    contentWrapper.innerHTML = `<div class="quiz-slide active"><p class="quiz-question-text">${question.question}</p><div class="quiz-answers">${answersHtml}</div><div class="quiz-explanation"></div></div>`;
+                    this.addAnswerListeners();
+                }
+                document.getElementById('quiz-next-btn').disabled = true;
+            }
+            addAnswerListeners() {
+                document.querySelectorAll('.quiz-answer-btn').forEach(btn => {
+                    btn.onclick = (e) => this.handleAnswer(e.target);
+                });
+            }
+            handleAnswer(selectedButton) {
+                if (this.state.answered) return;
+                this.state.answered = true;
+                if(navigator.vibrate) navigator.vibrate(20);
+                const selectedAnswer = selectedButton.dataset.answer;
+                const currentQ = this.state.questions[this.state.currentQuestionIndex];
+                const correctAnswer = currentQ.correctAnswer;
+                
+                if (selectedAnswer === correctAnswer) {
+                    this.state.score++;
+                    selectedButton.classList.add('correct');
+                } else {
+                    selectedButton.classList.add('incorrect');
+                    const correctBtn = Array.from(document.querySelectorAll('.quiz-answer-btn')).find(btn => btn.dataset.answer === correctAnswer);
+                    if (correctBtn) correctBtn.classList.add('correct');
+                }
+                
+                document.querySelectorAll('.quiz-answer-btn').forEach(btn => btn.classList.add('disabled'));
+                document.getElementById('quiz-next-btn').disabled = false;
+                
+                const explanationEl = document.querySelector('.quiz-explanation');
+                if(explanationEl) {
+                    const explText = currentQ.explanation || ("La risposta corretta è: " + correctAnswer);
+                    explanationEl.innerHTML = "<strong>Spiegazione:</strong> " + explText;
+                    explanationEl.classList.add('visible');
+                }
+                
+                this.saveState();
+            }
+            nextQuestion() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.state.currentQuestionIndex++;
+                if (this.state.currentQuestionIndex < this.state.questions.length) {
+                    this.saveState();
+                    this.renderQuestion();
+                } else {
+                    this.renderResults();
+                }
+            }
+            renderResults() {
+                const score = this.state.score;
+                const total = this.state.questions.length;
+                const percentage = Math.round((score / total) * 100);
+                let message = "Puoi fare di meglio. Riprova!";
+                if (percentage >= 70) message = "Ottimo lavoro!";
+                if (percentage >= 90) message = "Eccellente!";
+                this.clearState();
+                this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title">Risultati</span></div><div class="quiz-body"><div class="quiz-results-wrapper"><h2 class="quiz-results-title">${message}</h2><div class="quiz-results-score">${score} / ${total}</div><p class="quiz-results-text">Hai risposto correttamente al ${percentage}% delle domande.</p><div class="quiz-results-actions"><button class="quiz-next-btn" id="retake-quiz-btn">Riprova il Quiz</button><button class="quiz-next-btn secondary" id="close-results-btn">Torna allo Studio</button></div></div></div>`;
+                document.getElementById('retake-quiz-btn').onclick = () => this.beginNewQuiz();
+                document.getElementById('close-results-btn').onclick = () => this.close();
+            }
+            shuffleArray(array) {
+                return array.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const app = new ScrollytellingApp(learningContent);
+            const quiz = new Quiz(quizData);
+            document.getElementById('quiz-btn').onclick = () => quiz.start();
+        });
+    </script>
+</body>
+</html>
