@@ -1928,166 +1928,196 @@
             }
         }
         
-        class Quiz {
-            constructor(questions) {
-                this.allQuestions = questions;
-                this.dom = {
-                    overlay: document.getElementById('quiz-overlay'),
-                    container: document.getElementById('quiz-container'),
-                };
-                this.state = {};
-                this.localStorageKey = 'templateQuizState_ww2';
-                this.wasSnapEnabled = false; 
-                this.savedScrollPosition = 0; 
-            }
-            start() {
-                if(navigator.vibrate) navigator.vibrate(20);
-                const savedState = this.loadState();
-                if (savedState) { this.renderResumePrompt(); } 
-                else { this.beginNewQuiz(); }
-            }
-            resume() {
-                if(navigator.vibrate) navigator.vibrate(20);
-                this.state = this.loadState();
-                this.openOverlay();
-                this.startQuizUI();
-                this.renderQuestion();
-            }
-            beginNewQuiz() {
-                if(navigator.vibrate) navigator.vibrate(20);
-                this.state = {
-                    questions: this.shuffleArray([...this.allQuestions]),
-                    currentQuestionIndex: 0,
-                    score: 0,
-                    answered: false,
-                };
-                this.saveState();
-                this.openOverlay();
-                this.renderIntro();
-            }
-            openOverlay() {
-                this.savedScrollPosition = window.scrollY;
-                if (document.documentElement.classList.contains('snap-enabled')) {
-                    this.wasSnapEnabled = true;
-                    document.documentElement.classList.remove('snap-enabled');
-                } else {
-                    this.wasSnapEnabled = false;
-                }
-                this.dom.overlay.classList.add('visible');
-                document.body.classList.add('no-scroll');
-            }
-            close() {
-                if(navigator.vibrate) navigator.vibrate(20);
-                this.dom.overlay.classList.remove('visible');
-                document.body.classList.remove('no-scroll');
-                if (this.wasSnapEnabled) {
-                    document.documentElement.classList.add('snap-enabled');
-                }
-                window.scrollTo(0, this.savedScrollPosition);
-            }
-            saveState() { localStorage.setItem(this.localStorageKey, JSON.stringify(this.state)); }
-            loadState() { const saved = localStorage.getItem(this.localStorageKey); return saved ? JSON.parse(saved) : null; }
-            clearState() { localStorage.removeItem(this.localStorageKey); }
-            
-            renderResumePrompt() {
-                this.openOverlay();
-                this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title">Quiz in Sospeso</span><button class="icon-btn quiz-close-btn" id="quiz-close-resume"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div><div class="quiz-body"><div class="quiz-results-wrapper"><h2 class="quiz-results-title">Bentornato!</h2><p class="quiz-results-text">Hai un quiz in sospeso. Vuoi continuare da dove avevi interrotto?</p><div class="quiz-results-actions"><button class="quiz-next-btn" id="resume-quiz-btn">Riprendi Quiz</button><button class="quiz-next-btn secondary" id="restart-quiz-btn">Inizia da Capo</button></div></div></div>`;
-                document.getElementById('resume-quiz-btn').onclick = () => this.resume();
-                document.getElementById('restart-quiz-btn').onclick = () => { this.clearState(); this.beginNewQuiz(); };
-                document.getElementById('quiz-close-resume').onclick = () => this.close();
-            }
-            renderIntro() {
-                 this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title">Test di Autovalutazione</span><button class="icon-btn quiz-close-btn" id="quiz-close-intro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div><div class="quiz-body"><div class="quiz-results-wrapper"><h2 class="quiz-results-title">Sei pronto?</h2><p class="quiz-results-text">Verifica la tua preparazione con ${this.state.questions.length} domande.</p><button class="quiz-next-btn" id="start-quiz-btn">Inizia il Quiz</button></div></div>`;
-                 document.getElementById('start-quiz-btn').onclick = () => { this.startQuizUI(); this.renderQuestion(); };
-                 document.getElementById('quiz-close-intro').onclick = () => this.close();
-            }
-            startQuizUI() {
-                if(navigator.vibrate) navigator.vibrate(20);
-                this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title" id="quiz-progress-text"></span><button class="icon-btn quiz-close-btn" id="quiz-close-main"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div><div class="quiz-body"><div id="quiz-content-wrapper"></div></div><div class="quiz-footer"><button class="quiz-next-btn" id="quiz-next-btn" disabled>Avanti</button></div>`;
-                document.getElementById('quiz-next-btn').onclick = () => this.nextQuestion();
-                document.getElementById('quiz-close-main').onclick = () => this.close();
-            }
-            renderQuestion() {
-                this.state.answered = false;
-                const question = this.state.questions[this.state.currentQuestionIndex];
-                const progressText = `Domanda ${this.state.currentQuestionIndex + 1} di ${this.state.questions.length}`;
-                document.getElementById('quiz-progress-text').textContent = progressText;
-                const answersHtml = this.shuffleArray(question.options).map(option => `<button class="quiz-answer-btn" data-answer="${option}">${option}</button>`).join('');
-                const contentWrapper = document.getElementById('quiz-content-wrapper');
-                const oldSlide = contentWrapper.querySelector('.quiz-slide');
-                if (oldSlide) {
-                    oldSlide.style.opacity = 0;
-                    setTimeout(() => {
-                        oldSlide.innerHTML = `<p class="quiz-question-text">${question.question}</p><div class="quiz-answers">${answersHtml}</div><div class="quiz-explanation"></div>`;
-                        oldSlide.style.opacity = 1;
-                        this.addAnswerListeners();
-                    }, 200);
-                } else {
-                    contentWrapper.innerHTML = `<div class="quiz-slide active"><p class="quiz-question-text">${question.question}</p><div class="quiz-answers">${answersHtml}</div><div class="quiz-explanation"></div></div>`;
-                    this.addAnswerListeners();
-                }
-                document.getElementById('quiz-next-btn').disabled = true;
-            }
-            addAnswerListeners() {
-                document.querySelectorAll('.quiz-answer-btn').forEach(btn => {
-                    btn.onclick = (e) => this.handleAnswer(e.target);
-                });
-            }
-            handleAnswer(selectedButton) {
-                if (this.state.answered) return;
-                this.state.answered = true;
-                if(navigator.vibrate) navigator.vibrate(20);
-                const selectedAnswer = selectedButton.dataset.answer;
-                const currentQ = this.state.questions[this.state.currentQuestionIndex];
-                const correctAnswer = currentQ.correctAnswer;
-                
-                if (selectedAnswer === correctAnswer) {
-                    this.state.score++;
-                    selectedButton.classList.add('correct');
-                } else {
-                    selectedButton.classList.add('incorrect');
-                    const correctBtn = Array.from(document.querySelectorAll('.quiz-answer-btn')).find(btn => btn.dataset.answer === correctAnswer);
-                    if (correctBtn) correctBtn.classList.add('correct');
-                }
-                
-                document.querySelectorAll('.quiz-answer-btn').forEach(btn => btn.classList.add('disabled'));
-                document.getElementById('quiz-next-btn').disabled = false;
-                
-                const explanationEl = document.querySelector('.quiz-explanation');
-                if(explanationEl) {
-                    const explText = currentQ.explanation || ("La risposta corretta è: " + correctAnswer);
-                    explanationEl.innerHTML = "<strong>Spiegazione:</strong> " + explText;
-                    explanationEl.classList.add('visible');
-                }
-                
-                this.saveState();
-            }
-            nextQuestion() {
-                if(navigator.vibrate) navigator.vibrate(20);
-                this.state.currentQuestionIndex++;
-                if (this.state.currentQuestionIndex < this.state.questions.length) {
-                    this.saveState();
-                    this.renderQuestion();
-                } else {
-                    this.renderResults();
-                }
-            }
-            renderResults() {
-                const score = this.state.score;
-                const total = this.state.questions.length;
-                const percentage = Math.round((score / total) * 100);
-                let message = "Puoi fare di meglio. Riprova!";
-                if (percentage >= 70) message = "Ottimo lavoro!";
-                if (percentage >= 90) message = "Eccellente!";
-                this.clearState();
-                this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title">Risultati</span></div><div class="quiz-body"><div class="quiz-results-wrapper"><h2 class="quiz-results-title">${message}</h2><div class="quiz-results-score">${score} / ${total}</div><p class="quiz-results-text">Hai risposto correttamente al ${percentage}% delle domande.</p><div class="quiz-results-actions"><button class="quiz-next-btn" id="retake-quiz-btn">Riprova il Quiz</button><button class="quiz-next-btn secondary" id="close-results-btn">Torna allo Studio</button></div></div></div>`;
-                document.getElementById('retake-quiz-btn').onclick = () => this.beginNewQuiz();
-                document.getElementById('close-results-btn').onclick = () => this.close();
-            }
-            shuffleArray(array) {
-                return array.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
-            }
+class Quiz {
+    constructor(questions) {
+        this.allQuestions = questions;
+        this.dom = {
+            overlay: document.getElementById('quiz-overlay'),
+            container: document.getElementById('quiz-container'),
+        };
+        this.state = {};
+        this.localStorageKey = 'templateQuizState_ww2';
+        this.wasSnapEnabled = false;
+        this.savedScrollPosition = 0;
+    }
+
+    start() {
+        if (navigator.vibrate) navigator.vibrate(20);
+        const savedState = this.loadState();
+        if (savedState) { this.renderResumePrompt(); }
+        else { this.beginNewQuiz(); }
+    }
+
+    resume() {
+        if (navigator.vibrate) navigator.vibrate(20);
+        this.state = this.loadState();
+        this.openOverlay();
+        this.startQuizUI();
+        this.renderQuestion();
+    }
+
+    beginNewQuiz() {
+        if (navigator.vibrate) navigator.vibrate(20);
+        this.state = {
+            questions: this.shuffleArray([...this.allQuestions]),
+            currentQuestionIndex: 0,
+            score: 0,
+            answered: false,
+        };
+        this.saveState();
+        this.openOverlay();
+        this.renderIntro();
+    }
+
+    openOverlay() {
+        this.savedScrollPosition = window.scrollY;
+        if (document.documentElement.classList.contains('snap-enabled')) {
+            this.wasSnapEnabled = true;
+            document.documentElement.classList.remove('snap-enabled');
+        } else {
+            this.wasSnapEnabled = false;
         }
+        this.dom.overlay.classList.add('visible');
+        document.body.classList.add('no-scroll');
+    }
+
+    close() {
+        if (navigator.vibrate) navigator.vibrate(20);
+        this.dom.overlay.classList.remove('visible');
+        document.body.classList.remove('no-scroll');
+        if (this.wasSnapEnabled) {
+            document.documentElement.classList.add('snap-enabled');
+        }
+        window.scrollTo(0, this.savedScrollPosition);
+    }
+
+    saveState() { localStorage.setItem(this.localStorageKey, JSON.stringify(this.state)); }
+    loadState() { const saved = localStorage.getItem(this.localStorageKey); return saved ? JSON.parse(saved) : null; }
+    clearState() { localStorage.removeItem(this.localStorageKey); }
+
+    renderResumePrompt() {
+        this.openOverlay();
+        this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title">Quiz in Sospeso</span><button class="icon-btn quiz-close-btn" id="quiz-close-resume"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div><div class="quiz-body"><div class="quiz-results-wrapper"><h2 class="quiz-results-title">Bentornato!</h2><p class="quiz-results-text">Hai un quiz in sospeso. Vuoi continuare da dove avevi interrotto?</p><div class="quiz-results-actions"><button class="quiz-next-btn" id="resume-quiz-btn">Riprendi Quiz</button><button class="quiz-next-btn secondary" id="restart-quiz-btn">Inizia da Capo</button></div></div></div>`;
+        document.getElementById('resume-quiz-btn').onclick = () => this.resume();
+        document.getElementById('restart-quiz-btn').onclick = () => { this.clearState(); this.beginNewQuiz(); };
+        document.getElementById('quiz-close-resume').onclick = () => this.close();
+    }
+
+    renderIntro() {
+        this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title">Test di Autovalutazione</span><button class="icon-btn quiz-close-btn" id="quiz-close-intro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div><div class="quiz-body"><div class="quiz-results-wrapper"><h2 class="quiz-results-title">Sei pronto?</h2><p class="quiz-results-text">Verifica la tua preparazione con ${this.state.questions.length} domande.</p><button class="quiz-next-btn" id="start-quiz-btn">Inizia il Quiz</button></div></div>`;
+        document.getElementById('start-quiz-btn').onclick = () => { this.startQuizUI(); this.renderQuestion(); };
+        document.getElementById('quiz-close-intro').onclick = () => this.close();
+    }
+
+    startQuizUI() {
+        if (navigator.vibrate) navigator.vibrate(20);
+        this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title" id="quiz-progress-text"></span><button class="icon-btn quiz-close-btn" id="quiz-close-main"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div><div class="quiz-body"><div id="quiz-content-wrapper"></div></div><div class="quiz-footer"><button class="quiz-next-btn" id="quiz-next-btn" disabled>Avanti</button></div>`;
+        document.getElementById('quiz-next-btn').onclick = () => this.nextQuestion();
+        document.getElementById('quiz-close-main').onclick = () => this.close();
+    }
+
+    renderQuestion() {
+        this.state.answered = false;
+        const question = this.state.questions[this.state.currentQuestionIndex];
+        const progressText = `Domanda ${this.state.currentQuestionIndex + 1} di ${this.state.questions.length}`;
+        document.getElementById('quiz-progress-text').textContent = progressText;
+
+        // FIXED: Shuffle options
+        const shuffledOptions = this.shuffleArray([...question.options]);
+        const answersHtml = shuffledOptions.map(option => `<button class="quiz-answer-btn" data-answer="${option.replace(/"/g, '&quot;')}">${option}</button>`).join('');
+
+        const contentWrapper = document.getElementById('quiz-content-wrapper');
+        const oldSlide = contentWrapper.querySelector('.quiz-slide');
+
+        const updateSlide = (container) => {
+            container.innerHTML = `<p class="quiz-question-text">${question.question}</p><div class="quiz-answers">${answersHtml}</div><div class="quiz-explanation"></div>`;
+            this.addAnswerListeners();
+        };
+
+        if (oldSlide) {
+            oldSlide.style.opacity = 0;
+            setTimeout(() => {
+                updateSlide(oldSlide);
+                oldSlide.style.opacity = 1;
+            }, 200);
+        } else {
+            contentWrapper.innerHTML = `<div class="quiz-slide active"></div>`;
+            updateSlide(contentWrapper.querySelector('.quiz-slide'));
+        }
+        document.getElementById('quiz-next-btn').disabled = true;
+    }
+
+    addAnswerListeners() {
+        document.querySelectorAll('.quiz-answer-btn').forEach(btn => {
+            btn.onclick = (e) => this.handleAnswer(e.currentTarget); // currentTarget è più sicuro di target
+        });
+    }
+
+    handleAnswer(selectedButton) {
+        if (this.state.answered) return;
+        this.state.answered = true;
+        if (navigator.vibrate) navigator.vibrate(20);
+
+        const selectedAnswer = selectedButton.dataset.answer;
+        const currentQ = this.state.questions[this.state.currentQuestionIndex];
+
+        // FIXED LOGIC: Recupera il testo della risposta corretta usando l'indice 'correct'
+        // Se i tuoi dati hanno 'correctAnswer', usalo, altrimenti usa l'indice 'correct'
+        const correctAnswer = currentQ.correctAnswer || currentQ.options[currentQ.correct];
+
+        if (selectedAnswer === correctAnswer) {
+            this.state.score++;
+            selectedButton.classList.add('correct');
+        } else {
+            selectedButton.classList.add('incorrect');
+            // Evidenzia la risposta corretta
+            document.querySelectorAll('.quiz-answer-btn').forEach(btn => {
+                if (btn.dataset.answer === correctAnswer) {
+                    btn.classList.add('correct');
+                }
+            });
+        }
+
+        document.querySelectorAll('.quiz-answer-btn').forEach(btn => btn.classList.add('disabled'));
+        document.getElementById('quiz-next-btn').disabled = false;
+
+        const explanationEl = document.querySelector('.quiz-explanation');
+        if (explanationEl) {
+            explanationEl.innerHTML = `<strong>Spiegazione:</strong> ${currentQ.explanation}`;
+            explanationEl.classList.add('visible');
+        }
+
+        this.saveState();
+    }
+
+    nextQuestion() {
+        if (navigator.vibrate) navigator.vibrate(20);
+        this.state.currentQuestionIndex++;
+        if (this.state.currentQuestionIndex < this.state.questions.length) {
+            this.saveState();
+            this.renderQuestion();
+        } else {
+            this.renderResults();
+        }
+    }
+
+    renderResults() {
+        const score = this.state.score;
+        const total = this.state.questions.length;
+        const percentage = Math.round((score / total) * 100);
+        let message = "Puoi fare di meglio. Riprova!";
+        if (percentage >= 70) message = "Ottimo lavoro!";
+        if (percentage >= 90) message = "Eccellente!";
+        this.clearState();
+        this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title">Risultati</span></div><div class="quiz-body"><div class="quiz-results-wrapper"><h2 class="quiz-results-title">${message}</h2><div class="quiz-results-score">${score} / ${total}</div><p class="quiz-results-text">Hai risposto correttamente al ${percentage}% delle domande.</p><div class="quiz-results-actions"><button class="quiz-next-btn" id="retake-quiz-btn">Riprova il Quiz</button><button class="quiz-next-btn secondary" id="close-results-btn">Torna allo Studio</button></div></div></div>`;
+        document.getElementById('retake-quiz-btn').onclick = () => this.beginNewQuiz();
+        document.getElementById('close-results-btn').onclick = () => this.close();
+    }
+
+    shuffleArray(array) {
+        return array.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
+    }
+}
         document.addEventListener('DOMContentLoaded', () => {
             const app = new ScrollytellingApp(learningContent);
             const quiz = new Quiz(quizData);
