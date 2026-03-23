@@ -544,7 +544,7 @@
                         <p>Schiacciata dai debiti di guerra (Trattato di Versailles), la Germania stampò cartamoneta senza copertura. Nel 1923, l'<strong>iperinflazione</strong> distrusse il marco: i cittadini usavano le banconote per accendere le stufe. Tra il 1924 e il 1929 ci furono i "Golden Twenties" grazie ai prestiti americani (Piano Dawes), ma il crollo di Wall Street nel 1929 fece sprofondare nuovamente il Paese. Con oltre 6 milioni di disoccupati, le masse disperate si rivolsero all'estrema destra.</p>
                     `,
                     storyDescription: `
-                        <p>Immagina di passeggiare per le strade di Berlino nei primi anni '20. Da un lato vedi un fermento intellettuale senza pari: architetti come Walter Gropius stanno rivoluzionando il modo di concepire gli edifici con il Bauhaus, mentre pionieri come Magnus Hirschfeld lottano per i diritti civili in una società che sembra improvvisamente modernissima.</p>
+                        <p>Immagina di passeggiare per le strade di Berlino nei primi anni '20. Da un lato vedi un fermento intellettuale senza pari: architetti come Walter Gropius stanno rivoluzionando il modo di concepire edifici con il Bauhaus, mentre pionieri come Magnus Hirschfeld lottano per i diritti civili in una società che sembra improvvisamente modernissima.</p>
                         <p>Ma basta voltare l'angolo per vedere la tragedia. Noti un uomo con una carriola piena zeppa di mazzette di banconote. Sta andando a comprare un pezzo di pane, perché i prezzi raddoppiano di ora in ora. Il denaro non vale più nulla, viene usato dai bambini per giocare a costruzioni o bruciato nelle stufe. È l'<strong>iperinflazione del 1923</strong>.</p>
                         <p>La Repubblica di Weimar è un esperimento democratico meraviglioso ma nato morto. A sinistra, le strade si macchiano del sangue di Rosa Luxemburg, uccisa dai Freikorps durante la rivolta spartachista. A destra, le ferite brucianti dell'umiliazione di Versailles covano rancore. E quando nel 1929 l'economia americana crolla, trascinando giù la fragile ripresa tedesca, 6 milioni di disoccupati si ritrovano affamati. In questa disperazione assoluta, la democrazia appare debole e corrotta. La folla smette di cercare riforme e inizia a cercare un "salvatore", un uomo forte. Quell'uomo era già pronto a prendere la scena.</p>
                     `
@@ -785,7 +785,8 @@
             ]
         };
 
-        const quizData = [
+        const quizData = [ 
+
     {
         question: "Quali fattori favorirono la caduta di Weimar e l'ascesa del Partito Nazionalsocialista?",
         options: [
@@ -1570,7 +1571,7 @@
     { question: "I Kamikaze erano sottomarini tedeschi?", options: ["Vero", "Falso: erano piloti suicidi giapponesi."], correct: 1, explanation: "Si schiantavano contro le navi americane." },
     { question: "La sigla CLN indica i partigiani italiani uniti?", options: ["Falso", "Vero"], correct: 1, explanation: "Comitato di Liberazione Nazionale." },
     { question: "Auschwitz era un lager per soli prigionieri di guerra?", options: ["Vero", "Falso: era il principale campo di sterminio (Shoah)."], correct: 1, explanation: "Progettato per l'annientamento sistematico." }
-];
+		];
 
         /* ================================================================= */
         /* LOGICA APPLICAZIONE (NON MODIFICARE A MENO CHE TU NON SAPPIA COSA FAI) */
@@ -1939,6 +1940,64 @@ class Quiz {
         this.localStorageKey = 'templateQuizState_ww2';
         this.wasSnapEnabled = false;
         this.savedScrollPosition = 0;
+        
+        this.setupImportInput(); // Inizializza l'input file nascosto
+    }
+
+    setupImportInput() {
+        if (!document.getElementById('import-file-input')) {
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.id = 'import-file-input';
+            fileInput.accept = '.json';
+            fileInput.style.display = 'none';
+            document.body.appendChild(fileInput);
+
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const importedState = JSON.parse(event.target.result);
+                        // Validazione di base per assicurarsi che il formato sia corretto
+                        if (importedState && typeof importedState.currentQuestionIndex === 'number' && Array.isArray(importedState.questions)) {
+                            this.state = importedState;
+                            this.saveState();
+                            alert('Progresso importato con successo!');
+                            this.resume(); // Avvia il quiz con i dati importati
+                        } else {
+                            alert('File di salvataggio non valido o corrotto.');
+                        }
+                    } catch (err) {
+                        alert('Errore durante la lettura del file. Assicurati che sia un JSON valido.');
+                    }
+                };
+                reader.readAsText(file);
+                e.target.value = ''; // Resetta l'input per permettere nuovi caricamenti
+            });
+        }
+    }
+
+    exportProgress() {
+        const stateToExport = this.loadState();
+        if (!stateToExport) {
+            alert('Nessun progresso da esportare. Inizia prima il quiz.');
+            return;
+        }
+        
+        const jsonString = JSON.stringify(stateToExport);
+        const blob = new Blob([jsonString], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.href = url;
+        downloadAnchorNode.download = "quiz-progress.json";
+        document.body.appendChild(downloadAnchorNode); // Necessario per Firefox
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+        URL.revokeObjectURL(url); // Libera la memoria
     }
 
     start() {
@@ -1997,15 +2056,52 @@ class Quiz {
 
     renderResumePrompt() {
         this.openOverlay();
-        this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title">Quiz in Sospeso</span><button class="icon-btn quiz-close-btn" id="quiz-close-resume"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div><div class="quiz-body"><div class="quiz-results-wrapper"><h2 class="quiz-results-title">Bentornato!</h2><p class="quiz-results-text">Hai un quiz in sospeso. Vuoi continuare da dove avevi interrotto?</p><div class="quiz-results-actions"><button class="quiz-next-btn" id="resume-quiz-btn">Riprendi Quiz</button><button class="quiz-next-btn secondary" id="restart-quiz-btn">Inizia da Capo</button></div></div></div>`;
+        this.dom.container.innerHTML = `
+            <div class="quiz-header">
+                <span class="quiz-title">Quiz in Sospeso</span>
+                <button class="icon-btn quiz-close-btn" id="quiz-close-resume">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="quiz-body">
+                <div class="quiz-results-wrapper">
+                    <h2 class="quiz-results-title">Bentornato!</h2>
+                    <p class="quiz-results-text">Hai un quiz in sospeso. Vuoi continuare da dove avevi interrotto?</p>
+                    <div class="quiz-results-actions">
+                        <button class="quiz-next-btn" id="resume-quiz-btn">Riprendi Quiz</button>
+                        <button class="quiz-next-btn secondary" id="restart-quiz-btn">Inizia da Capo</button>
+                        <button class="quiz-next-btn secondary" id="export-quiz-btn">Esporta Progresso</button>
+                        <button class="quiz-next-btn secondary" id="import-quiz-btn-resume">Importa Progresso</button>
+                    </div>
+                </div>
+            </div>`;
         document.getElementById('resume-quiz-btn').onclick = () => this.resume();
         document.getElementById('restart-quiz-btn').onclick = () => { this.clearState(); this.beginNewQuiz(); };
+        document.getElementById('export-quiz-btn').onclick = () => this.exportProgress();
+        document.getElementById('import-quiz-btn-resume').onclick = () => document.getElementById('import-file-input').click();
         document.getElementById('quiz-close-resume').onclick = () => this.close();
     }
 
     renderIntro() {
-        this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title">Test di Autovalutazione</span><button class="icon-btn quiz-close-btn" id="quiz-close-intro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div><div class="quiz-body"><div class="quiz-results-wrapper"><h2 class="quiz-results-title">Sei pronto?</h2><p class="quiz-results-text">Verifica la tua preparazione con ${this.state.questions.length} domande.</p><button class="quiz-next-btn" id="start-quiz-btn">Inizia il Quiz</button></div></div>`;
+        this.dom.container.innerHTML = `
+            <div class="quiz-header">
+                <span class="quiz-title">Test di Autovalutazione</span>
+                <button class="icon-btn quiz-close-btn" id="quiz-close-intro">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="quiz-body">
+                <div class="quiz-results-wrapper">
+                    <h2 class="quiz-results-title">Sei pronto?</h2>
+                    <p class="quiz-results-text">Verifica la tua preparazione con ${this.state.questions.length} domande.</p>
+                    <div class="quiz-results-actions">
+                        <button class="quiz-next-btn" id="start-quiz-btn">Inizia il Quiz</button>
+                        <button class="quiz-next-btn secondary" id="import-quiz-btn">Importa Progresso</button>
+                    </div>
+                </div>
+            </div>`;
         document.getElementById('start-quiz-btn').onclick = () => { this.startQuizUI(); this.renderQuestion(); };
+        document.getElementById('import-quiz-btn').onclick = () => document.getElementById('import-file-input').click();
         document.getElementById('quiz-close-intro').onclick = () => this.close();
     }
 
