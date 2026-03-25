@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Future Forms: Precise Edition</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+        :root {
+            --light-bg: #f0f2f5; --light-card: rgba(255, 255, 255, 0.9); --light-text: #1c1e21; --light-primary: #e4e6eb; --light-accent: #1877f2; --light-shadow: rgba(0, 0, 0, 0.1);
+            --dark-bg: #121212; --dark-card: rgba(28, 28, 30, 0.8); --dark-text: #e4e6eb; --dark-primary: #3a3b3c; --dark-accent: #0a84ff; --dark-shadow: rgba(0, 0, 0, 0.3);
+            --correct-color: #34c759; --incorrect-color: #ff3b30;
+            --border-radius: 16px; --transition-speed: 0.3s;
+        }
+
+        [data-theme="light"] { 
+            --bg-color: var(--light-bg); --card-color: var(--light-card); --text-color: var(--light-text); --primary-color: var(--light-primary); --accent-color: var(--light-accent); --shadow-color: var(--light-shadow);
+            --will-color: #2196F3; --going-to-color: #FF9800; --pres-cont-color: #4CAF50; --pres-simp-color: #9C27B0;
+        }
+        [data-theme="dark"] { 
+            --bg-color: var(--dark-bg); --card-color: var(--dark-card); --text-color: var(--dark-text); --primary-color: var(--dark-primary); --accent-color: var(--dark-accent); --shadow-color: var(--dark-shadow);
+            --will-color: #64B5F6; --going-to-color: #FFB74D; --pres-cont-color: #81C784; --pres-simp-color: #BA68C8;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        html { font-size: 16px; }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg-color); color: var(--text-color); display: flex; justify-content: center; align-items: flex-start; min-height: 100svh; padding: 5vh 1rem 1rem 1rem; transition: background-color var(--transition-speed), color var(--transition-speed); overflow-x: hidden;}
+        
+        .app-container { width: 100%; max-width: 550px; background-color: var(--card-color); border-radius: var(--border-radius); padding: 1.5rem; box-shadow: 0 8px 32px 0 var(--shadow-color); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        @media (min-width: 500px) { .app-container { padding: 2rem; } }
+        
+        .view { display: none; opacity: 0; transition: opacity 0.4s ease-in-out; }
+        .view.active { display: block; animation: fadeIn 0.4s forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .app-header h1 { font-size: 1.5rem; font-weight: 700; color: var(--accent-color); }
+        .theme-switcher { cursor: pointer; width: 24px; height: 24px; fill: var(--text-color); opacity: 0.8; transition: 0.2s; }
+        .theme-switcher:hover { opacity: 1; transform: scale(1.1) rotate(15deg); }
+
+        .control-group { margin-bottom: 1.5rem; }
+        .control-group p { text-align: center; margin-bottom: 0.75rem; font-weight: 600; opacity: 0.8; }
+        .controls-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 0.75rem; }
+        
+        @media (max-width: 500px) {
+            #type-selector button[data-type="mixed"] { grid-column: 1 / -1; }
+        }
+
+        .control-btn { background-color: var(--primary-color); color: var(--text-color); border: none; padding: 0.8rem 1rem; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; outline: none; }
+        .control-btn:hover:not(:disabled) { transform: translateY(-3px); filter: brightness(1.1); }
+        .control-btn:active:not(:disabled) { transform: translateY(-1px) scale(0.98); }
+        .control-btn.active { background-color: var(--accent-color); color: white; }
+        .control-btn.danger { background-color: var(--incorrect-color) !important; color: white !important; }
+        .control-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .toggle-switch-container { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 1rem; opacity: 0; transition: opacity 0.3s; }
+        .toggle-switch-container.visible { opacity: 1; }
+        .toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--primary-color); transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--accent-color); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        .question-card { background-color: rgba(0,0,0,0.05); padding: 1.5rem; border-radius: var(--border-radius); }
+        .progress-container { position: relative; margin-bottom: 2rem; display: flex; align-items: center; justify-content: center; }
+        #progress-text { position: absolute; font-size: 0.75rem; font-weight: 600; color: var(--text-color); text-shadow: 0 0 3px rgba(0,0,0,0.5); z-index: 2; top: -1.2rem; }
+        .progress-bar-container { width: 100%; height: 8px; background-color: var(--primary-color); border-radius: 4px; overflow: hidden; }
+        #progress-bar { width: 0%; height: 100%; background-color: var(--accent-color); transition: width 0.3s ease-in-out, background-color 0.3s; }
+        
+        .question-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; min-height: 30px; }
+        .header-icons { display: flex; align-items: center; gap: 1rem; }
+        
+        .rule-badge { font-weight: 600; opacity: 0.9; padding: 4px 10px; border-radius: 8px; white-space: nowrap; background-color: var(--primary-color); transition: 0.3s; }
+
+        .icon-btn { cursor: pointer; width: 22px; height: 22px; fill: var(--text-color); opacity: 0.7; transition: 0.2s; }
+        .icon-btn:hover { opacity: 1; transform: scale(1.15); }
+
+        #question-text-wrapper { min-height: 80px; transition: opacity 0.2s; display: flex; flex-direction: column; justify-content: center; align-items: center; margin-bottom: 1.5rem; }
+        #question-text { font-size: 1.2rem; line-height: 1.6; text-align: center; font-weight: 600;}
+        #question-instruction { font-size: 0.85rem; opacity: 0.7; margin-bottom: 0.5rem; text-align: center; }
+        
+        #answer-options { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1rem; width: 100%; }
+        .option-btn { border: 2px solid transparent; width: 100%; text-align: center; }
+        .option-btn.correct { background-color: var(--correct-color); color: white; border-color: var(--correct-color); opacity: 1 !important; }
+        .option-btn.incorrect { background-color: var(--incorrect-color); color: white; border-color: var(--incorrect-color); opacity: 1 !important; }
+        .option-btn:disabled { opacity: 0.7; }
+        .option-btn:not(:disabled):hover { border-color: var(--accent-color); }
+        
+        .fill-blank-input { background: var(--primary-color); color: var(--text-color); border: 2px solid transparent; border-bottom: 2px solid var(--accent-color); padding: 5px 10px; font-size: 1.1rem; font-family: inherit; width: 140px; text-align: center; outline: none; transition: 0.3s; border-radius: 8px 8px 0 0; font-weight: 600; margin: 0 5px; }
+        .fill-blank-input:focus { background: var(--card-color); border-color: var(--accent-color); }
+        .fill-blank-input.correct { border-color: var(--correct-color) !important; color: var(--correct-color); }
+        .fill-blank-input.incorrect { border-color: var(--incorrect-color) !important; color: var(--incorrect-color); }
+
+        .reorder-area { display: flex; flex-wrap: wrap; gap: 10px; min-height: 60px; padding: 15px; border: 2px dashed var(--primary-color); border-radius: 12px; margin-bottom: 1rem; align-items: center; justify-content: center; width: 100%; transition: border-color 0.3s; }
+        .reorder-area.active-drop { border-color: var(--accent-color); background: rgba(0,0,0,0.02); }
+        #reorder-words-area { border: none; padding: 0; min-height: auto; }
+        .word-pill { background: var(--primary-color); color: var(--text-color); padding: 8px 16px; border-radius: 20px; font-weight: 600; cursor: pointer; border: none; transition: 0.2s; box-shadow: 0 2px 5px var(--shadow-color); font-size: 1rem; }
+        .word-pill:hover { transform: translateY(-2px); background: var(--accent-color); color: white; }
+
+        .explanation-box { background: var(--primary-color); border-left: 4px solid var(--accent-color); padding: 12px; margin-top: 15px; border-radius: 4px 8px 8px 4px; font-size: 0.9rem; text-align: left; animation: fadeIn 0.4s forwards; display: none; }
+        .explanation-box.correct { border-left-color: var(--correct-color); background: rgba(52, 199, 89, 0.1); }
+        .explanation-box.incorrect { border-left-color: var(--incorrect-color); background: rgba(255, 59, 48, 0.1); }
+
+        .results-view h2 { margin-bottom: 1rem; color: var(--accent-color); }
+        #final-score { font-size: 3rem; font-weight: 700; margin-bottom: 0.5rem; }
+        #motivational-message { margin-bottom: 2rem; opacity: 0.9; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: 0.3s; z-index: 1000; }
+        .modal-overlay.visible { opacity: 1; visibility: visible; }
+        .modal-content { background: var(--card-color); padding: 2rem; border-radius: var(--border-radius); max-width: 90%; width: 450px; text-align: center; transform: scale(0.9); transition: 0.3s; position: relative; }
+        .modal-overlay.visible .modal-content { transform: scale(1); }
+        
+        .modal-header h3 { color: var(--accent-color); margin-bottom: 1rem; font-size: 1.3rem;}
+        
+        #rule-viewer { display: none; flex-direction: column; width: 100%; }
+        #rule-content-wrapper { position: relative; overflow: hidden; min-height: 220px; display: flex; align-items: center; justify-content: center; text-align: center; margin-bottom: 1rem; }
+        .rule-step { position: absolute; width: 100%; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); opacity: 0; pointer-events: none; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .rule-step.active { position: relative; opacity: 1; transform: translateX(0); pointer-events: auto; }
+        .rule-step.enter-right { transform: translateX(40px); }
+        .rule-step.enter-left { transform: translateX(-40px); }
+        .rule-step.exit-left { transform: translateX(-40px); opacity: 0; }
+        .rule-step.exit-right { transform: translateX(40px); opacity: 0; }
+        
+        .grammar-box { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; font-weight: bold; background: rgba(0,0,0,0.05); padding: 10px; border-radius: 8px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.1); }
+        .g-item { padding: 4px 8px; border-radius: 6px; }
+        .g-subj { background: var(--primary-color); }
+        .g-aux { background: var(--accent-color); color: white; }
+        .g-verb { background: var(--correct-color); color: white; }
+
+        .rule-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; }
+        .rule-nav-btn { cursor: pointer; width: 44px; height: 44px; fill: var(--text-color); transition: 0.2s; background: var(--primary-color); border-radius: 50%; padding: 10px; }
+        .rule-nav-btn:hover:not(.disabled) { background: var(--accent-color); fill: white; transform: scale(1.1); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .rule-nav-btn.disabled { opacity: 0.2; cursor: not-allowed; }
+        
+        #modal-buttons { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1.5rem; }
+        #modal-buttons .control-btn { width: 100%; margin: 0; }
+        
+        #close-rule-btn { position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 1.5rem; color: var(--text-color); cursor: pointer; opacity: 0.5; transition: 0.2s; }
+        #close-rule-btn:hover { opacity: 1; }
+
+        #reset-progress-btn { background: none; border: none; color: var(--text-color); opacity: 0.6; text-decoration: underline; cursor: pointer; font-family: 'Poppins', sans-serif; font-size: 0.9rem; margin-top: 1rem; display: block; width: 100%; text-align: center; }
+        #reset-progress-btn:hover { opacity: 1; }
+        
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body data-theme="dark">
+
+    <div class="app-container">
+        <div class="app-header">
+            <h1>Future Forms Quiz</h1>
+            <svg id="theme-switcher" class="theme-switcher" viewBox="0 0 24 24">
+                <path class="sun" d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.64 5.64c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41l1.06 1.06c.39.39 1.02.39 1.41 0s.39-1.02 0-1.41L5.64 5.64zm12.73 12.73c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41l1.06 1.06c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41l-1.06-1.06zM18.36 5.64c.39-.39.39-1.02 0-1.41-.39-.39-1.02-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.02 0 1.41s1.02.39 1.41 0l1.06-1.06zm-12.73 12.73c.39-.39.39-1.02 0-1.41-.39-.39-1.02-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.02 0 1.41s1.02.39 1.41 0l1.06-1.06z"/>
+                <svg class="moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"> <path d="M6 .278a.77.77 0 0 1 .08.858 7.2 7.2 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277q.792-.001 1.533-.16a.79.79 0 0 1 .81.316.73.73 0 0 1-.031.893A8.35 8.35 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.75.75 0 0 1 6 .278M4.858 1.311A7.27 7.27 0 0 0 1.025 7.71c0 4.02 3.279 7.276 7.319 7.276a7.32 7.32 0 0 0 5.205-2.162q-.506.063-1.029.063c-4.61 0-8.343-3.714-8.343-8.29 0-1.167.242-2.278.681-3.286"/> </svg>
+            </svg>
+        </div>
+
+        <div id="selection-view" class="view active">
+            <div class="control-group"><p>Argomento Futuro</p>
+                <div class="controls-grid" id="type-selector">
+                    <button class="control-btn" data-type="will">Will</button>
+                    <button class="control-btn" data-type="going_to">Going to</button>
+                    <button class="control-btn" data-type="present_continuous">Pres. Cont.</button>
+                    <button class="control-btn" data-type="present_simple">Pres. Simple</button>
+                    <button class="control-btn active" data-type="mixed">Mixed</button>
+                </div>
+            </div>
+            <div class="control-group"><p>Lunghezza Quiz</p>
+                <div class="controls-grid" id="length-selector">
+                    <button class="control-btn active" data-length="5">5 Domande</button>
+                    <button class="control-btn" data-length="10">10 Domande</button>
+                    <button class="control-btn" data-length="15">15 Domande</button>
+                    <button class="control-btn" data-length="max">Tutte</button>
+                </div>
+            </div>
+            <div class="control-group toggle-switch-container visible" id="show-type-toggle-container">
+                <p style="margin: 0;">Mostra indizio regola in "Mixed"</p>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="show-type-toggle" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <button id="resume-quiz-btn" class="control-btn hidden" style="width:100%; margin-top:1rem; background-color: var(--correct-color); color:white; font-size: 1.1rem; padding: 1rem;">Riprendi Quiz</button>
+            <button id="start-quiz-btn" class="control-btn active" style="width:100%; margin-top:1rem; font-size: 1.1rem; padding: 1rem;">Inizia Quiz</button>
+            <button id="reset-progress-btn" class="hidden">Resetta Progressi</button>
+        </div>
+
+        <div id="quiz-view" class="view">
+            <div class="question-card">
+                <div class="progress-container"><div id="progress-text"></div><div class="progress-bar-container"><div id="progress-bar"></div></div></div>
+                <div class="question-header">
+                    <div id="question-type-badge" class="rule-badge"></div>
+                    <div class="header-icons">
+                        <!-- Rule Book Icon -->
+                        <svg id="rule-btn" class="icon-btn" viewBox="0 0 24 24"><path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-.1zM11 18.49c-1.5-.7-3.4-1.19-4.5-1.19-1.1 0-2.4.29-3.5.69V7.5c1.1-.4 2.4-.69 3.5-.69 1.1 0 3 .49 4.5 1.19v10.49zm10 .69c-1.1-.4-2.4-.69-3.5-.69-1.1 0-3 .49-4.5 1.19V7.5c1.5-.7 3.4-1.19 4.5-1.19 1.1 0 2.4.29 3.5.69v10.49z"/></svg>
+                        <!-- Pause Icon -->
+                        <svg id="pause-btn" class="icon-btn" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                    </div>
+                </div>
+                
+                <div id="question-text-wrapper">
+                    <div id="question-instruction"></div>
+                    <div id="question-text"></div>
+                </div>
+                
+                <div id="answer-options"></div>
+                
+                <div id="explanation-box" class="explanation-box"></div>
+                <button id="next-btn" class="control-btn hidden" style="width:100%; margin-top:1rem;">Prossima</button>
+            </div>
+        </div>
+        
+        <div id="results-view" class="view">
+            <div class="results-view" style="text-align:center;">
+                <h2>Quiz Completato!</h2>
+                <p id="final-score"></p>
+                <p id="motivational-message"></p>
+                <button id="restart-btn" class="control-btn active" style="width:100%;">Torna alla Home</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="modal" class="modal-overlay">
+        <div class="modal-content">
+            <button id="close-rule-btn" class="hidden">&times;</button>
+            <div class="modal-header">
+                <h3 id="modal-title"></h3>
+            </div>
+            
+            <p id="modal-text"></p>
+            <div id="modal-buttons"></div>
+
+            <div id="rule-viewer">
+                <div id="rule-content-wrapper"></div>
+                <div class="rule-controls">
+                    <svg id="rule-prev" class="rule-nav-btn" viewBox="0 0 24 24"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6z"/></svg>
+                    <div id="rule-dots" style="display:flex; gap:5px; align-items:center;"></div>
+                    <svg id="rule-next" class="rule-nav-btn" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = {
+            will: [
+                { format: "multiple_choice", sentence: "I think people ___ on Mars in the future.", answer: "will live", distractors: ["are living", "are going to live"], explanation: "Usiamo 'will' per fare previsioni basate sulle nostre opinioni o speranze." },
+                { format: "fill_blank", sentence: "It's cold in here. I ___ (close) the window.", answer: ["will close", "'ll close"], explanation: "Usiamo 'will' per decisioni spontanee prese nel momento esatto in cui parliamo." },
+                { format: "reorder", words: ["I", "promise", "I", "won't", "tell", "anyone"], answer: "I promise I won't tell anyone", explanation: "'Will' (e la sua forma negativa 'won't') è il tempo usato per fare promesse." },
+                { format: "error_correction", sentence: "Scegli la frase corretta per un'offerta di aiuto spontanea:", answer: "I will carry those bags for you.", distractors: ["I am carrying those bags for you.", "I carry those bags for you."], explanation: "Per offrirsi di fare qualcosa sul momento, si usa sempre 'will'." },
+                { format: "fill_blank", sentence: "A: The phone is ringing! B: I ___ (answer) it!", answer: ["will answer", "'ll answer"], explanation: "Decisione spontanea (reazione immediata al telefono che squilla)." },
+                { format: "multiple_choice", sentence: "Do you think it ___ tomorrow?", answer: "will rain", distractors: ["is raining", "rains"], explanation: "Previsione basata su un'opinione ('Do you think...')." },
+                { format: "reorder", words: ["Perhaps", "we", "will", "go", "to", "London"], answer: "Perhaps we will go to London", explanation: "Con parole che esprimono incertezza come 'perhaps', 'maybe', si usa 'will'." },
+                { format: "multiple_choice", sentence: "I'm sure you ___ the exam. You studied hard.", answer: "will pass", distractors: ["pass", "are passing"], explanation: "Previsione accompagnata da 'I'm sure'." },
+                { format: "fill_blank", sentence: "I don't have money. Don't worry, I ___ (lend) you some.", answer: ["will lend", "'ll lend"], explanation: "Un'offerta/decisione presa nel momento in cui si scopre il problema." },
+                { format: "error_correction", sentence: "Trova la forma corretta:", answer: "In 2050, cars will fly.", distractors: ["In 2050, cars are flying.", "In 2050, cars fly."], explanation: "Una previsione a lungo termine basata sull'immaginazione richiede 'will'." }
+            ],
+            going_to: [
+                { format: "multiple_choice", sentence: "Look at those dark clouds! It ___.", answer: "is going to rain", distractors: ["will rain", "rains"], explanation: "Si usa 'going to' per previsioni basate su prove evidenti nel presente (le nuvole nere)." },
+                { format: "reorder", words: ["I", "am", "going", "to", "travel", "to", "Paris"], answer: "I am going to travel to Paris", explanation: "'Going to' si usa per intenzioni e piani decisi prima di parlare." },
+                { format: "fill_blank", sentence: "Watch out! You ___ (drop) that glass!", answer: ["are going to drop", "'re going to drop"], explanation: "C'è l'evidenza immediata che l'azione sta per accadere (il bicchiere sta scivolando)." },
+                { format: "error_correction", sentence: "Scegli l'espressione corretta per esprimere un piano futuro già deciso:", answer: "He is going to buy a new car.", distractors: ["He will buy a new car.", "He buys a new car."], explanation: "Per intenzioni già meditate si usa 'be going to'." },
+                { format: "fill_blank", sentence: "My sister is pregnant. She ___ (have) a baby.", answer: ["is going to have", "'s going to have"], explanation: "L'evidenza fisica (la gravidanza) ci permette di prevedere l'evento con certezza." },
+                { format: "multiple_choice", sentence: "They have saved enough money, so they ___ buy a house.", answer: "are going to", distractors: ["will", "are"], explanation: "Il fatto che abbiano risparmiato indica un piano prestabilito." },
+                { format: "reorder", words: ["What", "are", "you", "going", "to", "do", "tomorrow?"], answer: "What are you going to do tomorrow?", explanation: "Per chiedere dei piani di qualcuno, si usa la struttura interrogativa di 'going to'." },
+                { format: "fill_blank", sentence: "Look at the time! We ___ (miss) the train.", answer: ["are going to miss", "'re going to miss"], explanation: "L'orario attuale è la prova evidente che perderemo il treno." },
+                { format: "multiple_choice", sentence: "I ___ stop eating junk food. I made this decision yesterday.", answer: "am going to", distractors: ["will", "do"], explanation: "La decisione è stata presa IERI, quindi è un'intenzione preesistente, non spontanea." },
+                { format: "error_correction", sentence: "Quale frase usa 'going to' correttamente?", answer: "She is going to study medicine next year.", distractors: ["She going to study medicine.", "She is go to study medicine."], explanation: "La struttura corretta è: Soggetto + am/is/are + going to + verbo base." }
+            ],
+            present_continuous: [
+                { format: "multiple_choice", sentence: "I ___ my dentist at 3 PM tomorrow.", answer: "am meeting", distractors: ["meet", "will meet"], explanation: "Il Present Continuous si usa per appuntamenti prefissati (arrangements) con data/ora precisa." },
+                { format: "reorder", words: ["We", "are", "having", "a", "party", "on", "Saturday"], answer: "We are having a party on Saturday", explanation: "L'organizzazione di una festa è un piano definitivo che coinvolge altre persone." },
+                { format: "fill_blank", sentence: "She ___ (fly) to London on Friday. She has the tickets.", answer: ["is flying", "'s flying"], explanation: "Avere già i biglietti rende l'evento un 'arrangement' definitivo." },
+                { format: "error_correction", sentence: "Scegli la frase corretta per descrivere un incontro organizzato:", answer: "They are playing tennis this afternoon.", distractors: ["They play tennis this afternoon.", "They playing tennis this afternoon."], explanation: "Soggetto + am/is/are + verbo-ing per esprimere appuntamenti futuri." },
+                { format: "multiple_choice", sentence: "I ___ dinner with my boss tonight. I booked the restaurant.", answer: "am having", distractors: ["have", "will have"], explanation: "Aver prenotato il ristorante conferma che si tratta di un piano concordato." },
+                { format: "fill_blank", sentence: "What ___ (you / do) tomorrow evening? Let's meet up!", answer: "are you doing", explanation: "Si usa il present continuous per chiedere quali accordi presi ha l'altra persona." },
+                { format: "reorder", words: ["My", "parents", "are", "visiting", "me", "next", "weekend"], answer: "My parents are visiting me next weekend", explanation: "Una visita dei genitori è tipicamente un evento concordato in anticipo." },
+                { format: "multiple_choice", sentence: "He ___ work early today because he has a doctor's appointment.", answer: "is leaving", distractors: ["leaves", "will leave"], explanation: "Il permesso è già stato accordato a causa dell'appuntamento medico." },
+                { format: "error_correction", sentence: "Trova la forma corretta (matrimonio organizzato):", answer: "We are getting married in June.", distractors: ["We will get married in June.", "We get married in June."], explanation: "Un matrimonio con chiesa prenotata è il classico esempio di 'arrangement'." },
+                { format: "fill_blank", sentence: "Tom ___ (start) his new job on Monday morning.", answer: "is starting", explanation: "Aver firmato un contratto d'assunzione rende l'inizio del lavoro un accordo definitivo." }
+            ],
+            present_simple: [
+                { format: "multiple_choice", sentence: "The train ___ at 8:00 AM tomorrow.", answer: "leaves", distractors: ["is leaving", "will leave"], explanation: "Il Present Simple per il futuro si usa unicamente per orari prestabiliti (timetables)." },
+                { format: "fill_blank", sentence: "What time ___ the movie ___ (start)?", answer: "does start", explanation: "Gli orari di cinema/teatri sono fissi e richiedono il Present Simple (ausiliare DO/DOES nelle domande)." },
+                { format: "reorder", words: ["My", "flight", "arrives", "at", "10:30", "PM"], answer: "My flight arrives at 10:30 PM", explanation: "I voli aerei seguono un orario ufficiale, quindi usiamo il Present Simple." },
+                { format: "error_correction", sentence: "Scegli la forma corretta per un orario scolastico:", answer: "The school term starts on September 5th.", distractors: ["The school term is starting on September 5th.", "The school term will start on September 5th."], explanation: "Le date di inizio scuole/corsi rientrano nella categoria degli eventi programmati a calendario." },
+                { format: "multiple_choice", sentence: "Hurry up! The bus ___ in five minutes.", answer: "departs", distractors: ["is departing", "will depart"], explanation: "Anche se manca poco, l'autobus segue un orario stabilito dalla compagnia di trasportos." },
+                { format: "fill_blank", sentence: "The concert ___ (begin) at 9:00 PM tonight.", answer: "begins", explanation: "L'orario di inizio di uno spettacolo richiede il verbo base + 's' per la terza persona." },
+                { format: "reorder", words: ["Tomorrow", "is", "Tuesday"], answer: "Tomorrow is Tuesday", explanation: "Il calendario stesso è il 'timetable' per eccellenza!" },
+                { format: "multiple_choice", sentence: "Our English lesson ___ at 11:15 AM.", answer: "finishes", distractors: ["is finishing", "will finish"], explanation: "Come per l'inizio, anche l'orario di fine di una lezione programmata segue il Present Simple." },
+                { format: "error_correction", sentence: "Qual è la domanda corretta per chiedere l'orario di un treno?", answer: "When does your train leave?", distractors: ["When is your train leaving?", "When will your train leave?"], explanation: "Nelle domande sugli orari usiamo Does/Do + verbo base." },
+                { format: "fill_blank", sentence: "What time ___ the sun ___ (set) today?", answer: "does set", explanation: "Gli eventi astronomici (alba, tramonto) sono calcolati matematicamente come un orario." }
+            ]
+        };
+
+        const animatedRules = {
+            will: [
+                { html: "<h4>Future Simple (Will)</h4><p>Il futuro con <b>Will</b> si usa quando non c'è un piano preciso. È il futuro dell'istinto e dell'incertezza.</p><div class='grammar-box'><span class='g-item g-subj'>Soggetto</span> + <span class='g-item g-aux'>will / won't</span> + <span class='g-item g-verb'>Verbo base</span></div>" },
+                { html: "<h4>1. Decisioni Spontanee</h4><p>Prendi una decisione nel momento esatto in cui parli (nessuna premeditazione).</p><br><p style='text-align:left; background:rgba(0,0,0,0.05); padding:10px; border-radius:8px;'><em>[Il telefono squilla]</em><br><b>A:</b> I <span style='color:var(--will-color);font-weight:bold;'>will answer</span> it!</p>" },
+                { html: "<h4>2. Promesse e Offerte</h4><p>Ti offri volontariamente di fare qualcosa o fai una promessa.</p><br><p style='text-align:left; background:rgba(0,0,0,0.05); padding:10px; border-radius:8px;'><em>I promise I <span style='color:var(--will-color);font-weight:bold;'>won't tell</span> anyone.</em><br><em>I <span style='color:var(--will-color);font-weight:bold;'>will help</span> you with those heavy bags.</em></p>" },
+                { html: "<h4>3. Previsioni Basate su Opinioni</h4><p>Dici cosa <em>pensi</em> accadrà (spesso con <i>I think, probably, I'm sure</i>).</p><br><p style='text-align:left; background:rgba(0,0,0,0.05); padding:10px; border-radius:8px;'><em>I think people <span style='color:var(--will-color);font-weight:bold;'>will live</span> on Mars in 2050.</em></p>" }
+            ],
+            going_to: [
+                { html: "<h4>Be Going To</h4><p>Si usa per il futuro dell'<b>intenzione</b> e dell'<b>evidenza</b>.</p><div class='grammar-box'><span class='g-item g-subj'>Soggetto</span> + <span class='g-item g-aux'>am/is/are + going to</span> + <span class='g-item g-verb'>Verbo base</span></div>" },
+                { html: "<h4>1. Intenzioni e Piani</h4><p>Hai già deciso di fare qualcosa prima di parlarne, ma forse non hai ancora organizzato i dettagli finali.</p><br><p style='text-align:left; background:rgba(0,0,0,0.05); padding:10px; border-radius:8px;'><em>I <span style='color:var(--going-to-color);font-weight:bold;'>am going to study</span> medicine at university next year.</em> (È il mio piano)</p>" },
+                { html: "<h4>2. Previsioni con Prove Evidenti</h4><p>C'è qualcosa nel presente che ti fa capire chiaramente cosa sta per succedere.</p><br><p style='text-align:left; background:rgba(0,0,0,0.05); padding:10px; border-radius:8px;'><em>Look at those black clouds! It <span style='color:var(--going-to-color);font-weight:bold;'>is going to rain</span>!</em></p>" }
+            ],
+            present_continuous: [
+                { html: "<h4>Present Continuous (Future)</h4><p>Si usa per il futuro dell'<b>organizzazione definitiva</b> (Arrangements).</p><div class='grammar-box'><span class='g-item g-subj'>Soggetto</span> + <span class='g-item g-aux'>am/is/are</span> + <span class='g-item g-verb'>Verbo in -ING</span></div>" },
+                { html: "<h4>Appuntamenti Prefissati</h4><p>Hai già organizzato tutto: c'è un accordo con altre persone, o hai comprato i biglietti/prenotato un posto. Di solito è menzionata l'ora o il luogo.</p><br><p style='text-align:left; background:rgba(0,0,0,0.05); padding:10px; border-radius:8px;'><em>I <span style='color:var(--pres-cont-color);font-weight:bold;'>am meeting</span> the dentist at 3 PM tomorrow.</em><br><em>We <span style='color:var(--pres-cont-color);font-weight:bold;'>are flying</span> to Paris on Saturday.</em></p>" }
+            ],
+            present_simple: [
+                { html: "<h4>Present Simple (Future)</h4><p>Si usa per parlare del futuro seguendo la regolarità degli <b>orari ufficiali</b> (Timetables).</p><div class='grammar-box'><span class='g-item g-subj'>Soggetto</span> + <span class='g-item g-verb'>Verbo Base (aggiungi 's' alla 3a persona)</span></div>" },
+                { html: "<h4>Orari Pre-stabiliti</h4><p>Eventi che non dipendono da te, ma da un programma ufficiale: treni, aerei, cinema, lezioni, calendario.</p><br><p style='text-align:left; background:rgba(0,0,0,0.05); padding:10px; border-radius:8px;'><em>The train <span style='color:var(--pres-simp-color);font-weight:bold;'>leaves</span> at 8:00 AM.</em><br><em>The film <span style='color:var(--pres-simp-color);font-weight:bold;'>starts</span> at 21:00.</em><br><em>Tomorrow <span style='color:var(--pres-simp-color);font-weight:bold;'>is</span> Tuesday.</em></p>" }
+            ]
+        };
+
+        let quizLength = 5, currentType = 'mixed', currentQuestionIndex = 0, score = 0, quizQuestions = [], showTypeInMixed = true;
+        let currentRuleKey = '', currentRuleStep = 0;
+        let isAnimating = false;
+        
+        const views = { selection: document.getElementById("selection-view"), quiz: document.getElementById("quiz-view"), results: document.getElementById("results-view") };
+        const progressTextEl = document.getElementById("progress-text"), questionTextWrapper = document.getElementById("question-text-wrapper"), questionInstructionEl = document.getElementById("question-instruction"), questionTextEl = document.getElementById("question-text"), answerOptionsEl = document.getElementById("answer-options"), nextBtn = document.getElementById("next-btn"), explanationBoxEl = document.getElementById("explanation-box"), progressBar = document.getElementById("progress-bar"), ruleBadge = document.getElementById("question-type-badge");
+        const modal = document.getElementById("modal"), modalTitle = document.getElementById("modal-title"), modalText = document.getElementById("modal-text"), modalButtons = document.getElementById("modal-buttons"), ruleViewer = document.getElementById("rule-viewer"), ruleContentWrapper = document.getElementById("rule-content-wrapper"), closeRuleBtn = document.getElementById("close-rule-btn"), rulePrevBtn = document.getElementById("rule-prev"), ruleNextBtn = document.getElementById("rule-next"), ruleDots = document.getElementById("rule-dots");
+        const themeSwitcher = document.getElementById("theme-switcher");
+        
+        function init() {
+            document.getElementById("type-selector").addEventListener('click', handleSelection);
+            document.getElementById("length-selector").addEventListener('click', handleSelection);
+            
+            document.getElementById("start-quiz-btn").addEventListener('click', handleStartQuizClick);
+            document.getElementById("resume-quiz-btn").addEventListener('click', resumeQuiz);
+            
+            nextBtn.addEventListener('click', nextQuestion);
+            document.getElementById("restart-btn").addEventListener('click', goHome);
+            document.getElementById("rule-btn").addEventListener('click', () => openRuleModal(quizQuestions[currentQuestionIndex].type));
+            document.getElementById("pause-btn").addEventListener('click', confirmPause);
+            document.getElementById("reset-progress-btn").addEventListener('click', confirmReset);
+            themeSwitcher.addEventListener('click', toggleTheme);
+            
+            rulePrevBtn.addEventListener('click', () => navigateRule(-1));
+            ruleNextBtn.addEventListener('click', () => navigateRule(1));
+            closeRuleBtn.addEventListener('click', hideModal);
+
+            modal.addEventListener('click', e => { if(e.target === modal) hideModal(); });
+            
+            loadTheme();
+            updateSelectionUI();
+        }
+
+        function handleSelection(e) {
+            if(!e.target.matches('.control-btn')) return;
+            const parent = e.target.parentElement;
+            parent.querySelector('.active').classList.remove('active');
+            e.target.classList.add('active');
+            if(parent.id === 'type-selector') {
+                currentType = e.target.dataset.type;
+                document.getElementById("show-type-toggle-container").classList.toggle('visible', currentType === 'mixed');
+            }
+            if(parent.id === 'length-selector') {
+                quizLength = e.target.dataset.length === 'max' ? 'max' : parseInt(e.target.dataset.length);
+            }
+        }
+
+        function showView(viewName) {
+            Object.values(views).forEach(v => v.classList.remove('active'));
+            views[viewName].classList.add('active');
+        }
+
+        function updateSelectionUI() {
+            const saved = loadProgress();
+            const resumeBtn = document.getElementById("resume-quiz-btn");
+            const resetBtn = document.getElementById("reset-progress-btn");
+            const startBtn = document.getElementById("start-quiz-btn");
+            
+            if (saved && saved.currentQuestionIndex < saved.quizQuestions.length) {
+                resumeBtn.classList.remove('hidden');
+                resetBtn.classList.remove('hidden');
+                startBtn.textContent = "Inizia Nuovo (Cancella Salvataggio)";
+                startBtn.classList.remove('active');
+            } else {
+                resumeBtn.classList.add('hidden');
+                resetBtn.classList.add('hidden');
+                startBtn.textContent = "Inizia Quiz";
+                startBtn.classList.add('active');
+            }
+        }
+
+        function handleStartQuizClick() {
+            if (loadProgress()) {
+                showStandardModal('Nuovo Quiz', 'Iniziando un nuovo quiz, i tuoi progressi salvati andranno persi. Vuoi procedere?', [
+                    {text: 'Annulla', action: hideModal},
+                    {text: 'Sì, inizia nuovo', action: () => { hideModal(); startQuiz(); }, class: 'danger'}
+                ]);
+            } else {
+                startQuiz();
+            }
+        }
+
+        function startQuiz() {
+            clearProgress();
+            showTypeInMixed = document.getElementById("show-type-toggle").checked;
+            let pool = (currentType === 'mixed') 
+                ? Object.values(questions).flat().map((q, i) => {
+                    let typeKey = 'will';
+                    if (i >= questions.will.length && i < questions.will.length + questions.going_to.length) typeKey = 'going_to';
+                    else if (i >= questions.will.length + questions.going_to.length && i < questions.will.length + questions.going_to.length + questions.present_continuous.length) typeKey = 'present_continuous';
+                    else if (i >= questions.will.length + questions.going_to.length + questions.present_continuous.length) typeKey = 'present_simple';
+                    return {...q, type: typeKey};
+                  }) 
+                : questions[currentType].map(q => ({...q, type: currentType}));
+            
+            pool = pool.sort(() => .5 - Math.random());
+            const finalLength = (quizLength === 'max') ? pool.length : Math.min(quizLength, pool.length);
+            quizQuestions = pool.slice(0, finalLength);
+            currentQuestionIndex = 0;
+            score = 0;
+            showView('quiz');
+            loadQuestion();
+        }
+
+        function resumeQuiz() {
+            const saved = loadProgress();
+            if (saved) {
+                quizQuestions = saved.quizQuestions; 
+                currentQuestionIndex = saved.currentQuestionIndex; 
+                score = saved.score; 
+                currentType = saved.currentType; 
+                quizLength = saved.quizLength;
+                showView('quiz'); 
+                loadQuestion(); 
+            }
+        }
+
+        function loadQuestion() {
+            const currentQ = quizQuestions[currentQuestionIndex];
+            
+            let typeName = currentQ.type.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+            if (typeName === 'Going To') typeName = 'Be Going To';
+            let typeColor = 'var(--accent-color)';
+            switch(currentQ.type) {
+                case 'will': typeColor = 'var(--will-color)'; break;
+                case 'going_to': typeColor = 'var(--going-to-color)'; break;
+                case 'present_continuous': typeColor = 'var(--pres-cont-color)'; break;
+                case 'present_simple': typeColor = 'var(--pres-simp-color)'; break;
+            }
+            
+            ruleBadge.textContent = typeName;
+            ruleBadge.style.color = typeColor;
+            
+            if(currentType === 'mixed' && !showTypeInMixed) {
+                ruleBadge.style.visibility = 'hidden'; 
+                progressBar.style.backgroundColor = 'var(--accent-color)'; 
+            } else {
+                ruleBadge.style.visibility = 'visible'; 
+                progressBar.style.backgroundColor = typeColor;
+            }
+            
+            answerOptionsEl.innerHTML = '';
+            explanationBoxEl.style.display = 'none';
+            explanationBoxEl.className = 'explanation-box';
+            nextBtn.classList.add('hidden');
+            
+            if (currentQ.format === 'fill_blank') {
+                questionInstructionEl.textContent = "Scrivi la forma corretta nello spazio (usa le contrazioni se vuoi).";
+                
+                const parts = currentQ.sentence.split('___');
+                questionTextEl.innerHTML = parts[0] + '<input type="text" id="fill-input" class="fill-blank-input" autocomplete="off">' + parts[1];
+                
+                const checkBtn = document.createElement('button');
+                checkBtn.className = 'control-btn active';
+                checkBtn.textContent = 'Verifica';
+                checkBtn.style.width = '100%';
+                checkBtn.onclick = () => validateFillBlank(currentQ);
+                answerOptionsEl.appendChild(checkBtn);
+                
+                setTimeout(() => {
+                    const inp = document.getElementById('fill-input');
+                    if(inp) {
+                        inp.focus();
+                        inp.addEventListener('keypress', (e) => { if(e.key === 'Enter') validateFillBlank(currentQ); });
+                    }
+                }, 100);
+
+            } else if (currentQ.format === 'reorder') {
+                questionInstructionEl.textContent = "Riordina le parole per formare la frase corretta. Clicca sui blocchi.";
+                questionTextEl.innerHTML = "";
+                
+                const answerArea = document.createElement('div');
+                answerArea.className = 'reorder-area';
+                answerArea.id = 'reorder-answer-area';
+                
+                const wordsArea = document.createElement('div');
+                wordsArea.className = 'reorder-area';
+                wordsArea.id = 'reorder-words-area';
+                
+                const words = [...currentQ.words].sort(() => 0.5 - Math.random());
+                words.forEach(word => {
+                    const pill = document.createElement('button');
+                    pill.className = 'word-pill';
+                    pill.textContent = word;
+                    pill.onclick = () => {
+                        if(pill.parentElement === wordsArea) answerArea.appendChild(pill);
+                        else wordsArea.appendChild(pill);
+                        answerArea.classList.toggle('active-drop', answerArea.children.length > 0);
+                    };
+                    wordsArea.appendChild(pill);
+                });
+                
+                answerOptionsEl.appendChild(answerArea);
+                answerOptionsEl.appendChild(wordsArea);
+                
+                const checkBtn = document.createElement('button');
+                checkBtn.className = 'control-btn active';
+                checkBtn.textContent = 'Verifica';
+                checkBtn.style.width = '100%';
+                checkBtn.onclick = () => validateReorder(currentQ, answerArea);
+                answerOptionsEl.appendChild(checkBtn);
+                
+            } else {
+                questionInstructionEl.textContent = currentQ.format === 'error_correction' ? "Scegli l'opzione grammaticalmente corretta." : "Scegli l'opzione corretta per completare la frase.";
+                questionTextEl.innerHTML = currentQ.sentence.replace('___', '<span style="color:var(--accent-color); font-weight:bold;">_____</span>');
+                
+                const options = [...currentQ.distractors, currentQ.answer].sort(() => .5 - Math.random());
+                options.forEach(option => {
+                    const btn = document.createElement('button');
+                    btn.className = 'control-btn option-btn';
+                    btn.textContent = option;
+                    btn.onclick = () => validateMultipleChoice(btn, currentQ);
+                    answerOptionsEl.appendChild(btn);
+                });
+            }
+            
+            questionTextWrapper.style.opacity = 1;
+            updateProgressBar();
+        }
+
+        function validateMultipleChoice(btn, currentQ) {
+            disableAllButtons();
+            const isCorrect = btn.textContent === currentQ.answer;
+            handleResult(isCorrect, currentQ);
+            
+            const allButtons = answerOptionsEl.querySelectorAll('.option-btn');
+            if(isCorrect) {
+                btn.classList.add('correct');
+                allButtons.forEach(b => { if(b !== btn) b.style.opacity = '0.5'; });
+            } else {
+                btn.classList.add('incorrect');
+                allButtons.forEach(b => {
+                    if(b.textContent === currentQ.answer) b.classList.add('correct');
+                    else if(b !== btn) b.style.opacity = '0.5';
+                });
+            }
+        }
+
+        function validateFillBlank(currentQ) {
+            const inputEl = document.getElementById('fill-input');
+            if(!inputEl || inputEl.disabled) return;
+            const userText = inputEl.value.trim().toLowerCase().replace(/ +/g, ' ');
+            const correctAnswers = (Array.isArray(currentQ.answer) ? currentQ.answer : [currentQ.answer]).map(a => a.toLowerCase());
+            
+            const isCorrect = correctAnswers.includes(userText);
+            
+            inputEl.disabled = true;
+            inputEl.classList.add(isCorrect ? 'correct' : 'incorrect');
+            if(!isCorrect) inputEl.value = Array.isArray(currentQ.answer) ? currentQ.answer[0] : currentQ.answer;
+            
+            disableAllButtons();
+            handleResult(isCorrect, currentQ);
+        }
+
+        function validateReorder(currentQ, answerArea) {
+            disableAllButtons();
+            const pills = Array.from(answerArea.children);
+            const userSentence = pills.map(p => p.textContent).join(' ');
+            const isCorrect = userSentence.replace(/[.,!?]/g, '').trim().toLowerCase() === currentQ.answer.replace(/[.,!?]/g, '').trim().toLowerCase();
+            
+            pills.forEach(p => p.style.background = isCorrect ? 'var(--correct-color)' : 'var(--incorrect-color)');
+            pills.forEach(p => p.style.color = 'white');
+            
+            if(!isCorrect) {
+                setTimeout(() => {
+                    answerArea.innerHTML = '';
+                    const correctWords = currentQ.answer.split(' ');
+                    correctWords.forEach(w => {
+                        const pill = document.createElement('div');
+                        pill.className = 'word-pill';
+                        pill.style.background = 'var(--correct-color)';
+                        pill.style.color = 'white';
+                        pill.textContent = w;
+                        answerArea.appendChild(pill);
+                    });
+                }, 1000);
+            }
+
+            handleResult(isCorrect, currentQ);
+        }
+
+        function handleResult(isCorrect, currentQ) {
+            if(isCorrect) score++;
+            
+            if(currentType === 'mixed' && !showTypeInMixed) {
+                let typeColor = 'var(--accent-color)';
+                switch(currentQ.type) { case 'will': typeColor = 'var(--will-color)'; break; case 'going_to': typeColor = 'var(--going-to-color)'; break; case 'present_continuous': typeColor = 'var(--pres-cont-color)'; break; case 'present_simple': typeColor = 'var(--pres-simp-color)'; break; }
+                progressBar.style.backgroundColor = typeColor;
+            }
+            
+            explanationBoxEl.innerHTML = `<b>${isCorrect ? 'Corretto!' : 'Sbagliato.'}</b> ${currentQ.explanation}`;
+            explanationBoxEl.className = `explanation-box ${isCorrect ? 'correct' : 'incorrect'}`;
+            explanationBoxEl.style.display = 'block';
+            
+            nextBtn.classList.remove('hidden');
+            nextBtn.textContent = (currentQuestionIndex === quizQuestions.length - 1) ? 'Fine Quiz' : 'Prossima';
+            saveProgress();
+        }
+
+        function disableAllButtons() {
+            const btns = answerOptionsEl.querySelectorAll('button');
+            btns.forEach(b => { if(b.textContent !== 'Prossima') b.disabled = true; });
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if(currentQuestionIndex < quizQuestions.length) {
+                questionTextWrapper.style.opacity = 0;
+                explanationBoxEl.style.display = 'none';
+                setTimeout(loadQuestion, 200);
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            clearProgress();
+            showView('results');
+            const percentage = Math.round(score / quizQuestions.length * 100);
+            document.getElementById("final-score").textContent = `${score}/${quizQuestions.length} (${percentage}%)`;
+            let message = "Non ti arrendere, riprova e migliorerai!";
+            if(percentage === 100) message = "Perfect score! Sei un esperto dei tempi futuri!";
+            else if(percentage >= 80) message = "Ottimo lavoro! Ci sei quasi.";
+            else if(percentage >= 50) message = "Non male! Continua a fare pratica.";
+            document.getElementById("motivational-message").textContent = message;
+        }
+
+        function goHome() { 
+            hideModal(); 
+            showView('selection'); 
+            updateSelectionUI();
+        }
+
+        function updateProgressBar() {
+            progressBar.style.width = `${((currentQuestionIndex + 1) / quizQuestions.length) * 100}%`;
+            progressTextEl.textContent = `${currentQuestionIndex + 1} / ${quizQuestions.length}`;
+        }
+
+        function openRuleModal(ruleKey) {
+            currentRuleKey = ruleKey;
+            currentRuleStep = 0;
+            isAnimating = false;
+            
+            modalTitle.textContent = "Spiegazione Regola";
+            modalText.style.display = 'none';
+            modalButtons.style.display = 'none';
+            ruleViewer.style.display = 'flex';
+            closeRuleBtn.classList.remove('hidden');
+            
+            renderRuleStep('next', true);
+            modal.classList.add('visible');
+        }
+
+        function navigateRule(dir) {
+            if (isAnimating) return;
+            
+            const steps = animatedRules[currentRuleKey];
+            if (dir === 1 && currentRuleStep < steps.length - 1) {
+                currentRuleStep++;
+                renderRuleStep('next');
+            } else if (dir === -1 && currentRuleStep > 0) {
+                currentRuleStep--;
+                renderRuleStep('prev');
+            }
+        }
+
+        function renderRuleStep(animationDir, initial = false) {
+            if (!initial) isAnimating = true;
+            
+            const steps = animatedRules[currentRuleKey];
+            const newStepEl = document.createElement('div');
+            newStepEl.className = `rule-step ${initial ? 'active' : (animationDir === 'next' ? 'enter-right' : 'enter-left')}`;
+            newStepEl.innerHTML = steps[currentRuleStep].html;
+            
+            const oldElements = ruleContentWrapper.querySelectorAll('.rule-step');
+            oldElements.forEach(oldEl => {
+                if(!initial) {
+                    oldEl.classList.remove('active');
+                    oldEl.classList.add(animationDir === 'next' ? 'exit-left' : 'exit-right');
+                    setTimeout(() => { if(oldEl.parentNode) oldEl.remove() }, 400);
+                } else {
+                    oldEl.remove();
+                }
+            });
+            
+            ruleContentWrapper.appendChild(newStepEl);
+            if(!initial) {
+                void newStepEl.offsetWidth; 
+                newStepEl.classList.add('active');
+                newStepEl.classList.remove('enter-right', 'enter-left');
+                setTimeout(() => { isAnimating = false; }, 400);
+            }
+
+            ruleDots.innerHTML = '';
+            steps.forEach((_, i) => {
+                const dot = document.createElement('div');
+                dot.style.width = '8px'; dot.style.height = '8px'; dot.style.borderRadius = '50%';
+                dot.style.background = i === currentRuleStep ? 'var(--accent-color)' : 'var(--primary-color)';
+                dot.style.transition = '0.3s';
+                ruleDots.appendChild(dot);
+            });
+            rulePrevBtn.classList.toggle('disabled', currentRuleStep === 0);
+            ruleNextBtn.classList.toggle('disabled', currentRuleStep === steps.length - 1);
+        }
+
+        function confirmPause() {
+            showStandardModal('Pausa Quiz', 'Vuoi mettere in pausa per riprendere più tardi?', [
+                {text: 'Torna al quiz', action: hideModal, class: 'active'},
+                {text: 'Salva e chiudi', action: pauseQuiz},
+                {text: 'Abbandona e cancella', action: () => { clearProgress(); goHome(); }, class: 'danger'}
+            ]);
+        }
+
+        function pauseQuiz() {
+            saveProgress();
+            goHome();
+        }
+
+        function confirmReset() {
+            showStandardModal('Resettare i Progressi?', 'Vuoi cancellare definitivamente la sessione salvata?', [
+                {text: 'Annulla', action: hideModal},
+                {text: 'Sì, resetta', action: () => { clearProgress(); hideModal(); updateSelectionUI(); }, class: 'danger'}
+            ]);
+        }
+
+        function showStandardModal(title, text, buttons) {
+            modalTitle.textContent = title;
+            modalText.textContent = text;
+            modalText.style.display = 'block';
+            ruleViewer.style.display = 'none';
+            closeRuleBtn.classList.add('hidden');
+            
+            modalButtons.innerHTML = '';
+            modalButtons.style.display = 'flex';
+            buttons.forEach(btn => {
+                const button = document.createElement('button');
+                button.textContent = btn.text;
+                button.className = 'control-btn';
+                if(btn.class) button.classList.add(btn.class);
+                button.onclick = btn.action;
+                modalButtons.appendChild(button);
+            });
+            modal.classList.add('visible');
+        }
+
+        function hideModal() { modal.classList.remove('visible'); }
+
+        function saveProgress() { 
+            const isAnswered = !nextBtn.classList.contains('hidden');
+            const indexToSave = isAnswered ? currentQuestionIndex + 1 : currentQuestionIndex;
+            
+            if (indexToSave >= quizQuestions.length) {
+                clearProgress();
+                return;
+            }
+
+            localStorage.setItem('quizProgressFuture', JSON.stringify({
+                quizQuestions, 
+                currentQuestionIndex: indexToSave, 
+                score, 
+                currentType, 
+                quizLength
+            })); 
+        }
+
+        function loadProgress() { 
+            const saved = localStorage.getItem('quizProgressFuture'); 
+            return saved ? JSON.parse(saved) : null; 
+        }
+
+        function clearProgress() { localStorage.removeItem('quizProgressFuture'); }
+
+        function toggleTheme() {
+            const newTheme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+            document.body.dataset.theme = newTheme;
+            localStorage.setItem("theme", newTheme);
+            updateThemeIcon(newTheme);
+        }
+        function loadTheme() {
+            const savedTheme = localStorage.getItem("theme") || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            document.body.dataset.theme = savedTheme;
+            updateThemeIcon(savedTheme);
+        }
+        function updateThemeIcon(theme) {
+            themeSwitcher.querySelector(".sun").style.display = theme === 'dark' ? 'block' : 'none';
+            themeSwitcher.querySelector(".moon").style.display = theme === 'dark' ? 'none' : 'block';
+        }
+
+        init();
+    </script>
+</body>
+</html>
