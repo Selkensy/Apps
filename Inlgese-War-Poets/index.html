@@ -1,0 +1,2459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>The English War Poets - Study App</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap');
+
+        :root {
+            /* --- COLORS & THEME --- */
+            
+            /* LIGHT MODE */
+            --bg-light: #f5f5f4;  /* Stone 100 */
+            --text-light: #292524; 
+            --text-light-secondary: #57534e; 
+            --card-bg-light: #ffffff;
+            --card-border-light: #e7e5e4; 
+            --accent-light: #4b5320; /* Army Green / Olive accent */
+            --shadow-light: 0 4px 20px -2px rgba(28, 25, 23, 0.06);
+            --focus-ring-light: #6b705c;
+            --highlight-light: #e9edc9; 
+            
+            /* Card Back Colors - Light */
+            --flip-front-bg-light: #fafaf9; 
+            --flip-back-bg-light: #e7e5e4; 
+            --flip-back-text-light: #292524;
+
+            /* Quiz Explanation Colors - Light */
+            --quiz-expl-bg-light: #f0fdf4;
+            --quiz-expl-border-light: #bbf7d0;
+            --quiz-expl-text-light: #14532d;
+
+            /* DARK MODE */
+            --bg-dark: #1c1917; /* Stone 900 */
+            --text-dark: #e7e5e4; 
+            --text-dark-secondary: #a8a29e; 
+            --card-bg-dark: #292524; 
+            --card-border-dark: #44403c; 
+            --accent-dark: #a3b18a; 
+            --shadow-dark: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+            --focus-ring-dark: #cad2c5;
+            
+            /* Card Back Colors - Dark */
+            --flip-front-bg-dark: #0f0e0d; 
+            --flip-back-bg-dark: #292524; 
+            --flip-back-text-dark: #e7e5e4;
+
+            /* Quiz Explanation Colors - Dark */
+            --quiz-expl-bg-dark: #14532d;
+            --quiz-expl-border-dark: #15803d;
+            --quiz-expl-text-dark: #f0fdf4;
+        }
+
+        [data-theme="light"] {
+            --bg-color: var(--bg-light); --text-color: var(--text-light); --text-secondary-color: var(--text-light-secondary); 
+            --card-bg-color: var(--card-bg-light); --accent-color: var(--accent-light);
+            --border-color: var(--card-border-light); --shadow-color: var(--shadow-light); 
+            --focus-ring-color: var(--focus-ring-light); --highlight-color: var(--highlight-light);
+            --highlight-text-color: var(--text-light);
+            --flip-front-bg: var(--flip-front-bg-light);
+            --flip-back-bg: var(--flip-back-bg-light);
+            --flip-back-text: var(--flip-back-text-light);
+            --quiz-expl-bg: var(--quiz-expl-bg-light);
+            --quiz-expl-border: var(--quiz-expl-border-light);
+            --quiz-expl-text: var(--quiz-expl-text-light);
+        }
+        [data-theme="dark"] {
+            --bg-color: var(--bg-dark); --text-color: var(--text-dark); --text-secondary-color: var(--text-dark-secondary);
+            --card-bg-color: var(--card-bg-dark); --accent-color: var(--accent-dark);
+            --border-color: var(--card-border-dark); --shadow-color: var(--shadow-dark); 
+            --focus-ring-color: var(--focus-ring-dark); --highlight-color: var(--highlight-dark);
+            --highlight-text-color: var(--highlight-text-dark);
+            --flip-front-bg: var(--flip-front-bg-dark);
+            --flip-back-bg: var(--flip-back-bg-dark);
+            --flip-back-text: var(--flip-back-text-dark);
+            --quiz-expl-bg: var(--quiz-expl-bg-dark);
+            --quiz-expl-border: var(--quiz-expl-border-dark);
+            --quiz-expl-text: var(--quiz-expl-text-dark);
+        }
+        
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html { font-size: 100%; -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+        
+        body {
+            font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color);
+            transition: background-color 0.4s ease, color 0.4s ease; -webkit-tap-highlight-color: transparent;
+            line-height: 1.8; overflow-x: hidden;
+        }
+        body.no-scroll { overflow: hidden; height: 100%; width: 100%; }
+
+        button { cursor: pointer; border: none; background: none; font-family: inherit; color: inherit; -webkit-tap-highlight-color: transparent; }
+        button:focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 2px; border-radius: 4px; }
+        button:active { transform: scale(0.98); }
+
+        .app-container { opacity: 0; transition: opacity 0.5s ease; }
+        .app-container.loaded { opacity: 1; }
+        
+        /* HEADER */
+        .header {
+            position: sticky; top: 0; z-index: 100;
+            background-color: rgba(245, 245, 244, 0.9);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid transparent;
+            transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), box-shadow 0.3s ease;
+            will-change: transform;
+        }
+        [data-theme="dark"] .header { background-color: rgba(28, 25, 23, 0.9); }
+        .header.hidden { transform: translateY(-100%); }
+        .header.scrolled { border-bottom-color: var(--border-color); box-shadow: var(--shadow-color); }
+
+        .header-content { padding: 0.75rem 1.5rem; display: flex; justify-content: space-between; align-items: center; min-height: 64px; }
+        .header-title { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1; text-align: left; margin-right: 1rem; }
+        
+        .controls { display: flex; align-items: center; gap: 0.75rem; }
+        
+        .icon-btn { display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 12px; transition: background-color 0.2s; }
+        .icon-btn:hover { background-color: var(--border-color); }
+        .icon-btn svg { width: 22px; height: 22px; color: var(--text-secondary-color); transition: color 0.3s; }
+        .icon-btn.active svg { color: var(--accent-color); }
+        
+        /* Nav Buttons Desktop */
+        .nav-buttons-desktop {
+            display: none;
+            position: fixed; bottom: 2rem; right: 2rem;
+            flex-direction: column; gap: 0.5rem;
+            z-index: 95;
+        }
+        .icon-btn.disabled { opacity: 0.3; pointer-events: none; cursor: default; }
+
+        #autoscroll-btn { display: none; }
+
+        .theme-switcher .sun-icon { display: none; } [data-theme="light"] .theme-switcher .sun-icon { display: block; }
+        .theme-switcher .moon-icon { display: none; } [data-theme="dark"] .theme-switcher .moon-icon { display: block; }
+
+        .mode-switcher { display: flex; background-color: var(--border-color); border-radius: 14px; padding: 4px; }
+        .mode-btn { font-size: 0.85rem; font-weight: 600; padding: 6px 16px; border-radius: 10px; color: var(--text-secondary-color); transition: all 0.2s ease; }
+        .mode-btn.active { background-color: var(--card-bg-color); color: var(--text-color); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .desktop-mode-switcher { display: none; }
+
+        /* TIMELINE MOBILE */
+        .progress-timeline-mobile { padding: 0 1.5rem 1rem 1.5rem; touch-action: none; }
+        .timeline-track { position: relative; width: 100%; height: 6px; background-color: var(--border-color); border-radius: 3px; cursor: pointer; }
+        .timeline-progress { position: absolute; top: 0; left: 0; height: 100%; background-color: var(--accent-color); border-radius: 3px; width: 0; transition: width 0.2s linear; will-change: width; }
+        .timeline-nodes { position: absolute; top: 50%; left: 0; width: 100%; display: flex; justify-content: space-between; pointer-events: none; }
+        .timeline-node-point {
+            width: 12px; height: 12px; border-radius: 50%; background-color: var(--border-color);
+            border: 2px solid var(--bg-color); transform: translateY(-50%); transition: transform 0.3s ease, background-color 0.3s ease;
+            pointer-events: auto;
+        }
+        .timeline-node-point.past, .timeline-node-point.active { background-color: var(--accent-color); }
+        .timeline-node-point.active { transform: translateY(-50%) scale(1.4); box-shadow: 0 0 0 4px var(--highlight-color); }
+
+        /* LAYOUT & CHAPTERS */
+        .main-layout { padding-top: 4rem; }
+        #story-panel { padding: 0 1.5rem; }
+        
+        .story-chapter {
+            min-height: 90vh; padding: 6rem 0;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0.5; transform: scale(0.98); filter: blur(1px);
+            transition: opacity 0.6s ease, transform 0.6s ease, filter 0.6s ease; 
+            border-bottom: 1px dashed var(--border-color);
+        }
+        .story-chapter:last-child { border-bottom: none; min-height: 80vh; }
+        .story-chapter.active { opacity: 1; transform: scale(1); filter: blur(0); }
+        
+        .chapter-content { max-width: 680px; width: 100%; }
+        .chapter-title { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 8vw, 3rem); color: var(--text-color); margin-bottom: 2rem; line-height: 1.15; letter-spacing: -0.02em; word-wrap: break-word;}
+        .chapter-body { font-size: 1.125rem; line-height: 2.1; color: var(--text-secondary-color); }
+        
+        .chapter-body p, .chapter-body ul, .chapter-body ol { margin-bottom: 1.5rem; }
+        .chapter-body ul, .chapter-body ol { padding-left: 1.2rem; }
+        .chapter-body li { margin-bottom: 0.75rem; padding-left: 0.5rem; }
+        .chapter-body li::marker { color: var(--accent-color); font-weight: 700; }
+        .chapter-body strong { font-weight: 700; color: var(--text-color); }
+        .chapter-body h4 { 
+            font-size: 0.95rem; margin: 2.5rem 0 1rem 0; color: var(--accent-color); 
+            text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700;
+            display: flex; align-items: center; gap: 0.5rem;
+            line-height: 1.4;
+        }
+        .chapter-body h4::after { content: ''; flex-grow: 1; height: 1px; background-color: var(--border-color); opacity: 0.5; }
+        .chapter-body blockquote { font-style: italic; border-left: 4px solid var(--accent-color); padding-left: 1rem; margin-left: 0; color: var(--text-color); background: var(--highlight-color); padding: 1rem;}
+        
+        /* INTERACTIVE ELEMENTS */
+        .interactive-accordion { 
+            margin: 2rem 0; border: 1px solid var(--border-color); border-radius: 16px; 
+            overflow: hidden; background-color: var(--card-bg-color); box-shadow: var(--shadow-color);
+            width: 100%;
+        }
+        .acc-item { border-bottom: 1px solid var(--border-color); }
+        .acc-item:last-child { border-bottom: none; }
+        .acc-header {
+            width: 100%; padding: 1.25rem 1.5rem; text-align: left;
+            background-color: var(--card-bg-color); font-weight: 600; color: var(--text-color);
+            display: flex; justify-content: space-between; align-items: center;
+            transition: background-color 0.2s; font-size: 1rem; line-height: 1.4;
+        }
+        .acc-header:hover { background-color: var(--bg-color); }
+        .acc-header .acc-icon { 
+            width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+            color: var(--accent-color); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            flex-shrink: 0; margin-left: 12px;
+        }
+        .acc-item.open .acc-header .acc-icon { transform: rotate(135deg); }
+        .acc-body {
+            max-height: 0; overflow: hidden; transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            background-color: var(--bg-color);
+        }
+        .acc-content { padding: 1.25rem 1.5rem; font-size: 1rem; color: var(--text-secondary-color); border-top: 1px dashed var(--border-color); line-height: 1.6; }
+
+        /* FLIP CARDS (ADAPTIVE GRID) */
+        .flip-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2.5rem 0;
+        }
+        .flip-container { 
+            perspective: 1000px; 
+            width: 100%; 
+            min-height: 350px; 
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+            cursor: pointer;
+            box-shadow: var(--shadow-color);
+            border-radius: 20px;
+            display: grid;
+            grid-template-areas: "card-face";
+        }
+        .flip-container.flipped .flip-card-inner { transform: rotateY(180deg); }
+        
+        .flip-front, .flip-back {
+            grid-area: card-face; 
+            width: 100%;
+            -webkit-backface-visibility: hidden; 
+            backface-visibility: hidden;
+            border-radius: 20px; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            justify-content: center; 
+            padding: 2rem;
+        }
+        
+        .flip-front { background-color: var(--flip-front-bg); border: 1px solid var(--border-color); text-align: center;}
+        .flip-back {
+            background-color: var(--flip-back-bg); color: var(--flip-back-text); transform: rotateY(180deg);
+        }
+        
+        .flip-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-color); line-height: 1.3; }
+        .flip-subtitle { font-size: 1rem; color: var(--text-secondary-color); font-style: italic;}
+        .flip-hint { 
+            font-size: 0.8rem; color: var(--accent-color); margin-top: 1.5rem; 
+            font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px;
+            opacity: 0.8; display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+        }
+        .flip-hint::after { content: '↻'; font-size: 1.2em; margin-top: -2.6px; }
+        
+        .flip-back p, .flip-back ul { color: var(--flip-back-text); font-size: 1rem; line-height: 1.6; margin: 0; font-weight: 500; width: 100%;}
+        .flip-back ul { text-align: left; padding-left: 1.5rem; margin-top: 0.5rem; }
+        .flip-back li { margin-bottom: 0.5rem; }
+        
+        [data-theme="light"] .flip-back li::marker { color: var(--accent-color); }
+        [data-theme="dark"] .flip-back li::marker { color: white; }
+
+        #timeline-desktop { display: none; }
+        #scroll-sentinel { position: absolute; top: 0; height: 1px; width: 1px; pointer-events: none; }
+
+        .app-footer {
+            position: fixed; bottom: 0; left: 0; width: 100%; z-index: 90;
+            display: flex; justify-content: center; 
+            padding: 1rem 1.5rem calc(1rem + env(safe-area-inset-bottom));
+            pointer-events: none;
+        }
+        .app-footer.hidden { transform: translateY(150%); }
+        .footer-mode-switcher { 
+            display: flex; pointer-events: auto;
+            background-color: rgba(255, 255, 255, 0.9); 
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); 
+            border-radius: 24px; padding: 6px; 
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        [data-theme="dark"] .footer-mode-switcher { background-color: rgba(28, 25, 23, 0.9); border-color: rgba(255,255,255,0.1); }
+
+        /* QUIZ MODE */
+        .quiz-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 200;
+            display: flex; align-items: center; justify-content: center; padding: 1rem;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            opacity: 0; transition: opacity 0.4s ease, visibility 0.4s; visibility: hidden;
+        }
+        .quiz-overlay.visible { opacity: 1; visibility: visible; }
+        .quiz-container {
+            background-color: var(--card-bg-color); border: 1px solid var(--border-color);
+            width: 96%; max-width: 600px; 
+            height: auto; max-height: 85vh;
+            border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            display: flex; flex-direction: column; overflow: hidden;
+            transform: scale(0.95) translateY(10px); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .quiz-overlay.visible .quiz-container { transform: scale(1) translateY(0); }
+        
+        .quiz-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; background-color: var(--bg-color); }
+        .quiz-title { font-weight: 600; color: var(--text-secondary-color); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .quiz-body { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; -webkit-overflow-scrolling: touch; }
+        #quiz-content-wrapper { padding: 1.5rem 1.5rem 2.5rem 1.5rem; display: flex; flex-direction: column; justify-content: flex-start; flex-grow: 1; min-height: 100%;}
+        
+        .quiz-slide { width: 100%; opacity: 0; transition: opacity 0.3s ease; margin: auto 0; padding-bottom: 2.5rem; }
+        .quiz-slide.active { opacity: 1; }
+        
+        .quiz-question-text { font-size: clamp(1.1rem, 4vw, 1.35rem); font-weight: 700; margin-bottom: 1.5rem; line-height: 1.4; color: var(--text-color); }
+        .quiz-answers { display: grid; gap: 0.75rem; }
+        .quiz-answer-btn {
+            width: 100%; padding: 1rem 1.25rem; text-align: left; background-color: var(--bg-color);
+            border: 2px solid transparent; border-radius: 16px; font-size: 1rem; font-weight: 500;
+            transition: all 0.2s ease; color: var(--text-color);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            word-break: break-word; hyphens: auto; line-height: 1.4;
+        }
+        .quiz-answer-btn:hover { background-color: var(--border-color); }
+        .quiz-answer-btn:active { transform: scale(0.98); }
+        .quiz-answer-btn.correct { background-color: #dcfce7; color: #14532d; border-color: #22c55e; }
+        [data-theme="dark"] .quiz-answer-btn.correct { background-color: #14532d; color: #f0fdf4; border-color: #22c55e; }
+        .quiz-answer-btn.incorrect { background-color: #fee2e2; color: #7f1d1d; border-color: #ef4444; }
+        [data-theme="dark"] .quiz-answer-btn.incorrect { background-color: #7f1d1d; color: #fef2f2; border-color: #ef4444; }
+        .quiz-answer-btn.disabled { opacity: 0.6; pointer-events: none; }
+        
+        .quiz-explanation {
+            margin-top: 1.5rem; padding: 1.25rem; border-radius: 12px; font-size: 1rem; line-height: 1.5;
+            background-color: var(--quiz-expl-bg); border: 1px solid var(--quiz-expl-border); color: var(--quiz-expl-text);
+            opacity: 0; transform: translateY(10px); transition: opacity 0.4s ease, transform 0.4s ease; display: none;
+        }
+        .quiz-explanation.visible { opacity: 1; transform: translateY(0); display: block; }
+
+        .quiz-footer { 
+            padding: 1.5rem; border-top: 1px solid var(--border-color); flex-shrink: 0; background-color: var(--bg-color);
+            padding-bottom: calc(1.5rem + env(safe-area-inset-bottom)/2);
+        }
+        .quiz-next-btn { width: 100%; background-color: var(--accent-color); color: white; padding: 1rem; border-radius: 14px; font-size: 1.1rem; font-weight: 600; transition: opacity 0.2s, transform 0.2s; }
+        .quiz-next-btn:active { transform: scale(0.98); }
+        .quiz-next-btn:disabled { background-color: var(--border-color); color: var(--text-secondary-color); cursor: not-allowed; transform: none; }
+
+        .quiz-results-wrapper { text-align: center; display: flex; flex-direction: column; justify-content: center; min-height: 100%; padding: 1.5rem; }
+        .quiz-results-title { font-family: 'Playfair Display', serif; font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .quiz-results-score { font-size: 3.5rem; font-weight: 800; color: var(--accent-color); line-height: 1; margin: 1rem 0; }
+        .quiz-results-text { font-size: 1.1rem; color: var(--text-secondary-color); margin-bottom: 2rem; }
+        .quiz-results-actions { display: flex; flex-direction: column; gap: 0.75rem; width: 100%; }
+        .quiz-results-actions .quiz-next-btn.secondary { background-color: transparent; border: 2px solid var(--border-color); color: var(--text-color); }
+        .quiz-results-actions .quiz-next-btn.secondary:hover { border-color: var(--text-secondary-color); }
+
+        /* DESKTOP OVERRIDES & RESPONSIVE FIXES */
+        @media (min-width: 960px) {
+            .progress-timeline-mobile { display: none; }
+            .app-footer { display: none; }
+            .desktop-mode-switcher { display: flex; }
+            #autoscroll-btn { display: flex; } 
+            
+            .nav-buttons-desktop { display: flex; }
+            
+            .main-layout { 
+                display: grid; 
+                grid-template-columns: 1fr minmax(0, 750px) 1fr; 
+                gap: 2rem; 
+                max-width: 100%; 
+                margin: 0; 
+                padding: 0 2rem; 
+            }
+            
+            #timeline-desktop {
+                grid-column: 1;
+                display: flex; 
+                position: sticky; top: 0; height: 100vh;
+                align-items: center; 
+                justify-content: flex-end;
+            }
+            
+            #story-panel { grid-column: 2; padding: 0; }
+
+            .timeline-desktop-container { 
+                position: relative; 
+                width: 220px; 
+                padding: 4rem 1rem 4rem 0; 
+                display: flex; justify-content: flex-end;
+            }
+            
+            .timeline-svg {
+                position: absolute; right: 0; 
+                top: 0; height: 100%; width: 2px; overflow: visible;
+                z-index: 0;
+                pointer-events: none; 
+            }
+            .timeline-svg-line { stroke: var(--border-color); stroke-width: 2px; fill: none; }
+            .timeline-svg-progress {
+                stroke: var(--accent-color); stroke-width: 2px; fill: none; transition: stroke-dashoffset 0.4s ease;
+            }
+
+            .timeline-desktop-nodes { 
+                display: flex; flex-direction: column; gap: 1.5rem; 
+                align-items: flex-end; text-align: right; width: 100%; 
+                z-index: 1; 
+            }
+            
+            .timeline-desktop-node {
+                display: flex; align-items: center; gap: 1.5rem; padding: 0.5rem 0;
+                position: relative; transition: opacity 0.3s; flex-direction: row-reverse; 
+                width: 140%; 
+                cursor: pointer; padding-right: 15px;
+            }
+            .timeline-desktop-node:hover .node-label { color: var(--accent-color); }
+            .timeline-desktop-node .node-point {
+                width: 14px; height: 14px; border-radius: 50%; background-color: var(--border-color);
+                border: 3px solid var(--bg-color); transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); flex-shrink: 0; 
+                z-index: 2; position: relative;
+            }
+            .timeline-desktop-node::after {
+                content: ''; position: absolute; top: 0; right: -10px; bottom: 0; width: 100%; z-index: -1;
+            }
+
+            .timeline-desktop-node .node-label { 
+                font-size: 0.95rem; font-weight: 500; color: var(--text-secondary-color); 
+                transition: color 0.3s ease, transform 0.3s ease;
+                white-space: nowrap;
+            }
+
+            .timeline-desktop-node.active .node-point { background-color: var(--accent-color); transform: scale(1.3); box-shadow: 0 0 0 4px var(--highlight-color); }
+            .timeline-desktop-node.active .node-label { color: var(--text-color); font-weight: 700; transform: translateX(-5px); }
+            .timeline-desktop-node.past .node-point { background-color: var(--accent-color); border-color: var(--accent-color); }
+
+            .story-chapter { padding: 6rem 0; min-height: 85vh; }
+            .story-chapter:first-child { padding-top: 4rem; }
+        }
+        
+        @media (min-width: 1200px) {
+             .main-layout { gap: 4rem; }
+        }
+    </style>
+</head>
+<body>
+    <div id="scroll-sentinel"></div>
+    <div class="app-container" id="app">
+        <header class="header" id="header">
+            <div class="header-content">
+                <h1 class="header-title" id="header-title">The English War Poets</h1>
+                <div class="controls">
+                    <div class="mode-switcher desktop-mode-switcher">
+                        <button class="mode-btn" data-mode="study">Study</button>
+                        <button class="mode-btn" data-mode="story">Story</button>
+                    </div>
+                    
+                    <button class="icon-btn" id="autoscroll-btn" aria-label="Toggle Autoscroll">
+                         <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 20V7m0 13-4-4m4 4 4-4m4-12v13m0-13 4 4m-4-4-4 4"/>
+                        </svg>
+                    </button>
+
+                     <button class="icon-btn" id="quiz-btn" aria-label="Start Quiz">
+                        <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 3L1 9l11 6 9-4.5V12h2V9l-11-6zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+                    </button>
+                    <button class="icon-btn theme-switcher" aria-label="Toggle Theme">
+                        <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                        <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="progress-timeline-mobile">
+                <div class="timeline-track" id="timeline-track-mobile">
+                    <div class="timeline-progress" id="timeline-progress-mobile"></div>
+                    <div class="timeline-nodes" id="timeline-nodes-mobile"></div>
+                </div>
+            </div>
+        </header>
+        
+        <div class="nav-buttons-desktop">
+            <button class="icon-btn" id="prev-chapter-btn" aria-label="Previous Chapter">
+                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                  <path fill-rule="evenodd" d="M5.575 13.729C4.501 15.033 5.43 17 7.12 17h9.762c1.69 0 2.618-1.967 1.544-3.271l-4.881-5.927a2 2 0 0 0-3.088 0l-4.88 5.927Z" clip-rule="evenodd"/>
+                </svg>
+            </button>
+            <button class="icon-btn" id="next-chapter-btn" aria-label="Next Chapter">
+                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                  <path fill-rule="evenodd" d="M18.425 10.271C19.499 8.967 18.57 7 16.88 7H7.12c-1.69 0-2.618 1.967-1.544 3.271l4.881 5.927a2 2 0 0 0 3.088 0l4.88-5.927Z" clip-rule="evenodd"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="main-layout">
+            <aside id="timeline-desktop">
+                <div class="timeline-desktop-container">
+                    <svg class="timeline-svg">
+                        <line class="timeline-svg-line" x1="1" y1="0" x2="1" y2="100%"></line>
+                        <line class="timeline-svg-progress" id="timeline-progress-desktop" x1="1" y1="0" x2="1" y2="100%"></line>
+                    </svg>
+                    <div class="timeline-desktop-nodes" id="timeline-nodes-desktop"></div>
+                </div>
+            </aside>
+            <main id="story-panel"></main>
+        </div>
+
+        <footer class="app-footer" id="app-footer">
+            <div class="mode-switcher footer-mode-switcher">
+                <button class="mode-btn" data-mode="study">Study</button>
+                <button class="mode-btn" data-mode="story">Story</button>
+            </div>
+        </footer>
+    </div>
+    
+    <div class="quiz-overlay" id="quiz-overlay">
+        <div class="quiz-container" id="quiz-container"></div>
+    </div>
+
+    <script>
+        const learningContent = {
+            title: "English War Poets",
+            chapters: [
+                {
+                    id: 'chapter-1',
+                    title: 'The Context: World War I',
+                    description: `
+                        <h4>An Epochal Change</h4>
+                        <p><strong>World War I (1914-1918)</strong> marked a dramatic historical period where millions of soldiers fought in brutal <em>trench warfare</em>. This conflict introduced chemical weapons, causing widespread loss of life and destruction.</p>
+                        <p>The initial patriotic enthusiasm, which saw the conflict as a noble adventure, was quickly replaced by disillusionment and horror. Soldiers found themselves living in hellish trenches, facing extreme conditions: mud, diseases, rats, repeated bombings, and constant psychological trauma (<em>shell-shock</em>).</p>
+                        
+                        <h4>"War Poetry"</h4>
+                        <p><em>War poetry</em> is a literary genre where poets express the realities of war. In England, it flourished during World War I, when soldier-poets felt the urge to tell what was happening at the front, challenging the patriotic rhetoric of politicians and 19th-century poetic conventions.</p>
+                        
+                        <div class="interactive-accordion">
+                            <div class="acc-item">
+                                <button class="acc-header">Why are these poets called "Modern"? <span class="acc-icon">+</span></button>
+                                <div class="acc-body"><div class="acc-content">Unlike 19th-century poems, these authors used raw, genuine, and sometimes "obscene" language for the time. They had to invent new forms of expression (like the broken rhythm or the "para-rhymes" used by Wilfred Owen) because the old styles were unable to convey the horror of modern warfare.</div></div>
+                            </div>
+                        </div>
+                    `,
+                    storyDescription: `
+                        <p>In 1914, thousands of young British men volunteered. There was a sense of pride and the belief that war was a noble adventure, an act of heroism for one's country.</p>
+                        <p>But when they arrived on the Western Front, reality hit them hard. They found themselves trapped in the mud of the trenches, surrounded by diseases, cold, and the constant threat of poison gas and machine guns.</p>
+                        <p>Amidst this hell, some educated young men, who had studied literature, began to write. Not to glorify the battles, but to scream the truth to the world. Their poems were not made of noble words, but of blood, mud, and horror. They were the <strong>War Poets</strong>, the voices from the battlefield.</p>
+                    `
+                },
+                {
+                    id: 'chapter-2',
+                    title: 'The Faces of War Poetry',
+                    description: `
+                        <h4>The Main Poets</h4>
+                        <p>Three figures stand out for capturing the different phases and emotional reactions to the conflict. Although their perspectives were different, they all shared the direct experience of the front.</p>
+                        
+                        <div class="flip-grid">
+                            <div class="flip-container">
+                                <div class="flip-card-inner">
+                                    <div class="flip-front">
+                                        <div class="flip-title">Rupert Brooke</div>
+                                        <div class="flip-subtitle">(1887-1915)</div>
+                                        <div class="flip-hint">Click to reveal</div>
+                                    </div>
+                                    <div class="flip-back">
+                                        <p><strong>The Idealistic Patriot</strong></p>
+                                        <ul>
+                                            <li>Wrote patriotic and idealistic war poetry early in the conflict.</li>
+                                            <li>Views war as a noble and heroic act (e.g., <em>The Soldier</em>).</li>
+                                            <li>Died early in the war (1915, of blood poisoning), reinforcing the romanticized image of a soldier willing to sacrifice himself for his country.</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flip-container">
+                                <div class="flip-card-inner">
+                                    <div class="flip-front">
+                                        <div class="flip-title">Siegfried Sassoon</div>
+                                        <div class="flip-subtitle">(1886-1967)</div>
+                                        <div class="flip-hint">Click to reveal</div>
+                                    </div>
+                                    <div class="flip-back">
+                                        <p><strong>The Outspoken Critic</strong></p>
+                                        <ul>
+                                            <li>War hero turned pacifist and harsh critic of the conflict's management.</li>
+                                            <li>Poetry mixes anger, cynicism, despair, and a bitter documentary style.</li>
+                                            <li>Wrote a famous "Declaration against the War" in 1917, denouncing the deliberate prolongation of the conflict by political leaders.</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flip-container">
+                                <div class="flip-card-inner">
+                                    <div class="flip-front">
+                                        <div class="flip-title">Wilfred Owen</div>
+                                        <div class="flip-subtitle">(1893-1918)</div>
+                                        <div class="flip-hint">Click to reveal</div>
+                                    </div>
+                                    <div class="flip-back">
+                                        <p><strong>The Voice of Pity</strong></p>
+                                        <ul>
+                                            <li>Known for his raw and realistic portrayal of war's horrors, graphically describing the physical and emotional toll.</li>
+                                            <li>His poetry is "compassion" (<em>"My subject is War, and the pity of War"</em>).</li>
+                                            <li>Met Sassoon at Craiglockhart hospital. Tragically died in battle just 7 days before the war ended.</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <p>Also worth mentioning is <strong>Isaac Rosenberg</strong> (1890-1918), coming from a working-class Jewish family, whose vision of the war was unadorned and presented raw details with almost modernist and scriptural elements.</p>
+                    `,
+                    storyDescription: `
+                        <p>The story of the War Poets is also the story of how illusion turned into anger and pity.</p>
+                        <p>It all started with handsome and privileged young men like **Rupert Brooke**. When he left, he wrote that dying in a foreign field would make that earth "for ever England". He died before seeing the worst, forever remaining the clean and heroic face of the nation.</p>
+                        <p>But the war continued. **Siegfried Sassoon**, a decorated officer, couldn't take it anymore. He saw the carnage and the hypocrisy of the generals sitting safely in London. He threw away his medals and wrote poems full of sarcasm and anger, accusing the leaders of sacrificing the youth. He was locked up in the Craiglockhart military hospital, officially for "shell-shock", but actually to silence him.</p>
+                        <p>There, Sassoon met a young teacher named **Wilfred Owen**. Sassoon encouraged him to write. Owen didn't use anger, but a heartbreaking pity. He wanted to show the world the pure pain of the soldiers. Tragically, Owen was killed by machine-gun fire on November 4, 1918, just a week before the bells rang the end of the war.</p>
+                    `
+                },
+                {
+                    id: 'chapter-3',
+                    title: 'The Old Lie: Dulce et Decorum Est',
+                    description: `
+                        <h4>Analysis of a Masterpiece</h4>
+                        <p><em>Dulce et Decorum Est</em> by Wilfred Owen is perhaps the most famous war poem in the English language. The title refers to the Latin poet Horace's phrase: <em>"Dulce et decorum est pro patria mori"</em> (It is sweet and honorable to die for one's country), which Owen ruthlessly calls <strong>"The old lie"</strong>.</p>
+                        
+                        <blockquote>
+                            "Bent double, like old beggars under sacks,<br>
+                            Knock-kneed, coughing like hags, we cursed through sludge,<br>
+                            Till on the haunting flares we turned our backs<br>
+                            And towards our distant rest began to trudge."
+                        </blockquote>
+
+                        <div class="interactive-accordion">
+                            <div class="acc-item">
+                                <button class="acc-header">The Image of the Soldiers <span class="acc-icon">+</span></button>
+                                <div class="acc-body"><div class="acc-content">The opening of the poem immediately dismantles the glorious image of the soldier. The young men are described as "old beggars" and coughing "hags", bent double, physically destroyed by mud and fatigue, deaf and blind to the danger.</div></div>
+                            </div>
+                            <div class="acc-item">
+                                <button class="acc-header">The Gas Attack <span class="acc-icon">+</span></button>
+                                <div class="acc-body"><div class="acc-content">The central moment is marked by the cry "Gas! GAS! Quick, boys!". Owen vividly describes the panic of fitting the gas masks and the trauma of seeing a comrade who doesn't make it in time, who "drowns" in a green sea of poisonous smoke. An image that will haunt the poet's dreams.</div></div>
+                            </div>
+                            <div class="acc-item">
+                                <button class="acc-header">The Critique of Propaganda <span class="acc-icon">+</span></button>
+                                <div class="acc-body"><div class="acc-content">In the last part, Owen addresses the reader directly (often identified as Jessie Pope, a journalist who wrote pro-war propaganda). If the reader could see the bodies thrown into the wagons and hear the blood gargling from the ruined lungs, Owen says, they would stop telling children the "Old Lie" of martial glory.</div></div>
+                            </div>
+                        </div>
+                    `,
+                    storyDescription: `
+                        <p>Imagine being immersed in thick mud up to your knees. You have been marching for days, you are so tired that you sleep while walking. Around you, twenty-year-old boys look like old beggars, bent double under the weight of their sacks.</p>
+                        <p>Suddenly, a hiss. Someone yells: <strong>"Gas! Gas! Quick, boys!"</strong>.</p>
+                        <p>It's a moment of pure frenzy. Everyone tries to put on the clumsy protective helmets. You make it just in time. But you look through the foggy glass of the mask and see someone floundering, suffocating in the dark green smoke.</p>
+                        <p>Wilfred Owen lived this scene. In his nightmares, he saw that man running toward him, drowning without water. Owen decided to put that nightmare on paper, describing the sound of blood gargling from gas-burned lungs. He did it with a specific purpose: to throw it in the face of those who, sitting comfortably at home, continued to tell children that dying for the nation was a sweet and glorious honor.</p>
+                    `
+                },
+                {
+                    id: 'chapter-4',
+                    title: 'Themes and Reflections',
+                    description: `
+                        <h4>Themes in War Poetry</h4>
+                        <ul>
+                            <li><strong>Horror and Brutality:</strong> Graphic and realistic descriptions highlighting the physical suffering and psychological trauma (like poison gas and mud).</li>
+                            <li><strong>Patriotism and Nationalism (and their fall):</strong> Early poems glorified war as noble. Later, poets became disillusioned, exposing the massive gap between propaganda rhetoric and the harsh reality.</li>
+                            <li><strong>Loss and Mourning:</strong> Poets express grief for fallen comrades, illustrating the personal cost of the conflict, replacing the abstract numbers of casualties.</li>
+                            <li><strong>Disillusionment with Leadership:</strong> Many poets criticize political and military leaders for mismanaging the war and sacrificing soldiers for questionable causes (a central theme in Sassoon's work).</li>
+                        </ul>
+
+                        <div class="interactive-accordion">
+                            <div class="acc-item">
+                                <button class="acc-header">Food for Thought <span class="acc-icon">+</span></button>
+                                <div class="acc-body"><div class="acc-content">
+                                    <p>These themes offer readers an unfiltered look at the war's reality, challenging romanticized notions of heroism and glory. They lead us to ask:</p>
+                                    <ul>
+                                        <li>Why do you think it's important to hear the voices of those <em>directly</em> affected by conflict, rather than official accounts?</li>
+                                        <li>Do you think poetry or art can inspire social change and stop future conflicts?</li>
+                                    </ul>
+                                </div></div>
+                            </div>
+                        </div>
+                    `,
+                    storyDescription: `
+                        <p>The legacy of the War Poets is immense. Before them, literature spoke of war in epic terms: chivalry, honor, the courage of Hector and Achilles.</p>
+                        <p>After 1918, thanks to the words of surviving (and non-surviving) young men, our understanding of war changed forever. They lifted the veil of propaganda and brought to the forefront the fragility of the human body, the fear, the senseless mourning, and the incompetence of those who send the young to die.</p>
+                        <p>Even today, when we talk about the horrors of modern conflicts, we use the vocabulary of pain that Wilfred Owen and Siegfried Sassoon forged in the mud of the trenches. Their poems remain a powerful reminder that behind the statistics and strategies, there are broken lives and "an old lie" that we should no longer believe.</p>
+                    `
+                }
+            ]
+        };
+
+        const quizData = [
+    // --- GENERAL WWI CONTEXT ---
+    {
+        question: "When did World War I begin?",
+        options: ["In 1912", "In 1914", "In 1916", "In 1918"],
+        correctAnswer: "In 1914",
+        explanation: "World War I officially began in 1914."
+    },
+    {
+        question: "When did World War I end?",
+        options: ["In 1915", "In 1917", "In 1918", "In 1920"],
+        correctAnswer: "In 1918",
+        explanation: "The conflict ended with the armistice in 1918."
+    },
+    {
+        question: "What type of warfare defined WWI?",
+        options: ["Naval battles", "Trench warfare", "Aerial combat", "Cavalry charges"],
+        correctAnswer: "Trench warfare",
+        explanation: "WWI was characterized by brutal trench warfare."
+    },
+    {
+        question: "What new weapon caused massive WWI casualties?",
+        options: ["Nuclear bombs", "Chemical weapons", "Stealth bombers", "Guided missiles"],
+        correctAnswer: "Chemical weapons",
+        explanation: "Poison gas was a horrific new weapon introduced in WWI."
+    },
+    {
+        question: "What term describes the psychological trauma of WWI?",
+        options: ["Battle fatigue", "Combat stress", "Shell-shock", "War neurosis"],
+        correctAnswer: "Shell-shock",
+        explanation: "Soldiers frequently suffered from shell-shock."
+    },
+    {
+        question: "What was the initial public attitude toward WWI?",
+        options: ["Deeply cynical", "Highly patriotic", "Openly hostile", "Mostly apathetic"],
+        correctAnswer: "Highly patriotic",
+        explanation: "Early on, the war was viewed as a noble adventure."
+    },
+    {
+        question: "Which pest was notoriously common in the trenches?",
+        options: ["Locusts", "Spiders", "Rats", "Snakes"],
+        correctAnswer: "Rats",
+        explanation: "Trenches were heavily infested with rats."
+    },
+    {
+        question: "How did the perception of war change over time?",
+        options: ["Anger to joy", "Glory to horror", "Fear to boredom", "Pity to pride"],
+        correctAnswer: "Glory to horror",
+        explanation: "The initial romantic view was crushed by brutal realities."
+    },
+    {
+        question: "What primarily drove early WWI volunteer enlistment?",
+        options: ["Financial gain", "Patriotic duty", "Legal mandates", "Boredom at home"],
+        correctAnswer: "Patriotic duty",
+        explanation: "Thousands volunteered out of a sense of patriotism."
+    },
+    {
+        question: "Where was the 'Western Front' primarily located?",
+        options: ["Russia and Poland", "France and Belgium", "Italy and Austria", "Egypt and Turkey"],
+        correctAnswer: "France and Belgium",
+        explanation: "The Western Front ran mainly through France and Belgium."
+    },
+
+    // --- WAR POETRY GENRE ---
+    {
+        question: "What does 'War Poetry' generally focus on?",
+        options: ["Political treaties", "Realities of war", "Romantic fiction", "Historical myths"],
+        correctAnswer: "Realities of war",
+        explanation: "War poetry expresses the brutal reality of the battlefield."
+    },
+    {
+        question: "Why did poets abandon 19th-century poetic conventions?",
+        options: ["They lacked skill", "They were too old", "They needed new words", "They hated classics"],
+        correctAnswer: "They needed new words",
+        explanation: "Old romantic styles couldn't convey modern horrors."
+    },
+    {
+        question: "Which technique is heavily associated with Wilfred Owen?",
+        options: ["Blank verse", "Para-rhymes", "Haiku meter", "Heroic couplets"],
+        correctAnswer: "Para-rhymes",
+        explanation: "Owen used para-rhymes to create a jarring, uneasy effect."
+    },
+    {
+        question: "Who was the main audience for late-war poetry?",
+        options: ["Enemy soldiers", "Complacent civilians", "Military generals", "School children"],
+        correctAnswer: "Complacent civilians",
+        explanation: "Poets wanted to shock civilians out of their complacency."
+    },
+    {
+        question: "What emotion replaced 'pride' in later war poetry?",
+        options: ["Excitement", "Disillusionment", "Satisfaction", "Indifference"],
+        correctAnswer: "Disillusionment",
+        explanation: "The tragic reality of war led to deep disillusionment."
+    },
+    {
+        question: "How did war poets view political propaganda?",
+        options: ["With great respect", "With deep suspicion", "With utter confusion", "With absolute apathy"],
+        correctAnswer: "With deep suspicion",
+        explanation: "They actively challenged the lies of political propaganda."
+    },
+    {
+        question: "Which of these best describes the language of war poets?",
+        options: ["Highly romantic", "Raw and realistic", "Abstract and vague", "Purely theoretical"],
+        correctAnswer: "Raw and realistic",
+        explanation: "They used vivid, unfiltered language to describe war."
+    },
+    {
+        question: "What was a major theme replacing 'heroism'?",
+        options: ["Strategic brilliance", "Meaningless sacrifice", "Financial prosperity", "Technological advance"],
+        correctAnswer: "Meaningless sacrifice",
+        explanation: "The focus shifted to the futile loss of young lives."
+    },
+    {
+        question: "What role did personal experience play for these poets?",
+        options: ["It was irrelevant", "It was foundational", "It was discouraged", "It was fabricated"],
+        correctAnswer: "It was foundational",
+        explanation: "Their poetry was strictly based on their own frontline trauma."
+    },
+    {
+        question: "Who were the 'War Poets'?",
+        options: ["Politicians in London", "Soldiers at the front", "Journalists at home", "Historians in schools"],
+        correctAnswer: "Soldiers at the front",
+        explanation: "They were young men who fought directly in the trenches."
+    },
+
+    // --- RUPERT BROOKE: FACTS ---
+    {
+        question: "When was Rupert Brooke born?",
+        options: ["In 1883", "In 1887", "In 1890", "In 1893"],
+        correctAnswer: "In 1887",
+        explanation: "Brooke was born in 1887."
+    },
+    {
+        question: "When did Rupert Brooke die?",
+        options: ["In 1914", "In 1915", "In 1917", "In 1918"],
+        correctAnswer: "In 1915",
+        explanation: "He died early in the war, in 1915."
+    },
+    {
+        question: "What caused Rupert Brooke's death?",
+        options: ["Sniper fire", "Poisonous gas", "Blood poisoning", "Artillery shell"],
+        correctAnswer: "Blood poisoning",
+        explanation: "He died of sepsis from a mosquito bite, not in combat."
+    },
+    {
+        question: "Where did Rupert Brooke study?",
+        options: ["Oxford University", "Cambridge College", "London University", "Edinburgh College"],
+        correctAnswer: "Cambridge College",
+        explanation: "Brooke was educated at King's College, Cambridge."
+    },
+    {
+        question: "What was Brooke's physical reputation?",
+        options: ["Frail and sickly", "Handsome and athletic", "Short and unathletic", "Average and unseen"],
+        correctAnswer: "Handsome and athletic",
+        explanation: "He was widely known for his exceptionally good looks."
+    },
+    {
+        question: "Where is Rupert Brooke buried?",
+        options: ["In London", "In Flanders", "On Skyros", "In Gallipoli"],
+        correctAnswer: "On Skyros",
+        explanation: "He was buried on the Greek island of Skyros."
+    },
+    {
+        question: "How many 'War Sonnets' did Brooke famously write in 1914?",
+        options: ["Three", "Five", "Seven", "Nine"],
+        correctAnswer: "Five",
+        explanation: "His reputation rests mainly on his five 1914 war sonnets."
+    },
+    {
+        question: "Which poet became a romantic symbol of early WWI?",
+        options: ["Wilfred Owen", "Rupert Brooke", "Isaac Rosenberg", "Siegfried Sassoon"],
+        correctAnswer: "Rupert Brooke",
+        explanation: "His early death made him a romantic national hero."
+    },
+    {
+        question: "Did Brooke experience brutal trench warfare?",
+        options: ["Yes, for years", "No, he saw little", "Yes, at the Somme", "No, he stayed home"],
+        correctAnswer: "No, he saw little",
+        explanation: "He died before experiencing the worst of the trenches."
+    },
+    {
+        question: "What social class did Brooke belong to?",
+        options: ["Working class", "Well-to-do family", "Impoverished nobles", "Middle-class merchants"],
+        correctAnswer: "Well-to-do family",
+        explanation: "He came from an affluent, educated background."
+    },
+
+    // --- RUPERT BROOKE: THEMES ---
+    {
+        question: "What tone defines Brooke's war poetry?",
+        options: ["Bitter and angry", "Satirical and dark", "Patriotic and noble", "Realistic and grim"],
+        correctAnswer: "Patriotic and noble",
+        explanation: "His poetry reflects the initial idealistic phase of the war."
+    },
+    {
+        question: "How did Brooke view the concept of death in war?",
+        options: ["As a total waste", "As a noble sacrifice", "As a cruel mistake", "As a random tragedy"],
+        correctAnswer: "As a noble sacrifice",
+        explanation: "He viewed dying for England as the ultimate honor."
+    },
+    {
+        question: "What is Brooke's most famous poem?",
+        options: ["The Soldier", "Counter-Attack", "Dulce et Decorum", "The Old Huntsman"],
+        correctAnswer: "The Soldier",
+        explanation: "'The Soldier' is his quintessential patriotic poem."
+    },
+    {
+        question: "According to Brooke, a foreign field where a soldier dies becomes what?",
+        options: ["A cursed wasteland", "For ever England", "A forgotten grave", "A monument of pity"],
+        correctAnswer: "For ever England",
+        explanation: "He wrote: 'That there's some corner of a foreign field / That is for ever England.'"
+    },
+    {
+        question: "What does 'The Soldier' emphasize over physical reality?",
+        options: ["Political strategies", "Spiritual cleansing", "Financial benefits", "Geographic conquests"],
+        correctAnswer: "Spiritual cleansing",
+        explanation: "Brooke saw war as something clean and spiritually cleansing."
+    },
+    {
+        question: "Which of these words best fits Brooke's poetry?",
+        options: ["Disillusionment", "Idealism", "Cynicism", "Rebellion"],
+        correctAnswer: "Idealism",
+        explanation: "His work is entirely idealistic and romantic."
+    },
+    {
+        question: "Who is the speaker addressing in 'The Soldier'?",
+        options: ["The enemy forces", "The British public", "The high generals", "The fallen heroes"],
+        correctAnswer: "The British public",
+        explanation: "He addresses the people back home, comforting them."
+    },
+    {
+        question: "How does Brooke describe the 'dust' in his poem?",
+        options: ["A richer dust", "A forgotten dust", "A bloody dust", "A wasted dust"],
+        correctAnswer: "A richer dust",
+        explanation: "He describes the English soldier's body as 'a richer dust'."
+    },
+    {
+        question: "What aspect of war is completely absent from Brooke's work?",
+        options: ["Love for country", "Physical suffering", "Sense of duty", "Spiritual peace"],
+        correctAnswer: "Physical suffering",
+        explanation: "His poems lack the graphic horror seen in later poets."
+    },
+    {
+        question: "What do Brooke's poems ultimately lack?",
+        options: ["Lyrical beauty", "Direct experience", "Patriotic fervor", "Rhyming structure"],
+        correctAnswer: "Direct experience",
+        explanation: "He wrote them before facing the harsh realities of the front."
+    },
+
+    // --- SIEGFRIED SASSOON: FACTS ---
+    {
+        question: "When was Siegfried Sassoon born?",
+        options: ["In 1886", "In 1890", "In 1893", "In 1895"],
+        correctAnswer: "In 1886",
+        explanation: "Sassoon was born in 1886."
+    },
+    {
+        question: "When did Siegfried Sassoon die?",
+        options: ["In 1915", "In 1918", "In 1935", "In 1967"],
+        correctAnswer: "In 1967",
+        explanation: "Unlike Brooke and Owen, Sassoon survived well into old age."
+    },
+    {
+        question: "What was Sassoon's military reputation early on?",
+        options: ["A cowardly deserter", "A decorated war hero", "A passive strategist", "A medic behind lines"],
+        correctAnswer: "A decorated war hero",
+        explanation: "He was extremely brave in battle and heavily decorated."
+    },
+    {
+        question: "What major public action did Sassoon take in 1917?",
+        options: ["He fled the country", "He burned his uniform", "He published a protest", "He joined the enemy"],
+        correctAnswer: "He published a protest",
+        explanation: "He wrote the 'Declaration against the War'."
+    },
+    {
+        question: "Where was Sassoon sent to silence his protest?",
+        options: ["A prison camp", "Craiglockhart hospital", "The Russian front", "A London asylum"],
+        correctAnswer: "Craiglockhart hospital",
+        explanation: "He was sent to a military psychiatric hospital."
+    },
+    {
+        question: "What was the official military excuse for Sassoon's protest?",
+        options: ["He was a spy", "He had shell-shock", "He was uneducated", "He was purely greedy"],
+        correctAnswer: "He had shell-shock",
+        explanation: "They claimed he was mentally unfit to discredit his protest."
+    },
+    {
+        question: "Who convinced the military board to send Sassoon to the hospital?",
+        options: ["Wilfred Owen", "Rupert Brooke", "Robert Graves", "Isaac Rosenberg"],
+        correctAnswer: "Robert Graves",
+        explanation: "His friend Robert Graves intervened to save him from court-martial."
+    },
+    {
+        question: "What religion did Sassoon convert to later in life?",
+        options: ["Judaism", "Protestantism", "Roman Catholicism", "Eastern Orthodoxy"],
+        correctAnswer: "Roman Catholicism",
+        explanation: "He found peace by becoming a Roman Catholic in 1957."
+    },
+    {
+        question: "Name one of Sassoon's poetry collections.",
+        options: ["The Old Huntsman", "The Young Soldier", "The Greek Island", "The Muddy Trench"],
+        correctAnswer: "The Old Huntsman",
+        explanation: "He published 'The Old Huntsman' in 1917."
+    },
+    {
+        question: "Who did Sassoon meet at Craiglockhart?",
+        options: ["Robert Graves", "Wilfred Owen", "Rupert Brooke", "Jessie Pope"],
+        correctAnswer: "Wilfred Owen",
+        explanation: "He met and deeply influenced Wilfred Owen there."
+    },
+
+    // --- SIEGFRIED SASSOON: THEMES ---
+    {
+        question: "What is the primary tone of Sassoon's poetry?",
+        options: ["Gentle and sad", "Angry and satirical", "Hopeful and bright", "Romantic and pure"],
+        correctAnswer: "Angry and satirical",
+        explanation: "His work is characterized by bitter anger and sarcasm."
+    },
+    {
+        question: "Who was the main target of Sassoon's criticism?",
+        options: ["The frontline soldiers", "The enemy troops", "The political leaders", "The medical nurses"],
+        correctAnswer: "The political leaders",
+        explanation: "He blamed politicians and generals for mismanaging the war."
+    },
+    {
+        question: "What did Sassoon accuse the authorities of doing?",
+        options: ["Ending the war early", "Deliberately prolonging it", "Fighting too passively", "Underfunding the navy"],
+        correctAnswer: "Deliberately prolonging it",
+        explanation: "He believed the war was being deliberately prolonged by those in power."
+    },
+    {
+        question: "How did Sassoon represent the war in his poems?",
+        options: ["As a sacred duty", "Through shocking details", "With abstract metaphors", "As a brief inconvenience"],
+        correctAnswer: "Through shocking details",
+        explanation: "He used sobering, documentary realism and shocking details."
+    },
+    {
+        question: "What emotion did Sassoon feel toward patriotic civilians?",
+        options: ["Deep appreciation", "Utter contempt", "Mild indifference", "Profound respect"],
+        correctAnswer: "Utter contempt",
+        explanation: "He despised civilians who blindly cheered for the war."
+    },
+    {
+        question: "Sassoon's work represents what key phase of the war?",
+        options: ["Early enthusiasm", "Final victory", "Deep disillusionment", "Initial hesitation"],
+        correctAnswer: "Deep disillusionment",
+        explanation: "He perfectly captured the widespread disillusionment of the troops."
+    },
+    {
+        question: "What distinguishes Sassoon from Owen stylistically?",
+        options: ["Sassoon used more pity", "Sassoon was more satiric", "Sassoon used free verse", "Sassoon never rhymed"],
+        correctAnswer: "Sassoon was more satiric",
+        explanation: "While Owen focused on pity, Sassoon utilized harsh satire."
+    },
+    {
+        question: "What does Sassoon's 'Declaration' explicitly defy?",
+        options: ["Religious authority", "Military authority", "Literary traditions", "Medical diagnoses"],
+        correctAnswer: "Military authority",
+        explanation: "It was an act of 'wilful defiance of military authority'."
+    },
+    {
+        question: "What did Sassoon believe the war had become?",
+        options: ["A war of defense", "A war of aggression", "A necessary evil", "A spiritual journey"],
+        correctAnswer: "A war of aggression",
+        explanation: "He felt it changed from liberation to aggression and conquest."
+    },
+    {
+        question: "What is a signature element of Sassoon's writing?",
+        options: ["Romantic imagery", "Sardonic distancing", "Heroic couplets", "Mythological gods"],
+        correctAnswer: "Sardonic distancing",
+        explanation: "He often used a sardonic, detached tone to highlight the horror."
+    },
+
+    // --- WILFRED OWEN: FACTS ---
+    {
+        question: "When was Wilfred Owen born?",
+        options: ["In 1886", "In 1890", "In 1893", "In 1895"],
+        correctAnswer: "In 1893",
+        explanation: "Owen was born in 1893."
+    },
+    {
+        question: "When did Wilfred Owen die?",
+        options: ["In 1914", "In 1915", "In 1917", "In 1918"],
+        correctAnswer: "In 1918",
+        explanation: "He was killed in action in 1918."
+    },
+    {
+        question: "How long before the war ended did Owen die?",
+        options: ["Exactly one year", "Just one week", "About one month", "Just one day"],
+        correctAnswer: "Just one week",
+        explanation: "He died on November 4, exactly a week before the armistice."
+    },
+    {
+        question: "What was Owen's profession before enlisting?",
+        options: ["A medical doctor", "An English teacher", "A factory worker", "A professional poet"],
+        correctAnswer: "An English teacher",
+        explanation: "He was working as an English teacher in France."
+    },
+    {
+        question: "What pushed Owen to return to England and enlist?",
+        options: ["A letter from the King", "Visiting a hospital", "Reading Brooke's work", "Losing his teaching job"],
+        correctAnswer: "Visiting a hospital",
+        explanation: "Visiting a hospital for the wounded motivated him to enlist."
+    },
+    {
+        question: "Where did Owen recover from shell-shock?",
+        options: ["In a London clinic", "At Craiglockhart", "In a French hospital", "At Cambridge University"],
+        correctAnswer: "At Craiglockhart",
+        explanation: "He was treated at the Craiglockhart military hospital."
+    },
+    {
+        question: "Who was Owen's major literary mentor during the war?",
+        options: ["Rupert Brooke", "Isaac Rosenberg", "Siegfried Sassoon", "Robert Graves"],
+        correctAnswer: "Siegfried Sassoon",
+        explanation: "Sassoon deeply influenced Owen's writing at Craiglockhart."
+    },
+    {
+        question: "How did Wilfred Owen die?",
+        options: ["From a gas attack", "A machine-gun attack", "From blood poisoning", "In a hospital bed"],
+        correctAnswer: "A machine-gun attack",
+        explanation: "He was killed by German machine-gun fire."
+    },
+    {
+        question: "Did Owen publish many poems while alive?",
+        options: ["He published dozens", "He published very few", "He published none", "He published books"],
+        correctAnswer: "He published very few",
+        explanation: "Most of his famous work was published posthumously."
+    },
+    {
+        question: "Where did Owen write the preface to his poems?",
+        options: ["In the trenches", "At Craiglockhart", "While in London", "At Cambridge"],
+        correctAnswer: "At Craiglockhart",
+        explanation: "He drafted his famous preface while recovering."
+    },
+
+    // --- WILFRED OWEN: THEMES ---
+    {
+        question: "What is the central emotion in Owen's poetry?",
+        options: ["Righteous anger", "Patriotic pride", "Profound pity", "Bitter cynicism"],
+        correctAnswer: "Profound pity",
+        explanation: "He stated: 'The Poetry is in the pity.'"
+    },
+    {
+        question: "How does Owen portray the physical toll of war?",
+        options: ["As a minor scratch", "With raw realism", "Through noble scars", "By ignoring it totally"],
+        correctAnswer: "With raw realism",
+        explanation: "He provides graphic, unsparing details of bodily destruction."
+    },
+    {
+        question: "What does Owen explicitly say his book is NOT about?",
+        options: ["Pain and suffering", "Heroes and glory", "Trenches and mud", "Life and death"],
+        correctAnswer: "Heroes and glory",
+        explanation: "He wrote: 'This book is not about heroes. English poetry is not yet fit to speak of them.'"
+    },
+    {
+        question: "Which literary device does Owen heavily rely on?",
+        options: ["Strict haiku forms", "Extensive alliteration", "Heroic couplets", "Joyful imagery"],
+        correctAnswer: "Extensive alliteration",
+        explanation: "He frequently uses alliteration and assonance."
+    },
+    {
+        question: "What is the effect of Owen's use of 'para-rhymes'?",
+        options: ["It sounds very cheerful", "It gives a haunting quality", "It mimics classical poetry", "It simplifies the reading"],
+        correctAnswer: "It gives a haunting quality",
+        explanation: "Para-rhymes (like loves/lives) create a sense of unease and gravity."
+    },
+    {
+        question: "Who is the primary focus of Owen's elegies?",
+        options: ["The political leaders", "The victorious generals", "This generation of soldiers", "The ancient Greek heroes"],
+        correctAnswer: "This generation of soldiers",
+        explanation: "He wrote: 'These elegies are to this generation in no sense consolatory.'"
+    },
+    {
+        question: "What duty does Owen assign to the 'true Poet'?",
+        options: ["He must be wealthy", "He must be patriotic", "He must be truthful", "He must be musical"],
+        correctAnswer: "He must be truthful",
+        explanation: "'All a poet can do today is warn. That is why the true Poets must be truthful.'"
+    },
+    {
+        question: "How do Owen's soldiers often appear physically?",
+        options: ["Strong and robust", "Destroyed and aged", "Clean and heroic", "Invisible and fast"],
+        correctAnswer: "Destroyed and aged",
+        explanation: "He describes young men who look like 'old beggars'."
+    },
+    {
+        question: "What differentiates Owen's pity from Sassoon's anger?",
+        options: ["It focuses on satire", "It lacks any emotion", "It shows deep compassion", "It blames the soldiers"],
+        correctAnswer: "It shows deep compassion",
+        explanation: "Owen went a step further than anger, offering deep compassion for the victims."
+    },
+    {
+        question: "What aspect of war does Owen completely reject?",
+        options: ["Comradeship in arms", "The pain of loss", "The romanticized image", "The physical landscape"],
+        correctAnswer: "The romanticized image",
+        explanation: "He fiercely rejects the idea that dying in war is sweet or noble."
+    },
+
+    // --- DULCE ET DECORUM EST ---
+    {
+        question: "What does 'Dulce et decorum est' translate to?",
+        options: ["War is always a hell", "It is sweet and honorable", "Death comes to all men", "The old lie of the war"],
+        correctAnswer: "It is sweet and honorable",
+        explanation: "It means 'It is sweet and proper (to die for one's country)'."
+    },
+    {
+        question: "Who originally coined the phrase 'Dulce et decorum est'?",
+        options: ["Siegfried Sassoon", "The poet Horace", "Julius Caesar", "Jessie Pope"],
+        correctAnswer: "The poet Horace",
+        explanation: "The phrase comes from the Roman poet Horace."
+    },
+    {
+        question: "How does Owen refer to this Latin phrase?",
+        options: ["The great truth", "The old lie", "The noble sacrifice", "The soldier's creed"],
+        correctAnswer: "The old lie",
+        explanation: "He concludes the poem by calling it 'The old lie'."
+    },
+    {
+        question: "What specific weapon attack is described in the poem?",
+        options: ["A sniper ambush", "A poison gas attack", "A tank assault", "An aerial bombing"],
+        correctAnswer: "A poison gas attack",
+        explanation: "The poem centers on a frantic reaction to a gas attack."
+    },
+    {
+        question: "How are the soldiers described in the first stanza?",
+        options: ["Like brave young lions", "Like old beggars under sacks", "Like swift silent ghosts", "Like angry metal machines"],
+        correctAnswer: "Like old beggars under sacks",
+        explanation: "They are exhausted, 'Bent double, like old beggars under sacks'."
+    },
+    {
+        question: "What command interrupts the soldiers' march?",
+        options: ["Fire! Fire! Quick!", "Gas! GAS! Quick, boys!", "Halt! HALT! Fall in!", "Run! RUN! Take cover!"],
+        correctAnswer: "Gas! GAS! Quick, boys!",
+        explanation: "The sudden warning of the gas shells dropping."
+    },
+    {
+        question: "What happens to the soldier who doesn't put his mask on in time?",
+        options: ["He runs away safely", "He drowns in the green sea", "He is shot by a sniper", "He falls into a deep pit"],
+        correctAnswer: "He drowns in the green sea",
+        explanation: "Owen compares the gas to a green sea where the man 'drowns'."
+    },
+    {
+        question: "What haunts the speaker's dreams?",
+        options: ["The sound of bombs", "The face of the general", "The dying man plunging at him", "The cheer of the crowds"],
+        correctAnswer: "The dying man plunging at him",
+        explanation: "'In all my dreams... he plunges at me, guttering, choking, drowning.'"
+    },
+    {
+        question: "Who is the 'you' Owen addresses at the end of the poem?",
+        options: ["The dying soldier", "The German enemy", "The civilian reader", "His friend Sassoon"],
+        correctAnswer: "The civilian reader",
+        explanation: "He addresses those at home who promote war to children."
+    },
+    {
+        question: "What physical detail shows the horror of the gas?",
+        options: ["Blood gargling from lungs", "A clean bullet wound", "A missing left arm", "A peaceful sleeping face"],
+        correctAnswer: "Blood gargling from lungs",
+        explanation: "He describes the blood 'gargling from the froth-corrupted lungs'."
+    },
+
+    // --- ISAAC ROSENBERG & COMPARISONS ---
+    {
+        question: "When was Isaac Rosenberg born?",
+        options: ["In 1886", "In 1887", "In 1890", "In 1893"],
+        correctAnswer: "In 1890",
+        explanation: "Rosenberg was born in 1890."
+    },
+    {
+        question: "What was Rosenberg's social background?",
+        options: ["Affluent aristocracy", "Wealthy middle-class", "Working-class Jewish", "Military nobility"],
+        correctAnswer: "Working-class Jewish",
+        explanation: "Unlike the others, he came from a poor, working-class Jewish family."
+    },
+    {
+        question: "What was Rosenberg's artistic ambition before the war?",
+        options: ["To be a general", "To be a politician", "To be a portrait artist", "To be a musician"],
+        correctAnswer: "To be a portrait artist",
+        explanation: "He was a talented artist studying at Birkbeck College."
+    },
+    {
+        question: "How did Rosenberg's poetry style differ from the others?",
+        options: ["It was highly romantic", "It was more modern and scriptural", "It was purely comedic", "It used perfect traditional rhyme"],
+        correctAnswer: "It was more modern and scriptural",
+        explanation: "Sassoon described his language as 'scriptural and elemental'."
+    },
+    {
+        question: "When did Isaac Rosenberg die?",
+        options: ["In 1915", "In 1917", "In 1918", "In 1920"],
+        correctAnswer: "In 1918",
+        explanation: "Like Owen, he was killed at the front in 1918."
+    },
+    {
+        question: "Which poet's work is considered 'unsentimental' and less concerned with pity?",
+        options: ["Wilfred Owen", "Rupert Brooke", "Isaac Rosenberg", "Siegfried Sassoon"],
+        correctAnswer: "Isaac Rosenberg",
+        explanation: "His vision was detached, unsentimental, and focused on raw details."
+    },
+    {
+        question: "Who wrote about the 'pity' of war?",
+        options: ["Siegfried Sassoon", "Rupert Brooke", "Wilfred Owen", "Isaac Rosenberg"],
+        correctAnswer: "Wilfred Owen",
+        explanation: "Owen is universally known as the poet of 'pity'."
+    },
+    {
+        question: "Who wrote about the 'glory' of war?",
+        options: ["Isaac Rosenberg", "Wilfred Owen", "Siegfried Sassoon", "Rupert Brooke"],
+        correctAnswer: "Rupert Brooke",
+        explanation: "Brooke represented the early romantic view of martial glory."
+    },
+    {
+        question: "Who is most associated with angry satire against politicians?",
+        options: ["Rupert Brooke", "Wilfred Owen", "Siegfried Sassoon", "Isaac Rosenberg"],
+        correctAnswer: "Siegfried Sassoon",
+        explanation: "Sassoon heavily criticized the leaders who managed the war."
+    },
+    {
+        question: "Which two poets met at Craiglockhart?",
+        options: ["Brooke and Sassoon", "Sassoon and Owen", "Owen and Rosenberg", "Rosenberg and Brooke"],
+        correctAnswer: "Sassoon and Owen",
+        explanation: "Sassoon mentored Owen at the military hospital."
+    },
+
+    // --- REPHRASED & REINFORCEMENT (Trick questions & variations to reach 200) ---
+    // Batch 11: WWI Re-visited
+    {
+        question: "Which conflict is the focus of these War Poets?",
+        options: ["World War II", "The Crimean War", "World War I", "The Boer War"],
+        correctAnswer: "World War I",
+        explanation: "All these poets fought in World War I."
+    },
+    {
+        question: "In what year did the armistice occur?",
+        options: ["1914", "1916", "1918", "1919"],
+        correctAnswer: "1918",
+        explanation: "The war ended with the armistice in November 1918."
+    },
+    {
+        question: "What psychological condition was treated at Craiglockhart?",
+        options: ["Combat blindness", "Shell-shock", "Trench foot", "Mustard gas burns"],
+        correctAnswer: "Shell-shock",
+        explanation: "Craiglockhart specialized in treating shell-shocked officers."
+    },
+    {
+        question: "Which of these was NOT a common hazard in the trenches?",
+        options: ["Rats", "Mud", "Poison Gas", "Cavalry swords"],
+        correctAnswer: "Cavalry swords",
+        explanation: "Cavalry was largely obsolete; trenches were dominated by gas and mud."
+    },
+    {
+        question: "How did early propaganda portray the enemy?",
+        options: ["As honorable equals", "As ultimate monsters", "As misunderstood victims", "As superior warriors"],
+        correctAnswer: "As ultimate monsters",
+        explanation: "Propaganda demonized the enemy to boost enlistment."
+    },
+    {
+        question: "Why did the 'War Poets' write their verses?",
+        options: ["To get rich quickly", "To expose the truth", "To please generals", "To practice Latin"],
+        correctAnswer: "To expose the truth",
+        explanation: "They wrote to awaken the public conscience to the horrors."
+    },
+    {
+        question: "Which phrase describes the initial wave of enlistment?",
+        options: ["Forced conscription", "Patriotic enthusiasm", "Reluctant drafting", "Financial desperation"],
+        correctAnswer: "Patriotic enthusiasm",
+        explanation: "Many young men eagerly volunteered out of patriotism."
+    },
+    {
+        question: "What replaced this early enthusiasm by 1916?",
+        options: ["Even more patriotism", "Doubt and disillusionment", "Joy and celebration", "Religious awakening"],
+        correctAnswer: "Doubt and disillusionment",
+        explanation: "The Battle of the Somme in 1916 shattered illusions."
+    },
+    {
+        question: "Which side of the conflict did these poets fight for?",
+        options: ["The German Army", "The British Army", "The French Army", "The American Army"],
+        correctAnswer: "The British Army",
+        explanation: "They were all English poets fighting for Britain."
+    },
+    {
+        question: "What literary shift did these poets cause?",
+        options: ["Return to classicism", "The birth of modern poetry", "The end of all rhyming", "The rise of prose exclusively"],
+        correctAnswer: "The birth of modern poetry",
+        explanation: "Their harsh realism helped usher in modernism."
+    },
+
+    // Batch 12: Brooke Re-visited
+    {
+        question: "Whose poetry represents the 'lost generation's' early innocence?",
+        options: ["Siegfried Sassoon", "Wilfred Owen", "Rupert Brooke", "Isaac Rosenberg"],
+        correctAnswer: "Rupert Brooke",
+        explanation: "Brooke's early death preserved his image of innocent heroism."
+    },
+    {
+        question: "Where did Rupert Brooke catch his fatal infection?",
+        options: ["In a trench", "On a ship to Gallipoli", "In a London hospital", "At Cambridge"],
+        correctAnswer: "On a ship to Gallipoli",
+        explanation: "He contracted blood-poisoning on a ship in the Aegean."
+    },
+    {
+        question: "What is the tone of 'The Soldier'?",
+        options: ["Darkly comedic", "Lyrical and patriotic", "Harshly realistic", "Deeply cynical"],
+        correctAnswer: "Lyrical and patriotic",
+        explanation: "It is noted for its lyricism and romantic patriotism."
+    },
+    {
+        question: "Who is the author of the 1914 'War Sonnets'?",
+        options: ["Wilfred Owen", "Rupert Brooke", "Isaac Rosenberg", "Siegfried Sassoon"],
+        correctAnswer: "Rupert Brooke",
+        explanation: "Brooke wrote the famous series of five sonnets in 1914."
+    },
+    {
+        question: "Does Brooke describe the stench of the trenches?",
+        options: ["Yes, frequently", "No, never", "Only in his letters", "Yes, in The Soldier"],
+        correctAnswer: "No, never",
+        explanation: "His poetry is clean and cleansing, lacking grim details."
+    },
+    {
+        question: "What does 'The Soldier' suggest happens to the mind after death?",
+        options: ["It vanishes entirely", "It becomes a pulse in the eternal mind", "It suffers in purgatory", "It haunts the battlefield"],
+        correctAnswer: "It becomes a pulse in the eternal mind",
+        explanation: "He imagines the soul returning thoughts given by England."
+    },
+    {
+        question: "Why was Brooke considered a 'focal point' for England?",
+        options: ["His fierce anti-war stance", "His handsome looks and sacrifice", "His political connections", "His immense wealth"],
+        correctAnswer: "His handsome looks and sacrifice",
+        explanation: "His beauty and early death made him a perfect propaganda symbol."
+    },
+    {
+        question: "Did Brooke survive to see the end of the war?",
+        options: ["Yes, he lived long", "No, he died in 1915", "No, he died in 1918", "Yes, he died in 1920"],
+        correctAnswer: "No, he died in 1915",
+        explanation: "He died very early in the conflict."
+    },
+    {
+        question: "What does Brooke mean by 'a richer dust'?",
+        options: ["Gold found in soil", "The body of an English soldier", "Fertilizer for crops", "Gunpowder on the field"],
+        correctAnswer: "The body of an English soldier",
+        explanation: "He implies English bodies enrich the foreign soil."
+    },
+    {
+        question: "Which word best describes Brooke's vision of England?",
+        options: ["Corrupt", "Idyllic", "Industrial", "Divided"],
+        correctAnswer: "Idyllic",
+        explanation: "He describes an idealized England of flowers, rivers, and suns."
+    },
+
+    // Batch 13: Sassoon Re-visited
+    {
+        question: "Who read Sassoon's declaration in the House of Commons?",
+        options: ["Winston Churchill", "Robert Graves", "A sympathetic MP", "Sassoon himself"],
+        correctAnswer: "A sympathetic MP",
+        explanation: "His protest was read aloud in parliament by an MP."
+    },
+    {
+        question: "What was Sassoon's attitude towards the 'people at home'?",
+        options: ["He thought they were brave", "He thought they were ignorant", "He wrote poems to praise them", "He asked them for money"],
+        correctAnswer: "He thought they were ignorant",
+        explanation: "He resented their complacency and ignorance of the suffering."
+    },
+    {
+        question: "Which political party did Sassoon side with later?",
+        options: ["The Conservative Party", "The Labour Party", "The Liberal Party", "The Green Party"],
+        correctAnswer: "The Labour Party",
+        explanation: "He got involved in politics, siding with Labour."
+    },
+    {
+        question: "What did Sassoon say was the reason for prolonging the war?",
+        options: ["To save democracy", "Evil and unjust ends", "To protect civilians", "To test new weapons"],
+        correctAnswer: "Evil and unjust ends",
+        explanation: "He believed the goals had become evil and unjust."
+    },
+    {
+        question: "Did Sassoon refuse to fight purely out of cowardice?",
+        options: ["Yes, he was scared", "No, it was a political protest", "Yes, he hated guns", "No, he was too old"],
+        correctAnswer: "No, it was a political protest",
+        explanation: "He was a decorated hero; his refusal was a calculated protest."
+    },
+    {
+        question: "What is 'Counter-Attack'?",
+        options: ["A battle strategy", "A poetry collection by Sassoon", "A novel by Owen", "A political pamphlet"],
+        correctAnswer: "A poetry collection by Sassoon",
+        explanation: "It is one of Sassoon's famous poetry collections (1918)."
+    },
+    {
+        question: "What did Sassoon want his protest to achieve?",
+        options: ["A military promotion", "A negotiated peace", "A transfer to the navy", "A larger pension"],
+        correctAnswer: "A negotiated peace",
+        explanation: "He believed the war's objects were now attainable by negotiation."
+    },
+    {
+        question: "How did Sassoon survive the war?",
+        options: ["He hid in France", "He was hospitalized until the end", "He fought and survived", "He deserted to America"],
+        correctAnswer: "He fought and survived",
+        explanation: "After his protest, he eventually returned to the front and survived."
+    },
+    {
+        question: "Which feeling is NOT characteristic of Sassoon's work?",
+        options: ["Cynicism", "Romantic patriotism", "Bitter anger", "Sardonic distance"],
+        correctAnswer: "Romantic patriotism",
+        explanation: "He completely abandoned romantic patriotism."
+    },
+    {
+        question: "What sport did Sassoon play as a young squire?",
+        options: ["Rugby", "Cricket", "Basketball", "Baseball"],
+        correctAnswer: "Cricket",
+        explanation: "He lived the pastoral life of a young squire, playing cricket."
+    },
+
+    // Batch 14: Owen Re-visited
+    {
+        question: "Who wrote 'My subject is War, and the pity of War'?",
+        options: ["Siegfried Sassoon", "Rupert Brooke", "Wilfred Owen", "Robert Graves"],
+        correctAnswer: "Wilfred Owen",
+        explanation: "This is Owen's famous manifesto from his drafted preface."
+    },
+    {
+        question: "What is 'para-rhyme'?",
+        options: ["Perfect rhyming words", "Rhymes with identical consonants but different vowels", "No rhyme at all", "Rhyming the first letter only"],
+        correctAnswer: "Rhymes with identical consonants but different vowels",
+        explanation: "Like loves/lives or seeds/sides, creating dissonance."
+    },
+    {
+        question: "Why did Owen return to the front despite his shell-shock?",
+        options: ["He was forced to", "To give a voice to the soldiers", "To win a medal", "To write a novel"],
+        correctAnswer: "To give a voice to the soldiers",
+        explanation: "He returned to testify and speak on behalf of the suffering men."
+    },
+    {
+        question: "How close was Owen to seeing the end of the war?",
+        options: ["He missed it by a week", "He missed it by a year", "He saw it end", "He missed it by a day"],
+        correctAnswer: "He missed it by a week",
+        explanation: "He died exactly seven days before the November 11 armistice."
+    },
+    {
+        question: "What did Owen think of the phrase 'Dulce et decorum est'?",
+        options: ["It was a beautiful truth", "It was the old lie", "It was a useful motto", "It was a medical fact"],
+        correctAnswer: "It was the old lie",
+        explanation: "He despised it as a deadly piece of propaganda."
+    },
+    {
+        question: "Which device gives Owen's lines a 'haunting quality'?",
+        options: ["Upbeat rhythms", "Para-rhymes and alliteration", "Classical mythology", "Sonnets forms only"],
+        correctAnswer: "Para-rhymes and alliteration",
+        explanation: "His sound devices force a gravity and moral force on the reader."
+    },
+    {
+        question: "What does Owen mean by 'warn' in his preface?",
+        options: ["Warn of enemy spies", "Warn civilians of war's true horror", "Warn generals of attacks", "Warn soldiers to hide"],
+        correctAnswer: "Warn civilians of war's true horror",
+        explanation: "'All a poet can do today is warn. That is why the true Poets must be truthful.'"
+    },
+    {
+        question: "Which of these is the subject of Owen's 'Disabled'?",
+        options: ["A broken rifle", "A wounded soldier", "A damaged tank", "A destroyed church"],
+        correctAnswer: "A wounded soldier",
+        explanation: "He wrote powerfully about the physical casualties of war."
+    },
+    {
+        question: "Did Owen view his poetry as consoling?",
+        options: ["Yes, deeply comforting", "No, in no sense consolatory", "Yes, for the generals", "No, it was just comedy"],
+        correctAnswer: "No, in no sense consolatory",
+        explanation: "He explicitly stated his elegies were 'in no sense consolatory'."
+    },
+    {
+        question: "Whose poetry combines graphic horror with profound compassion?",
+        options: ["Rupert Brooke", "Jessie Pope", "Wilfred Owen", "Lord Byron"],
+        correctAnswer: "Wilfred Owen",
+        explanation: "Owen uniquely combined brutal realism with deep pity."
+    },
+
+    // Batch 15: Dulce specifics & Text analysis
+    {
+        question: "In 'Dulce et Decorum Est', what are 'haunting flares'?",
+        options: ["Ghosts in the sky", "Battlefield illumination lights", "Enemy airplanes", "Shooting stars"],
+        correctAnswer: "Battlefield illumination lights",
+        explanation: "Flares were fired to illuminate the battlefield at night."
+    },
+    {
+        question: "Why do the soldiers 'curse through sludge'?",
+        options: ["They are angry at the mud", "They lost their maps", "They hate the captain", "They are retreating fast"],
+        correctAnswer: "They are angry at the mud",
+        explanation: "The physical exhaustion of marching through deep trench mud."
+    },
+    {
+        question: "What physical symptom of gas does the poem describe?",
+        options: ["Blindness only", "Guttering and choking", "Instant peaceful sleep", "Fever and chills"],
+        correctAnswer: "Guttering and choking",
+        explanation: "The gas causes the victim to choke and drown in his own fluids."
+    },
+    {
+        question: "Who is Jessie Pope?",
+        options: ["A famous nurse", "A pro-war propagandist poet", "Owen's sister", "A political leader"],
+        correctAnswer: "A pro-war propagandist poet",
+        explanation: "Owen originally dedicated the poem to her to criticize her work."
+    },
+    {
+        question: "What do the 'old beggars' symbolize in Owen's poem?",
+        options: ["Actual homeless people", "The premature aging of young soldiers", "The civilian population", "The enemy troops"],
+        correctAnswer: "The premature aging of young soldiers",
+        explanation: "War has physically destroyed their youth."
+    },
+    {
+        question: "How does the poem transition in its final stanza?",
+        options: ["It becomes a song", "It addresses the reader directly", "It flashes back to childhood", "It describes a victory"],
+        correctAnswer: "It addresses the reader directly",
+        explanation: "Owen shifts to 'If in some smothering dreams you too could pace...'"
+    },
+    {
+        question: "What is the 'green sea'?",
+        options: ["The ocean in France", "The cloud of chlorine gas", "A field of tall grass", "The color of the uniforms"],
+        correctAnswer: "The cloud of chlorine gas",
+        explanation: "Seen through the gas mask, the toxic smoke looks like a green sea."
+    },
+    {
+        question: "What happens 'Behind the wagon that we flung him in'?",
+        options: ["They sing a sad song", "They see his white eyes writhing", "They leave him behind", "They bury him immediately"],
+        correctAnswer: "They see his white eyes writhing",
+        explanation: "The grotesque reality of transporting the dying man."
+    },
+    {
+        question: "What does 'flung him in' suggest about the treatment of the dead/dying?",
+        options: ["Deep respect", "Callous urgency", "Medical care", "Religious ritual"],
+        correctAnswer: "Callous urgency",
+        explanation: "There is no time for dignity; bodies are just 'flung'."
+    },
+    {
+        question: "What does the phrase 'ardent for some desperate glory' mean?",
+        options: ["Eager to die a hero", "Afraid of the dark", "Looking for money", "Running from battle"],
+        correctAnswer: "Eager to die a hero",
+        explanation: "It describes young men tricked into wanting war's 'glory'."
+    },
+
+    // Batch 16: More Rosenberg & Overlaps
+    {
+        question: "Where did Isaac Rosenberg's family emigrate from?",
+        options: ["Germany", "France", "Russia", "Italy"],
+        correctAnswer: "Russia",
+        explanation: "His Jewish working-class family came from Russia."
+    },
+    {
+        question: "Did Rosenberg enlist as an officer?",
+        options: ["Yes, a decorated general", "No, as a private", "Yes, a naval captain", "No, he was a medic"],
+        correctAnswer: "No, as a private",
+        explanation: "Unlike Sassoon and Owen, Rosenberg served in the ranks."
+    },
+    {
+        question: "What describes Rosenberg's vision of war?",
+        options: ["Sentimental", "Unsentimental", "Highly romantic", "Deeply patriotic"],
+        correctAnswer: "Unsentimental",
+        explanation: "His poetry was stark, realistic, and unsentimental."
+    },
+    {
+        question: "Who was older: Brooke or Owen?",
+        options: ["Wilfred Owen", "Rupert Brooke", "They were twins", "Neither, both unknown"],
+        correctAnswer: "Rupert Brooke",
+        explanation: "Brooke was born in 1887, Owen in 1893."
+    },
+    {
+        question: "Which of these poets survived World War I?",
+        options: ["Rupert Brooke", "Wilfred Owen", "Siegfried Sassoon", "Isaac Rosenberg"],
+        correctAnswer: "Siegfried Sassoon",
+        explanation: "Only Sassoon outlived the war, dying in 1967."
+    },
+    {
+        question: "Which of these poets died first?",
+        options: ["Siegfried Sassoon", "Wilfred Owen", "Rupert Brooke", "Isaac Rosenberg"],
+        correctAnswer: "Rupert Brooke",
+        explanation: "Brooke died in 1915, early in the war."
+    },
+    {
+        question: "What common fate connects Brooke, Owen, and Rosenberg?",
+        options: ["They lived to be old", "They died during the war", "They deserted the army", "They became politicians"],
+        correctAnswer: "They died during the war",
+        explanation: "All three lost their lives during WWI."
+    },
+    {
+        question: "What was a main reason for publishing these war poems?",
+        options: ["To entertain children", "To awaken the public conscience", "To win a Nobel prize", "To encourage enlistment"],
+        correctAnswer: "To awaken the public conscience",
+        explanation: "They wanted people at home to know the horrifying truth."
+    },
+    {
+        question: "How did WWI affect traditional views of heroism?",
+        options: ["It strengthened them", "It challenged and destroyed them", "It ignored them entirely", "It modernized them slightly"],
+        correctAnswer: "It challenged and destroyed them",
+        explanation: "Mass slaughter made traditional individual heroism seem absurd."
+    },
+    {
+        question: "Which poet wrote mainly before the realities of the Somme (1916)?",
+        options: ["Siegfried Sassoon", "Wilfred Owen", "Rupert Brooke", "Isaac Rosenberg"],
+        correctAnswer: "Rupert Brooke",
+        explanation: "Brooke wrote in 1914-1915, before the worst atrocities occurred."
+    },
+
+    // Batch 17: Theme Details - Patriotism & Propaganda
+    {
+        question: "What is 'propaganda' in the context of WWI poetry?",
+        options: ["Poems against the war", "State-sponsored lies for recruitment", "Medical advice for soldiers", "Neutral news reporting"],
+        correctAnswer: "State-sponsored lies for recruitment",
+        explanation: "Propaganda was used to glorify the war and hide its realities."
+    },
+    {
+        question: "How do later War Poets respond to patriotism?",
+        options: ["They embrace it", "They see it as a dangerous illusion", "They ignore it", "They write new anthems"],
+        correctAnswer: "They see it as a dangerous illusion",
+        explanation: "They exposed the gap between patriotic rhetoric and reality."
+    },
+    {
+        question: "What does 'The Soldier' suggest about the English air?",
+        options: ["It is polluted", "It is breathing and pure", "It is full of gas", "It is cold and bitter"],
+        correctAnswer: "It is breathing and pure",
+        explanation: "Brooke writes: 'A body of England's, breathing English air'."
+    },
+    {
+        question: "Why did Sassoon throw his Military Cross medal into a river?",
+        options: ["He hated the metal", "As a protest against the war", "By complete accident", "To hide from the enemy"],
+        correctAnswer: "As a protest against the war",
+        explanation: "It was a symbolic act of defiance against the military."
+    },
+    {
+        question: "What term describes the generation that fought in WWI?",
+        options: ["The Greatest Generation", "The Lost Generation", "The Silent Generation", "The Heroic Generation"],
+        correctAnswer: "The Lost Generation",
+        explanation: "They are often referred to as the 'lost generation'."
+    },
+    {
+        question: "Who is considered the model writer of the 'lost generation' in the aftermath?",
+        options: ["Ernest Hemingway", "Rupert Brooke", "Charles Dickens", "Jane Austen"],
+        correctAnswer: "Ernest Hemingway",
+        explanation: "Hemingway is a prime example of postwar disillusionment literature."
+    },
+    {
+        question: "What was the 'Somme'?",
+        options: ["A type of rifle", "A brutal 1916 battle", "A French general", "A peace treaty"],
+        correctAnswer: "A brutal 1916 battle",
+        explanation: "The Battle of the Somme was one of the bloodiest of the war."
+    },
+    {
+        question: "What physical element is constantly mentioned in trench poetry?",
+        options: ["Sunny skies", "Thick mud", "Clean water", "Fresh flowers"],
+        correctAnswer: "Thick mud",
+        explanation: "Mud was a constant, deadly feature of trench life."
+    },
+    {
+        question: "What is an 'elegy' in the context of Owen's work?",
+        options: ["A joyful celebration", "A poem of serious reflection, typically a lament for the dead", "A political speech", "A humorous limerick"],
+        correctAnswer: "A poem of serious reflection, typically a lament for the dead",
+        explanation: "Owen described his poems as 'elegies'."
+    },
+    {
+        question: "How did civilians generally view the war before these poems were published?",
+        options: ["As an absolute nightmare", "As a glorious and safe adventure", "As a political mistake", "As a boring event"],
+        correctAnswer: "As a glorious and safe adventure",
+        explanation: "The press shielded them from the true horrors."
+    },
+
+    // Batch 18: Mixed Recap 1
+    {
+        question: "Which poet said: 'This book is not about heroes'?",
+        options: ["Siegfried Sassoon", "Rupert Brooke", "Wilfred Owen", "Isaac Rosenberg"],
+        correctAnswer: "Wilfred Owen",
+        explanation: "Owen wrote this in his drafted preface."
+    },
+    {
+        question: "Which poet was known as the 'young romantic hero'?",
+        options: ["Siegfried Sassoon", "Wilfred Owen", "Rupert Brooke", "Isaac Rosenberg"],
+        correctAnswer: "Rupert Brooke",
+        explanation: "Brooke's looks and early death cemented this image."
+    },
+    {
+        question: "Which poet survived and converted to Catholicism?",
+        options: ["Siegfried Sassoon", "Wilfred Owen", "Rupert Brooke", "Isaac Rosenberg"],
+        correctAnswer: "Siegfried Sassoon",
+        explanation: "Sassoon found peace in religion later in life."
+    },
+    {
+        question: "Which poet died just a week before the war ended?",
+        options: ["Siegfried Sassoon", "Wilfred Owen", "Rupert Brooke", "Isaac Rosenberg"],
+        correctAnswer: "Wilfred Owen",
+        explanation: "Owen's tragic death occurred on Nov 4, 1918."
+    },
+    {
+        question: "Which poet died of blood-poisoning from a mosquito bite?",
+        options: ["Siegfried Sassoon", "Wilfred Owen", "Rupert Brooke", "Isaac Rosenberg"],
+        correctAnswer: "Rupert Brooke",
+        explanation: "He died of sepsis on the way to Gallipoli."
+    },
+    {
+        question: "Who used 'para-rhymes' extensively?",
+        options: ["Siegfried Sassoon", "Wilfred Owen", "Rupert Brooke", "Isaac Rosenberg"],
+        correctAnswer: "Wilfred Owen",
+        explanation: "Para-rhymes are a hallmark of Owen's style."
+    },
+    {
+        question: "Who wrote 'The Old Huntsman'?",
+        options: ["Siegfried Sassoon", "Wilfred Owen", "Rupert Brooke", "Isaac Rosenberg"],
+        correctAnswer: "Siegfried Sassoon",
+        explanation: "It is a collection by Sassoon."
+    },
+    {
+        question: "Which poet was born in London's East End to Russian immigrants?",
+        options: ["Siegfried Sassoon", "Wilfred Owen", "Rupert Brooke", "Isaac Rosenberg"],
+        correctAnswer: "Isaac Rosenberg",
+        explanation: "Rosenberg came from a poor immigrant background."
+    },
+    {
+        question: "Which poet wrote 'Dulce et Decorum Est'?",
+        options: ["Siegfried Sassoon", "Wilfred Owen", "Rupert Brooke", "Isaac Rosenberg"],
+        correctAnswer: "Wilfred Owen",
+        explanation: "It is Owen's most famous poem."
+    },
+    {
+        question: "Which poet wrote 'The Soldier'?",
+        options: ["Siegfried Sassoon", "Wilfred Owen", "Rupert Brooke", "Isaac Rosenberg"],
+        correctAnswer: "Rupert Brooke",
+        explanation: "It is Brooke's most famous patriotic sonnet."
+    },
+
+    // Batch 19: Mixed Recap 2 (Trick/Reversed)
+    {
+        question: "If a poem praises the beauty of dying for England, who likely wrote it?",
+        options: ["Wilfred Owen", "Siegfried Sassoon", "Rupert Brooke", "Isaac Rosenberg"],
+        correctAnswer: "Rupert Brooke",
+        explanation: "Brooke's work is characterized by this idealism."
+    },
+    {
+        question: "If a poem bitterly attacks a general for his incompetence, who likely wrote it?",
+        options: ["Wilfred Owen", "Siegfried Sassoon", "Rupert Brooke", "John Keats"],
+        correctAnswer: "Siegfried Sassoon",
+        explanation: "Satire against authority is Sassoon's signature."
+    },
+    {
+        question: "If a poem vividly describes a choking gas victim to evoke pity, who likely wrote it?",
+        options: ["Wilfred Owen", "Siegfried Sassoon", "Rupert Brooke", "Robert Graves"],
+        correctAnswer: "Wilfred Owen",
+        explanation: "Owen focused on graphic realism to evoke pity."
+    },
+    {
+        question: "What year did the 'romantic' phase of the war essentially end?",
+        options: ["1914", "1916", "1918", "1920"],
+        correctAnswer: "1916",
+        explanation: "The horrific casualties of the Somme in 1916 shattered romance."
+    },
+    {
+        question: "Did all war poets agree on the purpose of the war?",
+        options: ["Yes, all supported it", "Yes, all hated it", "No, views changed over time", "They only cared about money"],
+        correctAnswer: "No, views changed over time",
+        explanation: "Brooke supported it, while later poets like Sassoon and Owen protested it."
+    },
+    {
+        question: "What did the military do when Sassoon protested?",
+        options: ["They shot him", "They ignored him", "They sent him to an asylum", "They promoted him"],
+        correctAnswer: "They sent him to an asylum",
+        explanation: "They sent him to Craiglockhart claiming he had shell-shock."
+    },
+    {
+        question: "What was Horace's 'old lie'?",
+        options: ["That war is short", "That dying for country is sweet", "That generals are smart", "That weapons are safe"],
+        correctAnswer: "That dying for country is sweet",
+        explanation: "'Dulce et decorum est pro patria mori'."
+    },
+    {
+        question: "Which of these is NOT a theme of English War Poetry?",
+        options: ["Horror and Brutality", "Disillusionment", "Loss and Mourning", "Space Exploration"],
+        correctAnswer: "Space Exploration",
+        explanation: "The themes are strictly related to the human cost of WWI."
+    },
+    {
+        question: "Who said 'The Poetry is in the pity'?",
+        options: ["Siegfried Sassoon", "Wilfred Owen", "Rupert Brooke", "Isaac Rosenberg"],
+        correctAnswer: "Wilfred Owen",
+        explanation: "This is Owen's defining artistic statement."
+    },
+    {
+        question: "Where did many of these poets write their verses?",
+        options: ["In comfortable offices", "In the actual trenches", "On sunny beaches", "In secret bunkers"],
+        correctAnswer: "In the actual trenches",
+        explanation: "Much of the poetry was drafted right on the battlefield."
+    },
+
+    // Batch 20: Final Nuances & Deep Cuts
+    {
+        question: "What was the purpose of Sassoon's 'Declaration'?",
+        options: ["To start a mutiny", "To expose the deliberate prolongation of the war", "To ask for a medal", "To surrender to Germany"],
+        correctAnswer: "To expose the deliberate prolongation of the war",
+        explanation: "He wanted to alert the public that the war's goals had changed to conquest."
+    },
+    {
+        question: "Who was Robert Graves?",
+        options: ["A German general", "A fellow poet and friend to Sassoon", "The Prime Minister", "A Craiglockhart doctor"],
+        correctAnswer: "A fellow poet and friend to Sassoon",
+        explanation: "Graves convinced the military board not to court-martial Sassoon."
+    },
+    {
+        question: "How does Owen describe the gas in 'Dulce et Decorum Est'?",
+        options: ["Like a gentle mist", "Like a green sea", "Like a black cloud", "Like invisible air"],
+        correctAnswer: "Like a green sea",
+        explanation: "He sees the victim 'drowning' under a green sea."
+    },
+    {
+        question: "Why did Owen use words like 'sludge' and 'trudge'?",
+        options: ["To create a joyful sound", "To emphasize heavy exhaustion", "Because they are French words", "To confuse the reader"],
+        correctAnswer: "To emphasize heavy exhaustion",
+        explanation: "The heavy consonant sounds mimic the fatigue of marching in mud."
+    },
+    {
+        question: "What effect does Brooke's poetry have on the reader?",
+        options: ["It induces nightmares", "It evokes comforting patriotism", "It causes political outrage", "It educates on weapons"],
+        correctAnswer: "It evokes comforting patriotism",
+        explanation: "His poems were used to comfort the nation and encourage enlistment."
+    },
+    {
+        question: "What did Sassoon's poetry represent for many common soldiers?",
+        options: ["Their unvoiced disillusionment", "Their love for the King", "Their desire for more combat", "Their ignorance of politics"],
+        correctAnswer: "Their unvoiced disillusionment",
+        explanation: "He spoke for the men who felt betrayed by their leaders."
+    },
+    {
+        question: "What is an example of an Owen 'para-rhyme'?",
+        options: ["Cat and Hat", "Loves and Lives", "Blue and True", "War and Peace"],
+        correctAnswer: "Loves and Lives",
+        explanation: "Para-rhymes share consonants but have different vowels."
+    },
+    {
+        question: "What does 'guttering' mean in Owen's poem?",
+        options: ["Cleaning the streets", "A flickering, dying candle sound", "Running very fast", "Singing loudly"],
+        correctAnswer: "A flickering, dying candle sound",
+        explanation: "It describes the horrific sound of the dying man choking on blood."
+    },
+    {
+        question: "Who 'cursed through sludge'?",
+        options: ["The German politicians", "The British soldiers", "The French civilians", "The medical nurses"],
+        correctAnswer: "The British soldiers",
+        explanation: "The exhausted soldiers marching away from the frontline."
+    },
+    {
+        question: "Ultimately, what did the War Poets achieve?",
+        options: ["They won the war", "They changed how war is perceived forever", "They became wealthy aristocrats", "They stopped WWII"],
+        correctAnswer: "They changed how war is perceived forever",
+        explanation: "They destroyed the romantic myth of war in modern literature."
+    }
+];
+
+        /* ================================================================= */
+        /* APPLICATION LOGIC */
+        /* ================================================================= */
+
+        class ScrollytellingApp {
+            constructor(content) {
+                this.content = content;
+                this.lastScrollY = 0;
+                this.isDragging = false;
+                this.scrubTargetIndex = 0;
+                this.isSnapEnabled = localStorage.getItem('snapEnabled') !== 'false'; 
+                this.currentChapterIndex = 0;
+                this.isSnapping = false; 
+                
+                this.initDOMElements();
+                this.initEventListeners();
+                this.initTheme();
+                this.initSnapState();
+                
+                this.setMode(localStorage.getItem('template-mode') || 'study');
+                this.dom.appContainer.classList.add('loaded');
+            }
+            
+            initDOMElements() {
+                this.dom = {
+                    appContainer: document.getElementById('app'), header: document.getElementById('header'),
+                    headerTitle: document.getElementById('header-title'), 
+                    timelineNodesMobile: document.getElementById('timeline-nodes-mobile'),
+                    timelineProgressMobile: document.getElementById('timeline-progress-mobile'),
+                    timelineTrackMobile: document.getElementById('timeline-track-mobile'),
+                    timelineNodesDesktop: document.getElementById('timeline-nodes-desktop'),
+                    timelineProgressDesktop: document.getElementById('timeline-progress-desktop'),
+                    timelineDesktopContainer: document.querySelector('.timeline-desktop-container'),
+                    storyPanel: document.getElementById('story-panel'),
+                    themeSwitcher: document.querySelector('.theme-switcher'),
+                    scrollSentinel: document.getElementById('scroll-sentinel'),
+                    modeBtns: document.querySelectorAll('.mode-btn'),
+                    appFooter: document.getElementById('app-footer'),
+                    autoScrollBtn: document.getElementById('autoscroll-btn'),
+                    prevChapterBtn: document.getElementById('prev-chapter-btn'),
+                    nextChapterBtn: document.getElementById('next-chapter-btn')
+                };
+            }
+            
+            initSnapState() {
+                if (this.isSnapEnabled) {
+                    document.documentElement.classList.add('snap-enabled');
+                    this.dom.autoScrollBtn.classList.add('active');
+                }
+            }
+
+            initTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light'; 
+                this.applyTheme(savedTheme);
+                this.dom.themeSwitcher.addEventListener('click', () => {
+                    if (navigator.vibrate) navigator.vibrate(20);
+                    const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                    this.applyTheme(newTheme);
+                });
+            }
+            
+            applyTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem('theme', theme);
+            }
+            
+            initEventListeners() {
+                if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
+                window.scrollTo(0, 0);
+
+                this.dom.modeBtns.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        if (navigator.vibrate) navigator.vibrate(20);
+                        const newMode = btn.dataset.mode;
+                        this.setMode(newMode);
+                    });
+                });
+                
+                this.dom.autoScrollBtn.addEventListener('click', () => {
+                     this.isSnapEnabled = !this.isSnapEnabled;
+                     localStorage.setItem('snapEnabled', this.isSnapEnabled);
+                     document.documentElement.classList.toggle('snap-enabled');
+                     this.dom.autoScrollBtn.classList.toggle('active');
+                     if (navigator.vibrate) navigator.vibrate(10);
+                     
+                     if(this.isSnapEnabled) {
+                         this.dom.header.classList.remove('hidden');
+                         this.dom.appFooter.classList.remove('hidden');
+                     }
+                });
+
+                this.dom.prevChapterBtn.addEventListener('click', () => {
+                    if (this.currentChapterIndex > 0) {
+                        this.scrollToChapter(this.content.chapters[this.currentChapterIndex - 1].id);
+                    }
+                });
+
+                this.dom.nextChapterBtn.addEventListener('click', () => {
+                    if (this.currentChapterIndex < this.content.chapters.length - 1) {
+                        this.scrollToChapter(this.content.chapters[this.currentChapterIndex + 1].id);
+                    }
+                });
+
+                window.addEventListener('scroll', () => this.handleScroll(), { passive: true });
+                window.addEventListener('resize', () => this.handleResize());
+                this.initDraggableTimeline();
+            }
+            
+            handleScroll() {
+                const currentScrollY = window.scrollY;
+                const isMobile = window.innerWidth < 960;
+
+                if (Math.abs(currentScrollY - this.lastScrollY) > 5) {
+                    if (currentScrollY > this.lastScrollY && currentScrollY > 80) {
+                        this.dom.header.classList.add('hidden');
+                        this.dom.appFooter.classList.add('hidden');
+                    } else {
+                        this.dom.header.classList.remove('hidden');
+                        this.dom.appFooter.classList.remove('hidden');
+                    }
+                }
+                
+                if (this.isSnapEnabled && !isMobile && !this.isSnapping) {
+                    this.checkSnapTrigger();
+                }
+
+                this.lastScrollY = currentScrollY;
+            }
+
+            checkSnapTrigger() {
+                const chapters = document.querySelectorAll('.story-chapter');
+                const viewportHeight = window.innerHeight;
+                const triggerPoint = viewportHeight / 1.5; 
+                
+                chapters.forEach((chapter, index) => {
+                    const rect = chapter.getBoundingClientRect();
+                    
+                    if (rect.bottom < triggerPoint && rect.bottom > 0 && index < chapters.length - 1) {
+                        this.isSnapping = true;
+                        const nextChapterId = chapters[index + 1].id;
+                        this.scrollToChapter(nextChapterId);
+                        
+                        setTimeout(() => {
+                            this.isSnapping = false;
+                        }, 1000);
+                    }
+                });
+            }
+            
+            handleResize() {
+                document.querySelectorAll('.acc-item.open .acc-body').forEach(body => {
+                    body.style.maxHeight = body.scrollHeight + "px";
+                });
+                if(this.dom.timelineNodesDesktop.offsetHeight > 0) {
+                    this.setupDesktopTimelineSVG();
+                }
+            }
+            
+            initDraggableTimeline() {
+                const timeline = this.dom.timelineTrackMobile;
+                const handleDrag = (e) => {
+                    if (!this.isDragging) return;
+                    e.preventDefault();
+                    const clientX = e.clientX || e.touches[0].clientX;
+                    const rect = timeline.getBoundingClientRect();
+                    let progress = (clientX - rect.left) / rect.width;
+                    progress = Math.max(0, Math.min(1, progress));
+                    
+                    this.scrubTargetIndex = Math.round(progress * (this.content.chapters.length - 1));
+                    this.dom.headerTitle.textContent = this.content.chapters[this.scrubTargetIndex].title;
+                    
+                    document.querySelectorAll('.timeline-node-point').forEach((node, index) => {
+                        node.classList.toggle('active', index === this.scrubTargetIndex);
+                    });
+                    this.dom.timelineProgressMobile.style.width = `${progress * 100}%`;
+                };
+                const startDrag = (e) => {
+                    this.isDragging = true;
+                    handleDrag(e);
+                };
+                const endDrag = () => {
+                    if (!this.isDragging) return;
+                    this.isDragging = false;
+                    this.scrollToChapter(this.content.chapters[this.scrubTargetIndex].id);
+                };
+                timeline.addEventListener('mousedown', startDrag);
+                window.addEventListener('mousemove', handleDrag);
+                window.addEventListener('mouseup', endDrag);
+                timeline.addEventListener('touchstart', startDrag, { passive: false });
+                window.addEventListener('touchmove', handleDrag, { passive: false });
+                window.addEventListener('touchend', endDrag);
+            }
+            
+            setMode(mode) {
+                localStorage.setItem('template-mode', mode);
+                this.dom.modeBtns.forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+                const currentScrollRatio = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+                this.buildUI(mode);
+                this.initObservers(); 
+                const newScrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+                window.scrollTo(0, newScrollHeight * currentScrollRatio);
+            }
+            
+            buildUI(mode) {
+                document.querySelector('.header-title').textContent = this.content.title;
+
+                this.dom.storyPanel.innerHTML = '';
+                this.dom.timelineNodesMobile.innerHTML = '';
+                this.dom.timelineNodesDesktop.innerHTML = '';
+                
+                this.content.chapters.forEach(chapter => {
+                    const nodePointMobile = document.createElement('button');
+                    nodePointMobile.className = 'timeline-node-point';
+                    nodePointMobile.dataset.targetId = chapter.id;
+                    nodePointMobile.setAttribute('aria-label', `Go to chapter: ${chapter.title}`);
+                    nodePointMobile.onclick = (e) => {
+                        if(navigator.vibrate) navigator.vibrate(10);
+                        this.scrollToChapter(chapter.id);
+                    };
+                    this.dom.timelineNodesMobile.appendChild(nodePointMobile);
+
+                    const nodeDesktop = document.createElement('button');
+                    nodeDesktop.className = 'timeline-desktop-node';
+                    nodeDesktop.dataset.targetId = chapter.id;
+                    nodeDesktop.innerHTML = `<div class="node-point"></div><div class="node-label">${chapter.title}</div>`;
+                    nodeDesktop.onclick = () => this.scrollToChapter(chapter.id);
+                    this.dom.timelineNodesDesktop.appendChild(nodeDesktop);
+
+                    const section = document.createElement('section');
+                    section.className = 'story-chapter';
+                    section.id = chapter.id;
+                    const content = mode === 'story' ? chapter.storyDescription : chapter.description;
+                    section.innerHTML = `<div class="chapter-content"><h2 class="chapter-title">${chapter.title}</h2><div class="chapter-body">${content}</div></div>`;
+                    this.dom.storyPanel.appendChild(section);
+                });
+                
+                this.dom.storyPanel.querySelectorAll('.masked-term').forEach(term => {
+                    term.addEventListener('click', () => {
+                        if(!term.classList.contains('revealed')) {
+                            term.classList.add('revealed');
+                            if (navigator.vibrate) navigator.vibrate(10);
+                        }
+                    });
+                });
+
+                this.dom.storyPanel.querySelectorAll('.acc-header').forEach(header => {
+                    header.addEventListener('click', () => {
+                        const item = header.parentElement;
+                        const body = header.nextElementSibling;
+                        const isOpen = item.classList.contains('open');
+                        item.classList.toggle('open');
+                        if (!isOpen) {
+                            body.style.maxHeight = body.scrollHeight + "px";
+                        } else {
+                            body.style.maxHeight = null;
+                        }
+                    });
+                });
+
+                this.dom.storyPanel.querySelectorAll('.flip-container').forEach(container => {
+                    container.addEventListener('click', () => {
+                         const selection = window.getSelection();
+                         if (selection.toString().length === 0) {
+                             container.classList.toggle('flipped');
+                         }
+                    });
+                });
+                
+                this.setupDesktopTimelineSVG();
+            }
+            
+            setupDesktopTimelineSVG() {
+                const nodesHeight = this.dom.timelineNodesDesktop.offsetHeight;
+                const containerHeight = this.dom.timelineDesktopContainer.offsetHeight;
+                if(nodesHeight === 0) return;
+                
+                const startY = (containerHeight - nodesHeight) / 2;
+                const endY = startY + nodesHeight;
+
+                const line = this.dom.timelineProgressDesktop.previousElementSibling;
+                line.setAttribute('y1', startY);
+                line.setAttribute('y2', endY);
+                
+                const progressLine = this.dom.timelineProgressDesktop;
+                progressLine.setAttribute('y1', startY);
+                progressLine.setAttribute('y2', endY);
+
+                const pathLength = endY - startY;
+                progressLine.style.strokeDasharray = pathLength;
+                progressLine.style.strokeDashoffset = pathLength;
+            }
+
+            scrollToChapter(id) {
+                const targetElement = document.getElementById(id);
+                if(!targetElement) return;
+                const headerOffset = 80;
+                const elementPosition = targetElement.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+            }
+            
+            updateNavButtonsState() {
+                if (this.currentChapterIndex <= 0) {
+                    this.dom.prevChapterBtn.classList.add('disabled');
+                } else {
+                    this.dom.prevChapterBtn.classList.remove('disabled');
+                }
+
+                if (this.currentChapterIndex >= this.content.chapters.length - 1) {
+                    this.dom.nextChapterBtn.classList.add('disabled');
+                } else {
+                    this.dom.nextChapterBtn.classList.remove('disabled');
+                }
+            }
+
+            initObservers() {
+                const chapterObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        const id = entry.target.id;
+                        const chapterIndex = this.content.chapters.findIndex(c => c.id === id);
+                        entry.target.classList.toggle('active', entry.isIntersecting);
+
+                        if (entry.isIntersecting) {
+                            this.currentChapterIndex = chapterIndex;
+                            this.updateNavButtonsState();
+
+                            if (!this.isDragging) {
+                                this.dom.headerTitle.textContent = this.content.chapters[chapterIndex].title;
+                            }
+                            document.querySelectorAll(`[data-target-id]`).forEach(node => {
+                                const isCurrent = node.dataset.targetId === id;
+                                const nodeIndex = this.content.chapters.findIndex(c => c.id === node.dataset.targetId);
+                                node.classList.toggle('active', isCurrent);
+                                node.classList.toggle('past', nodeIndex < chapterIndex);
+                            });
+                            
+                            const progress = (chapterIndex / (this.content.chapters.length - 1)) * 100;
+                            this.dom.timelineProgressMobile.style.width = `${progress}%`;
+
+                            const desktopLine = this.dom.timelineProgressDesktop;
+                            if (desktopLine) {
+                                const pathLength = parseFloat(desktopLine.style.strokeDasharray) || 0;
+                                const progressFraction = chapterIndex / (this.content.chapters.length - 1);
+                                desktopLine.style.strokeDashoffset = pathLength * (1 - progressFraction);
+                            }
+                        }
+                    });
+                }, { rootMargin: "-40% 0px -50% 0px", threshold: 0 });
+                
+                document.querySelectorAll('.story-chapter').forEach(chapter => chapterObserver.observe(chapter));
+
+                const headerObserver = new IntersectionObserver(([entry]) => {
+                    this.dom.header.classList.toggle('scrolled', !entry.isIntersecting);
+                }, { threshold: [1] });
+                
+                headerObserver.observe(this.dom.scrollSentinel);
+            }
+        }
+        
+        class Quiz {
+            constructor(questions) {
+                this.allQuestions = questions;
+                this.dom = {
+                    overlay: document.getElementById('quiz-overlay'),
+                    container: document.getElementById('quiz-container'),
+                };
+                this.state = {};
+                this.localStorageKey = 'templateQuizState';
+                this.wasSnapEnabled = false; 
+                this.savedScrollPosition = 0; 
+            }
+            start() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                const savedState = this.loadState();
+                if (savedState) { this.renderResumePrompt(); } 
+                else { this.beginNewQuiz(); }
+            }
+            resume() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.state = this.loadState();
+                this.openOverlay();
+                this.startQuizUI();
+                this.renderQuestion();
+            }
+            beginNewQuiz() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.state = {
+                    questions: this.shuffleArray([...this.allQuestions]),
+                    currentQuestionIndex: 0,
+                    score: 0,
+                    answered: false,
+                };
+                this.saveState();
+                this.openOverlay();
+                this.renderIntro();
+            }
+            openOverlay() {
+                this.savedScrollPosition = window.scrollY;
+                if (document.documentElement.classList.contains('snap-enabled')) {
+                    this.wasSnapEnabled = true;
+                    document.documentElement.classList.remove('snap-enabled');
+                } else {
+                    this.wasSnapEnabled = false;
+                }
+                this.dom.overlay.classList.add('visible');
+                document.body.classList.add('no-scroll');
+            }
+            close() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.dom.overlay.classList.remove('visible');
+                document.body.classList.remove('no-scroll');
+                if (this.wasSnapEnabled) {
+                    document.documentElement.classList.add('snap-enabled');
+                }
+                window.scrollTo(0, this.savedScrollPosition);
+            }
+            saveState() { localStorage.setItem(this.localStorageKey, JSON.stringify(this.state)); }
+            loadState() { const saved = localStorage.getItem(this.localStorageKey); return saved ? JSON.parse(saved) : null; }
+            clearState() { localStorage.removeItem(this.localStorageKey); }
+            
+            renderResumePrompt() {
+                this.openOverlay();
+                this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title">Pending Quiz</span><button class="icon-btn quiz-close-btn" id="quiz-close-resume"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div><div class="quiz-body"><div class="quiz-results-wrapper"><h2 class="quiz-results-title">Welcome Back!</h2><p class="quiz-results-text">You have an unfinished quiz. Do you want to resume from where you left off?</p><div class="quiz-results-actions"><button class="quiz-next-btn" id="resume-quiz-btn">Resume Quiz</button><button class="quiz-next-btn secondary" id="restart-quiz-btn">Start Over</button></div></div></div>`;
+                document.getElementById('resume-quiz-btn').onclick = () => this.resume();
+                document.getElementById('restart-quiz-btn').onclick = () => { this.clearState(); this.beginNewQuiz(); };
+                document.getElementById('quiz-close-resume').onclick = () => this.close();
+            }
+            renderIntro() {
+                 this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title">Self-Assessment Quiz</span><button class="icon-btn quiz-close-btn" id="quiz-close-intro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div><div class="quiz-body"><div class="quiz-results-wrapper"><h2 class="quiz-results-title">Are you ready?</h2><p class="quiz-results-text">Test your knowledge with ${this.state.questions.length} questions about the War Poets.</p><button class="quiz-next-btn" id="start-quiz-btn">Start Quiz</button></div></div>`;
+                 document.getElementById('start-quiz-btn').onclick = () => { this.startQuizUI(); this.renderQuestion(); };
+                 document.getElementById('quiz-close-intro').onclick = () => this.close();
+            }
+            startQuizUI() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title" id="quiz-progress-text"></span><button class="icon-btn quiz-close-btn" id="quiz-close-main"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div><div class="quiz-body"><div id="quiz-content-wrapper"></div></div><div class="quiz-footer"><button class="quiz-next-btn" id="quiz-next-btn" disabled>Next</button></div>`;
+                document.getElementById('quiz-next-btn').onclick = () => this.nextQuestion();
+                document.getElementById('quiz-close-main').onclick = () => this.close();
+            }
+            renderQuestion() {
+                this.state.answered = false;
+                const question = this.state.questions[this.state.currentQuestionIndex];
+                const progressText = `Question ${this.state.currentQuestionIndex + 1} of ${this.state.questions.length}`;
+                document.getElementById('quiz-progress-text').textContent = progressText;
+                const answersHtml = this.shuffleArray(question.options).map(option => `<button class="quiz-answer-btn" data-answer="${option}">${option}</button>`).join('');
+                const contentWrapper = document.getElementById('quiz-content-wrapper');
+                const oldSlide = contentWrapper.querySelector('.quiz-slide');
+                if (oldSlide) {
+                    oldSlide.style.opacity = 0;
+                    setTimeout(() => {
+                        oldSlide.innerHTML = `<p class="quiz-question-text">${question.question}</p><div class="quiz-answers">${answersHtml}</div><div class="quiz-explanation"></div>`;
+                        oldSlide.style.opacity = 1;
+                        this.addAnswerListeners();
+                    }, 200);
+                } else {
+                    contentWrapper.innerHTML = `<div class="quiz-slide active"><p class="quiz-question-text">${question.question}</p><div class="quiz-answers">${answersHtml}</div><div class="quiz-explanation"></div></div>`;
+                    this.addAnswerListeners();
+                }
+                document.getElementById('quiz-next-btn').disabled = true;
+            }
+            addAnswerListeners() {
+                document.querySelectorAll('.quiz-answer-btn').forEach(btn => {
+                    btn.onclick = (e) => this.handleAnswer(e.target);
+                });
+            }
+            handleAnswer(selectedButton) {
+                if (this.state.answered) return;
+                this.state.answered = true;
+                if(navigator.vibrate) navigator.vibrate(20);
+                const selectedAnswer = selectedButton.dataset.answer;
+                const currentQ = this.state.questions[this.state.currentQuestionIndex];
+                const correctAnswer = currentQ.correctAnswer;
+                
+                if (selectedAnswer === correctAnswer) {
+                    this.state.score++;
+                    selectedButton.classList.add('correct');
+                } else {
+                    selectedButton.classList.add('incorrect');
+                    const correctBtn = Array.from(document.querySelectorAll('.quiz-answer-btn')).find(btn => btn.dataset.answer === correctAnswer);
+                    if (correctBtn) correctBtn.classList.add('correct');
+                }
+                
+                document.querySelectorAll('.quiz-answer-btn').forEach(btn => btn.classList.add('disabled'));
+                document.getElementById('quiz-next-btn').disabled = false;
+                
+                const explanationEl = document.querySelector('.quiz-explanation');
+                if(explanationEl) {
+                    const explText = currentQ.explanation || ("The correct answer is: " + correctAnswer);
+                    explanationEl.innerHTML = "<strong>Explanation:</strong> " + explText;
+                    explanationEl.classList.add('visible');
+                }
+                
+                this.saveState();
+            }
+            nextQuestion() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.state.currentQuestionIndex++;
+                if (this.state.currentQuestionIndex < this.state.questions.length) {
+                    this.saveState();
+                    this.renderQuestion();
+                } else {
+                    this.renderResults();
+                }
+            }
+            renderResults() {
+                const score = this.state.score;
+                const total = this.state.questions.length;
+                const percentage = Math.round((score / total) * 100);
+                let message = "You can do better. Try again!";
+                if (percentage >= 70) message = "Great job!";
+                if (percentage >= 90) message = "Excellent!";
+                this.clearState();
+                this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title">Results</span></div><div class="quiz-body"><div class="quiz-results-wrapper"><h2 class="quiz-results-title">${message}</h2><div class="quiz-results-score">${score} / ${total}</div><p class="quiz-results-text">You answered ${percentage}% of the questions correctly.</p><div class="quiz-results-actions"><button class="quiz-next-btn" id="retake-quiz-btn">Retake Quiz</button><button class="quiz-next-btn secondary" id="close-results-btn">Back to Study</button></div></div></div>`;
+                document.getElementById('retake-quiz-btn').onclick = () => this.beginNewQuiz();
+                document.getElementById('close-results-btn').onclick = () => this.close();
+            }
+            shuffleArray(array) {
+                return array.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const app = new ScrollytellingApp(learningContent);
+            const quiz = new Quiz(quizData);
+            document.getElementById('quiz-btn').onclick = () => quiz.start();
+        });
+    </script>
+</body>
+</html>
