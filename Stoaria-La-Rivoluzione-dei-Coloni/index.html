@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>La Rivoluzione Americana - Template Studio</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap');
+
+        :root {
+            /* --- COLORI & TEMA --- */
+            /* LIGHT MODE */
+            --bg-light: #f5f5f4; 
+            --text-light: #292524; 
+            --text-light-secondary: #57534e; 
+            --card-bg-light: #ffffff;
+            --card-border-light: #e7e5e4; 
+            --accent-light: #d97706; 
+            --shadow-light: 0 4px 20px -2px rgba(28, 25, 23, 0.06);
+            --focus-ring-light: #f59e0b;
+            --highlight-light: #ffedd5; 
+            
+            /* Card Back Colors - Light */
+            --flip-front-bg-light: #fafaf9; 
+            --flip-back-bg-light: #e7e5e4; 
+            --flip-back-text-light: #292524;
+
+            /* Quiz Explanation Colors - Light */
+            --quiz-expl-bg-light: #f0fdf4;
+            --quiz-expl-border-light: #bbf7d0;
+            --quiz-expl-text-light: #14532d;
+
+            /* DARK MODE */
+            --bg-dark: #1c1917; 
+            --text-dark: #e7e5e4; 
+            --text-dark-secondary: #a8a29e; 
+            --card-bg-dark: #292524; 
+            --card-border-dark: #44403c; 
+            --accent-dark: #fb923c; 
+            --shadow-dark: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+            --focus-ring-dark: #fdba74;
+            
+            /* Card Back Colors - Dark */
+            --flip-front-bg-dark: #0f0e0d; 
+            --flip-back-bg-dark: #292524; 
+            --flip-back-text-dark: #e7e5e4;
+
+            /* Quiz Explanation Colors - Dark */
+            --quiz-expl-bg-dark: #14532d;
+            --quiz-expl-border-dark: #15803d;
+            --quiz-expl-text-dark: #f0fdf4;
+        }
+
+        [data-theme="light"] {
+            --bg-color: var(--bg-light); --text-color: var(--text-light); --text-secondary-color: var(--text-light-secondary); 
+            --card-bg-color: var(--card-bg-light); --accent-color: var(--accent-light);
+            --border-color: var(--card-border-light); --shadow-color: var(--shadow-light); 
+            --focus-ring-color: var(--focus-ring-light); --highlight-color: var(--highlight-light);
+            --highlight-text-color: var(--text-light);
+            --flip-front-bg: var(--flip-front-bg-light);
+            --flip-back-bg: var(--flip-back-bg-light);
+            --flip-back-text: var(--flip-back-text-light);
+            --quiz-expl-bg: var(--quiz-expl-bg-light);
+            --quiz-expl-border: var(--quiz-expl-border-light);
+            --quiz-expl-text: var(--quiz-expl-text-light);
+        }
+        [data-theme="dark"] {
+            --bg-color: var(--bg-dark); --text-color: var(--text-dark); --text-secondary-color: var(--text-dark-secondary);
+            --card-bg-color: var(--card-bg-dark); --accent-color: var(--accent-dark);
+            --border-color: var(--card-border-dark); --shadow-color: var(--shadow-dark); 
+            --focus-ring-color: var(--focus-ring-dark); --highlight-color: var(--highlight-dark);
+            --highlight-text-color: var(--highlight-text-dark);
+            --flip-front-bg: var(--flip-front-bg-dark);
+            --flip-back-bg: var(--flip-back-bg-dark);
+            --flip-back-text: var(--flip-back-text-dark);
+            --quiz-expl-bg: var(--quiz-expl-bg-dark);
+            --quiz-expl-border: var(--quiz-expl-border-dark);
+            --quiz-expl-text: var(--quiz-expl-text-dark);
+        }
+        
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html { font-size: 100%; -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+        
+        body {
+            font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color);
+            transition: background-color 0.4s ease, color 0.4s ease; -webkit-tap-highlight-color: transparent;
+            line-height: 1.8; overflow-x: hidden;
+        }
+        body.no-scroll { overflow: hidden; height: 100%; width: 100%; }
+
+        button { cursor: pointer; border: none; background: none; font-family: inherit; color: inherit; -webkit-tap-highlight-color: transparent; }
+        button:focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 2px; border-radius: 4px; }
+        button:active { transform: scale(0.98); }
+
+        .app-container { opacity: 0; transition: opacity 0.5s ease; }
+        .app-container.loaded { opacity: 1; }
+        
+        /* HEADER */
+        .header {
+            position: sticky; top: 0; z-index: 100;
+            background-color: rgba(245, 245, 244, 0.9);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid transparent;
+            transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), box-shadow 0.3s ease;
+            will-change: transform;
+        }
+        [data-theme="dark"] .header { background-color: rgba(28, 25, 23, 0.9); }
+        .header.hidden { transform: translateY(-100%); }
+        .header.scrolled { border-bottom-color: var(--border-color); box-shadow: var(--shadow-color); }
+
+        .header-content { padding: 0.75rem 1.5rem; display: flex; justify-content: space-between; align-items: center; min-height: 64px; }
+        .header-title { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1; text-align: left; margin-right: 1rem; }
+        
+        .controls { display: flex; align-items: center; gap: 0.75rem; }
+        
+        .icon-btn { display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 12px; transition: background-color 0.2s; }
+        .icon-btn:hover { background-color: var(--border-color); }
+        .icon-btn svg { width: 22px; height: 22px; color: var(--text-secondary-color); transition: color 0.3s; }
+        .icon-btn.active svg { color: var(--accent-color); }
+        
+        /* Nav Buttons Desktop */
+        .nav-buttons-desktop {
+            display: none;
+            position: fixed; bottom: 2rem; right: 2rem;
+            flex-direction: column; gap: 0.5rem;
+            z-index: 95;
+        }
+        .icon-btn.disabled { opacity: 0.3; pointer-events: none; cursor: default; }
+
+        #autoscroll-btn { display: none; }
+
+        .theme-switcher .sun-icon { display: none; } [data-theme="light"] .theme-switcher .sun-icon { display: block; }
+        .theme-switcher .moon-icon { display: none; } [data-theme="dark"] .theme-switcher .moon-icon { display: block; }
+
+        .mode-switcher { display: flex; background-color: var(--border-color); border-radius: 14px; padding: 4px; }
+        .mode-btn { font-size: 0.85rem; font-weight: 600; padding: 6px 16px; border-radius: 10px; color: var(--text-secondary-color); transition: all 0.2s ease; }
+        .mode-btn.active { background-color: var(--card-bg-color); color: var(--text-color); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .desktop-mode-switcher { display: none; }
+
+        /* TIMELINE MOBILE */
+        .progress-timeline-mobile { padding: 0 1.5rem 1rem 1.5rem; touch-action: none; }
+        .timeline-track { position: relative; width: 100%; height: 6px; background-color: var(--border-color); border-radius: 3px; cursor: pointer; }
+        .timeline-progress { position: absolute; top: 0; left: 0; height: 100%; background-color: var(--accent-color); border-radius: 3px; width: 0; transition: width 0.2s linear; will-change: width; }
+        .timeline-nodes { position: absolute; top: 50%; left: 0; width: 100%; display: flex; justify-content: space-between; pointer-events: none; }
+        .timeline-node-point {
+            width: 12px; height: 12px; border-radius: 50%; background-color: var(--border-color);
+            border: 2px solid var(--bg-color); transform: translateY(-50%); transition: transform 0.3s ease, background-color 0.3s ease;
+            pointer-events: auto;
+        }
+        .timeline-node-point.past, .timeline-node-point.active { background-color: var(--accent-color); }
+        .timeline-node-point.active { transform: translateY(-50%) scale(1.4); box-shadow: 0 0 0 4px var(--highlight-color); }
+
+        /* LAYOUT & CHAPTERS */
+        .main-layout { padding-top: 4rem; }
+        #story-panel { padding: 0 1.5rem; }
+        
+        .story-chapter {
+            min-height: 90vh; padding: 6rem 0;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0.5; transform: scale(0.98); filter: blur(1px);
+            transition: opacity 0.6s ease, transform 0.6s ease, filter 0.6s ease; 
+            border-bottom: 1px dashed var(--border-color);
+        }
+        .story-chapter:last-child { border-bottom: none; min-height: 80vh; }
+        .story-chapter.active { opacity: 1; transform: scale(1); filter: blur(0); }
+        
+        .chapter-content { max-width: 680px; width: 100%; }
+        .chapter-title { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 8vw, 3rem); color: var(--text-color); margin-bottom: 2rem; line-height: 1.15; letter-spacing: -0.02em; word-wrap: break-word;}
+        .chapter-body { font-size: 1.125rem; line-height: 2.1; color: var(--text-secondary-color); }
+        
+        .chapter-body p, .chapter-body ul, .chapter-body ol { margin-bottom: 1.5rem; }
+        .chapter-body ul, .chapter-body ol { padding-left: 1.2rem; }
+        .chapter-body li { margin-bottom: 0.75rem; padding-left: 0.5rem; }
+        .chapter-body li::marker { color: var(--accent-color); font-weight: 700; }
+        .chapter-body strong { font-weight: 700; color: var(--text-color); }
+        .chapter-body h4 { 
+            font-size: 0.95rem; margin: 2.5rem 0 1rem 0; color: var(--accent-color); 
+            text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700;
+            display: flex; align-items: center; gap: 0.5rem;
+            line-height: 1.4;
+        }
+        .chapter-body h4::after { content: ''; flex-grow: 1; height: 1px; background-color: var(--border-color); opacity: 0.5; }
+        
+        /* INTERACTIVE ELEMENTS */
+        .interactive-accordion { 
+            margin: 2rem 0; border: 1px solid var(--border-color); border-radius: 16px; 
+            overflow: hidden; background-color: var(--card-bg-color); box-shadow: var(--shadow-color);
+            width: 100%;
+        }
+        .acc-item { border-bottom: 1px solid var(--border-color); }
+        .acc-item:last-child { border-bottom: none; }
+        .acc-header {
+            width: 100%; padding: 1.25rem 1.5rem; text-align: left;
+            background-color: var(--card-bg-color); font-weight: 600; color: var(--text-color);
+            display: flex; justify-content: space-between; align-items: center;
+            transition: background-color 0.2s; font-size: 1rem; line-height: 1.4;
+        }
+        .acc-header:hover { background-color: var(--bg-color); }
+        .acc-header .acc-icon { 
+            width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+            color: var(--accent-color); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            flex-shrink: 0; margin-left: 12px;
+        }
+        .acc-item.open .acc-header .acc-icon { transform: rotate(135deg); }
+        .acc-body {
+            max-height: 0; overflow: hidden; transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            background-color: var(--bg-color);
+        }
+        .acc-content { padding: 1.25rem 1.5rem; font-size: 1rem; color: var(--text-secondary-color); border-top: 1px dashed var(--border-color); line-height: 1.6; }
+
+        /* FLIP CARDS (ADAPTIVE GRID) */
+        .flip-container { 
+            margin: 2.5rem auto; 
+            perspective: 1000px; 
+            width: 100%; 
+            max-width: 500px; 
+            min-height: 300px; 
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+            cursor: pointer;
+            box-shadow: var(--shadow-color);
+            border-radius: 20px;
+            display: grid;
+            grid-template-areas: "card-face";
+        }
+        .flip-container.flipped .flip-card-inner { transform: rotateY(180deg); }
+        
+        .flip-front, .flip-back {
+            grid-area: card-face; 
+            width: 100%;
+            -webkit-backface-visibility: hidden; 
+            backface-visibility: hidden;
+            border-radius: 20px; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            justify-content: center; 
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .flip-front { background-color: var(--flip-front-bg); border: 1px solid var(--border-color); }
+        .flip-back { background-color: var(--flip-back-bg); color: var(--flip-back-text); transform: rotateY(180deg); }
+        
+        .flip-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--text-color); line-height: 1.3; }
+        .flip-hint { 
+            font-size: 0.8rem; color: var(--accent-color); margin-top: 1.5rem; 
+            font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px;
+            opacity: 0.8; display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+        }
+        .flip-hint::after { content: '↻'; font-size: 1.2em; margin-top: -2.6px; }
+        
+        .flip-back p, .flip-back ul { color: var(--flip-back-text); font-size: 1.1rem; line-height: 1.6; margin: 0; font-weight: 500; width: 100%;}
+        .flip-back ul { text-align: left; padding-left: 1.5rem; margin-top: 0.5rem; }
+        .flip-back li { margin-bottom: 0.5rem; }
+        
+        [data-theme="light"] .flip-back li::marker { color: var(--accent-color); }
+        [data-theme="dark"] .flip-back li::marker { color: white; }
+
+        #timeline-desktop { display: none; }
+        #scroll-sentinel { position: absolute; top: 0; height: 1px; width: 1px; pointer-events: none; }
+
+        .app-footer {
+            position: fixed; bottom: 0; left: 0; width: 100%; z-index: 90;
+            display: flex; justify-content: center; 
+            padding: 1rem 1.5rem calc(1rem + env(safe-area-inset-bottom));
+            pointer-events: none;
+        }
+        .app-footer.hidden { transform: translateY(150%); }
+        .footer-mode-switcher { 
+            display: flex; pointer-events: auto;
+            background-color: rgba(255, 255, 255, 0.9); 
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); 
+            border-radius: 24px; padding: 6px; 
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        [data-theme="dark"] .footer-mode-switcher { background-color: rgba(28, 25, 23, 0.9); border-color: rgba(255,255,255,0.1); }
+
+        /* QUIZ MODE */
+        .quiz-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 200;
+            display: flex; align-items: center; justify-content: center; padding: 1rem;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            opacity: 0; transition: opacity 0.4s ease, visibility 0.4s; visibility: hidden;
+        }
+        .quiz-overlay.visible { opacity: 1; visibility: visible; }
+        .quiz-container {
+            background-color: var(--card-bg-color); border: 1px solid var(--border-color);
+            width: 96%; max-width: 600px; 
+            height: auto; max-height: 85vh;
+            border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            display: flex; flex-direction: column; overflow: hidden;
+            transform: scale(0.95) translateY(10px); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .quiz-overlay.visible .quiz-container { transform: scale(1) translateY(0); }
+        
+        .quiz-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; background-color: var(--bg-color); }
+        .quiz-title { font-weight: 600; color: var(--text-secondary-color); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .quiz-body { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; -webkit-overflow-scrolling: touch; }
+        #quiz-content-wrapper { padding: 1.5rem; display: flex; flex-direction: column; justify-content: center; min-height: 100%;}
+        
+        .quiz-slide { width: 100%; opacity: 0; transition: opacity 0.3s ease; }
+        .quiz-slide.active { opacity: 1; }
+        
+        .quiz-question-text { font-size: clamp(1.1rem, 4vw, 1.35rem); font-weight: 700; margin-bottom: 1.5rem; line-height: 1.4; color: var(--text-color); }
+        .quiz-answers { display: grid; gap: 0.75rem; }
+        .quiz-answer-btn {
+            width: 100%; padding: 1rem 1.25rem; text-align: left; background-color: var(--bg-color);
+            border: 2px solid transparent; border-radius: 16px; font-size: 1rem; font-weight: 500;
+            transition: all 0.2s ease; color: var(--text-color);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            word-break: break-word; hyphens: auto; line-height: 1.4;
+        }
+        .quiz-answer-btn:hover { background-color: var(--border-color); }
+        .quiz-answer-btn:active { transform: scale(0.98); }
+        .quiz-answer-btn.correct { background-color: #dcfce7; color: #14532d; border-color: #22c55e; }
+        [data-theme="dark"] .quiz-answer-btn.correct { background-color: #14532d; color: #f0fdf4; border-color: #22c55e; }
+        .quiz-answer-btn.incorrect { background-color: #fee2e2; color: #7f1d1d; border-color: #ef4444; }
+        [data-theme="dark"] .quiz-answer-btn.incorrect { background-color: #7f1d1d; color: #fef2f2; border-color: #ef4444; }
+        .quiz-answer-btn.disabled { opacity: 0.6; pointer-events: none; }
+        
+        .quiz-explanation {
+            margin-top: 1.5rem; padding: 1.25rem; border-radius: 12px; font-size: 1rem; line-height: 1.5;
+            background-color: var(--quiz-expl-bg); border: 1px solid var(--quiz-expl-border); color: var(--quiz-expl-text);
+            opacity: 0; transform: translateY(10px); transition: opacity 0.4s ease, transform 0.4s ease; display: none;
+        }
+        .quiz-explanation.visible { opacity: 1; transform: translateY(0); display: block; }
+
+        .quiz-footer { 
+            padding: 1.5rem; border-top: 1px solid var(--border-color); flex-shrink: 0; background-color: var(--bg-color);
+            padding-bottom: calc(1.5rem + env(safe-area-inset-bottom)/2);
+        }
+        .quiz-next-btn { width: 100%; background-color: var(--accent-color); color: white; padding: 1rem; border-radius: 14px; font-size: 1.1rem; font-weight: 600; transition: opacity 0.2s, transform 0.2s; }
+        .quiz-next-btn:active { transform: scale(0.98); }
+        .quiz-next-btn:disabled { background-color: var(--border-color); color: var(--text-secondary-color); cursor: not-allowed; transform: none; }
+
+        .quiz-results-wrapper { text-align: center; display: flex; flex-direction: column; justify-content: center; min-height: 100%; padding: 1.5rem; }
+        .quiz-results-title { font-family: 'Playfair Display', serif; font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .quiz-results-score { font-size: 3.5rem; font-weight: 800; color: var(--accent-color); line-height: 1; margin: 1rem 0; }
+        .quiz-results-text { font-size: 1.1rem; color: var(--text-secondary-color); margin-bottom: 2rem; }
+        .quiz-results-actions { display: flex; flex-direction: column; gap: 0.75rem; width: 100%; }
+        .quiz-results-actions .quiz-next-btn.secondary { background-color: transparent; border: 2px solid var(--border-color); color: var(--text-color); }
+        .quiz-results-actions .quiz-next-btn.secondary:hover { border-color: var(--text-secondary-color); }
+
+        /* DESKTOP OVERRIDES */
+        @media (min-width: 960px) {
+            .progress-timeline-mobile { display: none; }
+            .app-footer { display: none; }
+            .desktop-mode-switcher { display: flex; }
+            #autoscroll-btn { display: flex; } 
+            
+            .nav-buttons-desktop { display: flex; }
+            
+            .main-layout { 
+                display: grid; 
+                grid-template-columns: 1fr minmax(0, 680px) 1fr; 
+                gap: 2rem; 
+                max-width: 100%; 
+                margin: 0; 
+                padding: 0 2rem; 
+            }
+            
+            #timeline-desktop {
+                grid-column: 1;
+                display: flex; 
+                position: sticky; top: 0; height: 100vh;
+                align-items: center; 
+                justify-content: flex-end;
+            }
+            
+            #story-panel { grid-column: 2; padding: 0; }
+
+            .timeline-desktop-container { 
+                position: relative; 
+                width: 220px; 
+                padding: 4rem 1rem 4rem 0; 
+                display: flex; justify-content: flex-end;
+            }
+            
+            .timeline-svg {
+                position: absolute; right: 0; 
+                top: 0; height: 100%; width: 2px; overflow: visible;
+                z-index: 0;
+                pointer-events: none; 
+            }
+            .timeline-svg-line { stroke: var(--border-color); stroke-width: 2px; fill: none; }
+            .timeline-svg-progress {
+                stroke: var(--accent-color); stroke-width: 2px; fill: none; transition: stroke-dashoffset 0.4s ease;
+            }
+
+            .timeline-desktop-nodes { 
+                display: flex; flex-direction: column; gap: 1.5rem; 
+                align-items: flex-end; text-align: right; width: 100%; 
+                z-index: 1; 
+            }
+            
+            .timeline-desktop-node {
+                display: flex; align-items: center; gap: 1.5rem; padding: 0.5rem 0;
+                position: relative; transition: opacity 0.3s; flex-direction: row-reverse; 
+                width: 140%; 
+                cursor: pointer; padding-right: 15px;
+            }
+            .timeline-desktop-node:hover .node-label { color: var(--accent-color); }
+            .timeline-desktop-node .node-point {
+                width: 14px; height: 14px; border-radius: 50%; background-color: var(--border-color);
+                border: 3px solid var(--bg-color); transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); flex-shrink: 0; 
+                z-index: 2; position: relative;
+            }
+            .timeline-desktop-node::after {
+                content: ''; position: absolute; top: 0; right: -10px; bottom: 0; width: 100%; z-index: -1;
+            }
+
+            .timeline-desktop-node .node-label { 
+                font-size: 0.95rem; font-weight: 500; color: var(--text-secondary-color); 
+                transition: color 0.3s ease, transform 0.3s ease;
+                white-space: nowrap; 
+            }
+
+            .timeline-desktop-node.active .node-point { background-color: var(--accent-color); transform: scale(1.3); box-shadow: 0 0 0 4px var(--highlight-color); }
+            .timeline-desktop-node.active .node-label { color: var(--text-color); font-weight: 700; transform: translateX(-5px); }
+            .timeline-desktop-node.past .node-point { background-color: var(--accent-color); border-color: var(--accent-color); }
+
+            .story-chapter { padding: 6rem 0; min-height: 85vh; }
+            .story-chapter:first-child { padding-top: 4rem; }
+        }
+        
+        @media (min-width: 1200px) {
+             .main-layout { gap: 4rem; }
+        }
+    </style>
+</head>
+<body>
+    <div id="scroll-sentinel"></div>
+    <div class="app-container" id="app">
+        <header class="header" id="header">
+            <div class="header-content">
+                <h1 class="header-title" id="header-title">La Rivoluzione Americana</h1>
+                <div class="controls">
+                    <div class="mode-switcher desktop-mode-switcher">
+                        <button class="mode-btn" data-mode="study">Studio</button>
+                        <button class="mode-btn" data-mode="story">Storia</button>
+                    </div>
+                    
+                    <button class="icon-btn" id="autoscroll-btn" aria-label="Attiva/Disattiva Autoscroll">
+                         <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 20V7m0 13-4-4m4 4 4-4m4-12v13m0-13 4 4m-4-4-4 4"/>
+                        </svg>
+                    </button>
+
+                     <button class="icon-btn" id="quiz-btn" aria-label="Avvia Quiz">
+                        <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 3L1 9l11 6 9-4.5V12h2V9l-11-6zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+                    </button>
+                    <button class="icon-btn theme-switcher" aria-label="Cambia Tema">
+                        <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                        <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="progress-timeline-mobile">
+                <div class="timeline-track" id="timeline-track-mobile">
+                    <div class="timeline-progress" id="timeline-progress-mobile"></div>
+                    <div class="timeline-nodes" id="timeline-nodes-mobile"></div>
+                </div>
+            </div>
+        </header>
+        
+        <div class="nav-buttons-desktop">
+            <button class="icon-btn" id="prev-chapter-btn" aria-label="Capitolo precedente">
+                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                  <path fill-rule="evenodd" d="M5.575 13.729C4.501 15.033 5.43 17 7.12 17h9.762c1.69 0 2.618-1.967 1.544-3.271l-4.881-5.927a2 2 0 0 0-3.088 0l-4.88 5.927Z" clip-rule="evenodd"/>
+                </svg>
+            </button>
+            <button class="icon-btn" id="next-chapter-btn" aria-label="Capitolo successivo">
+                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                  <path fill-rule="evenodd" d="M18.425 10.271C19.499 8.967 18.57 7 16.88 7H7.12c-1.69 0-2.618 1.967-1.544 3.271l4.881 5.927a2 2 0 0 0 3.088 0l4.88-5.927Z" clip-rule="evenodd"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="main-layout">
+            <aside id="timeline-desktop">
+                <div class="timeline-desktop-container">
+                    <svg class="timeline-svg">
+                        <line class="timeline-svg-line" x1="1" y1="0" x2="1" y2="100%"></line>
+                        <line class="timeline-svg-progress" id="timeline-progress-desktop" x1="1" y1="0" x2="1" y2="100%"></line>
+                    </svg>
+                    <div class="timeline-desktop-nodes" id="timeline-nodes-desktop"></div>
+                </div>
+            </aside>
+            <main id="story-panel"></main>
+        </div>
+
+        <footer class="app-footer" id="app-footer">
+            <div class="mode-switcher footer-mode-switcher">
+                <button class="mode-btn" data-mode="study">Studio</button>
+                <button class="mode-btn" data-mode="story">Storia</button>
+            </div>
+        </footer>
+    </div>
+    
+    <div class="quiz-overlay" id="quiz-overlay">
+        <div class="quiz-container" id="quiz-container"></div>
+    </div>
+
+    <script>
+        /* 
+           =================================================================
+           DATI DEL CORSO
+           =================================================================
+        */
+        const learningContent = {
+            title: "La Rivoluzione Americana",
+            chapters: [
+                {
+                    id: 'capitolo-1',
+                    title: 'Una Società Dinamica nel Nuovo Mondo',
+                    description: `
+                        <h4>Le Tredici Colonie Britanniche</h4>
+                        <p>Per tutto il Settecento nel Nord America, soprattutto nelle <strong>tredici colonie britanniche</strong> situate sulla costa atlantica, giunsero emigrati da tutta l'Europa. Si formò così una società <strong>multietnica</strong>, ricca di competenze lavorative e di abilità commerciali o agricole.</p>
+                        
+                        <p>Gli immigrati erano pieni di iniziativa e desideravano trovare uno sbocco per la loro nuova vita. Una caratteristica fondamentale di questo mondo coloniale era che <strong>non era sottoposto alle rigide regole dell'Antico regime</strong> che soffocavano l'Europa: il governo non era in mano a una nobiltà e gli uomini non erano differenziati in base ai privilegi di cui godevano.</p>
+                        
+                        <h4>Le differenze economiche</h4>
+                        <p>Questi aspetti, uniti all'intraprendenza e all'ingegnosità, fecero delle colonie una realtà particolare dove le attività economiche si svilupparono rapidamente, ma con nette differenze tra Nord e Sud.</p>
+                        
+                        <div class="interactive-accordion">
+                            <div class="acc-item">
+                                <button class="acc-header">Le colonie del Nord <span class="acc-icon">+</span></button>
+                                <div class="acc-body">
+                                    <div class="acc-content">
+                                        Al Nord sorsero grandi città commerciali ed economicamente vivaci come <strong>Boston, New York e Filadelfia</strong>.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="acc-item">
+                                <button class="acc-header">Le colonie del Sud <span class="acc-icon">+</span></button>
+                                <div class="acc-body">
+                                    <div class="acc-content">
+                                        Nelle regioni del Sud si diffusero le grandi <strong>piantagioni di tabacco, cotone e canna da zucchero</strong>. In queste piantagioni lavoravano in condizioni disumane <strong>schiavi neri</strong> provenienti dal continente africano.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `,
+                    storyDescription: `
+                        <p>Immagina di essere un emigrante europeo nel 1700. Hai lasciato alle spalle le vecchie e soffocanti leggi dell'Europa, dove la nobiltà detiene tutto il potere. Sbarchi sulle coste atlantiche del Nord America, in una delle tredici colonie britanniche.</p>
+                        <p>Qui l'aria è diversa. Intorno a te senti parlare lingue diverse: è una società multietnica e dinamica. Se sei ingegnoso e hai voglia di lavorare, puoi costruirti una vita senza che nessuno ti giudichi per il tuo titolo nobiliare, perché l'<em>Antico regime</em> qui non esiste.</p>
+                        <p>Se decidi di stabilirti al Nord, potresti finire a camminare per le strade affollate di Boston o Filadelfia, tra mercanti e porti vivaci. Se invece viaggi verso il Sud, il paesaggio cambia: immense distese di tabacco e cotone si perdono all'orizzonte. Lì la ricchezza è enorme, ma nasconde un lato oscuro: a lavorare quelle terre sono uomini e donne strappati all'Africa e ridotti in schiavitù.</p>
+                    `
+                },
+                {
+                    id: 'capitolo-2',
+                    title: 'Le Origini della Ribellione e le Tasse',
+                    description: `
+                        <h4>Il desiderio di libertà</h4>
+                        <p>All'origine della rivoluzione vi è il desiderio dei coloni di <strong>liberarsi degli obblighi imposti dall'Inghilterra</strong>. Man mano che si facevano più numerosi, i coloni sopportavano sempre meno gli obblighi cui erano sottoposti dalla <em>madrepatria</em>.</p>
+                        
+                        <p>La popolazione delle colonie chiedeva un maggiore riconoscimento della propria libertà. La Gran Bretagna, invece, pensava di poter sfruttare a suo piacimento la ricchezza del popolo americano.</p>
+                        
+                        <h4>La rottura del 1763</h4>
+                        <p>La situazione si fece esplosiva dopo il <strong>1763</strong>, quando l'Inghilterra pretese di <strong>imporre nuove tasse</strong>. Gli Americani, però, non avevano nessuna intenzione di pagare tasse imposte da un Parlamento, quello della Gran Bretagna, in cui non erano rappresentati.</p>
+                        
+                        <p>Il loro principio divenne famoso: <strong>"No taxation without representation"</strong> (cioè <em>«niente tasse senza rappresentanza»</em>).</p>
+
+                        <div class="flip-container">
+                            <div class="flip-card-inner">
+                                <div class="flip-front">
+                                    <div class="flip-title">Glossario: Madrepatria & Boicottaggio</div>
+                                    <div class="flip-hint">Tocca per scoprire il significato</div>
+                                </div>
+                                <div class="flip-back">
+                                    <p><strong>Madrepatria:</strong> La patria d'origine. In questo caso, lo Stato (Inghilterra) che esercita il dominio sulle proprie colonie.</p>
+                                    <br>
+                                    <p><strong>Boicottaggio:</strong> Forma di lotta basata sul rifiuto di qualsiasi rapporto economico o politico con chi si contesta (dal nome del capitano inglese Charles Boycott).</p>
+                                </div>
+                            </div>
+                        </div>
+                    `,
+                    storyDescription: `
+                        <p>Gli anni passano e le colonie prosperano. Ma c'è un'ombra che incombe da oltre l'oceano: l'Inghilterra, la "Madrepatria". Per il governo britannico, tu e gli altri coloni siete solo una fonte di ricchezza da sfruttare.</p>
+                        <p>L'anno di svolta è il 1763. Dopo aver combattuto guerre costose, re Giorgio III e il Parlamento britannico decidono che a pagare il conto dovranno essere i coloni americani. Iniziano ad arrivare nuove, pesanti tasse su merci di uso quotidiano.</p>
+                        <p>L'indignazione esplode nelle piazze. "Perché dobbiamo pagare tasse approvate a Londra da un Parlamento in cui non abbiamo nessun deputato che ci rappresenti?" si chiedono in molti. Nasce così un grido di battaglia che risuonerà nella storia: <em>"No taxation without representation"</em>.</p>
+                        <p>Per rispondere, i coloni smettono di comprare merci inglesi. Inizia il "boicottaggio".</p>
+                    `
+                },
+                {
+                    id: 'capitolo-3',
+                    title: 'Verso l\'Indipendenza',
+                    description: `
+                        <h4>Dalla protesta al Congresso Continentale</h4>
+                        <p>Di conseguenza alla questione delle tasse, i coloni cominciarono a ribellarsi. Sorsero diverse organizzazioni che contestavano le posizioni del governo britannico, si diffusero libretti propagandistici e iniziò il <strong>boicottaggio</strong> delle merci inglesi.</p>
+                        
+                        <p>Nella loro lotta per l'autonomia, il <strong>5 settembre 1774</strong> si tenne a Filadelfia il <strong>primo Congresso continentale</strong>. In cui i rappresentanti delle colonie stabilirono di proseguire la lotta per l'autonomia con il boicottaggio, sperando ancora che il re avrebbe reso loro giustizia.</p>
+                        
+                        <p>Ma non fu così: anzi la repressione inglese aumentò e ci furono i primi scontri armati.</p>
+
+                        <h4>4 Luglio 1776: La Dichiarazione</h4>
+                        <p>Il <strong>4 luglio 1776</strong> un Congresso, in cui si erano riuniti i rappresentanti delle colonie, votò la <strong>Dichiarazione d'indipendenza</strong>. Questo documento fissò i principi fondamentali che dovevano caratterizzare il nuovo Stato che stava nascendo:</p>
+                        <ul>
+                            <li>Si affermava che i governi devono fondarsi sul <strong>consenso del popolo</strong>.</li>
+                            <li>Si stabiliva che <strong>gli uomini hanno uguali diritti</strong>.</li>
+                        </ul>
+                    `,
+                    storyDescription: `
+                        <p>La tensione è ormai alle stelle. Le piazze si riempiono di volantini e libretti che parlano di libertà. Il boicottaggio sta danneggiando gravemente i mercanti inglesi, ma re Giorgio III non cede.</p>
+                        <p>Nel settembre del 1774, i leader delle tredici colonie decidono che è ora di unirsi. Si incontrano a Filadelfia nel "Primo Congresso continentale". Molti sperano ancora in una soluzione pacifica, sperando che il Re ascolti le loro suppliche. Ma la risposta da Londra è durissima: mandano truppe armate per reprimere la protesta.</p>
+                        <p>I primi spari rimbombano nelle campagne. È il punto di non ritorno. Il 4 luglio 1776, a Filadelfia, i delegati compiono un atto impensabile: firmano la Dichiarazione di Indipendenza. Non si considerano più sudditi inglesi. Scrivono nero su bianco parole che cambieranno il mondo: tutti gli uomini hanno diritti uguali e nessun governo ha valore se non si basa sul consenso del popolo.</p>
+                    `
+                },
+                {
+                    id: 'capitolo-4',
+                    title: 'La Guerra e la Vittoria di Washington',
+                    description: `
+                        <h4>La guerra contro l'Inghilterra</h4>
+                        <p>Dopo la Dichiarazione, i coloni dovettero affrontare l'esercito inglese. L'esercito americano fu guidato da <strong>George Washington</strong>, un grande proprietario terriero della Virginia.</p>
+                        
+                        <p>Inizialmente, l'esercito americano si trovò in grande difficoltà contro i soldati britannici. Tuttavia, la situazione cambiò con la decisiva <strong>vittoria di Saratoga nel 1777</strong>.</p>
+                        
+                        <h4>L'aiuto internazionale e la pace</h4>
+                        <p>A seguito dei primi successi americani, giunsero gli aiuti militari ed economici di <strong>Francia, Spagna e Olanda</strong>, le quali colsero l'occasione per opporsi alla potenza dell'Inghilterra.</p>
+                        
+                        <p>Trovandosi ormai isolata e sconfitta sul campo di battaglia a <strong>Yorktown (1781)</strong>, l'Inghilterra si vide costretta a riconoscere alle colonie l'indipendenza che esse avevano proclamato fin dal 1776.</p>
+                        
+                        <p>Il conflitto si concluse ufficialmente con la firma della <strong>pace di Versailles (1783)</strong>.</p>
+                    `,
+                    storyDescription: `
+                        <p>Dichiarare l'indipendenza su un pezzo di carta è una cosa, conquistarla sul campo di battaglia è un'altra. L'Impero Britannico ha l'esercito più potente del mondo. A guidare le truppe americane, disorganizzate e mal equipaggiate, viene chiamato un proprietario terriero della Virginia: George Washington.</p>
+                        <p>I primi anni sono un disastro. L'esercito americano soffre il freddo, la fame e subisce pesanti sconfitte. Ma nel 1777, a Saratoga, le truppe di Washington riescono in un'impresa incredibile: sconfiggono gli inglesi. È la svolta. Le potenze europee come Francia e Spagna, nemiche giurate dell'Inghilterra, capiscono che l'America fa sul serio e inviano navi, armi e soldati in aiuto.</p>
+                        <p>Nel 1781, le truppe britanniche vengono accerchiate e sconfitte definitivamente a Yorktown. È la fine dell'incubo. Nel 1783, con la Pace di Versailles, il re d'Inghilterra si arrende all'evidenza: sono nati gli Stati Uniti d'America.</p>
+                    `
+                }
+            ]
+        };
+
+        /* 
+           =================================================================
+           DATI DEL QUIZ
+           =================================================================
+        */
+        const quizData = [
+            { question: "Nel Settecento, da dove provenivano principalmente gli emigrati che giunsero in Nord America?", options: ["Dall'Europa", "Dall'Asia", "Dal Sud America", "Dall'Australia"], correctAnswer: "Dall'Europa", explanation: "Gli emigrati giunsero da tutta l'Europa, attratti dalle nuove opportunità del continente." },
+            { question: "Dove erano collocate le tredici colonie britanniche nel Nord America?", options: ["Sulla costa atlantica", "Sulla costa pacifica", "Nel Golfo del Messico", "Al confine con l'Alaska"], correctAnswer: "Sulla costa atlantica", explanation: "Le 13 colonie si trovavano sulla costa orientale, affacciate sull'Oceano Atlantico." },
+            { question: "Quale aggettivo descrive meglio la società formatasi nelle colonie britanniche?", options: ["Multietnica e dinamica", "Aristocratica e rigida", "Omogenea e statica", "Povera e rassegnata"], correctAnswer: "Multietnica e dinamica", explanation: "Il testo definisce la società multietnica, ricca di competenze e dinamica, senza i vincoli dell'Antico regime." },
+            { question: "Il mondo coloniale nordamericano era sottoposto alle regole dell'Antico regime?", options: ["Falso", "Vero"], correctAnswer: "Falso", explanation: "A differenza dell'Europa, non vi era una nobiltà a governare e gli uomini non erano divisi in base ai privilegi." },
+            { question: "Quali erano le principali città sorte nelle colonie del Nord?", options: ["Boston, New York e Filadelfia", "Charleston, Savannah e Richmond", "New Orleans, Miami e Atlanta", "Washington, Dallas e Chicago"], correctAnswer: "Boston, New York e Filadelfia", explanation: "Al Nord sorsero grandi città commerciali come Boston, New York e Filadelfia." },
+            { question: "Quale attività economica caratterizzava principalmente le colonie del Sud?", options: ["Le piantagioni", "Le industrie siderurgiche", "La pesca d'altura", "Il commercio navale"], correctAnswer: "Le piantagioni", explanation: "Al Sud si diffusero enormi piantagioni agricole lavorate dagli schiavi." },
+            { question: "Quali prodotti venivano coltivati nelle piantagioni del Sud?", options: ["Tabacco, cotone e canna da zucchero", "Grano, mais e orzo", "Patate, pomodori e fagioli", "Caffè, cacao e spezie"], correctAnswer: "Tabacco, cotone e canna da zucchero", explanation: "Le colture principali erano quelle destinate all'esportazione: tabacco, cotone e canna da zucchero." },
+            { question: "Chi costituiva la principale forza lavoro nelle piantagioni del Sud?", options: ["Schiavi neri provenienti dall'Africa", "Immigrati irlandesi appena arrivati", "Contadini stipendiati francesi", "I nativi americani"], correctAnswer: "Schiavi neri provenienti dall'Africa", explanation: "Nelle piantagioni lavoravano schiavi neri portati dal continente africano." },
+            { question: "Cosa si intende con il termine 'Madrepatria' in questo contesto storico?", options: ["Lo Stato che esercita il dominio sulle colonie", "La terra natale degli indigeni", "Il paese d'origine del padre", "Una nazione alleata in guerra"], correctAnswer: "Lo Stato che esercita il dominio sulle colonie", explanation: "In questo caso la madrepatria era l'Inghilterra, rispetto alle colonie americane." },
+            { question: "Da chi prende il nome la parola 'Boicottaggio'?", options: ["Dal capitano Charles Boycott", "Da un generale francese di nome Boycotte", "Da un fiume americano", "Dal Re Giorgio Boycott"], correctAnswer: "Dal capitano Charles Boycott", explanation: "Il termine deriva dall'amministratore inglese Charles Boycott che lavorò in Irlanda nell'Ottocento." },
+            { question: "In cosa consiste un boicottaggio?", options: ["Nel rifiuto di qualsiasi rapporto economico o politico come forma di protesta", "Nell'attaccare fisicamente i mercanti", "Nel pagare le tasse con monete false", "Nel rubare merci dalle navi inglesi"], correctAnswer: "Nel rifiuto di qualsiasi rapporto economico o politico come forma di protesta", explanation: "È una forma di lotta pacifica che consiste nel non collaborare o non acquistare merci." },
+            { question: "Quale fu il desiderio fondamentale all'origine della rivoluzione americana?", options: ["Liberarsi degli obblighi imposti dall'Inghilterra", "Conquistare il Canada francese", "Sottomettere le tribù native", "Diventare re d'America"], correctAnswer: "Liberarsi degli obblighi imposti dall'Inghilterra", explanation: "I coloni non sopportavano più le imposizioni e le regole dettate da Londra." },
+            { question: "Come considerava la Gran Bretagna il popolo americano e i suoi territori?", options: ["Una ricchezza da sfruttare a suo piacimento", "Come cittadini inglesi di Serie A", "Come un regno indipendente alleato", "Un territorio inutile da abbandonare"], correctAnswer: "Una ricchezza da sfruttare a suo piacimento", explanation: "L'Inghilterra vedeva le colonie essenzialmente come una fonte di entrate economiche." },
+            { question: "In che anno la situazione divenne esplosiva tra colonie e madrepatria?", options: ["1763", "1776", "1783", "1750"], correctAnswer: "1763", explanation: "Dopo il 1763 l'Inghilterra decise di imporre nuove pesanti tasse." },
+            { question: "Quale fu la causa scatenante delle prime proteste dei coloni nel 1763?", options: ["L'imposizione di nuove tasse da parte dell'Inghilterra", "Il divieto di parlare inglese", "L'abolizione della schiavitù", "L'invasione dei francesi"], correctAnswer: "L'imposizione di nuove tasse da parte dell'Inghilterra", explanation: "Le nuove tasse imposte da Londra accesero la miccia della rivolta." },
+            { question: "Perché gli Americani si rifiutavano di pagare le nuove tasse britanniche?", options: ["Perché erano imposte da un Parlamento in cui non erano rappresentati", "Perché non avevano monete sufficienti", "Perché le tasse andavano pagate solo in oro", "Perché il re non aveva firmato i documenti"], correctAnswer: "Perché erano imposte da un Parlamento in cui non erano rappresentati", explanation: "I coloni si rifiutavano di obbedire a un Parlamento londinese dove non sedeva nessun loro deputato." },
+            { question: "Qual era il famoso slogan coniato dai coloni per protestare contro le tasse?", options: ["No taxation without representation", "Give me liberty or give me death", "America for Americans", "God save the colonies"], correctAnswer: "No taxation without representation", explanation: "Significa: Niente tasse senza rappresentanza in parlamento." },
+            { question: "Come iniziarono a ribellarsi concretamente i coloni americani?", options: ["Con boicottaggio delle merci inglesi e diffusione di libretti propagandistici", "Inviando navi da guerra a Londra", "Smettendo di lavorare nei campi", "Arrestando tutti gli ufficiali inglesi"], correctAnswer: "Con boicottaggio delle merci inglesi e diffusione di libretti propagandistici", explanation: "Iniziarono diffondendo idee tramite organizzazioni, stampa e bloccando l'acquisto di merci." },
+            { question: "In che data si tenne il primo Congresso continentale?", options: ["5 settembre 1774", "4 luglio 1776", "1 gennaio 1763", "25 dicembre 1781"], correctAnswer: "5 settembre 1774", explanation: "Il primo raduno ufficiale delle colonie avvenne il 5 settembre 1774." },
+            { question: "In quale città si tenne il primo Congresso continentale?", options: ["Filadelfia", "Boston", "New York", "Washington D.C."], correctAnswer: "Filadelfia", explanation: "I rappresentanti si riunirono a Filadelfia." },
+            { question: "Durante il primo Congresso del 1774, i coloni dichiararono subito l'indipendenza?", options: ["Falso", "Vero"], correctAnswer: "Falso", explanation: "Inizialmente stabilirono solo di proseguire il boicottaggio, sperando ancora nella giustizia del re." },
+            { question: "Quale fu la risposta del governo inglese alle richieste del primo Congresso continentale?", options: ["Aumentò la repressione scatenando i primi scontri armati", "Ritirò tutte le tasse immediatamente", "Inviò ambasciatori per scusarsi", "Concesse ai coloni seggi in parlamento"], correctAnswer: "Aumentò la repressione scatenando i primi scontri armati", explanation: "La Corona non cedette e la repressione armata portò all'inizio del conflitto vero e proprio." },
+            { question: "Quale documento fu votato il 4 luglio 1776?", options: ["La Dichiarazione d'indipendenza", "La Costituzione Americana", "Il Trattato di Versailles", "La Carta dei Diritti"], correctAnswer: "La Dichiarazione d'indipendenza", explanation: "Il 4 luglio 1776 i coloni dichiararono ufficialmente l'indipendenza dall'Inghilterra." },
+            { question: "Quale principio fondamentale era contenuto nella Dichiarazione del 1776?", options: ["Che gli uomini hanno uguali diritti e i governi si fondano sul consenso del popolo", "Che il re doveva essere eletto ogni 4 anni", "Che le colonie diventavano un Impero", "Che la schiavitù veniva abolita in tutti gli stati"], correctAnswer: "Che gli uomini hanno uguali diritti e i governi si fondano sul consenso del popolo", explanation: "Questi erano i principi illuministi su cui si fondò il nuovo Stato (nonostante la contraddizione del mantenimento della schiavitù al Sud)." },
+            { question: "Chi fu scelto per guidare l'esercito americano?", options: ["George Washington", "Thomas Jefferson", "Benjamin Franklin", "Abraham Lincoln"], correctAnswer: "George Washington", explanation: "Washington, un grande proprietario terriero della Virginia, assunse il comando dell'esercito." },
+            { question: "Quale importante battaglia vinta dagli Americani avvenne nel 1777?", options: ["Battaglia di Saratoga", "Battaglia di Yorktown", "Battaglia di Lexington", "Battaglia di Gettysburg"], correctAnswer: "Battaglia di Saratoga", explanation: "La vittoria di Saratoga nel 1777 fu fondamentale per rovesciare le sorti del conflitto." },
+            { question: "Quali nazioni europee aiutarono i coloni americani durante la guerra?", options: ["Francia, Spagna e Olanda", "Germania, Italia e Russia", "Portogallo e Belgio", "Nessuna, combatterono da soli"], correctAnswer: "Francia, Spagna e Olanda", explanation: "Queste nazioni colsero l'opportunità per indebolire l'Impero Britannico." },
+            { question: "Dove e in che anno l'Inghilterra fu sconfitta definitivamente sul campo di battaglia?", options: ["Yorktown (1781)", "Saratoga (1777)", "Filadelfia (1776)", "Boston (1774)"], correctAnswer: "Yorktown (1781)", explanation: "L'esercito britannico isolato fu sconfitto a Yorktown nel 1781." },
+            { question: "Come si chiamava il trattato di pace che concluse la guerra d'indipendenza americana?", options: ["Pace di Versailles", "Trattato di Parigi", "Pace di Londra", "Dichiarazione dei Diritti"], correctAnswer: "Pace di Versailles", explanation: "Il conflitto fu chiuso ufficialmente con la Pace di Versailles (nota anche come Trattato di Parigi del 1783)." },
+            { question: "In che anno fu firmata la pace di Versailles?", options: ["1783", "1776", "1781", "1789"], correctAnswer: "1783", explanation: "La pace che riconobbe l'indipendenza degli Stati Uniti d'America fu siglata nel 1783." },
+            { question: "Osservando la carta geografica del 1783 (dal libro), a chi apparteneva la Florida?", options: ["Era un territorio spagnolo", "Era un territorio inglese", "Faceva parte dei primi 13 Stati Uniti", "Era un territorio francese"], correctAnswer: "Era un territorio spagnolo", explanation: "Secondo l'esercizio della carta sul libro, la Florida nel 1783 era in mano alla Spagna." },
+            { question: "Sempre secondo la carta del 1783, è vero che la Louisiana era un territorio inglese?", options: ["Falso", "Vero"], correctAnswer: "Falso", explanation: "Come indica la carta e le soluzioni implicite dell'esercizio, la Louisiana non era inglese (era tornata spagnola/francese in quel periodo)." }
+        ];
+
+        /* ================================================================= */
+        /* LOGICA APPLICAZIONE */
+        /* ================================================================= */
+
+        class ScrollytellingApp {
+            constructor(content) {
+                this.content = content;
+                this.lastScrollY = 0;
+                this.isDragging = false;
+                this.scrubTargetIndex = 0;
+                this.isSnapEnabled = localStorage.getItem('snapEnabled') !== 'false'; 
+                this.currentChapterIndex = 0;
+                this.isSnapping = false; 
+                
+                this.initDOMElements();
+                this.initEventListeners();
+                this.initTheme();
+                this.initSnapState();
+                
+                this.setMode(localStorage.getItem('template-mode') || 'study');
+                this.dom.appContainer.classList.add('loaded');
+            }
+            
+            initDOMElements() {
+                this.dom = {
+                    appContainer: document.getElementById('app'), header: document.getElementById('header'),
+                    headerTitle: document.getElementById('header-title'), 
+                    timelineNodesMobile: document.getElementById('timeline-nodes-mobile'),
+                    timelineProgressMobile: document.getElementById('timeline-progress-mobile'),
+                    timelineTrackMobile: document.getElementById('timeline-track-mobile'),
+                    timelineNodesDesktop: document.getElementById('timeline-nodes-desktop'),
+                    timelineProgressDesktop: document.getElementById('timeline-progress-desktop'),
+                    timelineDesktopContainer: document.querySelector('.timeline-desktop-container'),
+                    storyPanel: document.getElementById('story-panel'),
+                    themeSwitcher: document.querySelector('.theme-switcher'),
+                    scrollSentinel: document.getElementById('scroll-sentinel'),
+                    modeBtns: document.querySelectorAll('.mode-btn'),
+                    appFooter: document.getElementById('app-footer'),
+                    autoScrollBtn: document.getElementById('autoscroll-btn'),
+                    prevChapterBtn: document.getElementById('prev-chapter-btn'),
+                    nextChapterBtn: document.getElementById('next-chapter-btn')
+                };
+            }
+            
+            initSnapState() {
+                if (this.isSnapEnabled) {
+                    document.documentElement.classList.add('snap-enabled');
+                    this.dom.autoScrollBtn.classList.add('active');
+                }
+            }
+
+            initTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light'; 
+                this.applyTheme(savedTheme);
+                this.dom.themeSwitcher.addEventListener('click', () => {
+                    if (navigator.vibrate) navigator.vibrate(20);
+                    const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                    this.applyTheme(newTheme);
+                });
+            }
+            
+            applyTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem('theme', theme);
+            }
+            
+            initEventListeners() {
+                if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
+                window.scrollTo(0, 0);
+
+                this.dom.modeBtns.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        if (navigator.vibrate) navigator.vibrate(20);
+                        const newMode = btn.dataset.mode;
+                        this.setMode(newMode);
+                    });
+                });
+                
+                this.dom.autoScrollBtn.addEventListener('click', () => {
+                     this.isSnapEnabled = !this.isSnapEnabled;
+                     localStorage.setItem('snapEnabled', this.isSnapEnabled);
+                     document.documentElement.classList.toggle('snap-enabled');
+                     this.dom.autoScrollBtn.classList.toggle('active');
+                     if (navigator.vibrate) navigator.vibrate(10);
+                     
+                     if(this.isSnapEnabled) {
+                         this.dom.header.classList.remove('hidden');
+                         this.dom.appFooter.classList.remove('hidden');
+                     }
+                });
+
+                this.dom.prevChapterBtn.addEventListener('click', () => {
+                    if (this.currentChapterIndex > 0) {
+                        this.scrollToChapter(this.content.chapters[this.currentChapterIndex - 1].id);
+                    }
+                });
+
+                this.dom.nextChapterBtn.addEventListener('click', () => {
+                    if (this.currentChapterIndex < this.content.chapters.length - 1) {
+                        this.scrollToChapter(this.content.chapters[this.currentChapterIndex + 1].id);
+                    }
+                });
+
+                window.addEventListener('scroll', () => this.handleScroll(), { passive: true });
+                window.addEventListener('resize', () => this.handleResize());
+                this.initDraggableTimeline();
+            }
+            
+            handleScroll() {
+                const currentScrollY = window.scrollY;
+                const isMobile = window.innerWidth < 960;
+
+                if (Math.abs(currentScrollY - this.lastScrollY) > 5) {
+                    if (currentScrollY > this.lastScrollY && currentScrollY > 80) {
+                        this.dom.header.classList.add('hidden');
+                        this.dom.appFooter.classList.add('hidden');
+                    } else {
+                        this.dom.header.classList.remove('hidden');
+                        this.dom.appFooter.classList.remove('hidden');
+                    }
+                }
+                
+                if (this.isSnapEnabled && !isMobile && !this.isSnapping) {
+                    this.checkSnapTrigger();
+                }
+
+                this.lastScrollY = currentScrollY;
+            }
+
+            checkSnapTrigger() {
+                const chapters = document.querySelectorAll('.story-chapter');
+                const viewportHeight = window.innerHeight;
+                const triggerPoint = viewportHeight / 1.5;
+                
+                chapters.forEach((chapter, index) => {
+                    const rect = chapter.getBoundingClientRect();
+                    
+                    if (rect.bottom < triggerPoint && rect.bottom > 0 && index < chapters.length - 1) {
+                        this.isSnapping = true;
+                        const nextChapterId = chapters[index + 1].id;
+                        this.scrollToChapter(nextChapterId);
+                        
+                        setTimeout(() => {
+                            this.isSnapping = false;
+                        }, 1000);
+                    }
+                });
+            }
+            
+            handleResize() {
+                document.querySelectorAll('.acc-item.open .acc-body').forEach(body => {
+                    body.style.maxHeight = body.scrollHeight + "px";
+                });
+                if(this.dom.timelineNodesDesktop.offsetHeight > 0) {
+                    this.setupDesktopTimelineSVG();
+                }
+            }
+            
+            initDraggableTimeline() {
+                const timeline = this.dom.timelineTrackMobile;
+                const handleDrag = (e) => {
+                    if (!this.isDragging) return;
+                    e.preventDefault();
+                    const clientX = e.clientX || e.touches[0].clientX;
+                    const rect = timeline.getBoundingClientRect();
+                    let progress = (clientX - rect.left) / rect.width;
+                    progress = Math.max(0, Math.min(1, progress));
+                    
+                    this.scrubTargetIndex = Math.round(progress * (this.content.chapters.length - 1));
+                    this.dom.headerTitle.textContent = this.content.chapters[this.scrubTargetIndex].title;
+                    
+                    document.querySelectorAll('.timeline-node-point').forEach((node, index) => {
+                        node.classList.toggle('active', index === this.scrubTargetIndex);
+                    });
+                    this.dom.timelineProgressMobile.style.width = `${progress * 100}%`;
+                };
+                const startDrag = (e) => {
+                    this.isDragging = true;
+                    handleDrag(e);
+                };
+                const endDrag = () => {
+                    if (!this.isDragging) return;
+                    this.isDragging = false;
+                    this.scrollToChapter(this.content.chapters[this.scrubTargetIndex].id);
+                };
+                timeline.addEventListener('mousedown', startDrag);
+                window.addEventListener('mousemove', handleDrag);
+                window.addEventListener('mouseup', endDrag);
+                timeline.addEventListener('touchstart', startDrag, { passive: false });
+                window.addEventListener('touchmove', handleDrag, { passive: false });
+                window.addEventListener('touchend', endDrag);
+            }
+            
+            setMode(mode) {
+                localStorage.setItem('template-mode', mode);
+                this.dom.modeBtns.forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+                const currentScrollRatio = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+                this.buildUI(mode);
+                this.initObservers(); 
+                const newScrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+                window.scrollTo(0, newScrollHeight * currentScrollRatio);
+            }
+            
+            buildUI(mode) {
+                document.querySelector('.header-title').textContent = this.content.title;
+
+                this.dom.storyPanel.innerHTML = '';
+                this.dom.timelineNodesMobile.innerHTML = '';
+                this.dom.timelineNodesDesktop.innerHTML = '';
+                
+                this.content.chapters.forEach(chapter => {
+                    const nodePointMobile = document.createElement('button');
+                    nodePointMobile.className = 'timeline-node-point';
+                    nodePointMobile.dataset.targetId = chapter.id;
+                    nodePointMobile.setAttribute('aria-label', `Vai al capitolo: ${chapter.title}`);
+                    nodePointMobile.onclick = (e) => {
+                        if(navigator.vibrate) navigator.vibrate(10);
+                        this.scrollToChapter(chapter.id);
+                    };
+                    this.dom.timelineNodesMobile.appendChild(nodePointMobile);
+
+                    const nodeDesktop = document.createElement('button');
+                    nodeDesktop.className = 'timeline-desktop-node';
+                    nodeDesktop.dataset.targetId = chapter.id;
+                    nodeDesktop.innerHTML = `<div class="node-point"></div><div class="node-label">${chapter.title}</div>`;
+                    nodeDesktop.onclick = () => this.scrollToChapter(chapter.id);
+                    this.dom.timelineNodesDesktop.appendChild(nodeDesktop);
+
+                    const section = document.createElement('section');
+                    section.className = 'story-chapter';
+                    section.id = chapter.id;
+                    const content = mode === 'story' ? chapter.storyDescription : chapter.description;
+                    section.innerHTML = `<div class="chapter-content"><h2 class="chapter-title">${chapter.title}</h2><div class="chapter-body">${content}</div></div>`;
+                    this.dom.storyPanel.appendChild(section);
+                });
+                
+                this.dom.storyPanel.querySelectorAll('.masked-term').forEach(term => {
+                    term.addEventListener('click', () => {
+                        if(!term.classList.contains('revealed')) {
+                            term.classList.add('revealed');
+                            if (navigator.vibrate) navigator.vibrate(10);
+                        }
+                    });
+                });
+
+                this.dom.storyPanel.querySelectorAll('.acc-header').forEach(header => {
+                    header.addEventListener('click', () => {
+                        const item = header.parentElement;
+                        const body = header.nextElementSibling;
+                        const isOpen = item.classList.contains('open');
+                        item.classList.toggle('open');
+                        if (!isOpen) {
+                            body.style.maxHeight = body.scrollHeight + "px";
+                        } else {
+                            body.style.maxHeight = null;
+                        }
+                    });
+                });
+
+                this.dom.storyPanel.querySelectorAll('.flip-container').forEach(container => {
+                    container.addEventListener('click', () => {
+                         const selection = window.getSelection();
+                         if (selection.toString().length === 0) {
+                             container.classList.toggle('flipped');
+                         }
+                    });
+                });
+                
+                this.setupDesktopTimelineSVG();
+            }
+            
+            setupDesktopTimelineSVG() {
+                const nodesHeight = this.dom.timelineNodesDesktop.offsetHeight;
+                const containerHeight = this.dom.timelineDesktopContainer.offsetHeight;
+                const startY = (containerHeight - nodesHeight) / 2;
+                const endY = startY + nodesHeight;
+
+                const line = this.dom.timelineProgressDesktop.previousElementSibling;
+                line.setAttribute('y1', startY);
+                line.setAttribute('y2', endY);
+                
+                const progressLine = this.dom.timelineProgressDesktop;
+                progressLine.setAttribute('y1', startY);
+                progressLine.setAttribute('y2', endY);
+
+                const pathLength = endY - startY;
+                progressLine.style.strokeDasharray = pathLength;
+                progressLine.style.strokeDashoffset = pathLength;
+            }
+
+            scrollToChapter(id) {
+                const targetElement = document.getElementById(id);
+                const headerOffset = 80;
+                const elementPosition = targetElement.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+            }
+            
+            updateNavButtonsState() {
+                if (this.currentChapterIndex <= 0) {
+                    this.dom.prevChapterBtn.classList.add('disabled');
+                } else {
+                    this.dom.prevChapterBtn.classList.remove('disabled');
+                }
+
+                if (this.currentChapterIndex >= this.content.chapters.length - 1) {
+                    this.dom.nextChapterBtn.classList.add('disabled');
+                } else {
+                    this.dom.nextChapterBtn.classList.remove('disabled');
+                }
+            }
+
+            initObservers() {
+                const chapterObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        const id = entry.target.id;
+                        const chapterIndex = this.content.chapters.findIndex(c => c.id === id);
+                        entry.target.classList.toggle('active', entry.isIntersecting);
+
+                        if (entry.isIntersecting) {
+                            this.currentChapterIndex = chapterIndex;
+                            this.updateNavButtonsState();
+
+                            if (!this.isDragging) {
+                                this.dom.headerTitle.textContent = this.content.chapters[chapterIndex].title;
+                            }
+                            document.querySelectorAll(`[data-target-id]`).forEach(node => {
+                                const isCurrent = node.dataset.targetId === id;
+                                const nodeIndex = this.content.chapters.findIndex(c => c.id === node.dataset.targetId);
+                                node.classList.toggle('active', isCurrent);
+                                node.classList.toggle('past', nodeIndex < chapterIndex);
+                            });
+                            
+                            const progress = (chapterIndex / (this.content.chapters.length - 1)) * 100;
+                            this.dom.timelineProgressMobile.style.width = `${progress}%`;
+
+                            const desktopLine = this.dom.timelineProgressDesktop;
+                            if (desktopLine) {
+                                const pathLength = parseFloat(desktopLine.style.strokeDasharray) || 0;
+                                const progressFraction = chapterIndex / (this.content.chapters.length - 1);
+                                desktopLine.style.strokeDashoffset = pathLength * (1 - progressFraction);
+                            }
+                        }
+                    });
+                }, { rootMargin: "-40% 0px -50% 0px", threshold: 0 });
+                
+                document.querySelectorAll('.story-chapter').forEach(chapter => chapterObserver.observe(chapter));
+
+                const headerObserver = new IntersectionObserver(([entry]) => {
+                    this.dom.header.classList.toggle('scrolled', !entry.isIntersecting);
+                }, { threshold: [1] });
+                
+                headerObserver.observe(this.dom.scrollSentinel);
+            }
+        }
+        
+        class Quiz {
+            constructor(questions) {
+                this.allQuestions = questions;
+                this.dom = {
+                    overlay: document.getElementById('quiz-overlay'),
+                    container: document.getElementById('quiz-container'),
+                };
+                this.state = {};
+                this.localStorageKey = 'templateQuizState';
+                this.wasSnapEnabled = false; 
+                this.savedScrollPosition = 0; 
+            }
+            start() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                const savedState = this.loadState();
+                if (savedState) { this.renderResumePrompt(); } 
+                else { this.beginNewQuiz(); }
+            }
+            resume() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.state = this.loadState();
+                this.openOverlay();
+                this.startQuizUI();
+                this.renderQuestion();
+            }
+            beginNewQuiz() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.state = {
+                    questions: this.shuffleArray([...this.allQuestions]),
+                    currentQuestionIndex: 0,
+                    score: 0,
+                    answered: false,
+                };
+                this.saveState();
+                this.openOverlay();
+                this.renderIntro();
+            }
+            openOverlay() {
+                this.savedScrollPosition = window.scrollY;
+                if (document.documentElement.classList.contains('snap-enabled')) {
+                    this.wasSnapEnabled = true;
+                    document.documentElement.classList.remove('snap-enabled');
+                } else {
+                    this.wasSnapEnabled = false;
+                }
+                this.dom.overlay.classList.add('visible');
+                document.body.classList.add('no-scroll');
+            }
+            close() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.dom.overlay.classList.remove('visible');
+                document.body.classList.remove('no-scroll');
+                if (this.wasSnapEnabled) {
+                    document.documentElement.classList.add('snap-enabled');
+                }
+                window.scrollTo(0, this.savedScrollPosition);
+            }
+            saveState() { localStorage.setItem(this.localStorageKey, JSON.stringify(this.state)); }
+            loadState() { const saved = localStorage.getItem(this.localStorageKey); return saved ? JSON.parse(saved) : null; }
+            clearState() { localStorage.removeItem(this.localStorageKey); }
+            
+            renderResumePrompt() {
+                this.openOverlay();
+                this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title">Quiz in Sospeso</span><button class="icon-btn quiz-close-btn" id="quiz-close-resume"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div><div class="quiz-body"><div class="quiz-results-wrapper"><h2 class="quiz-results-title">Bentornato!</h2><p class="quiz-results-text">Hai un quiz in sospeso. Vuoi continuare da dove avevi interrotto?</p><div class="quiz-results-actions"><button class="quiz-next-btn" id="resume-quiz-btn">Riprendi Quiz</button><button class="quiz-next-btn secondary" id="restart-quiz-btn">Inizia da Capo</button></div></div></div>`;
+                document.getElementById('resume-quiz-btn').onclick = () => this.resume();
+                document.getElementById('restart-quiz-btn').onclick = () => { this.clearState(); this.beginNewQuiz(); };
+                document.getElementById('quiz-close-resume').onclick = () => this.close();
+            }
+            renderIntro() {
+                 this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title">Test di Autovalutazione</span><button class="icon-btn quiz-close-btn" id="quiz-close-intro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div><div class="quiz-body"><div class="quiz-results-wrapper"><h2 class="quiz-results-title">Sei pronto?</h2><p class="quiz-results-text">Verifica la tua preparazione con ${this.state.questions.length} domande.</p><button class="quiz-next-btn" id="start-quiz-btn">Inizia il Quiz</button></div></div>`;
+                 document.getElementById('start-quiz-btn').onclick = () => { this.startQuizUI(); this.renderQuestion(); };
+                 document.getElementById('quiz-close-intro').onclick = () => this.close();
+            }
+            startQuizUI() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title" id="quiz-progress-text"></span><button class="icon-btn quiz-close-btn" id="quiz-close-main"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div><div class="quiz-body"><div id="quiz-content-wrapper"></div></div><div class="quiz-footer"><button class="quiz-next-btn" id="quiz-next-btn" disabled>Avanti</button></div>`;
+                document.getElementById('quiz-next-btn').onclick = () => this.nextQuestion();
+                document.getElementById('quiz-close-main').onclick = () => this.close();
+            }
+            renderQuestion() {
+                this.state.answered = false;
+                const question = this.state.questions[this.state.currentQuestionIndex];
+                const progressText = `Domanda ${this.state.currentQuestionIndex + 1} di ${this.state.questions.length}`;
+                document.getElementById('quiz-progress-text').textContent = progressText;
+                const answersHtml = this.shuffleArray(question.options).map(option => `<button class="quiz-answer-btn" data-answer="${option}">${option}</button>`).join('');
+                const contentWrapper = document.getElementById('quiz-content-wrapper');
+                const oldSlide = contentWrapper.querySelector('.quiz-slide');
+                if (oldSlide) {
+                    oldSlide.style.opacity = 0;
+                    setTimeout(() => {
+                        oldSlide.innerHTML = `<p class="quiz-question-text">${question.question}</p><div class="quiz-answers">${answersHtml}</div><div class="quiz-explanation"></div>`;
+                        oldSlide.style.opacity = 1;
+                        this.addAnswerListeners();
+                    }, 200);
+                } else {
+                    contentWrapper.innerHTML = `<div class="quiz-slide active"><p class="quiz-question-text">${question.question}</p><div class="quiz-answers">${answersHtml}</div><div class="quiz-explanation"></div></div>`;
+                    this.addAnswerListeners();
+                }
+                document.getElementById('quiz-next-btn').disabled = true;
+            }
+            addAnswerListeners() {
+                document.querySelectorAll('.quiz-answer-btn').forEach(btn => {
+                    btn.onclick = (e) => this.handleAnswer(e.target);
+                });
+            }
+            handleAnswer(selectedButton) {
+                if (this.state.answered) return;
+                this.state.answered = true;
+                if(navigator.vibrate) navigator.vibrate(20);
+                const selectedAnswer = selectedButton.dataset.answer;
+                const currentQ = this.state.questions[this.state.currentQuestionIndex];
+                const correctAnswer = currentQ.correctAnswer;
+                
+                if (selectedAnswer === correctAnswer) {
+                    this.state.score++;
+                    selectedButton.classList.add('correct');
+                } else {
+                    selectedButton.classList.add('incorrect');
+                    const correctBtn = Array.from(document.querySelectorAll('.quiz-answer-btn')).find(btn => btn.dataset.answer === correctAnswer);
+                    if (correctBtn) correctBtn.classList.add('correct');
+                }
+                
+                document.querySelectorAll('.quiz-answer-btn').forEach(btn => btn.classList.add('disabled'));
+                document.getElementById('quiz-next-btn').disabled = false;
+                
+                // Show explanation
+                const explanationEl = document.querySelector('.quiz-explanation');
+                if(explanationEl) {
+                    const explText = currentQ.explanation || ("La risposta corretta è: " + correctAnswer);
+                    explanationEl.innerHTML = "<strong>Spiegazione:</strong> " + explText;
+                    explanationEl.classList.add('visible');
+                }
+                
+                this.saveState();
+            }
+            nextQuestion() {
+                if(navigator.vibrate) navigator.vibrate(20);
+                this.state.currentQuestionIndex++;
+                if (this.state.currentQuestionIndex < this.state.questions.length) {
+                    this.saveState();
+                    this.renderQuestion();
+                } else {
+                    this.renderResults();
+                }
+            }
+            renderResults() {
+                const score = this.state.score;
+                const total = this.state.questions.length;
+                const percentage = Math.round((score / total) * 100);
+                let message = "Puoi fare di meglio. Riprova!";
+                if (percentage >= 70) message = "Ottimo lavoro!";
+                if (percentage >= 90) message = "Eccellente!";
+                this.clearState();
+                this.dom.container.innerHTML = `<div class="quiz-header"><span class="quiz-title">Risultati</span></div><div class="quiz-body"><div class="quiz-results-wrapper"><h2 class="quiz-results-title">${message}</h2><div class="quiz-results-score">${score} / ${total}</div><p class="quiz-results-text">Hai risposto correttamente al ${percentage}% delle domande.</p><div class="quiz-results-actions"><button class="quiz-next-btn" id="retake-quiz-btn">Riprova il Quiz</button><button class="quiz-next-btn secondary" id="close-results-btn">Torna allo Studio</button></div></div></div>`;
+                document.getElementById('retake-quiz-btn').onclick = () => this.beginNewQuiz();
+                document.getElementById('close-results-btn').onclick = () => this.close();
+            }
+            shuffleArray(array) {
+                return array.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const app = new ScrollytellingApp(learningContent);
+            const quiz = new Quiz(quizData);
+            document.getElementById('quiz-btn').onclick = () => quiz.start();
+        });
+    </script>
+</body>
+</html>
