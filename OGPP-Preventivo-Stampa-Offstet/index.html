@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulatore Preventivi Offset | PrintMaster</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { background-color: #f3f4f6; color: #1f2937; font-family: 'Inter', sans-serif; }
+        .slide-fade-enter-active { transition: all 0.4s ease-out; }
+        .slide-fade-leave-active { transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1); }
+        .slide-fade-enter-from, .slide-fade-leave-to { transform: translateX(20px); opacity: 0; }
+        
+        .input-group input { border: 2px solid #e5e7eb; transition: all 0.2s; }
+        .input-group input:focus { border-color: #3b82f6; outline: none; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
+        .input-success { border-color: #10b981 !important; background-color: #ecfdf5; }
+        .input-error { border-color: #ef4444 !important; background-color: #fef2f2; }
+    </style>
+</head>
+<body>
+
+<div id="app" class="min-h-screen flex flex-col" v-if="isLoaded">
+    <!-- Header -->
+    <header class="bg-blue-900 text-white shadow-md py-4 px-6 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <h1 class="text-xl font-bold flex items-center gap-2">
+                <i class="fa-solid fa-print"></i> Offset Cost Calculator
+            </h1>
+            
+            <!-- Controlli Header -->
+            <div class="flex items-center gap-6">
+                <!-- Toggle Notazione Corretto -->
+                <div class="flex items-center gap-2 text-sm bg-blue-800 px-3 py-1.5 rounded-lg border border-blue-700">
+                    <span :class="{'text-blue-300': notationMode === 'std', 'font-bold': notationMode === 'prof'}">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </span>
+                    
+                    <div class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out mx-2" 
+                         :class="notationMode === 'std' ? 'bg-green-400' : 'bg-gray-400'" 
+                         @click="toggleNotation">
+                        <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out" 
+                              :class="notationMode === 'std' ? 'translate-x-5' : 'translate-x-0'"></span>
+                    </div>
+
+                    <span :class="{'text-blue-300': notationMode === 'prof', 'font-bold': notationMode === 'std'}">
+					<i class="fa-solid fa-text-width"></i>
+					</span>
+                </div>
+
+                <button @click="showFormulas = true" class="text-sm bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded shadow transition">
+                    <i class="fa-solid fa-book-open mr-1"></i> Formulario
+                </button>
+                <button @click="generateScenario" class="text-sm bg-white text-blue-900 font-semibold px-4 py-2 rounded shadow hover:bg-gray-100 transition">
+                    <i class="fa-solid fa-rotate mr-1"></i> Nuovo
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Sidebar: Dati Commessa -->
+        <div class="lg:col-span-4 space-y-6">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden sticky top-24">
+                <div class="bg-blue-50 border-b border-blue-100 px-6 py-4 flex justify-between items-center">
+                    <h2 class="text-lg font-bold text-blue-900">Dati Commessa</h2>
+                    <i class="fa-solid fa-clipboard-list text-blue-400"></i>
+                </div>
+                <div class="p-6 space-y-4 text-sm">
+                    <div class="grid grid-cols-2 gap-y-3 border-b pb-4">
+                        <div class="font-semibold text-gray-700" v-html="lbl('np') + ':'"></div>
+                        <div>{{ scenario.pages }} <span v-if="notationMode === 'std'">pagine</span></div>
+                        
+                        <div class="font-semibold text-gray-700" v-html="lbl('fp') + ':'"></div>
+                        <div>{{ scenario.pageW }} x {{ scenario.pageH }} cm</div>
+                        
+                        <div class="font-semibold text-gray-700" v-html="lbl('t') + ':'"></div>
+                        <div>{{ formatNum(scenario.run) }} <span v-if="notationMode === 'std'">copie</span></div>
+                        
+                        <div class="font-semibold text-gray-700" v-html="lbl('stampa') + ':'"></div>
+                        <div>4 Colori B+V</div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-y-3 border-b pb-4">
+                        <div class="font-semibold text-gray-700" v-html="lbl('fmFormat') + ':'"></div>
+                        <div>{{ scenario.fmW }} x {{ scenario.fmH }} cm</div>
+                        
+                        <div class="font-semibold text-gray-700" v-html="lbl('fm1libro') + ':'"></div>
+                        <div>{{ scenario.fmPerBook }} <span v-if="notationMode === 'std'">FM</span></div>
+
+                        <div class="font-semibold text-gray-700" v-html="lbl('g') + ':'"></div>
+                        <div>{{ scenario.grammage }} g/m²</div>
+                        
+                        <div class="font-semibold text-gray-700" v-html="lbl('mPaper') + ':'"></div>
+                        <div>{{ scenario.marginPaper }}%</div>
+
+                        <div class="font-semibold text-gray-700" v-html="lbl('Ccarta') + ':'"></div>
+                        <div>{{ formatNum(scenario.costPaper, 2) }} €/kg</div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-y-3 border-b pb-4">
+                        <div class="font-semibold text-gray-700" v-html="lbl('mInk') + ':'"></div>
+                        <div>{{ scenario.marginInk }}%</div>
+                        
+                        <div class="font-semibold text-gray-700" v-html="lbl('AinkPerc') + ':'"></div>
+                        <div>{{ scenario.areaInkPerc }}% <span v-if="notationMode === 'prof'">di A</span><span v-else>dell'Area Pag.</span></div>
+                        
+                        <div class="font-semibold text-gray-700" v-html="lbl('AtxtAimmPerc') + ':'"></div>
+                        <div>{{ scenario.areaTxtPerc }}% / {{ scenario.areaImmPerc }}% <span v-if="notationMode === 'prof'"></span></div>
+                        
+                        <div class="font-semibold text-gray-700" v-html="lbl('dK') + ':'"></div>
+                        <div>{{ scenario.denK_txt }}% / {{ scenario.denK_imm }}%</div>
+
+                        <div class="font-semibold text-gray-700" v-html="lbl('dCMY') + ':'"></div>
+                        <div>{{ scenario.denCMY_imm }}%</div>
+
+                        <div class="font-semibold text-gray-700" v-html="lbl('coprenza') + ':'"></div>
+                        <div>{{ scenario.coverage }} g/m²</div>
+
+                        <div class="font-semibold text-gray-700" v-html="lbl('Cink') + ':'"></div>
+                        <div>{{ scenario.costInkK }} € / {{ scenario.costInkCMY }} €<span v-if="notationMode === 'std'"> al kg</span></div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-y-3">
+                        <div class="font-semibold text-gray-700" v-html="lbl('C1lastra') + ':'"></div>
+                        <div>{{ scenario.costPlate }} €</div>
+                        <div class="font-semibold text-gray-700" v-html="lbl('C1formatura') + ':'"></div>
+                        <div>{{ scenario.costFormat }} €</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Area di Lavoro -->
+        <div class="lg:col-span-8" :key="scenarioId">
+            <!-- Progress / Tabs -->
+            <div class="flex border-b border-gray-200 mb-6 overflow-x-auto">
+                <button v-for="(step, index) in steps" :key="index" 
+                    @click="currentStep = index"
+                    :class="['px-6 py-3 font-medium text-sm transition-colors border-b-2 outline-none whitespace-nowrap', 
+                             currentStep === index ? 'border-blue-500 text-blue-600 bg-blue-50' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
+                             stepCompleted[index] ? 'text-green-600' : '']">
+                    <i :class="step.icon" class="mr-2"></i> {{ step.name }}
+                    <i v-if="stepCompleted[index]" class="fa-solid fa-check text-green-500 ml-2"></i>
+                </button>
+            </div>
+
+            <!-- STEP 0: CARTA -->
+            <transition name="slide-fade" mode="out-in">
+                <div v-if="currentStep === 0" class="space-y-6">
+                    <interactive-row :title-html="lbl('fmGross')" id="fmGross" unit="FM"
+                        :tooltip="notationMode === 'prof' ? 'FM 1 Libro × t + m↑' : 'FM per libro × Tiratura copie + % scarto'" 
+                        :expected="calc.fmGross" v-model="userInputs.fmGross" @revealed="markRevealed('fmGross')">
+                        <template #hint><code>({{ scenario.fmPerBook }} × {{ scenario.run }}) + {{ scenario.marginPaper }}%</code></template>
+                    </interactive-row>
+
+                    <interactive-row :title-html="lbl('p_g_fm')" id="p_g_fm" unit="g"
+                        :tooltip="notationMode === 'prof' ? 'Area FM(m²) × g' : 'Base (m) × Altezza (m) × Grammatura'" 
+                        :expected="calc.p_g_fm" v-model="userInputs.p_g_fm" @revealed="markRevealed('p_g_fm')">
+                        <template #hint><code>({{ scenario.fmW }}/100) × ({{ scenario.fmH }}/100) × {{ scenario.grammage }}</code></template>
+                    </interactive-row>
+
+                    <interactive-row :title-html="lbl('p_kg_fm_tot')" id="p_kg_fm_tot" unit="kg"
+                        :tooltip="notationMode === 'prof' ? '(FMtot + m↑ × P(g)FM) / 1000' : '(FM Totali Lordi × Peso 1 FM in g) / 1000'" 
+                        :expected="calc.p_kg_fm_tot" v-model="userInputs.p_kg_fm_tot" @revealed="markRevealed('p_kg_fm_tot')">
+                        <template #hint><code>(FM Lordi × Peso g) / 1000</code></template>
+                    </interactive-row>
+
+                    <interactive-row :title-html="lbl('costPaperTot')" id="costPaperTot" unit="€"
+                        :tooltip="notationMode === 'prof' ? 'P(kg)FMtot × Ccarta' : 'Peso Totale Kg × Costo al Kg'" 
+                        :expected="calc.costPaperTot" v-model="userInputs.costPaperTot" @revealed="markRevealed('costPaperTot')">
+                        <template #hint><code>Peso Kg × {{ formatNum(scenario.costPaper, 2) }} €</code></template>
+                    </interactive-row>
+                    
+                    <div class="flex justify-end pt-4">
+                        <button @click="markStepComplete(0)" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded shadow font-semibold transition">
+                            Prossimo Step: Inchiostro <i class="fa-solid fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STEP 1: INCHIOSTRO -->
+                <div v-else-if="currentStep === 1" class="space-y-6">
+                    <div class="bg-white p-5 rounded-xl border shadow-sm">
+                        <h3 class="font-bold text-gray-700 border-b pb-2 mb-4">A) Calcolo Aree (m²)</h3>
+                        
+                        <interactive-row :title-html="lbl('aink_tot')" id="aink_tot" unit="m²"
+                            :tooltip="notationMode === 'prof' ? 'Fp(m²) × Np × Aink' : 'Area Pagina(m²) × Pagine × % Inchiostrabile'" 
+                            :expected="calc.aink_tot" v-model="userInputs.aink_tot" @revealed="markRevealed('aink_tot')">
+                            <template #hint><code>({{ scenario.pageW }}/100) × ({{ scenario.pageH }}/100) × {{ scenario.pages }} × {{ scenario.areaInkPerc / 100 }}</code></template>
+                        </interactive-row>
+                        
+                        <div class="pl-8 border-l-2 border-gray-200 mt-2 space-y-2">
+                            <interactive-row :title-html="lbl('atxt')" id="atxt" unit="m²"
+                                :tooltip="notationMode === 'prof' ? 'Ainktot × Atxt(%)' : 'Area Ink Totale × % Testo'" 
+                                :expected="calc.atxt" v-model="userInputs.atxt" @revealed="markRevealed('atxt')">
+                                <template #hint><code>Aink_tot × {{ scenario.areaTxtPerc / 100 }}</code></template>
+                            </interactive-row>
+                            <interactive-row :title-html="lbl('aimm')" id="aimm" unit="m²"
+                                :tooltip="notationMode === 'prof' ? 'Ainktot × Aimm(%)' : 'Area Ink Totale × % Immagini'" 
+                                :expected="calc.aimm" v-model="userInputs.aimm" @revealed="markRevealed('aimm')">
+                                <template #hint><code>Aink_tot × {{ scenario.areaImmPerc / 100 }}</code></template>
+                            </interactive-row>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl border shadow-sm">
+                        <h3 class="font-bold text-gray-700 border-b pb-2 mb-4">B) Costi Parziali (Base)</h3>
+                        
+                        <interactive-row :title-html="lbl('costK_txt')" id="costK_txt" unit="€"
+                            :tooltip="notationMode === 'prof' ? 'Atxt × dinkKtxt × t × (coprenza/1000) × CinkK' : 'Area Testo × Densità × Tiratura × (Coprenza Kg) × Costo'" 
+                            :expected="calc.costK_txt" v-model="userInputs.costK_txt" @revealed="markRevealed('costK_txt')">
+                            <template #hint><code>Area Testo × {{ scenario.denK_txt / 100 }} × {{ scenario.run }} × {{ scenario.coverage / 1000 }} × {{ scenario.costInkK }}</code></template>
+                        </interactive-row>
+                        
+                        <interactive-row :title-html="lbl('costK_imm')" id="costK_imm" unit="€"
+                            :tooltip="notationMode === 'prof' ? 'Aimm × dinkKimm × t × (coprenza/1000) × CinkK' : 'Area Immagini × Densità K × Tiratura × (Coprenza Kg) × Costo'" 
+                            :expected="calc.costK_imm" v-model="userInputs.costK_imm" @revealed="markRevealed('costK_imm')">
+                            <template #hint><code>Area Immagini × {{ scenario.denK_imm / 100 }} × {{ scenario.run }} × {{ scenario.coverage / 1000 }} × {{ scenario.costInkK }}</code></template>
+                        </interactive-row>
+                        
+                        <interactive-row :title-html="lbl('costCMY_imm')" id="costCMY_imm" unit="€"
+                            :tooltip="notationMode === 'prof' ? 'Aimm × dinkCMYimm × t × (coprenza/1000) × CinkCMY' : 'Area Immagini × Densità CMY × Tiratura × (Coprenza Kg) × Costo'" 
+                            :expected="calc.costCMY_imm" v-model="userInputs.costCMY_imm" @revealed="markRevealed('costCMY_imm')">
+                            <template #hint><code>Area Immagini × {{ scenario.denCMY_imm / 100 }} × {{ scenario.run }} × {{ scenario.coverage / 1000 }} × {{ scenario.costInkCMY }}</code></template>
+                        </interactive-row>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl border-2 border-blue-200 shadow-sm">
+                        <interactive-row :title-html="lbl('costInkTot')" id="costInkTot" unit="€"
+                            :tooltip="notationMode === 'prof' ? '(CinkKtxt + CinkKimm + CinkCMYimm) + m↑' : 'Somma dei 3 costi base + % di maggiorazione ink'" 
+                            :expected="calc.costInkTot" v-model="userInputs.costInkTot" @revealed="markRevealed('costInkTot')">
+                            <template #hint><code>(Costo K Txt + Costo K Imm + Costo CMY Imm) + {{ scenario.marginInk }}%</code></template>
+                        </interactive-row>
+                    </div>
+
+                    <div class="flex justify-between pt-4">
+                        <button @click="currentStep = 0" class="text-gray-500 hover:text-gray-800 font-semibold px-4 py-2">Indietro</button>
+                        <button @click="markStepComplete(1)" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded shadow font-semibold transition">
+                            Prossimo Step: Lastre <i class="fa-solid fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STEP 2: LASTRE -->
+                <div v-else-if="currentStep === 2" class="space-y-6">
+                    <interactive-row :title-html="lbl('numPlates')" id="numPlates" unit="pz"
+                        :tooltip="notationMode === 'prof' ? 'FM 1 Libro × 4(colori) × 2(B+V)' : 'FM per libro × Colori × 2 (per B+V)'" 
+                        :expected="calc.numPlates" v-model="userInputs.numPlates" @revealed="markRevealed('numPlates')">
+                        <template #hint><code>{{ scenario.fmPerBook }} (FM) × 4 (colori) × 2 (lati)</code></template>
+                    </interactive-row>
+
+                    <interactive-row :title-html="lbl('costPlatesTot')" id="costPlatesTot" unit="€"
+                        :tooltip="notationMode === 'prof' ? 'NLastre × (C1lastra + C1formatura)' : 'Num Lastre × (Costo singola lastra + Formatura)'" 
+                        :expected="calc.costPlatesTot" v-model="userInputs.costPlatesTot" @revealed="markRevealed('costPlatesTot')">
+                        <template #hint><code>Num Lastre × ({{ scenario.costPlate }} + {{ scenario.costFormat }})</code></template>
+                    </interactive-row>
+
+                    <div class="flex justify-between pt-4">
+                        <button @click="currentStep = 1" class="text-gray-500 hover:text-gray-800 font-semibold px-4 py-2">Indietro</button>
+                        <button @click="markStepComplete(2)" class="bg-gray-800 hover:bg-gray-900 text-white px-8 py-3 rounded-lg shadow-lg font-bold transition text-lg">
+                            Termina ed elabora Pagella <i class="fa-solid fa-flag-checkered ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STEP 3: RIEPILOGO & PAGELLA -->
+                <div v-else-if="currentStep === 3" class="space-y-8">
+                    <!-- Cards Recap -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="bg-white p-4 rounded-xl border shadow-sm border-blue-200 text-center">
+                            <h3 class="text-gray-500 text-sm font-semibold" v-html="lbl('recapCarta')"></h3>
+                            <div class="text-xl font-bold text-gray-800 mt-1">€ {{ formatNum(calc.costPaperTot, 2) }}</div>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border shadow-sm border-yellow-200 text-center">
+                            <h3 class="text-gray-500 text-sm font-semibold" v-html="lbl('recapInk')"></h3>
+                            <div class="text-xl font-bold text-gray-800 mt-1">€ {{ formatNum(calc.costInkTot, 2) }}</div>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border shadow-sm border-purple-200 text-center">
+                            <h3 class="text-gray-500 text-sm font-semibold" v-html="lbl('recapLastre')"></h3>
+                            <div class="text-xl font-bold text-gray-800 mt-1">€ {{ formatNum(calc.costPlatesTot, 2) }}</div>
+                        </div>
+                        <div class="bg-gray-800 p-4 rounded-xl shadow border border-gray-900 text-center text-white">
+                            <h3 class="text-gray-300 text-sm font-semibold" v-html="lbl('ctot')"></h3>
+                            <div class="text-2xl font-bold mt-1">€ {{ formatNum(calc.costPaperTot + calc.costInkTot + calc.costPlatesTot, 2) }}</div>
+                        </div>
+                    </div>
+
+                    <!-- Tabella Valutazione -->
+                    <div class="bg-white rounded-xl shadow border border-gray-200 overflow-hidden">
+                        <div class="bg-gray-50 border-b px-6 py-4 flex justify-between items-center">
+                            <h2 class="text-lg font-bold text-gray-800"><i class="fa-solid fa-list-check text-gray-500 mr-2"></i> Riepilogo e Valutazione Calcoli</h2>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm text-gray-700">
+                                <thead class="bg-gray-100 text-gray-600">
+                                    <tr>
+                                        <th class="px-6 py-3 font-semibold">Variabile</th>
+                                        <th class="px-6 py-3 font-semibold">Tuo Inserimento</th>
+                                        <th class="px-6 py-3 font-semibold">Valore Esatto</th>
+                                        <th class="px-6 py-3 font-semibold text-center">Esito</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200">
+                                    <tr v-for="field in summaryFields" :key="field.id" 
+                                        :class="{
+                                            'bg-green-50': evaluateStatus(field.id) === 'correct',
+                                            'bg-red-50': evaluateStatus(field.id) === 'wrong' || evaluateStatus(field.id) === 'missing',
+                                            'bg-yellow-50': evaluateStatus(field.id) === 'revealed'
+                                        }">
+                                        
+                                        <td class="px-6 py-4 font-medium" v-html="lbl(field.id)"></td>
+                                        
+                                        <td class="px-6 py-4 font-mono">
+                                            {{ userInputs[field.id] !== null && userInputs[field.id] !== '' ? formatNum(parseFloat(userInputs[field.id]), 2) : '---' }} 
+                                            <span class="text-xs text-gray-400">{{field.unit}}</span>
+                                        </td>
+                                        
+                                        <td class="px-6 py-4 font-mono font-bold text-gray-900">
+                                            {{ formatNum(calc[field.id], 2) }} <span class="text-xs text-gray-400">{{field.unit}}</span>
+                                        </td>
+                                        
+                                        <td class="px-6 py-4 text-center font-bold">
+                                            <span v-if="evaluateStatus(field.id) === 'correct'" class="text-green-600"><i class="fa-solid fa-check"></i> Esatto</span>
+                                            <span v-else-if="evaluateStatus(field.id) === 'revealed'" class="text-yellow-600"><i class="fa-solid fa-eye"></i> Rivelato</span>
+                                            <span v-else-if="evaluateStatus(field.id) === 'missing'" class="text-red-500"><i class="fa-solid fa-xmark"></i> Mancante</span>
+                                            <span v-else class="text-red-600"><i class="fa-solid fa-xmark"></i> Errato</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </transition>
+        </div>
+    </main>
+
+    <!-- Modal Formulario -->
+    <div v-if="showFormulas" class="fixed inset-0 bg-black bg-opacity-50 z-[100] flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center p-6 border-b sticky top-0 bg-white">
+                <h2 class="text-xl font-bold text-blue-900"><i class="fa-solid fa-book-open mr-2"></i> Formulario Essenziale</h2>
+                <button @click="showFormulas = false" class="text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
+            </div>
+            <div class="p-6 space-y-6 text-sm text-gray-700">
+                <div>
+                    <h3 class="font-bold text-lg text-blue-600 mb-2">1. Carta</h3>
+                    <ul class="list-disc pl-5 space-y-2">
+                        <li><strong v-html="lbl('fmGross') + ':'"></strong> <span v-html="notationMode === 'prof' ? 'FM 1 Libro &times; t + m<sup>&uarr;</sup>' : 'FM (Tiratura Netta) + Scarto (%)'"></span></li>
+                        <li><strong v-html="lbl('p_g_fm') + ':'"></strong> <span v-html="notationMode === 'prof' ? 'Area FM (m&sup2;) &times; g' : 'Area FM (m&sup2;) &times; Grammatura'"></span></li>
+                        <li><strong v-html="lbl('p_kg_fm_tot') + ':'"></strong> <span v-html="notationMode === 'prof' ? '(FM<sub>tot</sub>+m<sup>&uarr;</sup> &times; P(g)FM) / 1000' : '(Tiratura Lorda &times; Peso 1 FM in g) / 1000'"></span></li>
+                        <li><strong v-html="lbl('costPaperTot') + ':'"></strong> <span v-html="notationMode === 'prof' ? 'P(kg)FM<sub>tot</sub> &times; Ccarta' : 'Peso Totale (kg) &times; Costo Carta'"></span></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg text-yellow-600 mb-2">2. Inchiostri</h3>
+                    <ul class="list-disc pl-5 space-y-2">
+                        <li><strong v-html="lbl('aink_tot') + ':'"></strong> <span v-html="notationMode === 'prof' ? 'Area Fp (m&sup2;) &times; Np &times; Aink(%)' : 'Area 1 Pagina (in metri) &times; Num Pagine &times; % Inchiostrabile'"></span></li>
+                        <li><strong v-html="lbl('costK_txt') + ' (Costo Parziale):'"></strong> <span v-html="notationMode === 'prof' ? 'Area &times; Densità(%) &times; t &times; (coprenza/1000) &times; CinkK/CMY' : 'Area specifica (m&sup2;) &times; Densità (%) &times; Tiratura copie &times; (Coprenza/1000) &times; Costo/kg'"></span></li>
+                        <li><strong v-html="lbl('costInkTot') + ':'"></strong> <span v-html="notationMode === 'prof' ? 'Somma Costi Parziali + m<sup>&uarr;</sup>' : 'Somma dei costi parziali + % Maggiorazione'"></span></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg text-purple-600 mb-2">3. Lastre</h3>
+                    <ul class="list-disc pl-5 space-y-2">
+                        <li><strong v-html="lbl('numPlates') + ':'"></strong> <span v-html="notationMode === 'prof' ? 'FM 1 Libro &times; 8' : 'FM occorrenti per 1 libro &times; 8 (4 fronte + 4 retro)'"></span></li>
+                        <li><strong v-html="lbl('costPlatesTot') + ':'"></strong> <span v-html="notationMode === 'prof' ? 'NLastre &times; (C1lastra + C1formatura)' : 'Num Lastre &times; (Costo nudo lastra + Costo Formatura)'"></span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const { createApp, ref, onBeforeMount } = Vue;
+
+    const InteractiveRow = {
+        props: ['id', 'titleHtml', 'tooltip', 'expected', 'unit', 'modelValue'],
+        emits: ['update:modelValue', 'revealed'],
+        template: `
+            <div class="input-group bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 relative mt-3">
+                <div class="flex-grow">
+                    <h4 class="font-semibold text-gray-800 flex items-center">
+                        <span v-html="titleHtml"></span>
+                        <button @click="showTooltip = !showTooltip" class="ml-2 text-gray-400 hover:text-blue-500" title="Informazioni logiche">
+                            <i class="fa-solid fa-circle-question"></i>
+                        </button>
+                    </h4>
+                    <div v-if="showTooltip" class="text-xs text-blue-600 mt-1 mb-2">{{ tooltip }}</div>
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <input type="number" step="any" v-model="localValue" 
+                        @keyup.enter="checkValue"
+                        :class="{'input-success': isCorrect, 'input-error': isWrong}"
+                        class="w-32 px-3 py-2 rounded text-right font-mono" placeholder="0.00">
+                    <span class="text-gray-500 font-medium w-8">{{ unit }}</span>
+                    
+                    <button @click="checkValue" class="bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700" title="Controlla la risposta">
+                        <i class="fa-solid fa-check"></i>
+                    </button>
+                    <button @click="showHintToggle" class="bg-gray-200 text-gray-700 px-3 py-2 rounded hover:bg-gray-300" title="Mostra aiuto / Soluzione">
+                        <i class="fa-solid fa-lightbulb"></i>
+                    </button>
+                </div>
+
+                <div v-if="showHint" class="absolute top-full left-0 mt-2 bg-white border border-yellow-300 shadow-xl p-3 rounded text-sm z-10 w-full text-gray-700">
+                    <strong>Calcolo:</strong> <slot name="hint"></slot><br>
+                    <div class="mt-2 text-xs flex justify-between items-center">
+                        <span>Non riesci? Clicca per inserire la risposta esatta.</span>
+                        <button @click="revealAnswer" class="text-blue-600 underline font-semibold">Rivela Valore Esatto</button>
+                    </div>
+                </div>
+            </div>
+        `,
+        setup(props, { emit }) {
+            const localValue = ref(props.modelValue);
+            const isCorrect = ref(false);
+            const isWrong = ref(false);
+            const showTooltip = ref(false);
+            const showHint = ref(false);
+
+            const checkValue = () => {
+                emit('update:modelValue', localValue.value);
+                if (localValue.value === '' || localValue.value === null) return;
+                
+                const inputNum = parseFloat(localValue.value);
+                const expectedNum = parseFloat(props.expected);
+                const tolerance = expectedNum > 10 ? 0.5 : 0.05; 
+                
+                if (Math.abs(inputNum - expectedNum) <= tolerance) {
+                    isCorrect.value = true;
+                    isWrong.value = false;
+                    localValue.value = expectedNum.toFixed(2).replace(/\.00$/, ''); 
+                    emit('update:modelValue', localValue.value);
+                    showHint.value = false;
+                } else {
+                    isWrong.value = true;
+                    isCorrect.value = false;
+                    setTimeout(() => isWrong.value = false, 1500);
+                }
+            };
+
+            const showHintToggle = () => showHint.value = !showHint.value;
+
+            const revealAnswer = () => {
+                localValue.value = parseFloat(props.expected).toFixed(2).replace(/\.00$/, '');
+                isCorrect.value = true;
+                isWrong.value = false;
+                showHint.value = false;
+                emit('update:modelValue', localValue.value);
+                emit('revealed');
+            };
+
+            return { localValue, isCorrect, isWrong, showTooltip, showHint, checkValue, showHintToggle, revealAnswer };
+        }
+    };
+
+    createApp({
+        components: { InteractiveRow },
+        setup() {
+            const isLoaded = ref(false);
+            const currentStep = ref(0);
+            const stepCompleted = ref([false, false, false, false]);
+            const showFormulas = ref(false);
+            const scenarioId = ref(0);
+            
+            const notationMode = ref('prof'); // Default su "prof"
+
+            const steps = [
+                { name: 'Carta', icon: 'fa-solid fa-scroll' },
+                { name: 'Inchiostri', icon: 'fa-solid fa-droplet' },
+                { name: 'Lastre', icon: 'fa-solid fa-border-all' }
+            ];
+
+            const summaryFields = [
+                { id: 'fmGross', unit: 'FM' },
+                { id: 'p_g_fm', unit: 'g' },
+                { id: 'p_kg_fm_tot', unit: 'kg' },
+                { id: 'costPaperTot', unit: '€' },
+                { id: 'aink_tot', unit: 'm²' },
+                { id: 'atxt', unit: 'm²' },
+                { id: 'aimm', unit: 'm²' },
+                { id: 'costK_txt', unit: '€' },
+                { id: 'costK_imm', unit: '€' },
+                { id: 'costCMY_imm', unit: '€' },
+                { id: 'costInkTot', unit: '€' },
+                { id: 'numPlates', unit: 'pz' },
+                { id: 'costPlatesTot', unit: '€' }
+            ];
+
+            const labelsMap = {
+                np: { prof: 'Np', std: 'Libro' },
+                fp: { prof: 'Fp', std: 'Formato Pagina' },
+                t: { prof: 't', std: 'Tiratura (Netta)' },
+                stampa: { prof: 'Stampa', std: 'Stampa' },
+                fmFormat: { prof: 'FM', std: 'Formato FM' },
+                fm1libro: { prof: 'FM 1 Libro', std: 'FM per 1 libro' },
+                g: { prof: 'g', std: 'Grammatura Carta' },
+                mPaper: { prof: 'm<sup>&uarr;</sup> (Carta)', std: 'Magg. Carta' },
+                Ccarta: { prof: 'Ccarta', std: 'Costo Carta' },
+                mInk: { prof: 'm<sup>&uarr;</sup> (Inchiostro)', std: 'Magg. Inchiostro' },
+                AinkPerc: { prof: 'Aink', std: 'Area Inchiostrabile' },
+                AtxtAimmPerc: { prof: 'Atxt / Aimm', std: 'Testo / Immagini %' },
+                dK: { prof: 'dinkKtxt / dinkKimm', std: 'Densità K (Txt/Imm)' },
+                dCMY: { prof: 'dinkCMYimm', std: 'Densità CMY (Imm)' },
+                coprenza: { prof: 'coprenza', std: 'Coprenza' },
+                Cink: { prof: 'CinkK / CinkCMY', std: 'Costo K / CMY' },
+                C1lastra: { prof: 'C1lastra', std: 'Costo 1 Lastra' },
+                C1formatura: { prof: 'C1formatura', std: 'Costo 1 Formatura' },
+                
+                fmGross: { prof: 'FM<sub>tot</sub> + m<sup>&uarr;</sup>', std: '1. Tiratura FM Lorda' },
+                p_g_fm: { prof: 'P(g)FM', std: '2. Peso di 1 Foglio Macchina' },
+                p_kg_fm_tot: { prof: 'P(kg)FM<sub>tot</sub>', std: '3. Peso Totale FM' },
+                costPaperTot: { prof: 'Ccarta<sub>tot</sub>', std: '4. Costo Totale Carta' },
+                
+                aink_tot: { prof: 'Aink<sub>tot</sub>', std: 'Area Inchiostrabile Totale' },
+                atxt: { prof: 'Atxt', std: 'Area Testo' },
+                aimm: { prof: 'Aimm', std: 'Area Immagini' },
+                
+                costK_txt: { prof: 'CinkKtxt', std: 'Costo Nero Testo' },
+                costK_imm: { prof: 'CinkKimm', std: 'Costo Nero Immagini' },
+                costCMY_imm: { prof: 'CinkCMYimm', std: 'Costo CMY Immagini' },
+                costInkTot: { prof: 'Cink<sub>tot</sub>', std: 'Costo Inchiostro FINALE' },
+                
+                numPlates: { prof: 'NLastre', std: 'Numero Totale Lastre' },
+                costPlatesTot: { prof: 'Clastre<sub>tot</sub>', std: 'Costo Totale Lastre' },
+
+                ctot: { prof: 'C<sub>tot</sub>', std: 'Costo Diretto Totale' },
+                recapCarta: { prof: 'Ccarta<sub>tot</sub>', std: 'Costo Carta' },
+                recapInk: { prof: 'Cink<sub>tot</sub>', std: 'Costo Inchiostri' },
+                recapLastre: { prof: 'Clastre<sub>tot</sub>', std: 'Costo Lastre' },
+            };
+
+            const lbl = (id) => labelsMap[id][notationMode.value];
+            const toggleNotation = () => notationMode.value = notationMode.value === 'prof' ? 'std' : 'prof';
+
+            const scenario = ref({});
+            const calc = ref({});
+            const userInputs = ref({});
+            const statusFlags = ref({});
+
+            const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+            const randFloat = (min, max, decimals=1) => parseFloat((Math.random() * (max - min) + min).toFixed(decimals));
+
+            const generateScenario = () => {
+                currentStep.value = 0;
+                stepCompleted.value = [false, false, false, false];
+                userInputs.value = summaryFields.reduce((acc, f) => ({ ...acc, [f.id]: null }), {});
+                statusFlags.value = {};
+                
+                const isA4 = Math.random() > 0.5;
+                const pW = isA4 ? 21 : rand(14, 20);
+                const pH = isA4 ? 29 : rand(20, 28);
+                const fMW = pW > 17 ? 102 : 88;
+                const fMH = pW > 17 ? 72 : 64;
+                const fmPb = rand(5, 25); 
+
+                scenario.value = {
+                    pages: fmPb * 16, 
+                    pageW: pW,
+                    pageH: pH,
+                    run: rand(5, 30) * 1000,
+                    fmW: fMW,
+                    fmH: fMH,
+                    fmPerBook: fmPb,
+                    grammage: [90, 115, 130, 135, 150, 170][rand(0, 5)],
+                    marginPaper: randFloat(0.5, 2.0, 1),
+                    costPaper: randFloat(1.1, 2.5, 2),
+                    
+                    marginInk: randFloat(0.8, 1.5, 1),
+                    areaInkPerc: rand(75, 90),
+                    areaTxtPerc: rand(40, 65),
+                    areaImmPerc: rand(20, 40),
+                    denK_txt: rand(25, 40) + 40,
+                    denK_imm: rand(40, 60) + 30,
+                    denCMY_imm: rand(80, 95),
+                    coverage: randFloat(1.0, 1.4, 1),
+                    costInkK: rand(5, 8),
+                    costInkCMY: rand(6, 10),
+
+                    costPlate: rand(8, 12),
+                    costFormat: rand(12, 18)
+                };
+
+                const c = {};
+                const fmNet = scenario.value.fmPerBook * scenario.value.run;
+                c.fmGross = fmNet + (fmNet * (scenario.value.marginPaper / 100));
+                c.p_g_fm = (scenario.value.fmW / 100) * (scenario.value.fmH / 100) * scenario.value.grammage;
+                c.p_kg_fm_tot = (c.fmGross * c.p_g_fm) / 1000;
+                c.costPaperTot = c.p_kg_fm_tot * scenario.value.costPaper;
+
+                c.aink_tot = (scenario.value.pageW / 100) * (scenario.value.pageH / 100) * scenario.value.pages * (scenario.value.areaInkPerc / 100);
+                c.atxt = c.aink_tot * (scenario.value.areaTxtPerc / 100);
+                c.aimm = c.aink_tot * (scenario.value.areaImmPerc / 100);
+
+                const covKg = scenario.value.coverage / 1000;
+                c.costK_txt = c.atxt * (scenario.value.denK_txt / 100) * scenario.value.run * covKg * scenario.value.costInkK;
+                c.costK_imm = c.aimm * (scenario.value.denK_imm / 100) * scenario.value.run * covKg * scenario.value.costInkK;
+                c.costCMY_imm = c.aimm * (scenario.value.denCMY_imm / 100) * scenario.value.run * covKg * scenario.value.costInkCMY;
+                
+                const baseInkCost = c.costK_txt + c.costK_imm + c.costCMY_imm;
+                c.costInkTot = baseInkCost + (baseInkCost * (scenario.value.marginInk / 100));
+
+                c.numPlates = scenario.value.fmPerBook * 4 * 2; 
+                c.costPlatesTot = c.numPlates * (scenario.value.costPlate + scenario.value.costFormat);
+
+                calc.value = c;
+                scenarioId.value++;
+            };
+
+            const markRevealed = (id) => statusFlags.value[id] = 'revealed';
+
+            const evaluateStatus = (id) => {
+                if (statusFlags.value[id] === 'revealed') return 'revealed';
+                const uVal = parseFloat(userInputs.value[id]);
+                if (isNaN(uVal)) return 'missing';
+                
+                const expected = calc.value[id];
+                const tolerance = expected > 10 ? 0.5 : 0.05;
+                return Math.abs(uVal - expected) <= tolerance ? 'correct' : 'wrong';
+            };
+
+            const formatNum = (num, dec = 0) => {
+                if(num === undefined || num === null) return '0';
+                return num.toLocaleString('it-IT', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+            };
+
+            const markStepComplete = (index) => {
+                stepCompleted.value[index] = true;
+                currentStep.value = index + 1;
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            };
+
+            onBeforeMount(() => {
+                generateScenario();
+                isLoaded.value = true;
+            });
+
+            return {
+                isLoaded, steps, currentStep, stepCompleted, showFormulas,
+                notationMode, toggleNotation, lbl, summaryFields,
+                scenario, calc, userInputs, scenarioId,
+                generateScenario, formatNum, markStepComplete, markRevealed, evaluateStatus
+            };
+        }
+    }).mount('#app');
+</script>
+</body>
+</html>
