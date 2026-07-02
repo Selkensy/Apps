@@ -1,9 +1,18 @@
 <!DOCTYPE html>
-<html lang="it" data-theme="light">
+<html lang="it">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>MD to WA | V5 Stable</title>
+
+  <!-- Prevent theme flash on load by applying system preference immediately -->
+  <script>
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+  </script>
 
   <!-- Tailwind CSS (required) -->
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
@@ -636,6 +645,13 @@
           }
         });
 
+        // Listen for OS/System theme changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+          const newTheme = e.matches ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-theme', newTheme);
+          this.syncThemeIcon(newTheme);
+        });
+
         // Buttons
         DOM.btnUndo.addEventListener('click', () => History.undo());
         DOM.btnRedo.addEventListener('click', () => History.redo());
@@ -652,6 +668,7 @@
           }
         });
 
+        // Manual theme override toggle
         DOM.btnTheme.addEventListener('click', () => {
           const doc = document.documentElement;
           const next = doc.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
@@ -678,8 +695,9 @@
         this.clock();
         setInterval(() => this.clock(), 30000);
 
-        // First render
+        // Sync initial theme icon based on what the <head> script already set
         this.syncThemeIcon(document.documentElement.getAttribute('data-theme') || 'light');
+        // First render
         this.render();
       },
 
