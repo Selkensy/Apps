@@ -662,6 +662,12 @@
         <path d="M4 4l7 17 2.5-7.5L21 11z"/>
       </svg>
     </button>
+    <button class="tool-btn" id="btn-paste" data-tooltip="Paste Image (Ctrl+V)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+        <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+      </svg>
+    </button>
 
     <div class="divider"></div>
 
@@ -768,6 +774,7 @@
       <kbd>Right Click</kbd> <span>Hold while drawing/moving to Snap-to-Grid</span>
       <kbd>Middle Drag</kbd> <span>Pan Canvas / Move View</span>
       <kbd>D</kbd> <span>Selection Tool (Box Select & Move)</span>
+      <kbd>Alt</kbd> <span>Hold to temporarily Select & Move</span>
       <kbd>F</kbd> <span>Focus Custom Color Picker</span>
       <kbd>G</kbd> <span>Toggle Infinite Grid</span>
       <kbd>Ctrl+V</kbd> <span>Paste Image from Clipboard</span>
@@ -820,7 +827,9 @@
       theme: 'system', 
       tool: 'pen',
       previousTool: 'pen',
+      previousToolForAlt: 'pen',
       isRightClickErasing: false,
+      isAltSelecting: false,
       eraserModified: false,
       color: '#1e1e1e',
       paletteColors: [...DEFAULT_PALETTE],
@@ -1650,24 +1659,39 @@
 
     function handleKeyboard(e) {
       if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return; 
+      
+      // Temporary tool selection with Alt
+      if (e.key === 'Alt' && !state.isAltSelecting && state.tool !== 'selector') {
+          e.preventDefault();
+          state.previousToolForAlt = state.tool;
+          state.isAltSelecting = true;
+          setTool('selector');
+          return;
+      }
 
       const key = e.key.toLowerCase();
-      if (key === 'q') setTool('pen');
-      if (key === 'e') setTool('rect');
-      if (key === 'r') setTool('ellipse');
-      if (key === 'v') setTool('triangle');
-      if (key === 'x') setTool('axis');
-      if (key === 'a') setTool('eraser');
-      if (key === 'd') setTool('selector');
-      if (key === 'g') { state.gridVisible = !state.gridVisible; gridToggle.checked = state.gridVisible; triggerRedraw(); }
-      if (key === 'f') { e.preventDefault(); customColorInput.click(); }
-      if (key === 'c' && !e.shiftKey && !e.ctrlKey && !e.metaKey) showResetDialog();
-      if (key === 'c' && e.shiftKey) centerView();
-      if (key === 't') cycleTheme();
+      
+      // Fix Ctrl+V conflict: Only trigger normal tool selection if modifiers are cleanly released
+      if (!e.ctrlKey && !e.metaKey && !e.altKey) {
+        if (key === 'q') setTool('pen');
+        if (key === 'e') setTool('rect');
+        if (key === 'r') setTool('ellipse');
+        if (key === 'v') setTool('triangle');
+        if (key === 'x') setTool('axis');
+        if (key === 'a') setTool('eraser');
+        if (key === 'd') setTool('selector');
+        if (key === 'g') { state.gridVisible = !state.gridVisible; gridToggle.checked = state.gridVisible; triggerRedraw(); }
+        if (key === 'f') { e.preventDefault(); customColorInput.click(); }
+        if (key === 'c' && !e.shiftKey) showResetDialog();
+        if (key === 'c' && e.shiftKey) centerView();
+        if (key === 't') cycleTheme();
+      }
+
       if (key === 'tab') { e.preventDefault(); toggleUI(); }
       if (key === 'escape') {
         helpPanel.classList.add('hidden'); settingsPanel.classList.add('hidden');
         if (state.isRightClickErasing) { state.isRightClickErasing = false; setTool(state.previousTool); }
+        if (state.isAltSelecting) { state.isAltSelecting = false; setTool(state.previousToolForAlt); }
       }
       if (key === 'z' && !e.shiftKey && (e.ctrlKey || e.metaKey)) { e.preventDefault(); undo(); }
       if ((key === 'y' && (e.ctrlKey || e.metaKey)) || (key === 'z' && e.shiftKey && (e.ctrlKey || e.metaKey))) { e.preventDefault(); redo(); }
@@ -1684,6 +1708,23 @@
     window.addEventListener('mouseup', handlePointerUp);
     canvas.addEventListener('wheel', handleZoom, { passive: false });
     window.addEventListener('keydown', handleKeyboard);
+
+    // End temporary tool override on Alt release
+    window.addEventListener('keyup', e => {
+      if (e.key === 'Alt') {
+        e.preventDefault();
+        if (state.isAltSelecting) {
+          state.isAltSelecting = false;
+          setTool(state.previousToolForAlt);
+        }
+      }
+    });
+
+    // Handle losing focus out of the tab while holding temporary-mode keys
+    window.addEventListener('blur', () => {
+        if (state.isAltSelecting) { state.isAltSelecting = false; setTool(state.previousToolForAlt); }
+        if (state.isRightClickErasing) { state.isRightClickErasing = false; setTool(state.previousTool); }
+    });
 
     function setTool(toolName) {
       state.tool = toolName;
@@ -1818,12 +1859,41 @@
       reader.readAsDataURL(file);
     }
     
+    // Paste triggered from standard Ctrl+V hotkey (works without permission prompts)
     window.addEventListener('paste', e => {
       let x = (-state.cameraX + window.innerWidth / 2) / state.zoom;
       let y = (-state.cameraY + window.innerHeight / 2) / state.zoom;
       for (const item of e.clipboardData.items) {
         if (item.type.indexOf('image') === 0) { handleImageFile(item.getAsFile(), x, y); break; }
       }
+    });
+
+    // Paste triggered from explicit visual Toolbar Button
+    document.getElementById('btn-paste').addEventListener('click', async () => {
+        try {
+            if (!navigator.clipboard || !navigator.clipboard.read) {
+                alert("Clipboard API not supported in this browser. Please use the 'Ctrl+V' keyboard shortcut.");
+                return;
+            }
+            const clipboardItems = await navigator.clipboard.read();
+            let x = (-state.cameraX + window.innerWidth / 2) / state.zoom;
+            let y = (-state.cameraY + window.innerHeight / 2) / state.zoom;
+            let foundImage = false;
+            for (const item of clipboardItems) {
+                const imageTypes = item.types.filter(type => type.startsWith('image/'));
+                if (imageTypes.length > 0) {
+                    const blob = await item.getType(imageTypes[0]);
+                    const file = new File([blob], "pasted.png", { type: imageTypes[0] });
+                    handleImageFile(file, x, y);
+                    foundImage = true;
+                    break;
+                }
+            }
+            if (!foundImage) alert("No image found in clipboard. Copy an image file or pixels first.");
+        } catch (err) {
+            console.error("Clipboard access failed:", err);
+            alert("Could not read clipboard. Please ensure clipboard permissions are granted or use Ctrl+V.");
+        }
     });
     
     window.addEventListener('dragover', e => e.preventDefault());
