@@ -1,3 +1,5 @@
+--- START OF FILE Paste July 05, 2026 - 7:24PM ---
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,6 +19,8 @@
       --active-bg: rgba(79, 70, 229, 0.15);
       --btn-hover: rgba(0, 0, 0, 0.05);
       --blur: blur(12px);
+      --kbd-bg: #1a1a1a;
+      --kbd-color: #ffffff;
     }
 
     .theme-dark {
@@ -29,6 +33,8 @@
       --panel-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
       --active-bg: rgba(129, 140, 248, 0.25);
       --btn-hover: rgba(255, 255, 255, 0.08);
+      --kbd-bg: #f3f4f6;
+      --kbd-color: #1a1a1a;
     }
 
     * {
@@ -190,7 +196,6 @@
       border: 1px solid rgba(255, 255, 255, 0.25) !important;
     }
 
-    /* Beautiful Eyedropper Custom Hex Button */
     .custom-color-btn {
       width: 24px;
       height: 24px;
@@ -242,7 +247,6 @@
       cursor: pointer;
     }
 
-    /* Stroke Width Settings */
     .width-selector {
       display: flex;
       align-items: center;
@@ -251,7 +255,7 @@
       border-left: 1px solid var(--border-panel);
     }
 
-    .width-btn {
+    .width-btn, .palette-btn {
       width: 22px;
       height: 22px;
       border-radius: 4px;
@@ -266,14 +270,29 @@
       font-weight: 600;
       transition: background 0.15s;
     }
+    
+    .palette-btn {
+      width: 26px;
+      height: 26px;
+    }
 
-    .width-btn:hover {
+    .width-btn:hover, .palette-btn:hover {
       background: var(--btn-hover);
     }
 
     .width-btn.active {
       background: var(--active-bg);
       color: var(--accent-color);
+    }
+    
+    .palette-btn svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
 
     /* Modal / Floating Panels */
@@ -354,7 +373,6 @@
       text-align: center;
     }
 
-    /* Toast Info */
     .status-bar {
       position: absolute;
       bottom: 24px;
@@ -387,7 +405,6 @@
       justify-content: center;
     }
 
-    /* Global Tooltip positioning */
     [data-tooltip]::before {
       content: attr(data-tooltip);
       position: absolute;
@@ -417,7 +434,6 @@
       opacity: 0.9;
     }
 
-    /* Custom Toggle Switch CSS */
     .switch {
       position: relative;
       display: inline-block;
@@ -460,7 +476,6 @@
       transform: translateX(14px);
     }
 
-    /* Help Overlay Panel */
     .help-icon {
       margin-top: auto;
     }
@@ -503,13 +518,19 @@
       font-size: 12px;
       max-height: 300px;
       overflow-y: auto;
-      padding-right: 4px;
+      padding-right: 8px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--text-muted) transparent;
     }
+    
+    .help-grid::-webkit-scrollbar { width: 6px; }
+    .help-grid::-webkit-scrollbar-track { background: transparent; }
+    .help-grid::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 4px; }
 
     .help-grid kbd {
-      background: var(--text-color);
-      color: var(--bg-panel);
-      padding: 2px 6px;
+      background: var(--kbd-bg);
+      color: var(--kbd-color);
+      padding: 3px 6px;
       border-radius: 4px;
       font-weight: bold;
       justify-self: start;
@@ -519,7 +540,44 @@
       align-self: center;
     }
 
-    /* Custom Confirmation Modal */
+    /* Floating Image Context Menu */
+    #image-context-menu {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 50;
+      background: var(--bg-panel);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      border: 1px solid var(--border-panel);
+      border-radius: 8px;
+      padding: 4px;
+      box-shadow: var(--panel-shadow);
+      transition: opacity 0.15s;
+      pointer-events: auto;
+    }
+    
+    #image-context-menu.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    .context-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-color);
+      cursor: pointer;
+      font-size: 12px;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-weight: 500;
+      transition: background 0.15s;
+    }
+    
+    .context-btn:hover {
+      background: var(--btn-hover);
+    }
+
     .confirm-overlay {
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -566,39 +624,28 @@
       transition: background 0.15s;
     }
 
-    .btn-danger { 
-      background: #ef4444; 
-      color: white; 
-    }
-    .btn-danger:hover {
-      background: #dc2626;
-    }
-    .btn-cancel { 
-      background: var(--btn-hover); 
-      color: var(--text-color); 
-    }
-    .btn-cancel:hover {
-      background: rgba(100, 100, 100, 0.2);
-    }
+    .btn-danger { background: #ef4444; color: white; }
+    .btn-danger:hover { background: #dc2626; }
+    .btn-cancel { background: var(--btn-hover); color: var(--text-color); }
+    .btn-cancel:hover { background: rgba(100, 100, 100, 0.2); }
   </style>
 </head>
 <body>
 
   <canvas id="canvas"></canvas>
 
-  <!-- Left Glassmorphism Toolbar -->
   <div class="toolbar" id="toolbar">
     <button class="tool-btn active" id="btn-pen" data-tool="pen" data-tooltip="Pen (Q)">
       <svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-    </button>
-    <button class="tool-btn" id="btn-line" data-tool="line" data-tooltip="Line (W)">
-      <svg viewBox="0 0 24 24"><line x1="5" y1="19" x2="19" y2="5"/></svg>
     </button>
     <button class="tool-btn" id="btn-rect" data-tool="rect" data-tooltip="Rectangle (E)">
       <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg>
     </button>
     <button class="tool-btn" id="btn-ellipse" data-tool="ellipse" data-tooltip="Ellipse (R)">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>
+    </button>
+    <button class="tool-btn" id="btn-triangle" data-tool="triangle" data-tooltip="Triangle (V)">
+      <svg viewBox="0 0 24 24"><polygon points="4 4 4 20 20 20" stroke-linejoin="round"/></svg>
     </button>
     <button class="tool-btn" id="btn-axis" data-tool="axis" data-tooltip="Cartesian Axis (X)">
       <svg viewBox="0 0 24 24">
@@ -607,27 +654,19 @@
     </button>
     <button class="tool-btn" id="btn-eraser" data-tool="eraser" data-tooltip="Eraser (A)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-  <path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/>
-  <path d="M22 21H7"/>
-  <path d="m5 11 9 9"/>
-</svg>
-    </button>
-    <button class="tool-btn" id="btn-hand" data-tool="hand" data-tooltip="Pan View (S)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-  <polyline points="5 9 2 12 5 15"/>
-  <polyline points="9 5 12 2 15 5"/>
-  <polyline points="19 9 22 12 19 15"/>
-  <polyline points="9 19 12 22 15 19"/>
-  <line x1="2" y1="12" x2="22" y2="12"/>
-  <line x1="12" y1="2" x2="12" y2="22"/>
-</svg>
+        <path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/>
+        <path d="M22 21H7"/>
+        <path d="m5 11 9 9"/>
+      </svg>
     </button>
     <button class="tool-btn" id="btn-selector" data-tool="selector" data-tooltip="Select & Move (D)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-  <path d="M4 4l7 17 2.5-7.5L21 11z"/>
-</svg>
-
+        <path d="M4 4l7 17 2.5-7.5L21 11z"/>
+      </svg>
     </button>
+
+    <div class="divider"></div>
+
     <button class="tool-btn" id="btn-clear" data-tooltip="Erase All (C)">
       <svg viewBox="0 0 24 24">
         <path d="M3 6h18"/>
@@ -637,9 +676,6 @@
         <line x1="14" x2="14" y1="11" y2="17"/>
       </svg>
     </button>
-
-    <div class="divider"></div>
-
     <button class="tool-btn" id="btn-center" data-tooltip="Center View (Shift+C)">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M3 12h3m12 0h3M12 3v3m0 12v3"/></svg>
     </button>
@@ -654,7 +690,6 @@
     </button>
   </div>
 
-  <!-- Bottom Interactive Color / Stroke Swatch Palette -->
   <div class="palette-container" id="palette-container">
     <div class="swatches-area" id="swatches-area"></div>
     
@@ -674,9 +709,19 @@
       <button class="width-btn" data-width="8">8</button>
       <button class="width-btn" data-width="12">12</button>
     </div>
+    
+    <div style="width: 1px; height: 24px; background: var(--border-panel); margin: 0 4px;"></div>
+    
+    <div style="display: flex; gap: 4px;">
+      <button class="palette-btn" id="btn-undo" data-tooltip="Undo (Ctrl+Z)">
+        <svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
+      </button>
+      <button class="palette-btn" id="btn-redo" data-tooltip="Redo (Ctrl+Y)">
+        <svg viewBox="0 0 24 24"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5v0A5.5 5.5 0 0 0 9.5 20H13"/></svg>
+      </button>
+    </div>
   </div>
 
-  <!-- Grid Configuration Floating Panel -->
   <div class="floating-panel hidden" id="settings-panel">
     <div class="panel-header">
       <span>Canvas & Grid Settings</span>
@@ -686,13 +731,6 @@
       <span>Show Grid (G)</span>
       <label class="switch">
         <input type="checkbox" id="grid-toggle" checked>
-        <span class="slider"></span>
-      </label>
-    </div>
-    <div class="panel-row">
-      <span>Snap to Grid (H)</span>
-      <label class="switch">
-        <input type="checkbox" id="snap-toggle">
         <span class="slider"></span>
       </label>
     </div>
@@ -716,7 +754,6 @@
     </div>
   </div>
 
-  <!-- Shortcuts Panel Overlay -->
   <div class="help-panel hidden" id="help-panel">
     <div class="panel-header">
       <span>Keyboard Shortcuts Cheatsheet</span>
@@ -724,21 +761,22 @@
     </div>
     <div class="help-grid">
       <kbd>Q</kbd> <span>Pen Tool</span>
-      <kbd>W</kbd> <span>Straight Line Tool</span>
       <kbd>E</kbd> <span>Rectangle Tool</span>
       <kbd>R</kbd> <span>Ellipse Tool</span>
+      <kbd>V</kbd> <span>Triangle Tool</span>
       <kbd>X</kbd> <span>Axis Tool (X/Y Math Plane)</span>
       <kbd>A</kbd> <span>Stroke Eraser</span>
-      <kbd>Right Click</kbd> <span>Hold to temporarily erase</span>
-      <kbd>S</kbd> <span>Pan / Hand Tool</span>
+      <kbd>Right Click</kbd> <span>Hold to temporarily erase (when not drawing)</span>
+      <kbd>Right Click</kbd> <span>Hold while drawing/moving to Snap-to-Grid</span>
+      <kbd>Middle Drag</kbd> <span>Pan Canvas / Move View</span>
       <kbd>D</kbd> <span>Selection Tool (Box Select & Move)</span>
       <kbd>F</kbd> <span>Focus Custom Color Picker</span>
       <kbd>G</kbd> <span>Toggle Infinite Grid</span>
-      <kbd>H</kbd> <span>Toggle Snap-to-Grid</span>
+      <kbd>Ctrl+V</kbd> <span>Paste Image from Clipboard</span>
       <kbd>Shift</kbd> <span>Constrain shapes & straight pen lines</span>
       <kbd>Ctrl+Shift</kbd> <span>Snap perfectly straight Pen lines to Grid</span>
-      <kbd>Z</kbd> <span>Undo Stroke (History of 50)</span>
-      <kbd>Ctrl+Shift+Z</kbd> <span>Redo Stroke</span>
+      <kbd>Ctrl+Z</kbd> <span>Undo Stroke (History of 50)</span>
+      <kbd>Ctrl+Y</kbd> <span>Redo Stroke (or Ctrl+Shift+Z)</span>
       <kbd>C</kbd> <span>Erase All / Clear Canvas (Confirm)</span>
       <kbd>Shift+C</kbd> <span>Center Cam on Bounding Box</span>
       <kbd>T</kbd> <span>Cycle Theme (Dark / Light / System)</span>
@@ -750,22 +788,23 @@
     <span id="zoom-indicator">Zoom: 100%</span>
     <span id="coord-indicator">X: 0 Y: 0</span>
   </div>
+  
+  <div id="image-context-menu" class="hidden">
+    <button class="context-btn" id="btn-invert-image">Invert Colors</button>
+  </div>
 
   <script>
-    // Prevent global context menu so right-click erasure functions smoothly
     window.addEventListener('contextmenu', e => e.preventDefault());
 
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
 
-    // UI elements
     const toolbar = document.getElementById('toolbar');
     const palette = document.getElementById('palette-container');
     const swatchesArea = document.getElementById('swatches-area');
     const settingsPanel = document.getElementById('settings-panel');
     const helpPanel = document.getElementById('help-panel');
     const gridToggle = document.getElementById('grid-toggle');
-    const snapToggle = document.getElementById('snap-toggle');
     const gridSizeInput = document.getElementById('grid-size-input');
     const bgColorInput = document.getElementById('bg-color-input');
     const gridColorInput = document.getElementById('grid-color-input');
@@ -773,29 +812,22 @@
     const customColorBtn = document.getElementById('custom-color-btn');
     const zoomIndicator = document.getElementById('zoom-indicator');
     const coordIndicator = document.getElementById('coord-indicator');
+    const imgContextMenu = document.getElementById('image-context-menu');
 
     const DEFAULT_PALETTE = [
-      '#ffffff',
-      '#1e1e1e', 
-      '#ef4444',
-      '#3b82f6',
-      '#10b981',
-      '#f59e0b',
-      '#8b5cf6',
-      '#ec4899',
-      '#9ca3af'
+      '#ffffff', '#1e1e1e', '#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#9ca3af'
     ];
 
-    // State object
     const state = {
       theme: 'system', 
       tool: 'pen',
       previousTool: 'pen',
       isRightClickErasing: false,
+      eraserModified: false,
       color: '#1e1e1e',
       paletteColors: [...DEFAULT_PALETTE],
       width: 3,
-      snapToGrid: false,
+      actionSnapActive: false, // Chorded snap state
       gridVisible: true,
       gridSize: 40,
       gridColor: '#e5e7eb',
@@ -810,22 +842,26 @@
       isDrawing: false,
       isPanning: false,
       isMovingStroke: false,
+      isResizingStroke: false,
+      resizeHandle: -1,
       isMarqueeSelecting: false,
       marqueeStart: { x: 0, y: 0 },
       marqueeEnd: { x: 0, y: 0 },
       startCoords: { x: 0, y: 0 },
       prevCoords: { x: 0, y: 0 },
-      lastMousePoint: { x: 0, y: 0 }, // For interpolation smoothing
+      lastMousePoint: { x: 0, y: 0 }, 
       initialStrokesForMove: null,
+      initialBoundsForResize: null,
       uiVisible: true,
       tempStroke: null
     };
 
     function cloneStrokes(strokesArray) {
-      return strokesArray.map(s => ({
-        ...s,
-        points: s.points.map(p => ({ x: p.x, y: p.y }))
-      }));
+      return strokesArray.map(s => {
+        const clone = { ...s };
+        if (s.points) clone.points = s.points.map(p => ({ x: p.x, y: p.y }));
+        return clone;
+      });
     }
 
     function saveHistory() {
@@ -833,9 +869,7 @@
         state.history = state.history.slice(0, state.historyIndex + 1);
       }
       state.history.push(cloneStrokes(state.strokes));
-      if (state.history.length > 50) {
-        state.history.shift();
-      }
+      if (state.history.length > 50) state.history.shift();
       state.historyIndex = state.history.length - 1;
     }
 
@@ -872,7 +906,7 @@
     }
 
     function snapPoint(pt) {
-      if (!state.snapToGrid) return pt;
+      if (!state.actionSnapActive) return pt;
       return forceSnapPoint(pt);
     }
 
@@ -914,16 +948,14 @@
         const dx = Math.abs(p1.x - p0.x);
         const dy = Math.abs(p1.y - p0.y);
         stroke.bounds = {
-          minX: p0.x - dx - stroke.width,
-          minY: p0.y - dy - stroke.width,
-          maxX: p0.x + dx + stroke.width,
-          maxY: p0.y + dy + stroke.width
+          minX: p0.x - dx - stroke.width, minY: p0.y - dy - stroke.width,
+          maxX: p0.x + dx + stroke.width, maxY: p0.y + dy + stroke.width
         };
         return;
       }
 
       const pts = stroke.points;
-      if (pts.length === 0) return { minX: 0, minY: 0, maxX: 0, maxY: 0 };
+      if (!pts || pts.length === 0) return { minX: 0, minY: 0, maxX: 0, maxY: 0 };
       let minX = pts[0].x, maxX = pts[0].x, minY = pts[0].y, maxY = pts[0].y;
       for (let i = 1; i < pts.length; i++) {
         if (pts[i].x < minX) minX = pts[i].x;
@@ -932,17 +964,14 @@
         if (pts[i].y > maxY) maxY = pts[i].y;
       }
       stroke.bounds = {
-        minX: minX - stroke.width,
-        minY: minY - stroke.width,
-        maxX: maxX + stroke.width,
-        maxY: maxY + stroke.width
+        minX: minX - stroke.width, minY: minY - stroke.width,
+        maxX: maxX + stroke.width, maxY: maxY + stroke.width
       };
     }
 
     function hitTestStroke(pt, stroke) {
       const bounds = stroke.bounds;
       if (!bounds) return false;
-      
       const tolerance = (stroke.width / 2) + Math.max(15, 15 / state.zoom);
       
       if (pt.x < bounds.minX - tolerance || pt.x > bounds.maxX + tolerance ||
@@ -955,65 +984,51 @@
            return Math.hypot(pt.x - stroke.points[0].x, pt.y - stroke.points[0].y) <= tolerance;
         }
         for (let i = 0; i < stroke.points.length - 1; i++) {
-          if (distToSegment(pt, stroke.points[i], stroke.points[i+1]) <= tolerance) {
-            return true;
-          }
+          if (distToSegment(pt, stroke.points[i], stroke.points[i+1]) <= tolerance) return true;
         }
-      } else if (stroke.type === 'rect') {
+      } else if (stroke.type === 'rect' || stroke.type === 'image') {
         const [p1, p2] = stroke.points;
-        const corners = [
-          { x: p1.x, y: p1.y },
-          { x: p2.x, y: p1.y },
-          { x: p2.x, y: p2.y },
-          { x: p1.x, y: p2.y }
+        if (stroke.type === 'image') {
+            const minX = Math.min(p1.x, p2.x); const maxX = Math.max(p1.x, p2.x);
+            const minY = Math.min(p1.y, p2.y); const maxY = Math.max(p1.y, p2.y);
+            return pt.x >= minX && pt.x <= maxX && pt.y >= minY && pt.y <= maxY;
+        } else {
+            const corners = [{ x: p1.x, y: p1.y }, { x: p2.x, y: p1.y }, { x: p2.x, y: p2.y }, { x: p1.x, y: p2.y }];
+            for (let i = 0; i < 4; i++) {
+              if (distToSegment(pt, corners[i], corners[(i+1)%4]) <= tolerance) return true;
+            }
+        }
+      } else if (stroke.type === 'triangle') {
+        const [p1, p2] = stroke.points;
+        const pts = [
+            { x: p1.x, y: p1.y },
+            { x: p1.x, y: p2.y },
+            { x: p2.x, y: p2.y }
         ];
-        for (let i = 0; i < 4; i++) {
-          if (distToSegment(pt, corners[i], corners[(i+1)%4]) <= tolerance) return true;
+        for (let i = 0; i < 3; i++) {
+            if (distToSegment(pt, pts[i], pts[(i+1)%3]) <= tolerance) return true;
         }
       } else if (stroke.type === 'ellipse') {
         const [p1, p2] = stroke.points;
-        const cx = (p1.x + p2.x) / 2;
-        const cy = (p1.y + p2.y) / 2;
-        const rx = Math.abs(p2.x - p1.x) / 2;
-        const ry = Math.abs(p2.y - p1.y) / 2;
+        const cx = (p1.x + p2.x) / 2, cy = (p1.y + p2.y) / 2;
+        const rx = Math.abs(p2.x - p1.x) / 2, ry = Math.abs(p2.y - p1.y) / 2;
+        if (rx === 0 && ry === 0) return Math.hypot(pt.x - cx, pt.y - cy) <= tolerance;
+        else if (rx === 0) return distToSegment(pt, {x: cx, y: cy - ry}, {x: cx, y: cy + ry}) <= tolerance;
+        else if (ry === 0) return distToSegment(pt, {x: cx - rx, y: cy}, {x: cx + rx, y: cy}) <= tolerance;
         
-        if (rx === 0 && ry === 0) {
-          return Math.hypot(pt.x - cx, pt.y - cy) <= tolerance;
-        } else if (rx === 0) {
-          return distToSegment(pt, {x: cx, y: cy - ry}, {x: cx, y: cy + ry}) <= tolerance;
-        } else if (ry === 0) {
-          return distToSegment(pt, {x: cx - rx, y: cy}, {x: cx + rx, y: cy}) <= tolerance;
-        }
-
-        let prevX = cx + rx;
-        let prevY = cy;
-        const steps = 32; 
-        for (let i = 1; i <= steps; i++) {
-          const t = (i / steps) * Math.PI * 2;
-          const nx = cx + rx * Math.cos(t);
-          const ny = cy + ry * Math.sin(t);
-          if (distToSegment(pt, {x: prevX, y: prevY}, {x: nx, y: ny}) <= tolerance) {
-            return true;
-          }
-          prevX = nx;
-          prevY = ny;
+        let prevX = cx + rx, prevY = cy;
+        for (let i = 1; i <= 32; i++) {
+          const t = (i / 32) * Math.PI * 2;
+          const nx = cx + rx * Math.cos(t), ny = cy + ry * Math.sin(t);
+          if (distToSegment(pt, {x: prevX, y: prevY}, {x: nx, y: ny}) <= tolerance) return true;
+          prevX = nx; prevY = ny;
         }
       } else if (stroke.type === 'axis') {
-        const p0 = stroke.points[0];
-        const p1 = stroke.points[1];
-        const dx = Math.abs(p1.x - p0.x);
-        const dy = Math.abs(p1.y - p0.y);
+        const p0 = stroke.points[0], p1 = stroke.points[1];
+        const dx = Math.abs(p1.x - p0.x), dy = Math.abs(p1.y - p0.y);
         const angle = Math.atan2(dy, dx);
-        let drawX = angle <= 1.3;
-        let drawY = angle >= 0.26;
-
-        if (drawX) {
-            if (distToSegment(pt, {x: p0.x - dx, y: p0.y}, {x: p0.x + dx, y: p0.y}) <= tolerance) return true;
-        }
-        if (drawY) {
-            if (distToSegment(pt, {x: p0.x, y: p0.y - dy}, {x: p0.x, y: p0.y + dy}) <= tolerance) return true;
-        }
-        return false;
+        if (angle <= 1.3 && distToSegment(pt, {x: p0.x - dx, y: p0.y}, {x: p0.x + dx, y: p0.y}) <= tolerance) return true;
+        if (angle >= 0.26 && distToSegment(pt, {x: p0.x, y: p0.y - dy}, {x: p0.x, y: p0.y + dy}) <= tolerance) return true;
       }
       return false;
     }
@@ -1031,11 +1046,9 @@
       return { minX, minY, maxX, maxY };
     }
 
-    function hitTestGroupBounds(pt, bounds) {
-      if (!bounds) return false;
-      const tolerance = Math.max(10, 8 / state.zoom);
-      return pt.x >= bounds.minX - tolerance && pt.x <= bounds.maxX + tolerance &&
-             pt.y >= bounds.minY - tolerance && pt.y <= bounds.maxY + tolerance;
+    function hitTestGroupBounds(pt, gb) {
+      if (!gb) return false;
+      return pt.x >= gb.minX - 6 && pt.x <= gb.maxX + 6 && pt.y >= gb.minY - 6 && pt.y <= gb.maxY + 6;
     }
 
     function drawGrid(left, top, right, bottom) {
@@ -1050,20 +1063,24 @@
       const startY = Math.floor(top / size) * size;
       const endY = Math.ceil(bottom / size) * size;
 
-      for (let x = startX; x <= endX; x += size) {
-        ctx.moveTo(x, top);
-        ctx.lineTo(x, bottom);
-      }
-      for (let y = startY; y <= endY; y += size) {
-        ctx.moveTo(left, y);
-        ctx.lineTo(right, y);
-      }
+      for (let x = startX; x <= endX; x += size) { ctx.moveTo(x, top); ctx.lineTo(x, bottom); }
+      for (let y = startY; y <= endY; y += size) { ctx.moveTo(left, y); ctx.lineTo(right, y); }
       ctx.stroke();
     }
 
     function renderStrokePath(stroke, renderingContext) {
       const pts = stroke.points;
-      if (pts.length < 1) return;
+      if (!pts || pts.length < 1) return;
+
+      if (stroke.type === 'image' && stroke.img) {
+          const w = pts[1].x - pts[0].x;
+          const h = pts[1].y - pts[0].y;
+          renderingContext.save();
+          if (stroke.invert) renderingContext.filter = 'invert(100%)';
+          renderingContext.drawImage(stroke.img, pts[0].x, pts[0].y, w, h);
+          renderingContext.restore();
+          return;
+      }
 
       renderingContext.beginPath();
       renderingContext.strokeStyle = stroke.color;
@@ -1088,49 +1105,39 @@
             const yc = (pts[i].y + pts[i + 1].y) / 2;
             renderingContext.quadraticCurveTo(pts[i].x, pts[i].y, xc, yc);
           }
-          renderingContext.quadraticCurveTo(
-            pts[i].x,
-            pts[i].y,
-            pts[i + 1].x,
-            pts[i + 1].y
-          );
+          renderingContext.quadraticCurveTo(pts[i].x, pts[i].y, pts[i + 1].x, pts[i + 1].y);
           renderingContext.stroke();
         }
-      } else if (stroke.type === 'line') {
+      } else if (stroke.type === 'line' || stroke.type === 'rect' || stroke.type === 'ellipse' || stroke.type === 'triangle') {
         if (pts.length >= 2) {
-          renderingContext.moveTo(pts[0].x, pts[0].y);
-          renderingContext.lineTo(pts[1].x, pts[1].y);
-          renderingContext.stroke();
-        }
-      } else if (stroke.type === 'rect') {
-        if (pts.length >= 2) {
-          renderingContext.strokeRect(pts[0].x, pts[0].y, pts[1].x - pts[0].x, pts[1].y - pts[0].y);
-        }
-      } else if (stroke.type === 'ellipse') {
-        if (pts.length >= 2) {
-          const cx = (pts[0].x + pts[1].x) / 2;
-          const cy = (pts[0].y + pts[1].y) / 2;
-          const rx = Math.abs(pts[1].x - pts[0].x) / 2;
-          const ry = Math.abs(pts[1].y - pts[0].y) / 2;
-          renderingContext.ellipse(cx, cy, rx, ry, 0, 0, 2 * Math.PI);
+          if (stroke.type === 'line') {
+              renderingContext.moveTo(pts[0].x, pts[0].y);
+              renderingContext.lineTo(pts[1].x, pts[1].y);
+          } else if (stroke.type === 'rect') {
+              renderingContext.strokeRect(pts[0].x, pts[0].y, pts[1].x - pts[0].x, pts[1].y - pts[0].y);
+              return;
+          } else if (stroke.type === 'triangle') {
+              renderingContext.moveTo(pts[0].x, pts[0].y);
+              renderingContext.lineTo(pts[0].x, pts[1].y);
+              renderingContext.lineTo(pts[1].x, pts[1].y);
+              renderingContext.closePath();
+          } else if (stroke.type === 'ellipse') {
+              const cx = (pts[0].x + pts[1].x) / 2, cy = (pts[0].y + pts[1].y) / 2;
+              const rx = Math.abs(pts[1].x - pts[0].x) / 2, ry = Math.abs(pts[1].y - pts[0].y) / 2;
+              renderingContext.ellipse(cx, cy, rx, ry, 0, 0, 2 * Math.PI);
+          }
           renderingContext.stroke();
         }
       } else if (stroke.type === 'axis') {
         if (pts.length < 2) return;
-        const p0 = pts[0];
-        const p1 = pts[1];
+        const p0 = pts[0], p1 = pts[1];
         const gs = stroke.gridSize || 40;
-        const dx = Math.abs(p1.x - p0.x);
-        const dy = Math.abs(p1.y - p0.y);
-
+        const dx = Math.abs(p1.x - p0.x), dy = Math.abs(p1.y - p0.y);
         const angle = Math.atan2(dy, dx);
-        const drawX = angle <= 1.3;
-        const drawY = angle >= 0.26;
+        const drawX = angle <= 1.3, drawY = angle >= 0.26;
+        const tickLen = Math.max(4, gs * 0.15), arrowLen = Math.max(8, gs * 0.3);
 
-        const tickLen = Math.max(4, gs * 0.15);
-        const arrowLen = Math.max(8, gs * 0.3);
-
-        renderingContext.font = `500 ${Math.max(10, gs * 0.35)}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif`;
+        renderingContext.font = `500 ${Math.max(10, gs * 0.35)}px -apple-system, sans-serif`;
         renderingContext.textAlign = "center";
         renderingContext.textBaseline = "middle";
         renderingContext.fillStyle = stroke.color;
@@ -1138,12 +1145,10 @@
         const drawTick = (x, y, val, isX) => {
           renderingContext.beginPath();
           if (isX) {
-            renderingContext.moveTo(x, y - tickLen);
-            renderingContext.lineTo(x, y + tickLen);
+            renderingContext.moveTo(x, y - tickLen); renderingContext.lineTo(x, y + tickLen);
             if(val !== 0) renderingContext.fillText(val, x, y + gs * 0.4);
           } else {
-            renderingContext.moveTo(x - tickLen, y);
-            renderingContext.lineTo(x + tickLen, y);
+            renderingContext.moveTo(x - tickLen, y); renderingContext.lineTo(x + tickLen, y);
             if(val !== 0) renderingContext.fillText(val, x - gs * 0.4, y);
           }
           renderingContext.stroke();
@@ -1151,20 +1156,13 @@
 
         if (drawX) {
           renderingContext.beginPath();
-          renderingContext.moveTo(p0.x - dx, p0.y);
-          renderingContext.lineTo(p0.x + dx, p0.y);
+          renderingContext.moveTo(p0.x - dx, p0.y); renderingContext.lineTo(p0.x + dx, p0.y);
           renderingContext.stroke();
-          
           const maxSteps = Math.floor(dx / gs);
           for(let i = 0; i <= maxSteps; i++) {
-            if (i === 0) {
-               renderingContext.fillText("0", p0.x - gs*0.25, p0.y + gs*0.25);
-            } else {
-              drawTick(p0.x + i*gs, p0.y, i, true);
-              drawTick(p0.x - i*gs, p0.y, -i, true);
-            }
+            if (i === 0) renderingContext.fillText("0", p0.x - gs*0.25, p0.y + gs*0.25);
+            else { drawTick(p0.x + i*gs, p0.y, i, true); drawTick(p0.x - i*gs, p0.y, -i, true); }
           }
-          
           renderingContext.beginPath();
           renderingContext.moveTo(p0.x + dx - arrowLen, p0.y - arrowLen/1.5);
           renderingContext.lineTo(p0.x + dx, p0.y);
@@ -1174,16 +1172,12 @@
 
         if (drawY) {
           renderingContext.beginPath();
-          renderingContext.moveTo(p0.x, p0.y - dy);
-          renderingContext.lineTo(p0.x, p0.y + dy);
+          renderingContext.moveTo(p0.x, p0.y - dy); renderingContext.lineTo(p0.x, p0.y + dy);
           renderingContext.stroke();
-          
           const maxSteps = Math.floor(dy / gs);
           for(let i = 1; i <= maxSteps; i++) {
-            drawTick(p0.x, p0.y - i*gs, i, false);
-            drawTick(p0.x, p0.y + i*gs, -i, false);
+            drawTick(p0.x, p0.y - i*gs, i, false); drawTick(p0.x, p0.y + i*gs, -i, false);
           }
-          
           renderingContext.beginPath();
           renderingContext.moveTo(p0.x - arrowLen/1.5, p0.y - dy + arrowLen);
           renderingContext.lineTo(p0.x, p0.y - dy);
@@ -1209,9 +1203,7 @@
 
       state.strokes.forEach(stroke => renderStrokePath(stroke, ctx));
 
-      if (state.tempStroke) {
-        renderStrokePath(state.tempStroke, ctx);
-      }
+      if (state.tempStroke) renderStrokePath(state.tempStroke, ctx);
 
       if (state.tool === 'selector' && state.selectedStrokes.length > 0) {
         const gb = getGroupBounds(state.selectedStrokes);
@@ -1221,7 +1213,24 @@
           ctx.setLineDash([4 / state.zoom, 4 / state.zoom]);
           ctx.strokeRect(gb.minX - 6, gb.minY - 6, (gb.maxX - gb.minX) + 12, (gb.maxY - gb.minY) + 12);
           ctx.setLineDash([]);
+          
+          const box = { minX: gb.minX - 6, minY: gb.minY - 6, maxX: gb.maxX + 6, maxY: gb.maxY + 6 };
+          const handleSize = 8 / state.zoom;
+          ctx.fillStyle = '#4f46e5';
+          [{x: box.minX, y: box.minY}, {x: box.maxX, y: box.minY}, {x: box.maxX, y: box.maxY}, {x: box.minX, y: box.maxY}]
+          .forEach(c => ctx.fillRect(c.x - handleSize/2, c.y - handleSize/2, handleSize, handleSize));
+          
+          if (state.selectedStrokes.length === 1 && state.selectedStrokes[0].type === 'image') {
+              const screenX = gb.maxX * state.zoom + state.cameraX;
+              const screenY = gb.minY * state.zoom + state.cameraY;
+              imgContextMenu.style.transform = `translate(${screenX + 16}px, ${screenY}px)`;
+              if(imgContextMenu.classList.contains('hidden')) imgContextMenu.classList.remove('hidden');
+          } else {
+              if(!imgContextMenu.classList.contains('hidden')) imgContextMenu.classList.add('hidden');
+          }
         }
+      } else {
+         if(!imgContextMenu.classList.contains('hidden')) imgContextMenu.classList.add('hidden');
       }
 
       if (state.isMarqueeSelecting) {
@@ -1241,32 +1250,15 @@
 
     function centerView() {
       if (state.strokes.length === 0) {
-        state.cameraX = 0;
-        state.cameraY = 0;
-        state.zoom = 1;
-        triggerRedraw();
-        return;
+        state.cameraX = 0; state.cameraY = 0; state.zoom = 1; triggerRedraw(); return;
       }
-
       let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-      state.strokes.forEach(stroke => {
-        const b = stroke.bounds;
-        if (b) {
-          if (b.minX < minX) minX = b.minX;
-          if (b.minY < minY) minY = b.minY;
-          if (b.maxX > maxX) maxX = b.maxX;
-          if (b.maxY > maxY) maxY = b.maxY;
-        }
+      state.strokes.forEach(s => {
+        const b = s.bounds;
+        if (b) { minX = Math.min(minX, b.minX); minY = Math.min(minY, b.minY); maxX = Math.max(maxX, b.maxX); maxY = Math.max(maxY, b.maxY); }
       });
-
-      const wWidth = maxX - minX;
-      const wHeight = maxY - minY;
-      const margin = 60; 
-
-      const zoomX = (window.innerWidth - margin * 2) / wWidth;
-      const zoomY = (window.innerHeight - margin * 2) / wHeight;
-      let targetZoom = Math.max(0.1, Math.min(6, Math.min(zoomX, zoomY)));
-
+      const wWidth = maxX - minX, wHeight = maxY - minY, margin = 60; 
+      const targetZoom = Math.max(0.1, Math.min(6, Math.min((window.innerWidth - margin * 2) / wWidth, (window.innerHeight - margin * 2) / wHeight)));
       state.zoom = targetZoom;
       state.cameraX = window.innerWidth / 2 - (minX + wWidth / 2) * targetZoom;
       state.cameraY = window.innerHeight / 2 - (minY + wHeight / 2) * targetZoom;
@@ -1274,66 +1266,35 @@
     }
 
     function applyConstraints(ptStart, ptEnd) {
-      const dx = ptEnd.x - ptStart.x;
-      const dy = ptEnd.y - ptStart.y;
-
-      if (state.tool === 'line' || state.tool === 'pen' || state.tool === 'axis') {
-        const angle = Math.atan2(dy, dx);
-        const snappedAngle = Math.round(angle / (Math.PI / 4)) * (Math.PI / 4);
-        const length = Math.sqrt(dx * dx + dy * dy);
-        return {
-          x: ptStart.x + length * Math.cos(snappedAngle),
-          y: ptStart.y + length * Math.sin(snappedAngle)
-        };
-      } else if (state.tool === 'rect' || state.tool === 'ellipse') {
+      const dx = ptEnd.x - ptStart.x, dy = ptEnd.y - ptStart.y;
+      if (state.tool === 'pen' || state.tool === 'axis') {
+        const snappedAngle = Math.round(Math.atan2(dy, dx) / (Math.PI / 8)) * (Math.PI / 8);
+        const length = Math.hypot(dx, dy);
+        return { x: ptStart.x + length * Math.cos(snappedAngle), y: ptStart.y + length * Math.sin(snappedAngle) };
+      } else if (state.tool === 'rect' || state.tool === 'ellipse' || state.tool === 'triangle') {
         const size = Math.max(Math.abs(dx), Math.abs(dy));
-        return {
-          x: ptStart.x + Math.sign(dx) * size,
-          y: ptStart.y + Math.sign(dy) * size
-        };
+        return { x: ptStart.x + Math.sign(dx) * size, y: ptStart.y + Math.sign(dy) * size };
       }
       return ptEnd;
-    }
-
-    function deleteCustomColor(colorToRemove) {
-      state.paletteColors = state.paletteColors.filter(c => c.toLowerCase() !== colorToRemove.toLowerCase());
-      if (state.color.toLowerCase() === colorToRemove.toLowerCase()) {
-        selectColor(DEFAULT_PALETTE[0]);
-      }
-      saveToStorage();
-      renderPalette();
     }
 
     function renderPalette() {
       swatchesArea.innerHTML = '';
       state.paletteColors.forEach(color => {
         const sw = document.createElement('div');
-        sw.className = 'color-swatch';
+        sw.className = `color-swatch ${color.toLowerCase() === '#ffffff' ? 'color-swatch-white' : ''} ${state.color.toLowerCase() === color.toLowerCase() ? 'active' : ''}`;
         sw.style.backgroundColor = color;
         sw.setAttribute('data-color', color);
-        
-        if (color.toLowerCase() === '#ffffff') {
-          sw.classList.add('color-swatch-white');
-        }
-
-        if (state.color.toLowerCase() === color.toLowerCase()) {
-          sw.classList.add('active');
-        }
-
-        const isCustom = !DEFAULT_PALETTE.some(d => d.toLowerCase() === color.toLowerCase());
-        if (isCustom) {
+        if (!DEFAULT_PALETTE.some(d => d.toLowerCase() === color.toLowerCase())) {
           sw.setAttribute('data-tooltip', 'Right-click to delete');
-          sw.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            deleteCustomColor(color);
+          sw.addEventListener('contextmenu', e => {
+            e.preventDefault(); e.stopPropagation();
+            state.paletteColors = state.paletteColors.filter(c => c.toLowerCase() !== color.toLowerCase());
+            if (state.color.toLowerCase() === color.toLowerCase()) selectColor(DEFAULT_PALETTE[0]);
+            saveToStorage(); renderPalette();
           });
         }
-
-        sw.addEventListener('click', () => {
-          selectColor(color);
-        });
-
+        sw.addEventListener('click', () => selectColor(color));
         swatchesArea.appendChild(sw);
       });
     }
@@ -1341,16 +1302,8 @@
     function selectColor(color) {
       state.color = color;
       customColorInput.value = color;
-      
       customColorBtn.classList.remove('active');
-
-      document.querySelectorAll('.color-swatch').forEach(sw => {
-        if (sw.getAttribute('data-color').toLowerCase() === color.toLowerCase()) {
-          sw.classList.add('active');
-        } else {
-          sw.classList.remove('active');
-        }
-      });
+      document.querySelectorAll('.color-swatch').forEach(sw => sw.classList.toggle('active', sw.getAttribute('data-color').toLowerCase() === color.toLowerCase()));
       triggerRedraw();
     }
 
@@ -1358,7 +1311,7 @@
       helpPanel.classList.add('hidden');
       settingsPanel.classList.add('hidden');
 
-      if (e.button === 1 || (e.button === 0 && (state.tool === 'hand' || e.spaceKey))) {
+      if (e.button === 1 || (e.button === 0 && e.spaceKey)) {
         state.isPanning = true;
         state.startCoords = { x: e.clientX, y: e.clientY };
         state.prevCoords = { x: state.cameraX, y: state.cameraY };
@@ -1367,21 +1320,66 @@
       }
 
       if (e.button === 2) {
-        if (!state.isRightClickErasing) {
-          state.previousTool = state.tool;
-          state.isRightClickErasing = true;
-          setTool('eraser');
+        if (state.isDrawing || state.isMovingStroke || state.isResizingStroke || state.isMarqueeSelecting) {
+            state.actionSnapActive = true;
+            handlePointerMove(e);
+            return;
         }
-      } else if (e.button !== 0) {
-        return;
+        if (!state.isRightClickErasing) {
+            state.previousTool = state.tool;
+            state.isRightClickErasing = true;
+            state.eraserModified = false;
+            setTool('eraser');
+        }
       }
+
+      if (e.button === 0) {
+        if (state.isRightClickErasing) {
+            state.isRightClickErasing = false;
+            if (state.eraserModified) {
+                state.strokes = state.historyIndex >= 0 ? cloneStrokes(state.history[state.historyIndex]) : [];
+                state.eraserModified = false;
+            }
+            setTool(state.previousTool);
+            state.actionSnapActive = true;
+        } else {
+            state.actionSnapActive = false;
+        }
+      }
+
+      if (e.button !== 0 && e.button !== 2) return;
 
       const rawWorld = toWorldCoords(e.clientX, e.clientY);
       const snappedWorld = snapPoint(rawWorld);
       state.lastMousePoint = rawWorld; 
 
       if (state.tool === 'selector') {
+        state.isDrawing = false;
+        let hitHandle = -1;
         const groupBounds = getGroupBounds(state.selectedStrokes);
+        
+        if (groupBounds) {
+            const box = {
+                minX: groupBounds.minX - 6, minY: groupBounds.minY - 6,
+                maxX: groupBounds.maxX + 6, maxY: groupBounds.maxY + 6
+            };
+            const handleSize = Math.max(10, 8 / state.zoom);
+            const corners = [{x: box.minX, y: box.minY}, {x: box.maxX, y: box.minY}, {x: box.maxX, y: box.maxY}, {x: box.minX, y: box.maxY}];
+            for(let i=0; i<4; i++) {
+               if (Math.abs(rawWorld.x - corners[i].x) <= handleSize && Math.abs(rawWorld.y - corners[i].y) <= handleSize) {
+                   hitHandle = i; break;
+               }
+            }
+        }
+
+        if (hitHandle !== -1) {
+            state.isResizingStroke = true;
+            state.resizeHandle = hitHandle;
+            state.startCoords = rawWorld;
+            state.initialStrokesForMove = state.selectedStrokes.map(s => JSON.stringify(s.points));
+            state.initialBoundsForResize = groupBounds;
+            return;
+        }
 
         if (groupBounds && hitTestGroupBounds(rawWorld, groupBounds)) {
           state.isMovingStroke = true;
@@ -1392,25 +1390,20 @@
 
         let clickedOnStroke = null;
         for (let i = state.strokes.length - 1; i >= 0; i--) {
-          if (hitTestStroke(rawWorld, state.strokes[i])) {
-            clickedOnStroke = state.strokes[i];
-            break;
-          }
+          if (hitTestStroke(rawWorld, state.strokes[i])) { clickedOnStroke = state.strokes[i]; break; }
         }
 
         if (clickedOnStroke) {
           state.selectedStrokes = [clickedOnStroke];
           state.isMovingStroke = true;
           state.startCoords = rawWorld;
-          state.initialStrokesForMove = state.selectedStrokes.map(s => JSON.stringify(s.points));
-          triggerRedraw();
-          return;
+          state.initialStrokesForMove = [JSON.stringify(clickedOnStroke.points)];
+        } else {
+          state.selectedStrokes = [];
+          state.isMarqueeSelecting = true;
+          state.marqueeStart = state.actionSnapActive ? snappedWorld : rawWorld;
+          state.marqueeEnd = state.actionSnapActive ? snappedWorld : rawWorld;
         }
-
-        state.selectedStrokes = [];
-        state.isMarqueeSelecting = true;
-        state.marqueeStart = rawWorld;
-        state.marqueeEnd = rawWorld;
         triggerRedraw();
         return;
       }
@@ -1419,8 +1412,8 @@
         const activeErasures = state.strokes.filter(s => hitTestStroke(rawWorld, s));
         if (activeErasures.length > 0) {
           state.strokes = state.strokes.filter(s => !activeErasures.includes(s));
-          saveHistory();
-          state.selectedStrokes = [];
+          state.eraserModified = true;
+          state.selectedStrokes = []; 
           triggerRedraw();
         }
         state.isDrawing = true;
@@ -1428,111 +1421,151 @@
       }
 
       state.isDrawing = true;
-      state.startCoords = snappedWorld;
-      
-      state.tempStroke = {
-        type: state.tool,
-        color: state.color,
-        width: state.width,
-        points: [snappedWorld, snappedWorld]
-      };
-
-      if (state.tool === 'axis') {
-        state.tempStroke.gridSize = state.gridSize;
-      }
-
-      if (state.tool === 'pen') {
-        state.startCoords = rawWorld; 
-        state.tempStroke.points = [rawWorld];
-      }
-      
+      state.startCoords = (state.tool === 'pen' && !state.actionSnapActive) ? rawWorld : snappedWorld;
+      state.tempStroke = { type: state.tool, color: state.color, width: state.width, points: [state.startCoords, state.startCoords] };
+      if (state.tool === 'axis') state.tempStroke.gridSize = state.gridSize;
+      if (state.tool === 'pen') state.tempStroke.points = [state.startCoords];
       triggerRedraw();
     }
 
     function handlePointerMove(e) {
       if (state.isPanning) {
-        const dx = e.clientX - state.startCoords.x;
-        const dy = e.clientY - state.startCoords.y;
-        state.cameraX = state.prevCoords.x + dx;
-        state.cameraY = state.prevCoords.y + dy;
-        triggerRedraw();
-        return;
+        state.cameraX = state.prevCoords.x + (e.clientX - state.startCoords.x);
+        state.cameraY = state.prevCoords.y + (e.clientY - state.startCoords.y);
+        triggerRedraw(); return;
       }
 
       const rawWorld = toWorldCoords(e.clientX, e.clientY);
       const snappedWorld = snapPoint(rawWorld);
 
+      if (!state.isDrawing && !state.isMovingStroke && !state.isResizingStroke && !state.isMarqueeSelecting && state.tool === 'selector' && state.selectedStrokes.length > 0) {
+          const gb = getGroupBounds(state.selectedStrokes);
+          if (gb) {
+              const box = { minX: gb.minX - 6, minY: gb.minY - 6, maxX: gb.maxX + 6, maxY: gb.maxY + 6 };
+              const handleSize = Math.max(10, 8 / state.zoom);
+              const corners = [
+                  {x: box.minX, y: box.minY, c: 'nwse-resize'}, {x: box.maxX, y: box.minY, c: 'nesw-resize'},
+                  {x: box.maxX, y: box.maxY, c: 'nwse-resize'}, {x: box.minX, y: box.maxY, c: 'nesw-resize'}
+              ];
+              let hovered = false;
+              for(let i=0; i<4; i++) {
+                 if (Math.abs(rawWorld.x - corners[i].x) <= handleSize && Math.abs(rawWorld.y - corners[i].y) <= handleSize) {
+                     canvas.style.cursor = corners[i].c; hovered = true; break;
+                 }
+              }
+              if (!hovered) {
+                  if (hitTestGroupBounds(rawWorld, gb)) canvas.style.cursor = 'move';
+                  else canvas.style.cursor = 'crosshair';
+              }
+          }
+      }
+
+      if (state.isResizingStroke) {
+          let dx = rawWorld.x - state.startCoords.x;
+          let dy = rawWorld.y - state.startCoords.y;
+          
+          if (state.actionSnapActive) {
+              dx = snappedWorld.x - forceSnapPoint(state.startCoords).x;
+              dy = snappedWorld.y - forceSnapPoint(state.startCoords).y;
+          }
+          
+          const origBounds = state.initialBoundsForResize;
+          const origMinX = origBounds.minX, origMinY = origBounds.minY;
+          const origMaxX = origBounds.maxX, origMaxY = origBounds.maxY;
+          const origW = origMaxX - origMinX;
+          const origH = origMaxY - origMinY;
+          
+          let newMinX = origMinX, newMinY = origMinY;
+          let newMaxX = origMaxX, newMaxY = origMaxY;
+
+          if (state.resizeHandle === 0) { newMinX += dx; newMinY += dy; }
+          else if (state.resizeHandle === 1) { newMaxX += dx; newMinY += dy; }
+          else if (state.resizeHandle === 2) { newMaxX += dx; newMaxY += dy; }
+          else if (state.resizeHandle === 3) { newMinX += dx; newMaxY += dy; }
+
+          if (e.shiftKey && origW !== 0 && origH !== 0) {
+              let newW = newMaxX - newMinX;
+              let newH = newMaxY - newMinY;
+              const scale = Math.hypot(newW, newH) / Math.hypot(origW, origH);
+              
+              newW = origW * scale * (newW < 0 ? -1 : 1);
+              newH = origH * scale * (newH < 0 ? -1 : 1);
+
+              if (state.resizeHandle === 0) { newMinX = newMaxX - newW; newMinY = newMaxY - newH; }
+              else if (state.resizeHandle === 1) { newMaxX = newMinX + newW; newMinY = newMaxY - newH; }
+              else if (state.resizeHandle === 2) { newMaxX = newMinX + newW; newMaxY = newMinY + newH; }
+              else if (state.resizeHandle === 3) { newMinX = newMaxX - newW; newMaxY = newMinY + newH; }
+          }
+          
+          state.selectedStrokes.forEach((stroke, i) => {
+              const originalPoints = JSON.parse(state.initialStrokesForMove[i]);
+              stroke.points = originalPoints.map(p => {
+                  const relX = origW === 0 ? 0 : (p.x - origMinX) / origW;
+                  const relY = origH === 0 ? 0 : (p.y - origMinY) / origH;
+                  return {
+                      x: newMinX + relX * (newMaxX - newMinX),
+                      y: newMinY + relY * (newMaxY - newMinY)
+                  };
+              });
+              computeStrokeBounds(stroke);
+          });
+          triggerRedraw(); return;
+      }
+
       if (state.isMovingStroke && state.selectedStrokes.length > 0) {
-        const dx = rawWorld.x - state.startCoords.x;
-        const dy = rawWorld.y - state.startCoords.y;
+        let dx = rawWorld.x - state.startCoords.x;
+        let dy = rawWorld.y - state.startCoords.y;
+        
+        if (state.actionSnapActive) {
+            dx = snappedWorld.x - forceSnapPoint(state.startCoords).x;
+            dy = snappedWorld.y - forceSnapPoint(state.startCoords).y;
+        }
+
         state.selectedStrokes.forEach((stroke, i) => {
           const originalPoints = JSON.parse(state.initialStrokesForMove[i]);
-          stroke.points = originalPoints.map(p => ({
-            x: p.x + dx,
-            y: p.y + dy
-          }));
+          stroke.points = originalPoints.map(p => ({ x: p.x + dx, y: p.y + dy }));
           computeStrokeBounds(stroke);
         });
-        triggerRedraw();
-        return;
+        triggerRedraw(); return;
       }
 
-      if (state.isMarqueeSelecting) {
-        state.marqueeEnd = rawWorld;
-        triggerRedraw();
-        return;
+      if (state.isMarqueeSelecting) { 
+        state.marqueeEnd = state.actionSnapActive ? snappedWorld : rawWorld; 
+        triggerRedraw(); return; 
       }
-
+      
       if (!state.isDrawing) return;
+      if (state.tool !== 'eraser' && !state.tempStroke) {
+          state.isDrawing = false;
+          return;
+      }
 
       if (state.tool === 'eraser') {
-        const dx = rawWorld.x - state.lastMousePoint.x;
-        const dy = rawWorld.y - state.lastMousePoint.y;
-        const dist = Math.hypot(dx, dy);
-        const steps = Math.max(1, Math.ceil(dist / (10 / state.zoom)));
-        
+        const dx = rawWorld.x - state.lastMousePoint.x, dy = rawWorld.y - state.lastMousePoint.y;
+        const dist = Math.hypot(dx, dy), steps = Math.max(1, Math.ceil(dist / (10 / state.zoom)));
         let erasedSomething = false;
-
         for (let i = 1; i <= steps; i++) {
-          const stepPt = {
-            x: state.lastMousePoint.x + (dx * (i / steps)),
-            y: state.lastMousePoint.y + (dy * (i / steps))
-          };
+          const stepPt = { x: state.lastMousePoint.x + (dx * (i / steps)), y: state.lastMousePoint.y + (dy * (i / steps)) };
           const activeErasures = state.strokes.filter(s => hitTestStroke(stepPt, s));
           if (activeErasures.length > 0) {
             state.strokes = state.strokes.filter(s => !activeErasures.includes(s));
             erasedSomething = true;
           }
         }
-        
         state.lastMousePoint = rawWorld;
-
-        if (erasedSomething) {
-          saveHistory();
-          triggerRedraw();
-        }
+        if (erasedSomething) { state.eraserModified = true; triggerRedraw(); }
         return;
       }
 
       if (state.tool === 'pen') {
         if (e.shiftKey) {
-          if (e.ctrlKey || e.metaKey) {
-            const snappedStart = forceSnapPoint(state.startCoords);
-            const snappedEnd = forceSnapPoint(rawWorld);
-            state.tempStroke.points = [snappedStart, snappedEnd];
-          } else {
-            const constrainedEnd = applyConstraints(state.startCoords, rawWorld);
-            state.tempStroke.points = [state.startCoords, constrainedEnd];
-          }
+          if (e.ctrlKey || e.metaKey) state.tempStroke.points = [forceSnapPoint(state.startCoords), forceSnapPoint(rawWorld)];
+          else state.tempStroke.points = [state.startCoords, applyConstraints(state.startCoords, snappedWorld)];
         } else {
-          state.tempStroke.points.push(rawWorld);
+          state.tempStroke.points.push(snappedWorld);
         }
       } else {
-        let currentEndPt = snappedWorld;
-        if (e.shiftKey) {
-          currentEndPt = applyConstraints(state.startCoords, snappedWorld);
-        }
-        state.tempStroke.points[1] = currentEndPt;
+        state.tempStroke.points[1] = e.shiftKey ? applyConstraints(state.startCoords, snappedWorld) : snappedWorld;
       }
       triggerRedraw();
     }
@@ -1540,137 +1573,110 @@
     function handlePointerUp(e) {
       if (state.isPanning) {
         state.isPanning = false;
-        canvas.style.cursor = state.tool === 'hand' ? 'grab' : 'crosshair';
+        canvas.style.cursor = 'crosshair';
         return;
       }
 
-      if (state.isMarqueeSelecting) {
-        state.isMarqueeSelecting = false;
-        const minX = Math.min(state.marqueeStart.x, state.marqueeEnd.x);
-        const maxX = Math.max(state.marqueeStart.x, state.marqueeEnd.x);
-        const minY = Math.min(state.marqueeStart.y, state.marqueeEnd.y);
-        const maxY = Math.max(state.marqueeStart.y, state.marqueeEnd.y);
-
-        state.selectedStrokes = state.strokes.filter(s => {
-          const b = s.bounds;
-          if (!b) return false;
-          return !(b.minX > maxX || b.maxX < minX || b.minY > maxY || b.maxY < minY);
-        });
-        
-        triggerRedraw();
-        return;
+      if (e.button === 2) {
+          if (state.isRightClickErasing) {
+              state.isRightClickErasing = false;
+              state.isDrawing = false;
+              if (state.eraserModified) {
+                  saveHistory();
+                  state.eraserModified = false;
+              }
+              setTool(state.previousTool);
+              return;
+          }
+          if (state.actionSnapActive) {
+              state.actionSnapActive = false;
+              if (state.isDrawing || state.isMovingStroke || state.isResizingStroke || state.isMarqueeSelecting) {
+                  handlePointerMove(e);
+              }
+              return;
+          }
       }
 
-      if (state.isMovingStroke) {
-        state.isMovingStroke = false;
-        state.initialStrokesForMove = null;
-        saveHistory();
-        return;
-      }
+      if (e.button === 0) {
+          state.actionSnapActive = false;
+          
+          if (state.isResizingStroke) {
+            state.isResizingStroke = false; state.initialBoundsForResize = null; saveHistory(); return;
+          }
 
-      if (state.isRightClickErasing && e.button === 2) {
-        state.isRightClickErasing = false;
-        setTool(state.previousTool);
-      }
+          if (state.isMarqueeSelecting) {
+            state.isMarqueeSelecting = false;
+            const minX = Math.min(state.marqueeStart.x, state.marqueeEnd.x), maxX = Math.max(state.marqueeStart.x, state.marqueeEnd.x);
+            const minY = Math.min(state.marqueeStart.y, state.marqueeEnd.y), maxY = Math.max(state.marqueeStart.y, state.marqueeEnd.y);
+            state.selectedStrokes = state.strokes.filter(s => {
+              const b = s.bounds;
+              return b && !(b.minX > maxX || b.maxX < minX || b.minY > maxY || b.maxY < minY);
+            });
+            triggerRedraw(); return;
+          }
 
-      if (!state.isDrawing) return;
-      state.isDrawing = false;
+          if (state.isMovingStroke) {
+            state.isMovingStroke = false; state.initialStrokesForMove = null; saveHistory(); return;
+          }
 
-      if (state.tempStroke && state.tempStroke.points.length > 0) {
-        computeStrokeBounds(state.tempStroke);
-        state.strokes.push(state.tempStroke);
-        saveHistory();
+          if (!state.isDrawing) return;
+          state.isDrawing = false;
+
+          if (state.tool === 'eraser') {
+              if (state.eraserModified) {
+                  saveHistory();
+                  state.eraserModified = false;
+              }
+              return;
+          }
+
+          if (state.tempStroke && state.tempStroke.points.length > 0) {
+            computeStrokeBounds(state.tempStroke);
+            state.strokes.push(state.tempStroke);
+            saveHistory();
+          }
+          state.tempStroke = null;
+          triggerRedraw();
       }
-      state.tempStroke = null;
-      triggerRedraw();
     }
 
     function handleZoom(e) {
       e.preventDefault();
-      const zoomFactor = 1.15;
-      const zoomIn = e.deltaY < 0;
-      const rawMouse = { x: e.clientX, y: e.clientY };
-      const worldMouse = toWorldCoords(rawMouse.x, rawMouse.y);
-
-      let newZoom = zoomIn ? state.zoom * zoomFactor : state.zoom / zoomFactor;
-      newZoom = Math.max(0.05, Math.min(25, newZoom));
-
-      state.cameraX = rawMouse.x - worldMouse.x * newZoom;
-      state.cameraY = rawMouse.y - worldMouse.y * newZoom;
-      state.zoom = newZoom;
+      const zoomFactor = 1.15, zoomIn = e.deltaY < 0;
+      const rawMouse = { x: e.clientX, y: e.clientY }, worldMouse = toWorldCoords(rawMouse.x, rawMouse.y);
+      state.zoom = Math.max(0.05, Math.min(25, zoomIn ? state.zoom * zoomFactor : state.zoom / zoomFactor));
+      state.cameraX = rawMouse.x - worldMouse.x * state.zoom;
+      state.cameraY = rawMouse.y - worldMouse.y * state.zoom;
       triggerRedraw();
     }
 
     function handleKeyboard(e) {
-      if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') {
-        return; 
-      }
+      if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return; 
 
       const key = e.key.toLowerCase();
-
       if (key === 'q') setTool('pen');
-      if (key === 'w') setTool('line');
       if (key === 'e') setTool('rect');
       if (key === 'r') setTool('ellipse');
+      if (key === 'v') setTool('triangle');
       if (key === 'x') setTool('axis');
       if (key === 'a') setTool('eraser');
-      if (key === 's') setTool('hand');
       if (key === 'd') setTool('selector');
-
-      if (key === 'g') {
-        state.gridVisible = !state.gridVisible;
-        gridToggle.checked = state.gridVisible;
-        triggerRedraw();
-      }
-      if (key === 'h') {
-        state.snapToGrid = !state.snapToGrid;
-        snapToggle.checked = state.snapToGrid;
-      }
-      if (key === 'f') {
-        e.preventDefault();
-        customColorInput.click();
-      }
-      if (key === 'c' && !e.shiftKey) {
-        showResetDialog();
-      }
-      if (key === 'c' && e.shiftKey) {
-        centerView();
-      }
-      if (key === 't') {
-        cycleTheme();
-      }
-      if (key === 'tab') {
-        e.preventDefault();
-        toggleUI();
-      }
+      if (key === 'g') { state.gridVisible = !state.gridVisible; gridToggle.checked = state.gridVisible; triggerRedraw(); }
+      if (key === 'f') { e.preventDefault(); customColorInput.click(); }
+      if (key === 'c' && !e.shiftKey && !e.ctrlKey && !e.metaKey) showResetDialog();
+      if (key === 'c' && e.shiftKey) centerView();
+      if (key === 't') cycleTheme();
+      if (key === 'tab') { e.preventDefault(); toggleUI(); }
       if (key === 'escape') {
-        helpPanel.classList.add('hidden');
-        settingsPanel.classList.add('hidden');
-        if (state.isRightClickErasing) {
-          state.isRightClickErasing = false;
-          setTool(state.previousTool);
-        }
+        helpPanel.classList.add('hidden'); settingsPanel.classList.add('hidden');
+        if (state.isRightClickErasing) { state.isRightClickErasing = false; setTool(state.previousTool); }
       }
-
-      if (key === 'z' && !e.shiftKey && (e.ctrlKey || e.metaKey)) {
-        e.preventDefault();
-        undo();
-      }
-      if (key === 'z' && (e.shiftKey && (e.ctrlKey || e.metaKey))) {
-        e.preventDefault();
-        redo();
-      }
-      if (key === 'y' && (e.ctrlKey || e.metaKey)) {
-        e.preventDefault();
-        redo();
-      }
-
+      if (key === 'z' && !e.shiftKey && (e.ctrlKey || e.metaKey)) { e.preventDefault(); undo(); }
+      if ((key === 'y' && (e.ctrlKey || e.metaKey)) || (key === 'z' && e.shiftKey && (e.ctrlKey || e.metaKey))) { e.preventDefault(); redo(); }
       if (e.key === 'Delete' || e.key === 'Backspace') {
         if (state.tool === 'selector' && state.selectedStrokes.length > 0) {
           state.strokes = state.strokes.filter(s => !state.selectedStrokes.includes(s));
-          state.selectedStrokes = [];
-          saveHistory();
-          triggerRedraw();
+          state.selectedStrokes = []; saveHistory(); triggerRedraw();
         }
       }
     }
@@ -1683,85 +1689,72 @@
 
     function setTool(toolName) {
       state.tool = toolName;
-      document.querySelectorAll('.tool-btn[data-tool]').forEach(btn => {
-        btn.classList.toggle('active', btn.getAttribute('data-tool') === toolName);
-      });
-      canvas.style.cursor = toolName === 'hand' ? 'grab' : 'crosshair';
+      document.querySelectorAll('.tool-btn[data-tool]').forEach(btn => btn.classList.toggle('active', btn.getAttribute('data-tool') === toolName));
+      canvas.style.cursor = 'crosshair';
+      
+      state.isDrawing = false;
+      state.isMovingStroke = false;
+      state.isResizingStroke = false;
+      state.isMarqueeSelecting = false;
+      state.tempStroke = null;
+      state.initialStrokesForMove = null;
+      state.initialBoundsForResize = null;
       state.selectedStrokes = [];
+      
       triggerRedraw();
     }
 
-    document.querySelectorAll('.tool-btn[data-tool]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        state.isRightClickErasing = false; 
-        setTool(btn.getAttribute('data-tool'));
-      });
-    });
+    document.querySelectorAll('.tool-btn[data-tool]').forEach(btn => btn.addEventListener('click', () => {
+      state.isRightClickErasing = false; setTool(btn.getAttribute('data-tool'));
+    }));
 
     function cycleTheme() {
       const themes = ['light', 'dark', 'system'];
-      let idx = themes.indexOf(state.theme);
-      idx = (idx + 1) % themes.length;
-      setTheme(themes[idx]);
+      setTheme(themes[(themes.indexOf(state.theme) + 1) % themes.length]);
     }
 
     function setTheme(themeName) {
       state.theme = themeName;
       const root = document.body;
       root.className = ''; 
-
-      let isDark = false;
-      if (themeName === 'system') {
-        isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      } else {
-        isDark = themeName === 'dark';
-      }
-
+      const isDark = (themeName === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches) || themeName === 'dark';
       if (isDark) {
-        root.classList.add('theme-dark');
-        state.bgColor = '#121212';
-        state.gridColor = '#222222';
+        root.classList.add('theme-dark'); state.bgColor = '#121212'; state.gridColor = '#222222';
       } else {
-        state.bgColor = '#ffffff';
-        state.gridColor = '#e5e7eb';
+        state.bgColor = '#ffffff'; state.gridColor = '#e5e7eb';
       }
 
-      bgColorInput.value = state.bgColor;
-      gridColorInput.value = state.gridColor;
-
-      renderPalette();
-      triggerRedraw();
-    }
-
-    customColorInput.addEventListener('input', (e) => {
-      state.color = e.target.value;
-      customColorBtn.classList.add('active');
-      document.querySelectorAll('.color-swatch').forEach(sw => sw.classList.remove('active'));
-      triggerRedraw();
-    });
-
-    customColorInput.addEventListener('change', (e) => {
-      const selectedColor = e.target.value.toLowerCase();
-      if (!state.paletteColors.includes(selectedColor)) {
-        state.paletteColors.push(selectedColor);
-        saveToStorage();
-        renderPalette();
+      const hasWhite = state.paletteColors.includes('#ffffff');
+      const hasBlack = state.paletteColors.includes('#1e1e1e');
+      if (hasWhite && hasBlack) {
+        state.paletteColors = state.paletteColors.filter(c => c !== '#ffffff' && c !== '#1e1e1e');
+        if (isDark) {
+          state.paletteColors.unshift('#ffffff', '#1e1e1e');
+        } else {
+          state.paletteColors.unshift('#1e1e1e', '#ffffff');
+        }
       }
-      selectColor(selectedColor);
-    });
 
-    document.querySelectorAll('.width-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.width-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        state.width = parseInt(btn.getAttribute('data-width'), 10);
-      });
-    });
-
-    function togglePanel(panel) {
-      panel.classList.toggle('hidden');
+      bgColorInput.value = state.bgColor; gridColorInput.value = state.gridColor;
+      renderPalette(); triggerRedraw();
     }
 
+    customColorInput.addEventListener('input', e => {
+      state.color = e.target.value; customColorBtn.classList.add('active');
+      document.querySelectorAll('.color-swatch').forEach(sw => sw.classList.remove('active')); triggerRedraw();
+    });
+    customColorInput.addEventListener('change', e => {
+      const col = e.target.value.toLowerCase();
+      if (!state.paletteColors.includes(col)) { state.paletteColors.push(col); saveToStorage(); renderPalette(); }
+      selectColor(col);
+    });
+
+    document.querySelectorAll('.width-btn').forEach(btn => btn.addEventListener('click', () => {
+      document.querySelectorAll('.width-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active'); state.width = parseInt(btn.getAttribute('data-width'), 10);
+    }));
+
+    function togglePanel(panel) { panel.classList.toggle('hidden'); }
     document.getElementById('btn-settings').addEventListener('click', () => togglePanel(settingsPanel));
     document.getElementById('btn-settings-close').addEventListener('click', () => settingsPanel.classList.add('hidden'));
     document.getElementById('btn-help').addEventListener('click', () => togglePanel(helpPanel));
@@ -1769,144 +1762,119 @@
     document.getElementById('btn-center').addEventListener('click', centerView);
     document.getElementById('btn-theme').addEventListener('click', cycleTheme);
     document.getElementById('btn-clear').addEventListener('click', showResetDialog);
+    document.getElementById('btn-undo').addEventListener('click', undo);
+    document.getElementById('btn-redo').addEventListener('click', redo);
 
-    gridToggle.addEventListener('change', (e) => {
-      state.gridVisible = e.target.checked;
-      triggerRedraw();
+    document.getElementById('btn-invert-image').addEventListener('click', () => {
+        if (state.selectedStrokes.length === 1 && state.selectedStrokes[0].type === 'image') {
+            state.selectedStrokes[0].invert = !state.selectedStrokes[0].invert;
+            saveHistory(); triggerRedraw();
+        }
     });
-    snapToggle.addEventListener('change', (e) => {
-      state.snapToGrid = e.target.checked;
-    });
-    gridSizeInput.addEventListener('change', (e) => {
-      state.gridSize = Math.max(10, parseInt(e.target.value, 10));
-      triggerRedraw();
-    });
-    bgColorInput.addEventListener('input', (e) => {
-      state.bgColor = e.target.value;
-      triggerRedraw();
-    });
-    gridColorInput.addEventListener('input', (e) => {
-      state.gridColor = e.target.value;
-      triggerRedraw();
-    });
+
+    gridToggle.addEventListener('change', e => { state.gridVisible = e.target.checked; triggerRedraw(); });
+    gridSizeInput.addEventListener('change', e => { state.gridSize = Math.max(10, parseInt(e.target.value, 10)); triggerRedraw(); });
+    bgColorInput.addEventListener('input', e => { state.bgColor = e.target.value; triggerRedraw(); });
+    gridColorInput.addEventListener('input', e => { state.gridColor = e.target.value; triggerRedraw(); });
 
     function toggleUI() {
       state.uiVisible = !state.uiVisible;
       toolbar.classList.toggle('hidden', !state.uiVisible);
       palette.classList.toggle('hidden', !state.uiVisible);
-      if (!state.uiVisible) {
-        settingsPanel.classList.add('hidden');
-        helpPanel.classList.add('hidden');
-      }
+      if (!state.uiVisible) { settingsPanel.classList.add('hidden'); helpPanel.classList.add('hidden'); }
     }
 
     function showResetDialog() {
       if (document.querySelector('.confirm-overlay')) return;
-
       const overlay = document.createElement('div');
       overlay.className = 'confirm-overlay';
       overlay.innerHTML = `
         <div class="confirm-dialog">
           <h3>Erase All?</h3>
-          <p style="margin-top:8px; font-size:13px; color:var(--text-muted)">This will permanently clear all strokes from the canvas.</p>
+          <p style="margin-top:8px; font-size:13px; color:var(--text-muted)">This will permanently clear all strokes.</p>
           <div class="confirm-buttons">
             <button class="confirm-btn btn-danger" id="reset-confirm">Erase Everything</button>
             <button class="confirm-btn btn-cancel" id="reset-cancel">Cancel</button>
           </div>
-        </div>
-      `;
+        </div>`;
       document.body.appendChild(overlay);
-
       document.getElementById('reset-confirm').addEventListener('click', () => {
-        state.strokes = [];
-        state.selectedStrokes = [];
-        saveHistory();
-        triggerRedraw();
-        document.body.removeChild(overlay);
+        state.strokes = []; state.selectedStrokes = []; saveHistory(); triggerRedraw(); document.body.removeChild(overlay);
       });
-      document.getElementById('reset-cancel').addEventListener('click', () => {
-        document.body.removeChild(overlay);
-      });
+      document.getElementById('reset-cancel').addEventListener('click', () => document.body.removeChild(overlay));
     }
+
+    function handleImageFile(file, x, y) {
+      if (!file.type.startsWith('image/')) return;
+      const reader = new FileReader();
+      reader.onload = event => {
+        const base64 = event.target.result;
+        const img = new Image();
+        img.onload = () => {
+          const imgStroke = { type: 'image', src: base64, invert: false, points: [{x, y}, {x: x+img.width, y: y+img.height}], width: 2 };
+          imgStroke.img = img;
+          computeStrokeBounds(imgStroke); state.strokes.push(imgStroke); saveHistory(); triggerRedraw();
+        };
+        img.src = base64;
+      };
+      reader.readAsDataURL(file);
+    }
+    
+    window.addEventListener('paste', e => {
+      let x = (-state.cameraX + window.innerWidth / 2) / state.zoom;
+      let y = (-state.cameraY + window.innerHeight / 2) / state.zoom;
+      for (const item of e.clipboardData.items) {
+        if (item.type.indexOf('image') === 0) { handleImageFile(item.getAsFile(), x, y); break; }
+      }
+    });
+    
+    window.addEventListener('dragover', e => e.preventDefault());
+    window.addEventListener('drop', e => {
+      e.preventDefault();
+      const pt = toWorldCoords(e.clientX, e.clientY);
+      if (e.dataTransfer.files && e.dataTransfer.files.length > 0) handleImageFile(e.dataTransfer.files[0], pt.x, pt.y);
+    });
 
     function saveToStorage() {
       const data = {
-        strokes: state.strokes,
-        paletteColors: state.paletteColors,
-        color: state.color,
-        gridSettings: {
-          visible: state.gridVisible,
-          snap: state.snapToGrid,
-          size: state.gridSize,
-          gridColor: state.gridColor,
-          bgColor: state.bgColor
-        },
-        camera: {
-          x: state.cameraX,
-          y: state.cameraY,
-          zoom: state.zoom
-        },
+        strokes: state.strokes.map(s => { const copy = { ...s }; if (copy.type === 'image') delete copy.img; return copy; }),
+        paletteColors: state.paletteColors, color: state.color,
+        gridSettings: { visible: state.gridVisible, size: state.gridSize, gridColor: state.gridColor, bgColor: state.bgColor },
+        camera: { x: state.cameraX, y: state.cameraY, zoom: state.zoom },
         theme: state.theme
       };
-      localStorage.setItem('infinite_whiteboard_save', JSON.stringify(data));
+      try { localStorage.setItem('infinite_whiteboard_save', JSON.stringify(data)); } catch(e) {}
     }
 
     function loadFromStorage() {
       const raw = localStorage.getItem('infinite_whiteboard_save');
-      if (!raw) {
-        saveHistory();
-        setTheme('system');
-        renderPalette();
-        return;
-      }
+      if (!raw) { saveHistory(); setTheme('system'); renderPalette(); return; }
       try {
         const data = JSON.parse(raw);
         state.strokes = data.strokes || [];
         state.paletteColors = data.paletteColors || [...DEFAULT_PALETTE];
         state.color = data.color || '#1e1e1e';
-
-        state.strokes.forEach(computeStrokeBounds);
-
+        state.strokes.forEach(stroke => {
+            if (stroke.type === 'image' && stroke.src) {
+               const img = new Image(); img.onload = () => triggerRedraw(); img.src = stroke.src; stroke.img = img;
+            }
+            computeStrokeBounds(stroke);
+        });
         if (data.gridSettings) {
           state.gridVisible = data.gridSettings.visible !== undefined ? data.gridSettings.visible : true;
-          state.snapToGrid = !!data.gridSettings.snap;
-          state.gridSize = data.gridSettings.size || 40;
-          state.gridColor = data.gridSettings.gridColor || '#e5e7eb';
-          state.bgColor = data.gridSettings.bgColor || '#ffffff';
-
-          gridToggle.checked = state.gridVisible;
-          snapToggle.checked = state.snapToGrid;
-          gridSizeInput.value = state.gridSize;
-          bgColorInput.value = state.bgColor;
-          gridColorInput.value = state.gridColor;
+          state.gridSize = data.gridSettings.size || 40; state.gridColor = data.gridSettings.gridColor || '#e5e7eb'; state.bgColor = data.gridSettings.bgColor || '#ffffff';
+          gridToggle.checked = state.gridVisible; gridSizeInput.value = state.gridSize; bgColorInput.value = state.bgColor; gridColorInput.value = state.gridColor;
         }
-        if (data.camera) {
-          state.cameraX = data.camera.x || 0;
-          state.cameraY = data.camera.y || 0;
-          state.zoom = data.camera.zoom || 1;
-        }
-        if (data.theme) {
-          state.theme = data.theme;
-        }
-        setTheme(state.theme);
-        renderPalette();
-        saveHistory();
-      } catch (err) {
-        console.warn('Storage parsing failed. Resetting database states.');
-        setTheme('system');
-        renderPalette();
-      }
+        if (data.camera) { state.cameraX = data.camera.x || 0; state.cameraY = data.camera.y || 0; state.zoom = data.camera.zoom || 1; }
+        if (data.theme) state.theme = data.theme;
+        setTheme(state.theme); renderPalette(); saveHistory();
+      } catch (err) { setTheme('system'); renderPalette(); }
     }
 
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-      if (state.theme === 'system') setTheme('system');
-    });
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { if (state.theme === 'system') setTheme('system'); });
+    setInterval(saveToStorage, 5000); window.addEventListener('beforeunload', saveToStorage);
 
-    setInterval(saveToStorage, 5000);
-    window.addEventListener('beforeunload', saveToStorage);
-
-    loadFromStorage();
-    resize();
+    loadFromStorage(); resize();
   </script>
 </body>
 </html>
