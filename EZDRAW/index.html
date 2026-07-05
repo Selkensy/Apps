@@ -778,8 +778,8 @@
       <kbd>F</kbd> <span>Focus Custom Color Picker</span>
       <kbd>G</kbd> <span>Toggle Infinite Grid</span>
       <kbd>Ctrl+V</kbd> <span>Paste Image from Clipboard</span>
-      <kbd>Shift</kbd> <span>Constrain shapes & straight pen lines</span>
-      <kbd>Ctrl+Shift</kbd> <span>Snap perfectly straight Pen lines to Grid</span>
+      <kbd>Shift</kbd> <span>Straight Pen line / Constrain shapes</span>
+      <kbd>Ctrl+Shift</kbd> <span>Snap straight Pen line to fixed angle</span>
       <kbd>Ctrl+Z</kbd> <span>Undo Stroke (History of 50)</span>
       <kbd>Ctrl+Y</kbd> <span>Redo Stroke (or Ctrl+Shift+Z)</span>
       <kbd>C</kbd> <span>Erase All / Clear Canvas (Confirm)</span>
@@ -1566,8 +1566,11 @@
 
       if (state.tool === 'pen') {
         if (e.shiftKey) {
-          if (e.ctrlKey || e.metaKey) state.tempStroke.points = [forceSnapPoint(state.startCoords), forceSnapPoint(rawWorld)];
-          else state.tempStroke.points = [state.startCoords, applyConstraints(state.startCoords, snappedWorld)];
+          if (e.ctrlKey || e.metaKey) {
+            state.tempStroke.points = [state.startCoords, applyConstraints(state.startCoords, snappedWorld)];
+          } else {
+            state.tempStroke.points = [state.startCoords, snappedWorld];
+          }
         } else {
           state.tempStroke.points.push(snappedWorld);
         }
