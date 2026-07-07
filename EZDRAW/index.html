@@ -592,6 +592,17 @@
       opacity: 0;
       pointer-events: none;
     }
+
+    #arc-angle-wrapper {
+      color: var(--text-color);
+      padding: 6px 12px 10px 12px;
+      border-top: 1px solid var(--border-panel);
+      margin-top: 4px;
+    }
+
+    #arc-angle-wrapper.hidden {
+      display: none !important;
+    }
     
     .context-btn {
       background: transparent;
@@ -611,7 +622,7 @@
     }
     
     .context-btn.hidden {
-      display: none;
+      display: none !important;
     }
 
     #arc-slider {
@@ -786,6 +797,10 @@
   <div class="floating-panel hidden" id="color-picker-modal">
     <canvas id="color-canvas" width="190" height="130"></canvas>
     <input type="range" id="hue-slider" min="0" max="360" value="0">
+    <div style="display:flex; gap:8px; margin-top:10px; width:100%">
+        <button id="btn-color-cancel" class="confirm-btn btn-cancel" style="flex:1; padding:6px; font-size:12px;">Cancel</button>
+        <button id="btn-color-apply" class="confirm-btn" style="flex:1; padding:6px; font-size:12px; background:var(--accent-color); color:#fff">Apply</button>
+    </div>
   </div>
 
   <div class="floating-panel hidden" id="settings-panel">
@@ -841,14 +856,16 @@
       <kbd>V</kbd> <span>Triangle Tool</span>
       <kbd>X</kbd> <span>Axis Tool (X/Y Math Plane)</span>
       <kbd>A</kbd> <span>Eraser</span>
-      <kbd>Right Click</kbd> <span>Hold to temporarily erase (when not drawing)</span>
-      <kbd>Right Click</kbd> <span>Hold while drawing/moving to Snap-to-Grid</span>
+      <kbd>Right Click</kbd> <span>Hold to temporarily erase / Snap Grid (before/while drawing)</span>
       <kbd>Middle Drag</kbd> <span>Pan Canvas / Move View</span>
       <kbd>D</kbd> <span>Selection Tool (Box Select & Move)</span>
       <kbd>Alt</kbd> <span>Hold to temporarily Select & Move</span>
-      <kbd>Shift</kbd> <span>Straight lines / Precision erase / Constrain shapes</span>
+      <kbd>Shift</kbd> <span>Straight lines / Precision erase / Constrain shape axes</span>
+      <kbd>Ctrl+Click</kbd> <span>Add or remove individual objects from selection</span>
+      <kbd>Ctrl+Shift</kbd> <span>(while moving) Snap movement to 45°</span>
+      <kbd>Ctrl+Shift+&lt;</kbd> <span>(while moving) Snap movement to 22.5°</span>
       <kbd>Ctrl+D</kbd> <span>Duplicate Selection</span>
-      <kbd>MouseWheel</kbd> <span>With selection: Move Layer up/down</span>
+      <kbd>Ctrl+Wheel</kbd> <span>With selection: Move Layer up/down</span>
       <kbd>F</kbd> <span>Focus Custom Color Picker</span>
       <kbd>G</kbd> <span>Toggle Infinite Grid</span>
       <kbd>Ctrl+V</kbd> <span>Paste Image from Clipboard</span>
@@ -869,7 +886,7 @@
   <div id="shape-context-menu" class="hidden">
     <button class="context-btn" id="btn-duplicate">Duplicate (Ctrl+D)</button>
     <button class="context-btn hidden" id="btn-invert-image">Invert Colors</button>
-    <div id="arc-angle-wrapper" class="hidden" style="padding: 6px 12px 10px 12px; border-top: 1px solid var(--border-panel); margin-top: 4px;">
+    <div id="arc-angle-wrapper" class="hidden">
       <div style="font-size:10px; margin-bottom:8px; opacity:0.8; text-align:center;">Arc Angle</div>
       <input type="range" id="arc-slider" min="1" max="360" value="180">
     </div>
@@ -903,6 +920,15 @@
     const DEFAULT_PALETTE = [
       '#ffffff', '#1e1e1e', '#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#9ca3af'
     ];
+
+    let isoConstraintPressed = false;
+
+    window.addEventListener('keydown', e => {
+        if (e.code === 'IntlBackslash' || e.key === '<' || e.key === '>') isoConstraintPressed = true;
+    });
+    window.addEventListener('keyup', e => {
+        if (e.code === 'IntlBackslash' || e.key === '<' || e.key === '>') isoConstraintPressed = false;
+    });
 
     const state = {
       theme: 'system', 
@@ -942,7 +968,8 @@
       initialPointsBoundsForResize: null,
       uiVisible: true,
       tempStroke: null,
-      currentHue: 0
+      currentHue: 0,
+      colorPickerOriginalColor: '#1e1e1e'
     };
 
     function cloneStrokes(strokesArray) {
@@ -1030,7 +1057,6 @@
       return Math.sqrt(Math.pow(p.x - (v.x + t * (w.x - v.x)), 2) + Math.pow(p.y - (v.y + t * (w.y - v.y)), 2));
     }
 
-    // Used strictly for visual hit testing and bounding boxes of drawn rendering
     function computeStrokeBounds(stroke) {
       if (stroke.type === 'axis') {
         const p0 = stroke.points[0], p1 = stroke.points[1];
@@ -1056,7 +1082,6 @@
       };
     }
 
-    // Used for perfect resizing math - gets the un-padded boundary of the raw points
     function getRawGroupBounds(strokes) {
       if (!strokes || strokes.length === 0) return null;
       let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
@@ -1162,36 +1187,51 @@
                 poly.push({x: cx + rx*Math.cos(t), y: cy + ry*Math.sin(t)});
             }
         } else if (stroke.type === 'axis') {
-            return [{...stroke, type: 'pen', points: [pts[0], pts[1]]}]; 
+            const p0 = pts[0], p1 = pts[1];
+            const dx = Math.abs(p1.x - p0.x), dy = Math.abs(p1.y - p0.y);
+            const angle = Math.atan2(dy, dx);
+            let lines = [];
+            if (angle <= 1.3) lines.push({ ...stroke, type: 'pen', points: [{x: p0.x - dx, y: p0.y}, {x: p0.x + dx, y: p0.y}] });
+            if (angle >= 0.26) lines.push({ ...stroke, type: 'pen', points: [{x: p0.x, y: p0.y - dy}, {x: p0.x, y: p0.y + dy}] });
+            return lines;
         }
         return [{ ...stroke, type: 'pen', points: poly }];
+    }
+
+    function subdividePolyline(points, maxDist) {
+        if (points.length < 2) return points;
+        let newPts = [points[0]];
+        for (let i = 1; i < points.length; i++) {
+            const p1 = points[i-1], p2 = points[i];
+            const d = Math.hypot(p2.x - p1.x, p2.y - p1.y);
+            const steps = Math.ceil(d / maxDist);
+            for (let j = 1; j <= steps; j++) {
+                newPts.push({x: p1.x + (p2.x - p1.x)*j/steps, y: p1.y + (p2.y - p1.y)*j/steps});
+            }
+        }
+        return newPts;
     }
 
     function erasePrecision(stroke, center, radius) {
         const polylines = (stroke.type === 'pen' || stroke.type === 'line') ? [stroke] : shapeToPolylines(stroke);
         let result = [];
         for (let poly of polylines) {
+            const finePts = subdividePolyline(poly.points, radius / 2);
             let currentPoints = [];
-            for (let i = 0; i < poly.points.length - 1; i++) {
-                const p1 = poly.points[i], p2 = poly.points[i+1];
-                currentPoints.push(p1);
-                const dist = Math.hypot(p2.x - p1.x, p2.y - p1.y);
-                const steps = Math.max(1, Math.ceil(dist / 4)); 
-                for (let j = 1; j <= steps; j++) {
-                    const pt = {x: p1.x + (p2.x - p1.x)*j/steps, y: p1.y + (p2.y - p1.y)*j/steps};
-                    if (Math.hypot(pt.x - center.x, pt.y - center.y) <= radius) {
-                        if (currentPoints.length > 0) {
-                            result.push({...poly, type: 'pen', points: currentPoints});
-                            currentPoints = [];
-                        }
-                    } else {
-                        currentPoints.push(pt);
+            for (let i = 0; i < finePts.length; i++) {
+                const p = finePts[i];
+                if (Math.hypot(p.x - center.x, p.y - center.y) > radius) {
+                    currentPoints.push(p);
+                } else {
+                    if (currentPoints.length > 0) {
+                        result.push({...poly, type: 'pen', points: currentPoints});
+                        currentPoints = [];
                     }
                 }
             }
             if (currentPoints.length > 0) result.push({...poly, type: 'pen', points: currentPoints});
         }
-        return result.filter(s => s.points.length > 1);
+        return result;
     }
 
     function performErasure(pt, isShift) {
@@ -1506,7 +1546,7 @@
     }
 
     function handlePointerDown(e) {
-      if (e.target.closest('#shape-context-menu')) return;
+      if (e.target.closest('#shape-context-menu') || e.target.closest('#color-picker-modal')) return;
       
       helpPanel.classList.add('hidden');
       settingsPanel.classList.add('hidden');
@@ -1534,6 +1574,16 @@
         }
       }
 
+      if (e.button === 0 && state.isRightClickErasing) {
+          state.isRightClickErasing = false;
+          if (state.eraserModified) {
+              saveHistory();
+              state.eraserModified = false;
+          }
+          setTool(state.previousTool);
+          state.actionSnapActive = true;
+      }
+
       if (e.button !== 0 && e.button !== 2) return;
 
       const rawWorld = toWorldCoords(e.clientX, e.clientY);
@@ -1545,7 +1595,7 @@
         let hitHandle = -1;
         const groupBounds = getGroupBounds(state.selectedStrokes);
         
-        if (groupBounds) {
+        if (groupBounds && state.selectedStrokes.length > 0 && !(e.ctrlKey || e.metaKey)) {
             const box = {
                 minX: groupBounds.minX - 6, minY: groupBounds.minY - 6,
                 maxX: groupBounds.maxX + 6, maxY: groupBounds.maxY + 6
@@ -1578,20 +1628,30 @@
             clickedOnSelected = true;
         }
 
-        if (clickedOnSelected) {
-            state.isMovingStroke = true;
-            state.startCoords = rawWorld;
-            state.initialStrokesForMove = state.selectedStrokes.map(s => JSON.stringify({points: s.points, scale: s.scale || 1}));
-            return;
-        }
-
         if (clickedOnStroke) {
-          state.selectedStrokes = [clickedOnStroke];
-          state.isMovingStroke = true;
-          state.startCoords = rawWorld;
-          state.initialStrokesForMove = [JSON.stringify({points: clickedOnStroke.points, scale: clickedOnStroke.scale || 1})];
+            if (e.ctrlKey || e.metaKey) {
+                if (state.selectedStrokes.includes(clickedOnStroke)) {
+                    state.selectedStrokes = state.selectedStrokes.filter(s => s !== clickedOnStroke);
+                } else {
+                    state.selectedStrokes.push(clickedOnStroke);
+                }
+                if (state.selectedStrokes.length > 0) {
+                    state.isMovingStroke = true;
+                    state.startCoords = rawWorld;
+                    state.initialStrokesForMove = state.selectedStrokes.map(s => JSON.stringify({points: s.points, scale: s.scale || 1}));
+                } else {
+                    state.isMovingStroke = false;
+                }
+            } else {
+                if (!clickedOnSelected) {
+                    state.selectedStrokes = [clickedOnStroke];
+                }
+                state.isMovingStroke = true;
+                state.startCoords = rawWorld;
+                state.initialStrokesForMove = state.selectedStrokes.map(s => JSON.stringify({points: s.points, scale: s.scale || 1}));
+            }
         } else {
-          state.selectedStrokes = [];
+          if (!(e.ctrlKey || e.metaKey)) state.selectedStrokes = [];
           state.isMarqueeSelecting = true;
           state.marqueeStart = state.actionSnapActive ? snappedWorld : rawWorld;
           state.marqueeEnd = state.actionSnapActive ? snappedWorld : rawWorld;
@@ -1721,8 +1781,13 @@
         }
 
         if (e.shiftKey) {
+            let snapSteps = 4;
+            if (e.ctrlKey || e.metaKey) {
+                snapSteps = isoConstraintPressed ? 16 : 8;
+            }
             const angle = Math.atan2(dy, dx);
-            const snappedAngle = Math.round(angle / (Math.PI / 8)) * (Math.PI / 8);
+            const stepAngle = (Math.PI * 2) / snapSteps;
+            const snappedAngle = Math.round(angle / stepAngle) * stepAngle;
             const dist = Math.hypot(dx, dy);
             dx = Math.cos(snappedAngle) * dist;
             dy = Math.sin(snappedAngle) * dist;
@@ -1811,10 +1876,33 @@
             state.isMarqueeSelecting = false;
             const minX = Math.min(state.marqueeStart.x, state.marqueeEnd.x), maxX = Math.max(state.marqueeStart.x, state.marqueeEnd.x);
             const minY = Math.min(state.marqueeStart.y, state.marqueeEnd.y), maxY = Math.max(state.marqueeStart.y, state.marqueeEnd.y);
-            state.selectedStrokes = state.strokes.filter(s => {
-              const b = s.bounds;
-              return b && !(b.minX > maxX || b.maxX < minX || b.minY > maxY || b.maxY < minY);
+            
+            const rectIntersect = (minX1, minY1, maxX1, maxY1, minX2, minY2, maxX2, maxY2) => {
+                return !(maxX1 < minX2 || minX1 > maxX2 || maxY1 < minY2 || minY1 > maxY2);
+            };
+
+            const newlySelected = state.strokes.filter(s => {
+                if (!s.bounds) return false;
+                if (!rectIntersect(s.bounds.minX, s.bounds.minY, s.bounds.maxX, s.bounds.maxY, minX, minY, maxX, maxY)) return false;
+                if (s.type === 'image' || s.type === 'rect') return true;
+                const polylines = (s.type === 'pen' || s.type === 'line') ? [s] : shapeToPolylines(s);
+                for (let poly of polylines) {
+                    const finePts = subdividePolyline(poly.points, 10 / state.zoom);
+                    for (let p of finePts) {
+                        if (p.x >= minX && p.x <= maxX && p.y >= minY && p.y <= maxY) return true;
+                    }
+                }
+                return false;
             });
+
+            if (e.ctrlKey || e.metaKey) {
+                newlySelected.forEach(s => {
+                    if (!state.selectedStrokes.includes(s)) state.selectedStrokes.push(s);
+                });
+            } else {
+                state.selectedStrokes = newlySelected;
+            }
+
             triggerRedraw(); return;
           }
 
@@ -1844,26 +1932,30 @@
     }
 
     function handleZoom(e) {
-      if (state.selectedStrokes.length > 0 && state.tool === 'selector' && !e.ctrlKey) {
+      if (state.selectedStrokes.length > 0 && (e.ctrlKey || e.metaKey)) {
           e.preventDefault();
           const moveUp = e.deltaY < 0; 
+          let modified = false;
           if (moveUp) {
               for (let i = state.strokes.length - 2; i >= 0; i--) {
                   if (state.selectedStrokes.includes(state.strokes[i]) && !state.selectedStrokes.includes(state.strokes[i+1])) {
                       let temp = state.strokes[i+1]; state.strokes[i+1] = state.strokes[i]; state.strokes[i] = temp;
+                      modified = true;
                   }
               }
           } else {
               for (let i = 1; i < state.strokes.length; i++) {
                   if (state.selectedStrokes.includes(state.strokes[i]) && !state.selectedStrokes.includes(state.strokes[i-1])) {
                       let temp = state.strokes[i-1]; state.strokes[i-1] = state.strokes[i]; state.strokes[i] = temp;
+                      modified = true;
                   }
               }
           }
-          triggerRedraw(); saveHistory();
+          if (modified) { triggerRedraw(); saveHistory(); }
           return;
       }
-      e.preventDefault();
+      
+      if (e.ctrlKey || e.metaKey) e.preventDefault();
       const zoomFactor = 1.15, zoomIn = e.deltaY < 0;
       const rawMouse = { x: e.clientX, y: e.clientY }, worldMouse = toWorldCoords(rawMouse.x, rawMouse.y);
       state.zoom = Math.max(0.05, Math.min(25, zoomIn ? state.zoom * zoomFactor : state.zoom / zoomFactor));
@@ -1895,7 +1987,12 @@
         if (key === 'a') setTool('eraser');
         if (key === 'd') setTool('selector');
         if (key === 'g') { state.gridVisible = !state.gridVisible; gridToggle.checked = state.gridVisible; triggerRedraw(); }
-        if (key === 'f') { e.preventDefault(); colorPickerModal.classList.toggle('hidden'); updateColorCanvas(); }
+        if (key === 'f') { 
+            e.preventDefault(); 
+            state.colorPickerOriginalColor = state.color;
+            colorPickerModal.classList.toggle('hidden'); 
+            if (!colorPickerModal.classList.contains('hidden')) updateColorCanvas(); 
+        }
         if (key === 'c' && !e.shiftKey) showResetDialog();
         if (key === 'c' && e.shiftKey) centerView();
         if (key === 't') cycleTheme();
@@ -1903,7 +2000,11 @@
 
       if (key === 'tab') { e.preventDefault(); toggleUI(); }
       if (key === 'escape') {
-        helpPanel.classList.add('hidden'); settingsPanel.classList.add('hidden'); colorPickerModal.classList.add('hidden');
+        helpPanel.classList.add('hidden'); settingsPanel.classList.add('hidden'); 
+        if (!colorPickerModal.classList.contains('hidden')) {
+            colorPickerModal.classList.add('hidden');
+            selectColor(state.colorPickerOriginalColor);
+        }
         if (state.isRightClickErasing) { state.isRightClickErasing = false; setTool(state.previousTool); }
         if (state.isAltSelecting) { state.isAltSelecting = false; setTool(state.previousToolForAlt); }
       }
@@ -1937,6 +2038,7 @@
     window.addEventListener('blur', () => {
         if (state.isAltSelecting) { state.isAltSelecting = false; setTool(state.previousToolForAlt); }
         if (state.isRightClickErasing) { state.isRightClickErasing = false; setTool(state.previousTool); }
+        isoConstraintPressed = false;
     });
 
     function setTool(toolName) {
@@ -2008,8 +2110,6 @@
         const y = Math.max(0, Math.min(130, e.clientY - rect.top));
         const imgData = colorCtx.getImageData(x, y, 1, 1).data;
         const hex = "#" + (1 << 24 | imgData[0] << 16 | imgData[1] << 8 | imgData[2]).toString(16).slice(1);
-        
-        if (!state.paletteColors.includes(hex)) { state.paletteColors.push(hex); saveToStorage(); renderPalette(); }
         selectColor(hex);
     }
 
@@ -2020,8 +2120,22 @@
     hueSlider.addEventListener('input', e => { state.currentHue = e.target.value; updateColorCanvas(); });
 
     customColorBtn.addEventListener('click', () => {
+        state.colorPickerOriginalColor = state.color;
         colorPickerModal.classList.toggle('hidden');
         if(!colorPickerModal.classList.contains('hidden')) updateColorCanvas();
+    });
+
+    document.getElementById('btn-color-apply').addEventListener('click', () => {
+        if (!state.paletteColors.includes(state.color)) {
+            state.paletteColors.push(state.color);
+            saveToStorage(); renderPalette();
+        }
+        colorPickerModal.classList.add('hidden');
+    });
+
+    document.getElementById('btn-color-cancel').addEventListener('click', () => {
+        colorPickerModal.classList.add('hidden');
+        selectColor(state.colorPickerOriginalColor);
     });
 
     document.querySelectorAll('.width-btn').forEach(btn => btn.addEventListener('click', () => {
