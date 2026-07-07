@@ -585,7 +585,7 @@
       pointer-events: auto;
       display: flex;
       flex-direction: column;
-      min-width: 130px;
+      min-width: 140px;
     }
     
     #shape-context-menu.hidden {
@@ -593,14 +593,14 @@
       pointer-events: none;
     }
 
-    #arc-angle-wrapper {
+    #ellipse-angle-wrapper {
       color: var(--text-color);
       padding: 6px 12px 10px 12px;
       border-top: 1px solid var(--border-panel);
       margin-top: 4px;
     }
 
-    #arc-angle-wrapper.hidden {
+    #ellipse-angle-wrapper.hidden {
       display: none !important;
     }
     
@@ -625,7 +625,7 @@
       display: none !important;
     }
 
-    #arc-slider {
+    input[type=range] {
       -webkit-appearance: none;
       width: 100%;
       height: 4px;
@@ -633,7 +633,7 @@
       background: var(--border-panel);
       outline: none;
     }
-    #arc-slider::-webkit-slider-thumb {
+    input[type=range]::-webkit-slider-thumb {
       -webkit-appearance: none;
       width: 12px;
       height: 12px;
@@ -705,11 +705,8 @@
     <button class="tool-btn" id="btn-rect" data-tool="rect" data-tooltip="Rectangle (E)">
       <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg>
     </button>
-    <button class="tool-btn" id="btn-ellipse" data-tool="ellipse" data-tooltip="Ellipse (R)">
+    <button class="tool-btn" id="btn-ellipse" data-tool="ellipse" data-tooltip="Ellipse/Arc (R)">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>
-    </button>
-    <button class="tool-btn" id="btn-arc" data-tool="arc" data-tooltip="Arc (S)">
-      <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 18 0"/></svg>
     </button>
     <button class="tool-btn" id="btn-triangle" data-tool="triangle" data-tooltip="Triangle (V)">
       <svg viewBox="0 0 24 24"><polygon points="4 4 4 20 20 20" stroke-linejoin="round"/></svg>
@@ -855,8 +852,7 @@
     <div class="help-grid">
       <kbd>Q</kbd> <span>Pen Tool</span>
       <kbd>E</kbd> <span>Rectangle Tool</span>
-      <kbd>R</kbd> <span>Ellipse Tool</span>
-      <kbd>S</kbd> <span>Arc Tool</span>
+      <kbd>R</kbd> <span>Ellipse & Arc Tool</span>
       <kbd>V</kbd> <span>Triangle Tool</span>
       <kbd>X</kbd> <span>Axis Tool (X/Y Math Plane)</span>
       <kbd>A</kbd> <span>Eraser</span>
@@ -867,7 +863,6 @@
       <kbd>Shift</kbd> <span>Straight lines / Precision erase / Constrain shape axes</span>
       <kbd>Ctrl+Click</kbd> <span>Add or remove individual objects from selection</span>
       <kbd>Ctrl+Shift</kbd> <span>(while moving) Snap movement to 45°</span>
-      <kbd>Ctrl+Shift+&lt;</kbd> <span>(while moving) Snap movement to 22.5°</span>
       <kbd>Ctrl+D</kbd> <span>Duplicate Selection</span>
       <kbd>Ctrl+Wheel</kbd> <span>With selection: Move Layer up/down</span>
       <kbd>F</kbd> <span>Focus Custom Color Picker</span>
@@ -889,10 +884,31 @@
   
   <div id="shape-context-menu" class="hidden">
     <button class="context-btn" id="btn-duplicate">Duplicate (Ctrl+D)</button>
+    <button class="context-btn" id="btn-layer-top">Move to Top</button>
+    <button class="context-btn" id="btn-layer-bottom">Move to Bottom</button>
     <button class="context-btn hidden" id="btn-invert-image">Invert Colors</button>
-    <div id="arc-angle-wrapper" class="hidden">
-      <div style="font-size:10px; margin-bottom:8px; opacity:0.8; text-align:center;">Arc Angle</div>
-      <input type="range" id="arc-slider" min="1" max="360" value="180">
+    
+    <div class="panel-row" style="padding: 6px 12px; margin-top: 4px; border-top: 1px solid var(--border-panel);">
+      <span>Dashed Stroke</span>
+      <label class="switch">
+        <input type="checkbox" id="dashed-toggle">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div id="dash-spacing-wrapper" class="hidden" style="padding: 0 12px 10px 12px;">
+      <div style="font-size:10px; margin-bottom:8px; opacity:0.8; text-align:center;">Dash Spacing</div>
+      <input type="range" id="dash-spacing-slider" min="2" max="50" value="10">
+    </div>
+
+    <div id="ellipse-angle-wrapper" class="hidden">
+      <div style="display:flex; justify-content:space-between; font-size:10px; margin-bottom:4px; opacity:0.8;">
+        <span>Start Angle</span> <span id="start-angle-val">0°</span>
+      </div>
+      <input type="range" id="ellipse-start-slider" min="0" max="360" value="0">
+      <div style="display:flex; justify-content:space-between; font-size:10px; margin-bottom:4px; margin-top:8px; opacity:0.8;">
+        <span>End Angle</span> <span id="end-angle-val">360°</span>
+      </div>
+      <input type="range" id="ellipse-end-slider" min="0" max="360" value="360">
     </div>
   </div>
 
@@ -918,7 +934,7 @@
     const shapeContextMenu = document.getElementById('shape-context-menu');
     
     const colorCanvas = document.getElementById('color-canvas');
-    const colorCtx = colorCanvas.getContext('2d', {willReadFrequently: true});
+    const colorCtx = colorCanvas.getContext('2d');
     const hueSlider = document.getElementById('hue-slider');
 
     const DEFAULT_PALETTE = [
@@ -1156,16 +1172,19 @@
         for (let i = 0; i < 3; i++) {
             if (distToSegment(pt, pts[i], pts[(i+1)%3]) <= tolerance) return true;
         }
-      } else if (stroke.type === 'ellipse' || stroke.type === 'arc') {
+      } else if (stroke.type === 'ellipse') {
         const [p1, p2] = stroke.points;
         const cx = (p1.x + p2.x) / 2, cy = (p1.y + p2.y) / 2;
         const rx = Math.abs(p2.x - p1.x) / 2, ry = Math.abs(p2.y - p1.y) / 2;
         if (rx === 0 && ry === 0) return Math.hypot(pt.x - cx, pt.y - cy) <= tolerance;
         
-        const angleSpan = stroke.type === 'arc' ? (stroke.arcAngle || Math.PI) : Math.PI * 2;
-        let prevX = cx + rx, prevY = cy;
+        const start = stroke.startAngle || 0;
+        const end = stroke.endAngle !== undefined ? stroke.endAngle : (2 * Math.PI);
+        const angleSpan = end >= start ? end - start : (2 * Math.PI - start + end);
+        
+        let prevX = cx + rx * Math.cos(start), prevY = cy + ry * Math.sin(start);
         for (let i = 1; i <= 32; i++) {
-          const t = (i / 32) * angleSpan;
+          const t = start + (i / 32) * angleSpan;
           const nx = cx + rx * Math.cos(t), ny = cy + ry * Math.sin(t);
           if (distToSegment(pt, {x: prevX, y: prevY}, {x: nx, y: ny}) <= tolerance) return true;
           prevX = nx; prevY = ny;
@@ -1191,13 +1210,15 @@
             poly = [{x: pts[0].x, y: pts[0].y}, {x: pts[1].x, y: pts[0].y}, {x: pts[1].x, y: pts[1].y}, {x: pts[0].x, y: pts[1].y}, {x: pts[0].x, y: pts[0].y}];
         } else if (stroke.type === 'triangle') {
             poly = [{x: pts[0].x, y: pts[0].y}, {x: pts[0].x, y: pts[1].y}, {x: pts[1].x, y: pts[1].y}, {x: pts[0].x, y: pts[0].y}];
-        } else if (stroke.type === 'ellipse' || stroke.type === 'arc') {
+        } else if (stroke.type === 'ellipse') {
             const cx = (pts[0].x + pts[1].x)/2, cy = (pts[0].y + pts[1].y)/2;
             const rx = Math.abs(pts[1].x - pts[0].x)/2, ry = Math.abs(pts[1].y - pts[0].y)/2;
             const steps = 64;
-            const angleSpan = stroke.type === 'arc' ? (stroke.arcAngle || Math.PI) : 2*Math.PI;
+            const start = stroke.startAngle || 0;
+            const end = stroke.endAngle !== undefined ? stroke.endAngle : (2 * Math.PI);
+            const angleSpan = end >= start ? end - start : (2 * Math.PI - start + end);
             for (let i = 0; i <= steps; i++) {
-                const t = (i/steps)*angleSpan;
+                const t = start + (i/steps)*angleSpan;
                 poly.push({x: cx + rx*Math.cos(t), y: cy + ry*Math.sin(t)});
             }
         } else if (stroke.type === 'axis') {
@@ -1350,6 +1371,12 @@
       renderingContext.lineCap = 'round';
       renderingContext.lineJoin = 'round';
 
+      if (stroke.isDashed && stroke.type !== 'text') {
+        renderingContext.setLineDash([stroke.width * 2, stroke.dashSpacing || 10]);
+      } else {
+        renderingContext.setLineDash([]);
+      }
+
       if (stroke.type === 'pen') {
         if (pts.length === 1) {
           renderingContext.arc(pts[0].x, pts[0].y, stroke.width / 2, 0, Math.PI * 2);
@@ -1370,24 +1397,27 @@
           renderingContext.quadraticCurveTo(pts[i].x, pts[i].y, pts[i + 1].x, pts[i + 1].y);
           renderingContext.stroke();
         }
-      } else if (stroke.type === 'line' || stroke.type === 'rect' || stroke.type === 'ellipse' || stroke.type === 'triangle' || stroke.type === 'arc') {
+      } else if (stroke.type === 'line' || stroke.type === 'rect' || stroke.type === 'ellipse' || stroke.type === 'triangle') {
         if (pts.length >= 2) {
           if (stroke.type === 'line') {
               renderingContext.moveTo(pts[0].x, pts[0].y);
               renderingContext.lineTo(pts[1].x, pts[1].y);
           } else if (stroke.type === 'rect') {
               renderingContext.strokeRect(pts[0].x, pts[0].y, pts[1].x - pts[0].x, pts[1].y - pts[0].y);
-              return;
+              // resetting dash to not leak to next element early return
+              renderingContext.setLineDash([]);
+              return; 
           } else if (stroke.type === 'triangle') {
               renderingContext.moveTo(pts[0].x, pts[0].y);
               renderingContext.lineTo(pts[0].x, pts[1].y);
               renderingContext.lineTo(pts[1].x, pts[1].y);
               renderingContext.closePath();
-          } else if (stroke.type === 'ellipse' || stroke.type === 'arc') {
+          } else if (stroke.type === 'ellipse') {
               const cx = (pts[0].x + pts[1].x) / 2, cy = (pts[0].y + pts[1].y) / 2;
               const rx = Math.abs(pts[1].x - pts[0].x) / 2, ry = Math.abs(pts[1].y - pts[0].y) / 2;
-              const angleSpan = stroke.type === 'arc' ? (stroke.arcAngle || Math.PI) : 2 * Math.PI;
-              renderingContext.ellipse(cx, cy, rx, ry, 0, 0, angleSpan);
+              const start = stroke.startAngle || 0;
+              const end = stroke.endAngle !== undefined ? stroke.endAngle : (2 * Math.PI);
+              renderingContext.ellipse(cx, cy, rx, ry, 0, start, end);
           }
           renderingContext.stroke();
         }
@@ -1456,6 +1486,8 @@
         renderingContext.fillStyle = stroke.color;
         renderingContext.fillText(stroke.text, pts[0].x, pts[0].y);
       }
+      
+      renderingContext.setLineDash([]); // Ensure we don't bleed dashes to other things
     }
 
     function draw() {
@@ -1487,6 +1519,8 @@
           const box = { minX: gb.minX - 6, minY: gb.minY - 6, maxX: gb.maxX + 6, maxY: gb.maxY + 6 };
           const handleSize = 8 / state.zoom;
           ctx.fillStyle = '#4f46e5';
+          
+          // Draw visible corner handles (but we calculate invisible midpoints later for hits)
           [{x: box.minX, y: box.minY}, {x: box.maxX, y: box.minY}, {x: box.maxX, y: box.maxY}, {x: box.minX, y: box.maxY}]
           .forEach(c => ctx.fillRect(c.x - handleSize/2, c.y - handleSize/2, handleSize, handleSize));
           
@@ -1496,13 +1530,26 @@
           if(shapeContextMenu.classList.contains('hidden')) shapeContextMenu.classList.remove('hidden');
 
           const hasImage = state.selectedStrokes.some(s => s.type === 'image');
-          const hasArc = state.selectedStrokes.some(s => s.type === 'arc');
-          document.getElementById('btn-invert-image').classList.toggle('hidden', !hasImage);
-          document.getElementById('arc-angle-wrapper').classList.toggle('hidden', !hasArc);
+          const hasEllipse = state.selectedStrokes.some(s => s.type === 'ellipse');
+          const hasDashed = state.selectedStrokes.some(s => s.isDashed);
           
-          if (hasArc && !state.isMovingStroke && !state.isResizingStroke) {
-             const arcStroke = state.selectedStrokes.find(s => s.type === 'arc');
-             document.getElementById('arc-slider').value = Math.round((arcStroke.arcAngle || Math.PI) * 180 / Math.PI);
+          document.getElementById('btn-invert-image').classList.toggle('hidden', !hasImage);
+          document.getElementById('ellipse-angle-wrapper').classList.toggle('hidden', !hasEllipse);
+          
+          document.getElementById('dashed-toggle').checked = hasDashed;
+          document.getElementById('dash-spacing-wrapper').classList.toggle('hidden', !hasDashed);
+          
+          if (hasEllipse && !state.isMovingStroke && !state.isResizingStroke) {
+             const ellipseStroke = state.selectedStrokes.find(s => s.type === 'ellipse');
+             document.getElementById('ellipse-start-slider').value = Math.round((ellipseStroke.startAngle || 0) * 180 / Math.PI);
+             document.getElementById('ellipse-end-slider').value = Math.round((ellipseStroke.endAngle !== undefined ? ellipseStroke.endAngle : 2*Math.PI) * 180 / Math.PI);
+             document.getElementById('start-angle-val').textContent = document.getElementById('ellipse-start-slider').value + '°';
+             document.getElementById('end-angle-val').textContent = document.getElementById('ellipse-end-slider').value + '°';
+          }
+          
+          if (hasDashed && !state.isMovingStroke && !state.isResizingStroke) {
+             const dashedStroke = state.selectedStrokes.find(s => s.isDashed);
+             document.getElementById('dash-spacing-slider').value = dashedStroke.dashSpacing || 10;
           }
         }
       } else {
@@ -1547,7 +1594,7 @@
         const snappedAngle = Math.round(Math.atan2(dy, dx) / (Math.PI / 8)) * (Math.PI / 8);
         const length = Math.hypot(dx, dy);
         return { x: ptStart.x + length * Math.cos(snappedAngle), y: ptStart.y + length * Math.sin(snappedAngle) };
-      } else if (state.tool === 'rect' || state.tool === 'ellipse' || state.tool === 'triangle' || state.tool === 'arc') {
+      } else if (state.tool === 'rect' || state.tool === 'ellipse' || state.tool === 'triangle') {
         const size = Math.max(Math.abs(dx), Math.abs(dy));
         return { x: ptStart.x + Math.sign(dx) * size, y: ptStart.y + Math.sign(dy) * size };
       }
@@ -1668,9 +1715,13 @@
                 maxX: groupBounds.maxX + 6, maxY: groupBounds.maxY + 6
             };
             const handleSize = Math.max(10, 8 / state.zoom);
-            const corners = [{x: box.minX, y: box.minY}, {x: box.maxX, y: box.minY}, {x: box.maxX, y: box.maxY}, {x: box.minX, y: box.maxY}];
-            for(let i=0; i<4; i++) {
-               if (Math.abs(rawWorld.x - corners[i].x) <= handleSize && Math.abs(rawWorld.y - corners[i].y) <= handleSize) {
+            const handles = [
+                {x: box.minX, y: box.minY}, {x: box.maxX, y: box.minY}, {x: box.maxX, y: box.maxY}, {x: box.minX, y: box.maxY},
+                {x: (box.minX + box.maxX)/2, y: box.minY}, {x: box.maxX, y: (box.minY + box.maxY)/2},
+                {x: (box.minX + box.maxX)/2, y: box.maxY}, {x: box.minX, y: (box.minY + box.maxY)/2}
+            ];
+            for(let i=0; i<8; i++) {
+               if (Math.abs(rawWorld.x - handles[i].x) <= handleSize && Math.abs(rawWorld.y - handles[i].y) <= handleSize) {
                    hitHandle = i; break;
                }
             }
@@ -1741,7 +1792,7 @@
       state.startCoords = (state.tool === 'pen' && !state.actionSnapActive) ? rawWorld : snappedWorld;
       state.tempStroke = { type: state.tool, color: state.color, width: state.width, points: [state.startCoords, state.startCoords] };
       if (state.tool === 'axis') state.tempStroke.gridSize = state.gridSize;
-      if (state.tool === 'arc') state.tempStroke.arcAngle = Math.PI;
+      if (state.tool === 'ellipse') { state.tempStroke.startAngle = 0; state.tempStroke.endAngle = 2 * Math.PI; }
       if (state.tool === 'pen') state.tempStroke.points = [state.startCoords];
       triggerRedraw();
     }
@@ -1761,14 +1812,16 @@
           if (gb) {
               const box = { minX: gb.minX - 6, minY: gb.minY - 6, maxX: gb.maxX + 6, maxY: gb.maxY + 6 };
               const handleSize = Math.max(10, 8 / state.zoom);
-              const corners = [
+              const handles = [
                   {x: box.minX, y: box.minY, c: 'nwse-resize'}, {x: box.maxX, y: box.minY, c: 'nesw-resize'},
-                  {x: box.maxX, y: box.maxY, c: 'nwse-resize'}, {x: box.minX, y: box.maxY, c: 'nesw-resize'}
+                  {x: box.maxX, y: box.maxY, c: 'nwse-resize'}, {x: box.minX, y: box.maxY, c: 'nesw-resize'},
+                  {x: (box.minX + box.maxX)/2, y: box.minY, c: 'ns-resize'}, {x: box.maxX, y: (box.minY + box.maxY)/2, c: 'ew-resize'},
+                  {x: (box.minX + box.maxX)/2, y: box.maxY, c: 'ns-resize'}, {x: box.minX, y: (box.minY + box.maxY)/2, c: 'ew-resize'}
               ];
               let hovered = false;
-              for(let i=0; i<4; i++) {
-                 if (Math.abs(rawWorld.x - corners[i].x) <= handleSize && Math.abs(rawWorld.y - corners[i].y) <= handleSize) {
-                     canvas.style.cursor = corners[i].c; hovered = true; break;
+              for(let i=0; i<8; i++) {
+                 if (Math.abs(rawWorld.x - handles[i].x) <= handleSize && Math.abs(rawWorld.y - handles[i].y) <= handleSize) {
+                     canvas.style.cursor = handles[i].c; hovered = true; break;
                  }
               }
               if (!hovered) {
@@ -1804,8 +1857,13 @@
           else if (state.resizeHandle === 1) { newMaxX += dx; newMinY += dy; }
           else if (state.resizeHandle === 2) { newMaxX += dx; newMaxY += dy; }
           else if (state.resizeHandle === 3) { newMinX += dx; newMaxY += dy; }
+          else if (state.resizeHandle === 4) { newMinY += dy; } // N
+          else if (state.resizeHandle === 5) { newMaxX += dx; } // E
+          else if (state.resizeHandle === 6) { newMaxY += dy; } // S
+          else if (state.resizeHandle === 7) { newMinX += dx; } // W
 
-          if (e.shiftKey && origW !== 0 && origH !== 0) {
+          // shift key constraint logic applied mainly to corners
+          if (e.shiftKey && origW !== 0 && origH !== 0 && state.resizeHandle < 4) {
               let newW = newMaxX - newMinX;
               let newH = newMaxY - newMinY;
               const scale = Math.hypot(newW, newH) / Math.hypot(origW, origH);
@@ -2049,7 +2107,6 @@
         if (key === 'q') setTool('pen');
         if (key === 'e') setTool('rect');
         if (key === 'r') setTool('ellipse');
-        if (key === 's') setTool('arc');
         if (key === 'v') setTool('triangle');
         if (key === 'x') setTool('axis');
         if (key === 'a') setTool('eraser');
@@ -2171,13 +2228,25 @@
         gradB.addColorStop(0, 'rgba(0,0,0,0)'); gradB.addColorStop(1, '#000');
         colorCtx.fillStyle = gradB; colorCtx.fillRect(0,0,190,130);
     }
+    
+    // Mathematically calculates HSV to RGB regardless of canvas pixel reading (prevents edge corner bugs)
+    function hsvToHex(h, s, v) {
+        let f = (n, k = (n + h / 60) % 6) => v - v * s * Math.max(Math.min(k, 4 - k, 1), 0);
+        let r = Math.round(f(5) * 255).toString(16).padStart(2, '0');
+        let g = Math.round(f(3) * 255).toString(16).padStart(2, '0');
+        let b = Math.round(f(1) * 255).toString(16).padStart(2, '0');
+        return `#${r}${g}${b}`;
+    }
 
     function pickColorFromCanvas(e) {
         const rect = colorCanvas.getBoundingClientRect();
+        // Exact clamping allows corners & outside drags to correctly pick pure values
         const x = Math.max(0, Math.min(190, e.clientX - rect.left));
         const y = Math.max(0, Math.min(130, e.clientY - rect.top));
-        const imgData = colorCtx.getImageData(x, y, 1, 1).data;
-        const hex = "#" + (1 << 24 | imgData[0] << 16 | imgData[1] << 8 | imgData[2]).toString(16).slice(1);
+        
+        const S = x / 190;
+        const V = 1 - (y / 130);
+        const hex = hsvToHex(state.currentHue, S, V);
         selectColor(hex);
     }
 
@@ -2185,7 +2254,7 @@
     colorCanvas.addEventListener('mousedown', e => { isDraggingPicker = true; pickColorFromCanvas(e); });
     window.addEventListener('mousemove', e => { if (isDraggingPicker) pickColorFromCanvas(e); });
     window.addEventListener('mouseup', e => { isDraggingPicker = false; });
-    hueSlider.addEventListener('input', e => { state.currentHue = e.target.value; updateColorCanvas(); });
+    hueSlider.addEventListener('input', e => { state.currentHue = e.target.value; updateColorCanvas(); if (isDraggingPicker) pickColorFromCanvas(e); });
 
     customColorBtn.addEventListener('click', () => {
         state.colorPickerOriginalColor = state.color;
@@ -2208,7 +2277,20 @@
 
     document.querySelectorAll('.width-btn').forEach(btn => btn.addEventListener('click', () => {
       document.querySelectorAll('.width-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active'); state.width = parseInt(btn.getAttribute('data-width'), 10);
+      btn.classList.add('active'); 
+      state.width = parseInt(btn.getAttribute('data-width'), 10);
+      
+      if (state.selectedStrokes.length > 0) {
+          let modified = false;
+          state.selectedStrokes.forEach(s => {
+              if (s.type !== 'image' && s.type !== 'text') {
+                  s.width = state.width;
+                  computeStrokeBounds(s);
+                  modified = true;
+              }
+          });
+          if (modified) { saveHistory(); triggerRedraw(); }
+      }
     }));
 
     function togglePanel(panel) { panel.classList.toggle('hidden'); }
@@ -2223,6 +2305,22 @@
     document.getElementById('btn-redo').addEventListener('click', redo);
     document.getElementById('btn-duplicate').addEventListener('click', () => duplicateSelection());
 
+    document.getElementById('btn-layer-top').addEventListener('click', () => {
+        if (state.selectedStrokes.length === 0) return;
+        const selected = [...state.selectedStrokes];
+        state.strokes = state.strokes.filter(s => !selected.includes(s));
+        state.strokes.push(...selected);
+        saveHistory(); triggerRedraw();
+    });
+
+    document.getElementById('btn-layer-bottom').addEventListener('click', () => {
+        if (state.selectedStrokes.length === 0) return;
+        const selected = [...state.selectedStrokes];
+        state.strokes = state.strokes.filter(s => !selected.includes(s));
+        state.strokes.unshift(...selected);
+        saveHistory(); triggerRedraw();
+    });
+
     document.getElementById('btn-invert-image').addEventListener('click', () => {
         if (state.selectedStrokes.length > 0) {
             let modified = false;
@@ -2232,16 +2330,52 @@
             if (modified) { saveHistory(); triggerRedraw(); }
         }
     });
-
-    document.getElementById('arc-slider').addEventListener('input', e => {
-        const angle = parseInt(e.target.value, 10) * Math.PI / 180;
+    
+    document.getElementById('dashed-toggle').addEventListener('change', (e) => {
+        const isDashed = e.target.checked;
+        document.getElementById('dash-spacing-wrapper').classList.toggle('hidden', !isDashed);
         let modified = false;
         state.selectedStrokes.forEach(s => {
-            if (s.type === 'arc') { s.arcAngle = angle; modified = true; computeStrokeBounds(s); }
+            if (s.type !== 'image' && s.type !== 'text') {
+                s.isDashed = isDashed;
+                s.dashSpacing = s.dashSpacing || 10;
+                modified = true;
+            }
+        });
+        if (modified) { saveHistory(); triggerRedraw(); }
+    });
+    
+    document.getElementById('dash-spacing-slider').addEventListener('input', (e) => {
+        const val = parseInt(e.target.value, 10);
+        let modified = false;
+        state.selectedStrokes.forEach(s => {
+            if (s.isDashed) { s.dashSpacing = val; modified = true; }
         });
         if (modified) triggerRedraw();
     });
-    document.getElementById('arc-slider').addEventListener('change', () => saveHistory());
+    document.getElementById('dash-spacing-slider').addEventListener('change', () => saveHistory());
+
+    document.getElementById('ellipse-start-slider').addEventListener('input', e => {
+        const angle = parseInt(e.target.value, 10) * Math.PI / 180;
+        document.getElementById('start-angle-val').textContent = e.target.value + '°';
+        let modified = false;
+        state.selectedStrokes.forEach(s => {
+            if (s.type === 'ellipse') { s.startAngle = angle; modified = true; computeStrokeBounds(s); }
+        });
+        if (modified) triggerRedraw();
+    });
+    document.getElementById('ellipse-start-slider').addEventListener('change', () => saveHistory());
+    
+    document.getElementById('ellipse-end-slider').addEventListener('input', e => {
+        const angle = parseInt(e.target.value, 10) * Math.PI / 180;
+        document.getElementById('end-angle-val').textContent = e.target.value + '°';
+        let modified = false;
+        state.selectedStrokes.forEach(s => {
+            if (s.type === 'ellipse') { s.endAngle = angle; modified = true; computeStrokeBounds(s); }
+        });
+        if (modified) triggerRedraw();
+    });
+    document.getElementById('ellipse-end-slider').addEventListener('change', () => saveHistory());
 
     gridToggle.addEventListener('change', e => { state.gridVisible = e.target.checked; triggerRedraw(); });
     gridSizeInput.addEventListener('change', e => { state.gridSize = Math.max(10, parseInt(e.target.value, 10)); triggerRedraw(); });
