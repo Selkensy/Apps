@@ -1763,16 +1763,19 @@
             state.previousTool = state.tool;
             state.isRightClickErasing = true;
             state.eraserModified = false;
+            state.strokesBeforeRightClickErase = cloneStrokes(state.strokes);
             setTool('eraser');
         }
       }
 
       if (e.button === 0 && state.isRightClickErasing) {
           state.isRightClickErasing = false;
-          if (state.eraserModified) {
-              saveHistory();
+          if (state.eraserModified && state.strokesBeforeRightClickErase) {
+              state.strokes = state.strokesBeforeRightClickErase;
               state.eraserModified = false;
+              triggerRedraw();
           }
+          state.strokesBeforeRightClickErase = null;
           setTool(state.previousTool);
           state.actionSnapActive = true;
       }
