@@ -797,7 +797,11 @@
   <div class="floating-panel hidden" id="color-picker-modal">
     <canvas id="color-canvas" width="190" height="130"></canvas>
     <input type="range" id="hue-slider" min="0" max="360" value="0">
-    <div style="display:flex; gap:8px; margin-top:10px; width:100%">
+    <div style="display:flex; align-items:center; gap:8px; margin-top:12px; width:100%; padding-top:10px; border-top:1px solid var(--border-panel);">
+        <div id="color-preview-swatch" style="width:20px; height:20px; border-radius:50%; border:1px solid var(--border-panel); background:var(--text-color);"></div>
+        <span id="color-preview-hex" style="font-size:13px; font-family:monospace; color:var(--text-color); font-weight: 500;">#000000</span>
+    </div>
+    <div style="display:flex; gap:8px; margin-top:8px; width:100%">
         <button id="btn-color-cancel" class="confirm-btn btn-cancel" style="flex:1; padding:6px; font-size:12px;">Cancel</button>
         <button id="btn-color-apply" class="confirm-btn" style="flex:1; padding:6px; font-size:12px; background:var(--accent-color); color:#fff">Apply</button>
     </div>
@@ -1066,6 +1070,13 @@
           maxX: p0.x + dx + stroke.width, maxY: p0.y + dy + stroke.width
         };
         return;
+      } else if (stroke.type === 'text') {
+        const r = (stroke.size * (stroke.scale || 1)) / 2;
+        stroke.bounds = {
+            minX: stroke.points[0].x - r, minY: stroke.points[0].y - r,
+            maxX: stroke.points[0].x + r, maxY: stroke.points[0].y + r
+        };
+        return;
       }
       const pts = stroke.points;
       if (!pts || pts.length === 0) return { minX: 0, minY: 0, maxX: 0, maxY: 0 };
@@ -1165,6 +1176,9 @@
         const angle = Math.atan2(dy, dx);
         if (angle <= 1.3 && distToSegment(pt, {x: p0.x - dx, y: p0.y}, {x: p0.x + dx, y: p0.y}) <= tolerance) return true;
         if (angle >= 0.26 && distToSegment(pt, {x: p0.x, y: p0.y - dy}, {x: p0.x, y: p0.y + dy}) <= tolerance) return true;
+      } else if (stroke.type === 'text') {
+        const r = (stroke.size * (stroke.scale || 1)) / 2;
+        return Math.hypot(pt.x - stroke.points[0].x, pt.y - stroke.points[0].y) <= r + tolerance;
       }
       return false;
     }
@@ -1188,12 +1202,43 @@
             }
         } else if (stroke.type === 'axis') {
             const p0 = pts[0], p1 = pts[1];
+            const axisScale = stroke.scale || 1;
+            const gs = (stroke.gridSize || 40) * axisScale;
             const dx = Math.abs(p1.x - p0.x), dy = Math.abs(p1.y - p0.y);
             const angle = Math.atan2(dy, dx);
-            let lines = [];
-            if (angle <= 1.3) lines.push({ ...stroke, type: 'pen', points: [{x: p0.x - dx, y: p0.y}, {x: p0.x + dx, y: p0.y}] });
-            if (angle >= 0.26) lines.push({ ...stroke, type: 'pen', points: [{x: p0.x, y: p0.y - dy}, {x: p0.x, y: p0.y + dy}] });
-            return lines;
+            const drawX = angle <= 1.3, drawY = angle >= 0.26;
+            const tickLen = Math.max(4, gs * 0.15), arrowLen = Math.max(8, gs * 0.3);
+            const textSize = Math.max(10, gs * 0.35);
+            let elements = [];
+
+            if (drawX) {
+                elements.push({ ...stroke, type: 'pen', points: [{x: p0.x - dx, y: p0.y}, {x: p0.x + dx, y: p0.y}] });
+                const maxSteps = Math.floor(dx / gs);
+                for(let i = 0; i <= maxSteps; i++) {
+                    if (i === 0) {
+                        elements.push({ ...stroke, type: 'text', text: "0", size: textSize, points: [{x: p0.x - gs*0.25, y: p0.y + gs*0.25}] });
+                    } else {
+                        elements.push({ ...stroke, type: 'pen', points: [{x: p0.x + i*gs, y: p0.y - tickLen}, {x: p0.x + i*gs, y: p0.y + tickLen}] });
+                        elements.push({ ...stroke, type: 'text', text: i.toString(), size: textSize, points: [{x: p0.x + i*gs, y: p0.y + gs*0.4}] });
+                        elements.push({ ...stroke, type: 'pen', points: [{x: p0.x - i*gs, y: p0.y - tickLen}, {x: p0.x - i*gs, y: p0.y + tickLen}] });
+                        elements.push({ ...stroke, type: 'text', text: (-i).toString(), size: textSize, points: [{x: p0.x - i*gs, y: p0.y + gs*0.4}] });
+                    }
+                }
+                elements.push({ ...stroke, type: 'pen', points: [{x: p0.x + dx - arrowLen, y: p0.y - arrowLen/1.5}, {x: p0.x + dx, y: p0.y}, {x: p0.x + dx - arrowLen, y: p0.y + arrowLen/1.5}] });
+            }
+
+            if (drawY) {
+                elements.push({ ...stroke, type: 'pen', points: [{x: p0.x, y: p0.y - dy}, {x: p0.x, y: p0.y + dy}] });
+                const maxSteps = Math.floor(dy / gs);
+                for(let i = 1; i <= maxSteps; i++) {
+                    elements.push({ ...stroke, type: 'pen', points: [{x: p0.x - tickLen, y: p0.y - i*gs}, {x: p0.x + tickLen, y: p0.y - i*gs}] });
+                    elements.push({ ...stroke, type: 'text', text: i.toString(), size: textSize, points: [{x: p0.x - gs*0.4, y: p0.y - i*gs}] });
+                    elements.push({ ...stroke, type: 'pen', points: [{x: p0.x - tickLen, y: p0.y + i*gs}, {x: p0.x + tickLen, y: p0.y + i*gs}] });
+                    elements.push({ ...stroke, type: 'text', text: (-i).toString(), size: textSize, points: [{x: p0.x - gs*0.4, y: p0.y + i*gs}] });
+                }
+                elements.push({ ...stroke, type: 'pen', points: [{x: p0.x - arrowLen/1.5, y: p0.y - dy + arrowLen}, {x: p0.x, y: p0.y - dy}, {x: p0.x + arrowLen/1.5, y: p0.y - dy + arrowLen}] });
+            }
+            return elements;
         }
         return [{ ...stroke, type: 'pen', points: poly }];
     }
@@ -1213,10 +1258,17 @@
     }
 
     function erasePrecision(stroke, center, radius) {
-        const polylines = (stroke.type === 'pen' || stroke.type === 'line') ? [stroke] : shapeToPolylines(stroke);
+        const subStrokes = (stroke.type === 'pen' || stroke.type === 'line' || stroke.type === 'text') ? [stroke] : shapeToPolylines(stroke);
         let result = [];
-        for (let poly of polylines) {
-            const finePts = subdividePolyline(poly.points, radius / 2);
+        for (let sub of subStrokes) {
+            if (sub.type === 'text') {
+                const r = (sub.size * (sub.scale || 1)) / 2;
+                if (Math.hypot(sub.points[0].x - center.x, sub.points[0].y - center.y) > radius + r) {
+                    result.push(sub);
+                }
+                continue;
+            }
+            const finePts = subdividePolyline(sub.points, Math.max(1, radius / 2));
             let currentPoints = [];
             for (let i = 0; i < finePts.length; i++) {
                 const p = finePts[i];
@@ -1224,12 +1276,12 @@
                     currentPoints.push(p);
                 } else {
                     if (currentPoints.length > 0) {
-                        result.push({...poly, type: 'pen', points: currentPoints});
+                        result.push({...sub, type: 'pen', points: currentPoints});
                         currentPoints = [];
                     }
                 }
             }
-            if (currentPoints.length > 0) result.push({...poly, type: 'pen', points: currentPoints});
+            if (currentPoints.length > 0) result.push({...sub, type: 'pen', points: currentPoints});
         }
         return result;
     }
@@ -1243,6 +1295,7 @@
               for (let s of state.strokes) {
                   if (activeErasures.includes(s) && s.type !== 'image') {
                       const fragments = erasePrecision(s, pt, (s.width/2) + 15/state.zoom);
+                      fragments.forEach(f => computeStrokeBounds(f));
                       newStrokes.push(...fragments);
                       erasedSomething = true;
                   } else if (activeErasures.includes(s) && s.type === 'image') {
@@ -1395,6 +1448,13 @@
           renderingContext.lineTo(p0.x + arrowLen/1.5, p0.y - dy + arrowLen);
           renderingContext.stroke();
         }
+      } else if (stroke.type === 'text') {
+        const s = stroke.size * (stroke.scale || 1);
+        renderingContext.font = `500 ${s}px -apple-system, sans-serif`;
+        renderingContext.textAlign = "center";
+        renderingContext.textBaseline = "middle";
+        renderingContext.fillStyle = stroke.color;
+        renderingContext.fillText(stroke.text, pts[0].x, pts[0].y);
       }
     }
 
@@ -1520,6 +1580,9 @@
       customColorBtn.classList.remove('active');
       document.querySelectorAll('.color-swatch').forEach(sw => sw.classList.toggle('active', sw.getAttribute('data-color').toLowerCase() === color.toLowerCase()));
       
+      document.getElementById('color-preview-swatch').style.background = color;
+      document.getElementById('color-preview-hex').textContent = color.toUpperCase();
+
       if (state.selectedStrokes.length > 0) {
           let modified = false;
           state.selectedStrokes.forEach(s => {
@@ -1550,7 +1613,11 @@
       
       helpPanel.classList.add('hidden');
       settingsPanel.classList.add('hidden');
-      colorPickerModal.classList.add('hidden');
+      
+      if (!colorPickerModal.classList.contains('hidden')) {
+          colorPickerModal.classList.add('hidden');
+          selectColor(state.colorPickerOriginalColor);
+      }
 
       if (e.button === 1 || (e.button === 0 && e.spaceKey)) {
         state.isPanning = true;
@@ -1761,7 +1828,7 @@
                   return { x: newMinX + relX * (newMaxX - newMinX), y: newMinY + relY * (newMaxY - newMinY) };
               });
               
-              if (stroke.type === 'axis') {
+              if (stroke.type === 'axis' || stroke.type === 'text') {
                   const scaleX = origW === 0 ? 1 : Math.abs((newMaxX - newMinX) / origW);
                   const scaleY = origH === 0 ? 1 : Math.abs((newMaxY - newMinY) / origH);
                   stroke.scale = (originalData.scale || 1) * Math.max(scaleX, scaleY);
@@ -1885,6 +1952,7 @@
                 if (!s.bounds) return false;
                 if (!rectIntersect(s.bounds.minX, s.bounds.minY, s.bounds.maxX, s.bounds.maxY, minX, minY, maxX, maxY)) return false;
                 if (s.type === 'image' || s.type === 'rect') return true;
+                if (s.type === 'text') return s.points[0].x >= minX && s.points[0].x <= maxX && s.points[0].y >= minY && s.points[0].y <= maxY;
                 const polylines = (s.type === 'pen' || s.type === 'line') ? [s] : shapeToPolylines(s);
                 for (let poly of polylines) {
                     const finePts = subdividePolyline(poly.points, 10 / state.zoom);
