@@ -585,7 +585,7 @@
       pointer-events: auto;
       display: flex;
       flex-direction: column;
-      min-width: 140px;
+      width: 160px;
       color: var(--text-color); /* Applied to parent to solve dark mode text readability */
     }
     
@@ -600,7 +600,9 @@
       margin-top: 4px;
     }
 
-    #ellipse-angle-wrapper.hidden {
+    #ellipse-angle-wrapper.hidden,
+    #dashed-toggle-wrapper.hidden,
+    #dash-spacing-wrapper.hidden {
       display: none !important;
     }
     
@@ -915,6 +917,7 @@
   <script>
     // --- Universal Custom Range Slider logic (Allows Shift precision dragging) ---
     document.querySelectorAll('input[type=range]').forEach(slider => {
+        slider.setAttribute('step', 'any'); // Enable decimal support natively
         let isDragging = false;
         let exactVal = 0;
         let lastX = 0;
@@ -958,6 +961,7 @@
                 // Fine precision with Shift, super precision with Shift + Ctrl/Cmd
                 if (e.shiftKey && (e.ctrlKey || e.metaKey)) {
                     delta *= 0.01;
+                    step = 0.01;
                 } else if (e.shiftKey) {
                     delta *= 0.1; 
                 }
@@ -1622,13 +1626,15 @@
           
           if (hasEllipse && !state.isMovingStroke && !state.isResizingStroke) {
              const ellipseStroke = state.selectedStrokes.find(s => s.type === 'ellipse');
-             document.getElementById('ellipse-start-slider').value = Math.round((ellipseStroke.startAngle || 0) * 180 / Math.PI);
-             document.getElementById('ellipse-end-slider').value = Math.round((ellipseStroke.endAngle !== undefined ? ellipseStroke.endAngle : 2*Math.PI) * 180 / Math.PI);
-             document.getElementById('start-angle-val').textContent = document.getElementById('ellipse-start-slider').value + '°';
-             document.getElementById('end-angle-val').textContent = document.getElementById('ellipse-end-slider').value + '°';
+             const startVal = ((ellipseStroke.startAngle || 0) * 180 / Math.PI);
+             const endVal = ((ellipseStroke.endAngle !== undefined ? ellipseStroke.endAngle : 2*Math.PI) * 180 / Math.PI);
+             document.getElementById('ellipse-start-slider').value = startVal;
+             document.getElementById('ellipse-end-slider').value = endVal;
+             document.getElementById('start-angle-val').textContent = startVal.toFixed(1) + '°';
+             document.getElementById('end-angle-val').textContent = endVal.toFixed(1) + '°';
           }
           
-          if (hasDashed && !state.isMovingStroke && !state.isResizingStroke) {
+          if (isDashedEnabled && !state.isMovingStroke && !state.isResizingStroke) {
              const dashedStroke = state.selectedStrokes.find(s => s.isDashed);
              document.getElementById('dash-spacing-slider').value = dashedStroke.dashSpacing || 10;
           }
@@ -2503,8 +2509,9 @@
     document.getElementById('dash-spacing-slider').addEventListener('change', () => saveHistory());
 
     document.getElementById('ellipse-start-slider').addEventListener('input', e => {
-        const angle = parseInt(e.target.value, 10) * Math.PI / 180;
-        document.getElementById('start-angle-val').textContent = e.target.value + '°';
+        const val = parseFloat(e.target.value);
+        const angle = val * Math.PI / 180;
+        document.getElementById('start-angle-val').textContent = val.toFixed(1) + '°';
         let modified = false;
         state.selectedStrokes.forEach(s => {
             if (s.type === 'ellipse') { s.startAngle = angle; modified = true; computeStrokeBounds(s); }
@@ -2514,8 +2521,9 @@
     document.getElementById('ellipse-start-slider').addEventListener('change', () => saveHistory());
     
     document.getElementById('ellipse-end-slider').addEventListener('input', e => {
-        const angle = parseInt(e.target.value, 10) * Math.PI / 180;
-        document.getElementById('end-angle-val').textContent = e.target.value + '°';
+        const val = parseFloat(e.target.value);
+        const angle = val * Math.PI / 180;
+        document.getElementById('end-angle-val').textContent = val.toFixed(1) + '°';
         let modified = false;
         state.selectedStrokes.forEach(s => {
             if (s.type === 'ellipse') { s.endAngle = angle; modified = true; computeStrokeBounds(s); }
