@@ -955,8 +955,10 @@
                 
                 let delta = (dx / rect.width) * range;
                 
-                // Slow down value updates dramatically for precision if shift is pressed
-                if (e.shiftKey) {
+                // Fine precision with Shift, super precision with Shift + Ctrl/Cmd
+                if (e.shiftKey && (e.ctrlKey || e.metaKey)) {
+                    delta *= 0.01;
+                } else if (e.shiftKey) {
                     delta *= 0.1; 
                 }
 
@@ -1609,14 +1611,14 @@
           const hasImage = state.selectedStrokes.some(s => s.type === 'image');
           const nonImageSelected = state.selectedStrokes.some(s => s.type !== 'image');
           const hasEllipse = state.selectedStrokes.some(s => s.type === 'ellipse');
-          const hasDashed = state.selectedStrokes.some(s => s.isDashed);
+          const isDashedEnabled = nonImageSelected && state.selectedStrokes.some(s => s.isDashed);
           
           document.getElementById('btn-invert-image').classList.toggle('hidden', !hasImage);
           document.getElementById('ellipse-angle-wrapper').classList.toggle('hidden', !hasEllipse);
           
           document.getElementById('dashed-toggle-wrapper').classList.toggle('hidden', !nonImageSelected);
-          document.getElementById('dash-spacing-wrapper').classList.toggle('hidden', !(nonImageSelected && hasDashed));
-          document.getElementById('dashed-toggle').checked = hasDashed;
+          document.getElementById('dash-spacing-wrapper').classList.toggle('hidden', !isDashedEnabled);
+          document.getElementById('dashed-toggle').checked = isDashedEnabled;
           
           if (hasEllipse && !state.isMovingStroke && !state.isResizingStroke) {
              const ellipseStroke = state.selectedStrokes.find(s => s.type === 'ellipse');
