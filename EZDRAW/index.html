@@ -718,6 +718,15 @@
         <path d="M12 2v20M2 12h20M12 2l-3 3M12 2l3 3M22 12l-3-3M22 12l-3 3"/>
       </svg>
     </button>
+    <button class="tool-btn" id="btn-fill" data-tool="fill" data-tooltip="Fill/Bucket (B)">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="120%" height="100%" style="scale: 1.4;">
+        <g fill="none" stroke="currentColor" stroke-width="28" stroke-linecap="round" stroke-linejoin="round" transform="translate(23, 12)">
+          <rect x="95" y="115" width="220" height="280" rx="58" transform="rotate(41, 235, 255)" />
+          <path d="M 90,305 Q 235,208 355,242" transform="rotate(15) translate(35, -90)"/>
+          <path d="M 0,-45 C 16,-22 30,0 30,24 A 30,30 0 1,1 -30,24 C -30,0 -16,-22 0,-45 Z" transform="translate(375, 355)" />
+        </g>
+      </svg>
+    </button>
     <button class="tool-btn" id="btn-eraser" data-tool="eraser" data-tooltip="Eraser (A)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/>
@@ -857,6 +866,7 @@
       <kbd>R</kbd> <span>Ellipse & Arc Tool</span>
       <kbd>V</kbd> <span>Triangle Tool</span>
       <kbd>X</kbd> <span>Axis Tool (X/Y Math Plane)</span>
+      <kbd>B</kbd> <span>Fill/Bucket Tool</span>
       <kbd>A</kbd> <span>Eraser</span>
       <kbd>Right Click</kbd> <span>Hold to temporarily erase / Snap Grid (before/while drawing)</span>
       <kbd>Middle Drag</kbd> <span>Pan Canvas / Move View</span>
@@ -1155,6 +1165,12 @@
       return strokesArray.map(s => {
         const clone = { ...s };
         if (s.points) clone.points = s.points.map(p => ({ x: p.x, y: p.y }));
+        if (s.type === 'fill' && s.img) {
+            const newCanvas = document.createElement('canvas');
+            newCanvas.width = s.img.width; newCanvas.height = s.img.height;
+            newCanvas.getContext('2d', {willReadFrequently: true}).drawImage(s.img, 0, 0);
+            clone.img = newCanvas;
+        }
         return clone;
       });
     }
@@ -1331,12 +1347,25 @@
         for (let i = 0; i < stroke.points.length - 1; i++) {
           if (distToSegment(pt, stroke.points[i], stroke.points[i+1]) <= tolerance) return true;
         }
-      } else if (stroke.type === 'rect' || stroke.type === 'image') {
-        if (stroke.type === 'image') {
+      } else if (stroke.type === 'rect' || stroke.type === 'image' || stroke.type === 'fill') {
+        if (stroke.type === 'image' || stroke.type === 'fill') {
             const [p1, p2] = stroke.points;
             const minX = Math.min(p1.x, p2.x); const maxX = Math.max(p1.x, p2.x);
             const minY = Math.min(p1.y, p2.y); const maxY = Math.max(p1.y, p2.y);
-            return pt.x >= minX && pt.x <= maxX && pt.y >= minY && pt.y <= maxY;
+            if (pt.x >= minX && pt.x <= maxX && pt.y >= minY && pt.y <= maxY) {
+                if (stroke.type === 'fill' && stroke.img) {
+                    const ctx = stroke.img.getContext('2d', { willReadFrequently: true });
+                    if (ctx) {
+                       const w = maxX - minX, h = maxY - minY;
+                       const px = Math.floor(((pt.x - minX) / w) * stroke.img.width);
+                       const py = Math.floor(((pt.y - minY) / h) * stroke.img.height);
+                       const pixel = ctx.getImageData(px, py, 1, 1).data;
+                       return pixel[3] > 0;
+                    }
+                }
+                return true;
+            }
+            return false;
         } else {
             const { p1, p2 } = getShapeCorners(stroke);
             const start = stroke.startAngle || 0;
@@ -1407,7 +1436,7 @@
     }
 
     function shapeToPolylines(stroke) {
-        if (stroke.type === 'image') return [stroke];
+        if (stroke.type === 'image' || stroke.type === 'fill') return [stroke];
         const pts = stroke.points;
         let poly = [];
         if (stroke.type === 'rect') {
@@ -1541,10 +1570,26 @@
           if (isShift) {
               let newStrokes = [];
               for (let s of state.strokes) {
-                  if (activeErasures.includes(s) && s.type !== 'image') {
+                  if (activeErasures.includes(s) && s.type !== 'image' && s.type !== 'fill') {
                       const fragments = erasePrecision(s, pt, (s.width/2) + 15/state.zoom);
                       fragments.forEach(f => computeStrokeBounds(f));
                       newStrokes.push(...fragments);
+                      erasedSomething = true;
+                  } else if (activeErasures.includes(s) && s.type === 'fill') {
+                      const rad = (state.width/2) + 15/state.zoom;
+                      const [p1, p2] = s.points;
+                      const minX = Math.min(p1.x, p2.x); const minY = Math.min(p1.y, p2.y);
+                      const w = Math.max(p1.x, p2.x) - minX; const h = Math.max(p1.y, p2.y) - minY;
+                      const ctx = s.img.getContext('2d', { willReadFrequently: true });
+                      ctx.save();
+                      ctx.globalCompositeOperation = 'destination-out';
+                      const scaleX = s.img.width / w;
+                      const scaleY = s.img.height / h;
+                      ctx.beginPath();
+                      ctx.arc((pt.x - minX) * scaleX, (pt.y - minY) * scaleY, rad * scaleX, 0, Math.PI * 2);
+                      ctx.fill();
+                      ctx.restore();
+                      newStrokes.push(s);
                       erasedSomething = true;
                   } else if (activeErasures.includes(s) && s.type === 'image') {
                       erasedSomething = true;
@@ -1582,11 +1627,11 @@
       const pts = stroke.points;
       if (!pts || pts.length < 1) return;
 
-      if (stroke.type === 'image' && stroke.img) {
+      if ((stroke.type === 'image' || stroke.type === 'fill') && stroke.img) {
           const w = pts[1].x - pts[0].x;
           const h = pts[1].y - pts[0].y;
           renderingContext.save();
-          if (stroke.invert) renderingContext.filter = 'invert(100%)';
+          if (stroke.type === 'image' && stroke.invert) renderingContext.filter = 'invert(100%)';
           renderingContext.drawImage(stroke.img, pts[0].x, pts[0].y, w, h);
           renderingContext.restore();
           return;
@@ -1915,6 +1960,134 @@
         saveHistory(); triggerRedraw();
     }
 
+    function performFloodFill(startX, startY) {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const offCanvas = document.createElement('canvas');
+      offCanvas.width = w; offCanvas.height = h;
+      const offCtx = offCanvas.getContext('2d', { willReadFrequently: true });
+      
+      offCtx.save();
+      offCtx.translate(state.cameraX, state.cameraY);
+      offCtx.scale(state.zoom, state.zoom);
+      state.strokes.forEach(stroke => renderStrokePath(stroke, offCtx));
+      offCtx.restore();
+
+      const imgData = offCtx.getImageData(0, 0, w, h);
+      const data = imgData.data;
+
+      const targetColor = state.color;
+      const hexToRgb = (hex) => {
+          let c = hex.substring(1).split('');
+          if(c.length== 3) c= [c[0], c[0], c[1], c[1], c[2], c[2]];
+          c= '0x'+c.join('');
+          return [(c>>16)&255, (c>>8)&255, c&255, 255];
+      };
+      const fillRgba = hexToRgb(targetColor);
+
+      const sx = Math.floor(startX);
+      const sy = Math.floor(startY);
+      if (sx < 0 || sx >= w || sy < 0 || sy >= h) return;
+
+      const getPixelAlpha = (x, y) => data[(y * w + x) * 4 + 3];
+      if (getPixelAlpha(sx, sy) > 0) return;
+
+      const visited = new Uint8Array(w * h);
+      const queue = [sx, sy];
+      visited[sy * w + sx] = 1;
+      
+      let minX = sx, maxX = sx, minY = sy, maxY = sy;
+      let filledPixels = 0;
+      const MAX_PIXELS = w * h;
+
+      while (queue.length > 0) {
+          const y = queue.pop();
+          const x = queue.pop();
+          
+          filledPixels++;
+          if (filledPixels > MAX_PIXELS) break;
+
+          if (x < minX) minX = x;
+          if (x > maxX) maxX = x;
+          if (y < minY) minY = y;
+          if (y > maxY) maxY = y;
+
+          if (x === 0 || x === w - 1 || y === 0 || y === h - 1) {
+              const prev = document.getElementById('status-bar').textContent;
+              document.getElementById('status-bar').textContent = "Fill aborted: Region is unclosed or touches screen edge.";
+              setTimeout(() => { document.getElementById('status-bar').textContent = prev; }, 3000);
+              return;
+          }
+
+          const neighbors = [[x+1, y], [x-1, y], [x, y+1], [x, y-1]];
+          for (let [nx, ny] of neighbors) {
+              const idx = ny * w + nx;
+              if (visited[idx] === 0) {
+                  visited[idx] = 1;
+                  if (data[idx * 4 + 3] === 0) {
+                      queue.push(nx, ny);
+                  }
+              }
+          }
+      }
+
+      if (filledPixels === 0) return;
+
+      const expandedVisited = new Uint8Array(w * h);
+      for (let y = minY; y <= maxY; y++) {
+          for (let x = minX; x <= maxX; x++) {
+              if (visited[y * w + x]) {
+                  expandedVisited[y * w + x] = 1;
+                  if (x > 0) expandedVisited[y * w + (x - 1)] = 1;
+                  if (x < w - 1) expandedVisited[y * w + (x + 1)] = 1;
+                  if (y > 0) expandedVisited[(y - 1) * w + x] = 1;
+                  if (y < h - 1) expandedVisited[(y + 1) * w + x] = 1;
+              }
+          }
+      }
+      minX = Math.max(0, minX - 1);
+      maxX = Math.min(w - 1, maxX + 1);
+      minY = Math.max(0, minY - 1);
+      maxY = Math.min(h - 1, maxY + 1);
+
+      const outW = maxX - minX + 1;
+      const outH = maxY - minY + 1;
+      const resCanvas = document.createElement('canvas');
+      resCanvas.width = outW; resCanvas.height = outH;
+      const resCtx = resCanvas.getContext('2d', { willReadFrequently: true });
+      const resImgData = resCtx.createImageData(outW, outH);
+      const resData = resImgData.data;
+      
+      for (let y = 0; y < outH; y++) {
+          for (let x = 0; x < outW; x++) {
+              if (expandedVisited[(y + minY) * w + (x + minX)]) {
+                  const outIdx = (y * outW + x) * 4;
+                  resData[outIdx] = fillRgba[0];
+                  resData[outIdx+1] = fillRgba[1];
+                  resData[outIdx+2] = fillRgba[2];
+                  resData[outIdx+3] = fillRgba[3];
+              }
+          }
+      }
+      resCtx.putImageData(resImgData, 0, 0);
+
+      const tl = toWorldCoords(minX, minY);
+      const br = toWorldCoords(maxX + 1, maxY + 1);
+      
+      const fillStroke = {
+          type: 'fill',
+          color: targetColor,
+          width: state.width,
+          points: [tl, br],
+          img: resCanvas,
+          bounds: { minX: tl.x, minY: tl.y, maxX: br.x, maxY: br.y }
+      };
+      
+      state.strokes.push(fillStroke);
+      saveHistory();
+      triggerRedraw();
+    }
+
     function handlePointerDown(e) {
       if (e.target.closest('#shape-context-menu') || e.target.closest('#color-picker-modal')) return;
       
@@ -1962,6 +2135,11 @@
       }
 
       if (e.button !== 0 && e.button !== 2) return;
+
+      if (state.tool === 'fill') {
+          performFloodFill(e.clientX, e.clientY);
+          return;
+      }
 
       const rawWorld = toWorldCoords(e.clientX, e.clientY);
       const snappedWorld = snapPoint(rawWorld);
@@ -2390,6 +2568,7 @@
         if (key === 'r') setTool('ellipse');
         if (key === 'v') setTool('triangle');
         if (key === 'x') setTool('axis');
+        if (key === 'b') setTool('fill');
         if (key === 'a') setTool('eraser');
         if (key === 'd') setTool('selector');
         if (key === 'g') { state.gridVisible = !state.gridVisible; gridToggle.checked = state.gridVisible; triggerRedraw(); }
@@ -2814,7 +2993,7 @@
     });
 
     document.getElementById('btn-save-file').addEventListener('click', () => {
-        const data = JSON.stringify({ strokes: state.strokes.map(s => { const copy = { ...s }; if (copy.type === 'image') delete copy.img; return copy; }) });
+        const data = JSON.stringify({ strokes: state.strokes.map(s => { const copy = { ...s }; if (copy.type === 'image') delete copy.img; if (copy.type === 'fill' && copy.img) { copy.src = copy.img.toDataURL(); delete copy.img; } return copy; }) });
         const blob = new Blob([data], {type: 'application/json'});
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -2833,8 +3012,20 @@
                     state.strokes = parsed.strokes;
                     state.selectedStrokes = [];
                     state.strokes.forEach(s => {
-                        if (s.type === 'image' && s.src) {
-                            const img = new Image(); img.onload = () => triggerRedraw(); img.src = s.src; s.img = img;
+                        if ((s.type === 'image' || s.type === 'fill') && s.src) {
+                            const img = new Image(); 
+                            img.onload = () => { 
+                                if (s.type === 'fill') {
+                                    const canvas = document.createElement('canvas');
+                                    canvas.width = img.width; canvas.height = img.height;
+                                    canvas.getContext('2d', {willReadFrequently: true}).drawImage(img, 0, 0);
+                                    s.img = canvas;
+                                } else {
+                                    s.img = img; 
+                                }
+                                triggerRedraw(); 
+                            }; 
+                            img.src = s.src;
                         }
                         computeStrokeBounds(s);
                     });
@@ -2847,7 +3038,7 @@
 
     function saveToStorage() {
       const data = {
-        strokes: state.strokes.map(s => { const copy = { ...s }; if (copy.type === 'image') delete copy.img; return copy; }),
+        strokes: state.strokes.map(s => { const copy = { ...s }; if (copy.type === 'image') delete copy.img; if (copy.type === 'fill' && copy.img) { copy.src = copy.img.toDataURL(); delete copy.img; } return copy; }),
         paletteColors: state.paletteColors, color: state.color,
         gridSettings: { visible: state.gridVisible, size: state.gridSize, gridColor: state.gridColor, bgColor: state.bgColor },
         camera: { x: state.cameraX, y: state.cameraY, zoom: state.zoom },
@@ -2865,8 +3056,20 @@
         state.paletteColors = data.paletteColors || [...DEFAULT_PALETTE];
         state.color = data.color || '#1e1e1e';
         state.strokes.forEach(stroke => {
-            if (stroke.type === 'image' && stroke.src) {
-               const img = new Image(); img.onload = () => triggerRedraw(); img.src = stroke.src; stroke.img = img;
+            if ((stroke.type === 'image' || stroke.type === 'fill') && stroke.src) {
+               const img = new Image(); 
+               img.onload = () => { 
+                   if (stroke.type === 'fill') {
+                       const canvas = document.createElement('canvas');
+                       canvas.width = img.width; canvas.height = img.height;
+                       canvas.getContext('2d', {willReadFrequently: true}).drawImage(img, 0, 0);
+                       stroke.img = canvas;
+                   } else {
+                       stroke.img = img; 
+                   }
+                   triggerRedraw(); 
+               }; 
+               img.src = stroke.src; 
             }
             computeStrokeBounds(stroke);
         });
