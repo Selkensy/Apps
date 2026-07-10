@@ -1158,7 +1158,8 @@
       currentHue: 0,
       colorPickerOriginalColor: '#1e1e1e',
       pickerX: undefined,
-      pickerY: undefined
+      pickerY: undefined,
+      duplicateFlashStart: 0
     };
 
     function cloneStrokes(strokesArray) {
@@ -1817,6 +1818,18 @@
           ctx.strokeRect(gb.minX - 6, gb.minY - 6, (gb.maxX - gb.minX) + 12, (gb.maxY - gb.minY) + 12);
           ctx.setLineDash([]);
           
+          if (state.duplicateFlashStart) {
+              const elapsed = performance.now() - state.duplicateFlashStart;
+              if (elapsed < 600) {
+                  const alpha = 1 - (elapsed / 600);
+                  ctx.strokeStyle = `rgba(79, 70, 229, ${alpha})`;
+                  ctx.lineWidth = 6 / state.zoom;
+                  ctx.strokeRect(gb.minX - 6, gb.minY - 6, (gb.maxX - gb.minX) + 12, (gb.maxY - gb.minY) + 12);
+              } else {
+                  state.duplicateFlashStart = 0;
+              }
+          }
+          
           const box = { minX: gb.minX - 6, minY: gb.minY - 6, maxX: gb.maxX + 6, maxY: gb.maxY + 6 };
           const handleSize = 8 / state.zoom;
           ctx.fillStyle = '#4f46e5';
@@ -1948,16 +1961,32 @@
 
     function duplicateSelection() {
         if (state.selectedStrokes.length === 0) return;
-        const offset = 20 / state.zoom;
+        
+        const shapeContextMenu = document.getElementById('shape-context-menu');
+        if (shapeContextMenu && !shapeContextMenu.classList.contains('hidden')) {
+            shapeContextMenu.classList.add('hidden');
+        }
+
         const newSelected = state.selectedStrokes.map(s => {
             const dup = cloneStrokes([s])[0];
-            dup.points = dup.points.map(p => ({x: p.x + offset, y: p.y + offset}));
             computeStrokeBounds(dup);
             return dup;
         });
         state.strokes.push(...newSelected);
         state.selectedStrokes = newSelected;
-        saveHistory(); triggerRedraw();
+        saveHistory(); 
+        
+        state.duplicateFlashStart = performance.now();
+        const flashAnim = () => {
+            if (state.duplicateFlashStart && performance.now() - state.duplicateFlashStart < 600) {
+                triggerRedraw();
+                requestAnimationFrame(flashAnim);
+            } else if (state.duplicateFlashStart) {
+                state.duplicateFlashStart = 0;
+                triggerRedraw();
+            }
+        };
+        requestAnimationFrame(flashAnim);
     }
 
     function performFloodFill(startX, startY) {
