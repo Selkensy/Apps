@@ -1354,7 +1354,7 @@
             const minX = Math.min(p1.x, p2.x); const maxX = Math.max(p1.x, p2.x);
             const minY = Math.min(p1.y, p2.y); const maxY = Math.max(p1.y, p2.y);
             if (pt.x >= minX && pt.x <= maxX && pt.y >= minY && pt.y <= maxY) {
-                if (stroke.type === 'fill' && stroke.img) {
+                if (stroke.img) {
                     const ctx = stroke.img.getContext('2d', { willReadFrequently: true });
                     if (ctx) {
                        const w = maxX - minX, h = maxY - minY;
@@ -2494,16 +2494,53 @@
                 return !(maxX1 < minX2 || minX1 > maxX2 || maxY1 < minY2 || minY1 > maxY2);
             };
 
+            const lineRectIntersect = (p1, p2, rMinX, rMinY, rMaxX, rMaxY) => {
+                if (p1.x >= rMinX && p1.x <= rMaxX && p1.y >= rMinY && p1.y <= rMaxY) return true;
+                if (p2.x >= rMinX && p2.x <= rMaxX && p2.y >= rMinY && p2.y <= rMaxY) return true;
+                const ccw = (A, B, C) => (C.y-A.y)*(B.x-A.x) > (B.y-A.y)*(C.x-A.x);
+                const intersect = (A, B, C, D) => ccw(A,C,D) !== ccw(B,C,D) && ccw(A,B,C) !== ccw(A,B,D);
+                const r1 = {x: rMinX, y: rMinY}, r2 = {x: rMaxX, y: rMinY}, r3 = {x: rMaxX, y: rMaxY}, r4 = {x: rMinX, y: rMaxY};
+                return intersect(p1, p2, r1, r2) || intersect(p1, p2, r2, r3) || intersect(p1, p2, r3, r4) || intersect(p1, p2, r4, r1);
+            };
+
             const newlySelected = state.strokes.filter(s => {
                 if (!s.bounds) return false;
                 if (!rectIntersect(s.bounds.minX, s.bounds.minY, s.bounds.maxX, s.bounds.maxY, minX, minY, maxX, maxY)) return false;
-                if (s.type === 'image' || s.type === 'rect') return true;
-                if (s.type === 'text') return s.points[0].x >= minX && s.points[0].x <= maxX && s.points[0].y >= minY && s.points[0].y <= maxY;
+                
+                if (s.type === 'image' || s.type === 'fill') {
+                    if (!s.img) return true;
+                    const ixMin = Math.max(minX, s.bounds.minX), ixMax = Math.min(maxX, s.bounds.maxX);
+                    const iyMin = Math.max(minY, s.bounds.minY), iyMax = Math.min(maxY, s.bounds.maxY);
+                    if (ixMin > ixMax || iyMin > iyMax) return false;
+                    const ctx = s.img.getContext('2d', { willReadFrequently: true });
+                    if (!ctx) return true;
+                    const [p1, p2] = s.points;
+                    const bMinX = Math.min(p1.x, p2.x), bMinY = Math.min(p1.y, p2.y);
+                    const w = Math.max(p1.x, p2.x) - bMinX, h = Math.max(p1.y, p2.y) - bMinY;
+                    const stepsX = Math.min(10, Math.max(1, ixMax - ixMin)), stepsY = Math.min(10, Math.max(1, iyMax - iyMin));
+                    for (let i = 0; i <= stepsX; i++) {
+                        for (let j = 0; j <= stepsY; j++) {
+                            const px = ixMin + (ixMax - ixMin) * (i / stepsX), py = iyMin + (iyMax - iyMin) * (j / stepsY);
+                            const imgX = Math.floor(((px - bMinX) / w) * s.img.width), imgY = Math.floor(((py - bMinY) / h) * s.img.height);
+                            if (imgX >= 0 && imgX < s.img.width && imgY >= 0 && imgY < s.img.height) {
+                                if (ctx.getImageData(imgX, imgY, 1, 1).data[3] > 0) return true;
+                            }
+                        }
+                    }
+                    return false;
+                }
+                
+                if (s.type === 'text') {
+                    const r = (s.size * (s.scale || 1)) / 2;
+                    return rectIntersect(s.points[0].x - r, s.points[0].y - r, s.points[0].x + r, s.points[0].y + r, minX, minY, maxX, maxY);
+                }
+                
                 const polylines = (s.type === 'pen' || s.type === 'line') ? [s] : shapeToPolylines(s);
                 for (let poly of polylines) {
-                    const finePts = subdividePolyline(poly.points, 10 / state.zoom);
-                    for (let p of finePts) {
-                        if (p.x >= minX && p.x <= maxX && p.y >= minY && p.y <= maxY) return true;
+                    const pts = poly.points;
+                    if (pts.length === 1 && pts[0].x >= minX && pts[0].x <= maxX && pts[0].y >= minY && pts[0].y <= maxY) return true;
+                    for (let i = 0; i < pts.length - 1; i++) {
+                        if (lineRectIntersect(pts[i], pts[i+1], minX, minY, maxX, maxY)) return true;
                     }
                 }
                 return false;
