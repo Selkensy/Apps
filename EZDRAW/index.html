@@ -1109,6 +1109,14 @@
     ];
 
     let isoConstraintPressed = false;
+    const STORAGE_KEY = 'infinite_whiteboard_save';
+    const STORAGE_DB_NAME = 'infinite_whiteboard';
+    const STORAGE_STORE_NAME = 'boards';
+    let storageReady = false;
+    let boardChangedBeforeStorageLoaded = false;
+    let saveTimer = null;
+    let storageWriteQueue = Promise.resolve();
+    let nextStrokeId = 1;
 
     window.addEventListener('keydown', e => {
         if (e.code === 'IntlBackslash' || e.key === '<' || e.key === '>') isoConstraintPressed = true;
@@ -1177,12 +1185,14 @@
     }
 
     function saveHistory() {
+      if (!storageReady) boardChangedBeforeStorageLoaded = true;
       if (state.historyIndex < state.history.length - 1) {
         state.history = state.history.slice(0, state.historyIndex + 1);
       }
       state.history.push(cloneStrokes(state.strokes));
       if (state.history.length > 50) state.history.shift();
       state.historyIndex = state.history.length - 1;
+      schedulePersistentSave();
     }
 
     function undo() {
@@ -1254,6 +1264,9 @@
     }
 
     function computeStrokeBounds(stroke) {
+      // Bounds are a runtime cache used to reject distant hit tests. A legacy
+      // stroke without a saved width must not produce NaN bounds.
+      if (!Number.isFinite(stroke.width)) stroke.width = 3;
       if (stroke.type === 'axis') {
         const p0 = stroke.points[0], p1 = stroke.points[1];
         const dx = Math.abs(p1.x - p0.x), dy = Math.abs(p1.y - p0.y);
@@ -1303,6 +1316,22 @@
       };
     }
 
+    function ensureStrokeId(stroke) {
+      if (!stroke.id) stroke.id = window.crypto?.randomUUID?.() || `stroke-${Date.now()}-${nextStrokeId++}`;
+      return stroke.id;
+    }
+
+    function normaliseBoardStroke(stroke) {
+      ensureStrokeId(stroke);
+      if (!Number.isFinite(stroke.width)) stroke.width = 3;
+      return stroke;
+    }
+
+    function hasUsableBounds(bounds) {
+      return bounds && Number.isFinite(bounds.minX) && Number.isFinite(bounds.minY) &&
+        Number.isFinite(bounds.maxX) && Number.isFinite(bounds.maxY);
+    }
+
     function getRawGroupBounds(strokes) {
       if (!strokes || strokes.length === 0) return null;
       let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
@@ -1336,8 +1365,10 @@
     }
 
     function hitTestStroke(pt, stroke) {
+      // Rebuild old or corrupted persisted bounds from the stroke geometry.
+      if (!hasUsableBounds(stroke.bounds)) computeStrokeBounds(stroke);
       const bounds = stroke.bounds;
-      if (!bounds) return false;
+      if (!hasUsableBounds(bounds)) return false;
       const tolerance = (stroke.width / 2) + 15 / state.zoom;
       
       if (pt.x < bounds.minX - tolerance || pt.x > bounds.maxX + tolerance ||
@@ -1358,8 +1389,9 @@
                     const ctx = stroke.img.getContext ? stroke.img.getContext('2d', { willReadFrequently: true }) : null;
                     if (ctx) {
                        const w = maxX - minX, h = maxY - minY;
-                       const px = Math.floor(((pt.x - minX) / w) * stroke.img.width);
-                       const py = Math.floor(((pt.y - minY) / h) * stroke.img.height);
+                       if (!w || !h) return false;
+                       const px = Math.max(0, Math.min(stroke.img.width - 1, Math.floor(((pt.x - minX) / w) * stroke.img.width)));
+                       const py = Math.max(0, Math.min(stroke.img.height - 1, Math.floor(((pt.y - minY) / h) * stroke.img.height)));
                        const pixel = ctx.getImageData(px, py, 1, 1).data;
                        return pixel[3] > 0;
                     }
@@ -1568,15 +1600,30 @@
       let erasedSomething = false;
       const activeErasures = state.strokes.filter(s => hitTestStroke(pt, s));
       if (activeErasures.length > 0) {
+          // Avoid coupling target membership to ephemeral object references.
+          // Persisted stroke IDs remain stable across clone/save/load cycles.
+          const erasedIds = new Set(activeErasures.map(ensureStrokeId));
           if (isShift) {
               let newStrokes = [];
               for (let s of state.strokes) {
-                  if (activeErasures.includes(s) && s.type !== 'image' && s.type !== 'fill') {
+                  if (erasedIds.has(ensureStrokeId(s)) && s.type !== 'image' && s.type !== 'fill') {
                       const fragments = erasePrecision(s, pt, (s.width/2) + 15/state.zoom);
-                      fragments.forEach(f => computeStrokeBounds(f));
+                      fragments.forEach(f => {
+                          // A precision erase splits one stroke into independent
+                          // elements, so each fragment needs its own identity.
+                          delete f.id;
+                          ensureStrokeId(f);
+                          computeStrokeBounds(f);
+                      });
                       newStrokes.push(...fragments);
                       erasedSomething = true;
-                  } else if (activeErasures.includes(s) && s.type === 'fill') {
+                  } else if (erasedIds.has(ensureStrokeId(s)) && s.type === 'fill') {
+                      // A large imported fill can still be decoding when erasing starts.
+                      // Leave it intact until its editable canvas is ready instead of throwing.
+                      if (!s.img || !s.img.getContext) {
+                          newStrokes.push(s);
+                          continue;
+                      }
                       const rad = (state.width/2) + 15/state.zoom;
                       const [p1, p2] = s.points;
                       const minX = Math.min(p1.x, p2.x); const minY = Math.min(p1.y, p2.y);
@@ -1592,7 +1639,7 @@
                       ctx.restore();
                       newStrokes.push(s);
                       erasedSomething = true;
-                  } else if (activeErasures.includes(s) && s.type === 'image') {
+                  } else if (erasedIds.has(ensureStrokeId(s)) && s.type === 'image') {
                       erasedSomething = true;
                   } else {
                       newStrokes.push(s);
@@ -1600,7 +1647,7 @@
               }
               state.strokes = newStrokes;
           } else {
-              state.strokes = state.strokes.filter(s => !activeErasures.includes(s));
+              state.strokes = state.strokes.filter(s => !erasedIds.has(ensureStrokeId(s)));
               erasedSomething = true;
           }
       }
@@ -1969,6 +2016,8 @@
 
         const newSelected = state.selectedStrokes.map(s => {
             const dup = cloneStrokes([s])[0];
+            delete dup.id;
+            ensureStrokeId(dup);
             computeStrokeBounds(dup);
             return dup;
         });
@@ -3058,87 +3107,167 @@
       if (e.dataTransfer.files && e.dataTransfer.files.length > 0) handleImageFile(e.dataTransfer.files[0], pt.x, pt.y);
     });
 
+    function serialiseStroke(stroke) {
+        normaliseBoardStroke(stroke);
+        const copy = { ...stroke };
+        // Bounds are derived from points and must not become persisted state.
+        // They are rebuilt on every load so old caches cannot break hit-testing.
+        delete copy.bounds;
+        if (copy.type === 'image') delete copy.img;
+        if (copy.type === 'fill' && copy.img) {
+          copy.src = copy.img.toDataURL();
+          delete copy.img;
+        }
+        return copy;
+    }
+
     document.getElementById('btn-save-file').addEventListener('click', () => {
-        const data = JSON.stringify({ strokes: state.strokes.map(s => { const copy = { ...s }; if (copy.type === 'image') delete copy.img; if (copy.type === 'fill' && copy.img) { copy.src = copy.img.toDataURL(); delete copy.img; } return copy; }) });
+        const data = JSON.stringify({ strokes: state.strokes.map(serialiseStroke) });
         const blob = new Blob([data], {type: 'application/json'});
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url; a.download = 'whiteboard_export.json'; a.click();
     });
 
+    // Do not add a board to history until its image resources are ready.  A history
+    // snapshot made while images are still loading has no `img` objects, so undo
+    // can restore a board whose images cannot be drawn or erased.
+    function hydrateBoardStrokes(strokes) {
+      const usedIds = new Set();
+      strokes.forEach(stroke => {
+        normaliseBoardStroke(stroke);
+        if (usedIds.has(stroke.id)) {
+          delete stroke.id;
+          ensureStrokeId(stroke);
+        }
+        usedIds.add(stroke.id);
+      });
+      return Promise.all(strokes.map(stroke => new Promise((resolve, reject) => {
+        normaliseBoardStroke(stroke);
+        computeStrokeBounds(stroke);
+        if (!((stroke.type === 'image' || stroke.type === 'fill') && stroke.src)) {
+          resolve();
+          return;
+        }
+
+        const img = new Image();
+        img.onload = () => {
+          try {
+            if (stroke.type === 'fill') {
+              const imageCanvas = document.createElement('canvas');
+              imageCanvas.width = img.width;
+              imageCanvas.height = img.height;
+              imageCanvas.getContext('2d', {willReadFrequently: true}).drawImage(img, 0, 0);
+              stroke.img = imageCanvas;
+            } else {
+              stroke.img = img;
+            }
+            resolve();
+          } catch (error) {
+            reject(error);
+          }
+        };
+        img.onerror = () => reject(new Error('Unable to load an image in this whiteboard.'));
+        img.src = stroke.src;
+      })));
+    }
+
     document.getElementById('btn-load-file').addEventListener('click', () => document.getElementById('file-import').click());
     document.getElementById('file-import').addEventListener('change', e => {
         const file = e.target.files[0];
         if (!file) return;
         const reader = new FileReader();
-        reader.onload = ev => {
+        reader.onload = async ev => {
             try {
                 const parsed = JSON.parse(ev.target.result);
-                if (parsed.strokes) {
-                    state.strokes = parsed.strokes;
+                if (Array.isArray(parsed.strokes)) {
+                    // Keep the live board untouched until this import is complete,
+                    // making the load one coherent history operation.
+                    const importedStrokes = parsed.strokes;
+                    await hydrateBoardStrokes(importedStrokes);
+                    state.strokes = importedStrokes;
                     state.selectedStrokes = [];
-                    state.strokes.forEach(s => {
-                        if ((s.type === 'image' || s.type === 'fill') && s.src) {
-                            const img = new Image(); 
-                            img.onload = () => { 
-                                if (s.type === 'fill') {
-                                    const canvas = document.createElement('canvas');
-                                    canvas.width = img.width; canvas.height = img.height;
-                                    canvas.getContext('2d', {willReadFrequently: true}).drawImage(img, 0, 0);
-                                    s.img = canvas;
-                                } else {
-                                    s.img = img; 
-                                }
-                                triggerRedraw(); 
-                            }; 
-                            img.src = s.src;
-                        }
-                        computeStrokeBounds(s);
-                    });
-                    saveHistory(); triggerRedraw();
+                    saveHistory();
+                    saveToStorage();
+                    triggerRedraw();
                 }
             } catch(err) { alert("Invalid whiteboard file."); }
+            e.target.value = '';
         };
         reader.readAsText(file);
     });
 
-    function saveToStorage() {
-      const data = {
-        strokes: state.strokes.map(s => { const copy = { ...s }; if (copy.type === 'image') delete copy.img; if (copy.type === 'fill' && copy.img) { copy.src = copy.img.toDataURL(); delete copy.img; } return copy; }),
+    function serialiseBoard() {
+      return {
+        strokes: state.strokes.map(serialiseStroke),
         paletteColors: state.paletteColors, color: state.color,
         gridSettings: { visible: state.gridVisible, size: state.gridSize, gridColor: state.gridColor, bgColor: state.bgColor },
         camera: { x: state.cameraX, y: state.cameraY, zoom: state.zoom },
         theme: state.theme
       };
-      try { localStorage.setItem('infinite_whiteboard_save', JSON.stringify(data)); } catch(e) {}
     }
 
-    function loadFromStorage() {
-      const raw = localStorage.getItem('infinite_whiteboard_save');
-      if (!raw) { saveHistory(); setTheme('system'); renderPalette(); return; }
+    function openStorageDatabase() {
+      return new Promise((resolve, reject) => {
+        if (!window.indexedDB) return reject(new Error('IndexedDB is unavailable'));
+        const request = indexedDB.open(STORAGE_DB_NAME, 1);
+        request.onupgradeneeded = () => request.result.createObjectStore(STORAGE_STORE_NAME);
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+    }
+
+    async function readLargeBoard() {
+      const db = await openStorageDatabase();
       try {
-        const data = JSON.parse(raw);
-        state.strokes = data.strokes || [];
+        return await new Promise((resolve, reject) => {
+          const request = db.transaction(STORAGE_STORE_NAME, 'readonly').objectStore(STORAGE_STORE_NAME).get(STORAGE_KEY);
+          request.onsuccess = () => resolve(request.result || null);
+          request.onerror = () => reject(request.error);
+        });
+      } finally { db.close(); }
+    }
+
+    async function writeLargeBoard(data) {
+      const db = await openStorageDatabase();
+      try {
+        await new Promise((resolve, reject) => {
+          const transaction = db.transaction(STORAGE_STORE_NAME, 'readwrite');
+          transaction.objectStore(STORAGE_STORE_NAME).put(data, STORAGE_KEY);
+          transaction.oncomplete = resolve;
+          transaction.onerror = () => reject(transaction.error);
+          transaction.onabort = () => reject(transaction.error);
+        });
+      } finally { db.close(); }
+    }
+
+    function schedulePersistentSave() {
+      if (!storageReady) return;
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(saveToStorage, 400);
+    }
+
+    function saveToStorage() {
+      if (!storageReady) return;
+      clearTimeout(saveTimer);
+      const data = serialiseBoard();
+      // Queue writes so an older asynchronous write can never overwrite a newer board.
+      storageWriteQueue = storageWriteQueue.then(async () => {
+        await writeLargeBoard(data);
+        // Keep the old key for small boards and for users upgrading from older versions.
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (error) {
+          if (error.name !== 'QuotaExceededError') console.warn('Local backup save failed:', error);
+        }
+      }).catch(error => console.error('Whiteboard save failed:', error));
+    }
+
+    async function restoreBoard(data) {
+      try {
+        const restoredStrokes = data.strokes || [];
+        await hydrateBoardStrokes(restoredStrokes);
+        state.strokes = restoredStrokes;
         state.paletteColors = data.paletteColors || [...DEFAULT_PALETTE];
         state.color = data.color || '#1e1e1e';
-        state.strokes.forEach(stroke => {
-            if ((stroke.type === 'image' || stroke.type === 'fill') && stroke.src) {
-               const img = new Image(); 
-               img.onload = () => { 
-                   if (stroke.type === 'fill') {
-                       const canvas = document.createElement('canvas');
-                       canvas.width = img.width; canvas.height = img.height;
-                       canvas.getContext('2d', {willReadFrequently: true}).drawImage(img, 0, 0);
-                       stroke.img = canvas;
-                   } else {
-                       stroke.img = img; 
-                   }
-                   triggerRedraw(); 
-               }; 
-               img.src = stroke.src; 
-            }
-            computeStrokeBounds(stroke);
-        });
         if (data.gridSettings) {
           state.gridVisible = data.gridSettings.visible !== undefined ? data.gridSettings.visible : true;
           state.gridSize = data.gridSettings.size || 40; state.gridColor = data.gridSettings.gridColor || '#e5e7eb'; state.bgColor = data.gridSettings.bgColor || '#ffffff';
@@ -3148,6 +3277,22 @@
         if (data.theme) state.theme = data.theme;
         setTheme(state.theme); renderPalette(); saveHistory();
       } catch (err) { setTheme('system'); renderPalette(); }
+    }
+
+    async function loadFromStorage() {
+      let data = null;
+      try { data = await readLargeBoard(); } catch (error) { console.warn('Large-board storage is unavailable:', error); }
+      if (!data) {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (raw) data = JSON.parse(raw);
+        } catch (error) { console.warn('Legacy board could not be read:', error); }
+      }
+      storageReady = true;
+      if (boardChangedBeforeStorageLoaded) {
+        schedulePersistentSave();
+      } else if (data) await restoreBoard(data);
+      else { saveHistory(); setTheme('system'); renderPalette(); }
     }
 
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { if (state.theme === 'system') setTheme('system'); });
