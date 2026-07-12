@@ -739,7 +739,7 @@
         <path d="M4 4l7 17 2.5-7.5L21 11z"/>
       </svg>
     </button>
-    <button class="tool-btn" id="btn-paste" data-tooltip="Paste Image (Ctrl+V)">
+    <button class="tool-btn" id="btn-paste" data-tooltip="Paste (Ctrl+V)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
         <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
@@ -876,10 +876,12 @@
       <kbd>Ctrl+Click</kbd> <span>Add or remove individual objects from selection</span>
       <kbd>Ctrl+Shift</kbd> <span>(while moving) Snap movement to 45°</span>
       <kbd>Ctrl+D</kbd> <span>Duplicate Selection</span>
+      <kbd>Ctrl+M</kbd> <span>Merge Selected Objects</span>
       <kbd>Ctrl+Wheel</kbd> <span>With selection: Move Layer up/down</span>
       <kbd>F</kbd> <span>Focus Custom Color Picker</span>
       <kbd>G</kbd> <span>Toggle Infinite Grid</span>
-      <kbd>Ctrl+V</kbd> <span>Paste Image from Clipboard</span>
+      <kbd>Ctrl+C</kbd> <span>Copy Selection</span>
+      <kbd>Ctrl+V</kbd> <span>Paste Copy / Image</span>
       <kbd>Ctrl+Z</kbd> <span>Undo Stroke (History of 50)</span>
       <kbd>Ctrl+Y</kbd> <span>Redo Stroke (or Ctrl+Shift+Z)</span>
       <kbd>C</kbd> <span>Erase All / Clear Canvas (Confirm)</span>
@@ -895,7 +897,9 @@
   </div>
   
   <div id="shape-context-menu" class="hidden">
+    <button class="context-btn" id="btn-copy">Copy (Ctrl+C)</button>
     <button class="context-btn" id="btn-duplicate">Duplicate (Ctrl+D)</button>
+    <button class="context-btn hidden" id="btn-merge">Merge (Ctrl+M)</button>
     <button class="context-btn" id="btn-layer-top">Move to Top</button>
     <button class="context-btn" id="btn-layer-bottom">Move to Bottom</button>
     <button class="context-btn hidden" id="btn-invert-image">Invert Colors</button>
@@ -1170,12 +1174,14 @@
       colorPickerOriginalColor: '#1e1e1e',
       pickerX: undefined,
       pickerY: undefined,
-      duplicateFlashStart: 0
+      duplicateFlashStart: 0,
+      internalClipboard: null
     };
 
     function cloneStrokes(strokesArray) {
       return strokesArray.map(s => {
         const clone = { ...s };
+        if (s.type === 'group') clone.strokes = cloneStrokes(s.strokes);
         if (s.points) clone.points = s.points.map(p => ({ x: p.x, y: p.y }));
         if (s.type === 'fill' && s.img) {
             const newCanvas = document.createElement('canvas');
@@ -1266,15 +1272,44 @@
       return Math.sqrt(Math.pow(p.x - (v.x + t * (w.x - v.x)), 2) + Math.pow(p.y - (v.y + t * (w.y - v.y)), 2));
     }
 
+    function getRawGroupBounds(strokes) {
+      if (!strokes || strokes.length === 0) return null;
+      let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+      const process = s => {
+         if (s.type === 'group') { s.strokes.forEach(process); return; }
+         const w = s.width || 3;
+         const updateW = (x, y) => {
+           if (x - w < minX) minX = x - w; if (x + w > maxX) maxX = x + w;
+           if (y - w < minY) minY = y - w; if (y + w > maxY) maxY = y + w;
+         };
+         if (s.type === 'ellipse') {
+           const { cx, cy, rx, ry } = getEllipseParams(s);
+           updateW(cx - rx, cy - ry); updateW(cx + rx, cy + ry);
+         } else if (s.type === 'rect' || s.type === 'triangle' || s.type === 'image' || s.type === 'fill') {
+           const { p1, p2 } = getShapeCorners(s);
+           updateW(Math.min(p1.x, p2.x), Math.min(p1.y, p2.y));
+           updateW(Math.max(p1.x, p2.x), Math.max(p1.y, p2.y));
+         } else if (s.type === 'axis') {
+           const p0 = s.points[0], p1 = s.points[1];
+           const dx = Math.abs(p1.x - p0.x), dy = Math.abs(p1.y - p0.y);
+           updateW(p0.x - dx, p0.y - dy); updateW(p0.x + dx, p0.y + dy);
+         } else if (s.type === 'text') {
+           const r = (s.size * (s.scale || 1)) / 2;
+           if (s.points && s.points.length) {
+             updateW(s.points[0].x - r, s.points[0].y - r); updateW(s.points[0].x + r, s.points[0].y + r);
+           }
+         } else if (s.points && s.points.length) {
+           s.points.forEach(p => updateW(p.x, p.y));
+         }
+      };
+      strokes.forEach(process);
+      return { minX, minY, maxX, maxY };
+    }
+
     function getStrokeTransformCenter(stroke) {
-      const points = stroke.points || [];
-      if (!points.length) return { x: 0, y: 0 };
-      let minX = points[0].x, maxX = points[0].x, minY = points[0].y, maxY = points[0].y;
-      points.forEach(point => {
-        minX = Math.min(minX, point.x); maxX = Math.max(maxX, point.x);
-        minY = Math.min(minY, point.y); maxY = Math.max(maxY, point.y);
-      });
-      return { x: (minX + maxX) / 2, y: (minY + maxY) / 2 };
+      const gb = getRawGroupBounds([stroke]);
+      if (!gb || gb.minX === Infinity) return {x:0, y:0};
+      return { x: (gb.minX + gb.maxX) / 2, y: (gb.minY + gb.maxY) / 2 };
     }
 
     function rotatePoint(point, center, angle) {
@@ -1303,6 +1338,12 @@
       // Bounds are a runtime cache used to reject distant hit tests. A legacy
       // stroke without a saved width must not produce NaN bounds.
       if (!Number.isFinite(stroke.width)) stroke.width = 3;
+      if (stroke.type === 'group') {
+         stroke.strokes.forEach(s => computeStrokeBounds(s));
+         const gb = getGroupBounds(stroke.strokes);
+         stroke.bounds = gb ? { ...gb } : { minX: 0, minY: 0, maxX: 0, maxY: 0 };
+         return finalizeStrokeBounds(stroke);
+      }
       if (stroke.type === 'axis') {
         const p0 = stroke.points[0], p1 = stroke.points[1];
         const dx = Math.abs(p1.x - p0.x), dy = Math.abs(p1.y - p0.y);
@@ -1369,20 +1410,6 @@
         Number.isFinite(bounds.maxX) && Number.isFinite(bounds.maxY);
     }
 
-    function getRawGroupBounds(strokes) {
-      if (!strokes || strokes.length === 0) return null;
-      let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-      strokes.forEach(s => {
-        s.points.forEach(p => {
-            if (p.x < minX) minX = p.x;
-            if (p.x > maxX) maxX = p.x;
-            if (p.y < minY) minY = p.y;
-            if (p.y > maxY) maxY = p.y;
-        });
-      });
-      return { minX, minY, maxX, maxY };
-    }
-
     function getGroupBounds(strokes) {
       if (!strokes || strokes.length === 0) return null;
       let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
@@ -1402,11 +1429,21 @@
     }
 
     function hitTestStroke(pt, stroke) {
+      if (stroke.type === 'group') {
+         if (!hasUsableBounds(stroke.bounds)) computeStrokeBounds(stroke);
+         const b = stroke.bounds;
+         if (b && (pt.x < b.minX - 15/state.zoom || pt.x > b.maxX + 15/state.zoom || pt.y < b.minY - 15/state.zoom || pt.y > b.maxY + 15/state.zoom)) return false;
+         for (let s of stroke.strokes) {
+             if (hitTestStroke(pt, s)) return true;
+         }
+         return false;
+      }
+
       // Rebuild old or corrupted persisted bounds from the stroke geometry.
       if (!hasUsableBounds(stroke.bounds)) computeStrokeBounds(stroke);
       const bounds = stroke.bounds;
       if (!hasUsableBounds(bounds)) return false;
-      const tolerance = (stroke.width / 2) + 15 / state.zoom;
+      const tolerance = ((stroke.width || 3) / 2) + 15 / state.zoom;
       
       if (pt.x < bounds.minX - tolerance || pt.x > bounds.maxX + tolerance ||
           pt.y < bounds.minY - tolerance || pt.y > bounds.maxY + tolerance) return false;
@@ -1609,6 +1646,14 @@
     }
 
     function erasePrecision(stroke, center, radius) {
+        if (stroke.type === 'group') {
+            let fragments = [];
+            for (let sub of stroke.strokes) {
+                if (sub.type === 'image' || sub.type === 'fill') fragments.push(sub);
+                else fragments.push(...erasePrecision(sub, center, radius));
+            }
+            return fragments;
+        }
         const subStrokes = (stroke.type === 'pen' || stroke.type === 'line' || stroke.type === 'text') ? [stroke] : shapeToPolylines(stroke);
         let result = [];
         for (let sub of subStrokes) {
@@ -1637,51 +1682,57 @@
         return result;
     }
 
+    function flattenStrokes(strokes) {
+        let flat = [];
+        strokes.forEach(s => {
+            if (s.type === 'group') flat.push(...flattenStrokes(s.strokes));
+            else flat.push(s);
+        });
+        return flat;
+    }
+
     function performErasure(pt, isShift) {
       let erasedSomething = false;
       const activeErasures = state.strokes.filter(s => hitTestStroke(pt, s));
       if (activeErasures.length > 0) {
-          // Avoid coupling target membership to ephemeral object references.
-          // Persisted stroke IDs remain stable across clone/save/load cycles.
           const erasedIds = new Set(activeErasures.map(ensureStrokeId));
           if (isShift) {
               let newStrokes = [];
               for (let s of state.strokes) {
-                  if (erasedIds.has(ensureStrokeId(s)) && s.type !== 'image' && s.type !== 'fill') {
-                      const fragments = erasePrecision(s, pt, (s.width/2) + 15/state.zoom);
-                      fragments.forEach(f => {
-                          // A precision erase splits one stroke into independent
-                          // elements, so each fragment needs its own identity.
-                          delete f.id;
-                          ensureStrokeId(f);
-                          computeStrokeBounds(f);
-                      });
-                      newStrokes.push(...fragments);
-                      erasedSomething = true;
-                  } else if (erasedIds.has(ensureStrokeId(s)) && s.type === 'fill') {
-                      // A large imported fill can still be decoding when erasing starts.
-                      // Leave it intact until its editable canvas is ready instead of throwing.
-                      if (!s.img || !s.img.getContext) {
-                          newStrokes.push(s);
-                          continue;
+                  if (erasedIds.has(ensureStrokeId(s))) {
+                      let toProcess = s.type === 'group' ? flattenStrokes([s]) : [s];
+                      for (let sub of toProcess) {
+                          if (sub.type !== 'image' && sub.type !== 'fill') {
+                              const fragments = erasePrecision(sub, pt, ((sub.width || 3)/2) + 15/state.zoom);
+                              fragments.forEach(f => {
+                                  delete f.id;
+                                  ensureStrokeId(f);
+                                  computeStrokeBounds(f);
+                              });
+                              newStrokes.push(...fragments);
+                              erasedSomething = true;
+                          } else if (sub.type === 'fill') {
+                              if (!sub.img || !sub.img.getContext) { newStrokes.push(sub); continue; }
+                              const rad = (state.width/2) + 15/state.zoom;
+                              const [p1, p2] = sub.points;
+                              const minX = Math.min(p1.x, p2.x); const minY = Math.min(p1.y, p2.y);
+                              const w = Math.max(p1.x, p2.x) - minX; const h = Math.max(p1.y, p2.y) - minY;
+                              const ctx = sub.img.getContext('2d', { willReadFrequently: true });
+                              ctx.save();
+                              ctx.globalCompositeOperation = 'destination-out';
+                              const scaleX = sub.img.width / w;
+                              const scaleY = sub.img.height / h;
+                              ctx.beginPath();
+                              ctx.arc((pt.x - minX) * scaleX, (pt.y - minY) * scaleY, rad * scaleX, 0, Math.PI * 2);
+                              ctx.fill();
+                              ctx.restore();
+                              newStrokes.push(sub);
+                              erasedSomething = true;
+                          } else if (sub.type === 'image') {
+                              erasedSomething = true;
+                              newStrokes.push(sub);
+                          }
                       }
-                      const rad = (state.width/2) + 15/state.zoom;
-                      const [p1, p2] = s.points;
-                      const minX = Math.min(p1.x, p2.x); const minY = Math.min(p1.y, p2.y);
-                      const w = Math.max(p1.x, p2.x) - minX; const h = Math.max(p1.y, p2.y) - minY;
-                      const ctx = s.img.getContext('2d', { willReadFrequently: true });
-                      ctx.save();
-                      ctx.globalCompositeOperation = 'destination-out';
-                      const scaleX = s.img.width / w;
-                      const scaleY = s.img.height / h;
-                      ctx.beginPath();
-                      ctx.arc((pt.x - minX) * scaleX, (pt.y - minY) * scaleY, rad * scaleX, 0, Math.PI * 2);
-                      ctx.fill();
-                      ctx.restore();
-                      newStrokes.push(s);
-                      erasedSomething = true;
-                  } else if (erasedIds.has(ensureStrokeId(s)) && s.type === 'image') {
-                      erasedSomething = true;
                   } else {
                       newStrokes.push(s);
                   }
@@ -1713,6 +1764,11 @@
     }
 
     function renderStrokePath(stroke, renderingContext) {
+      if (stroke.type === 'group') {
+         stroke.strokes.forEach(s => renderStrokePath(s, renderingContext));
+         return;
+      }
+
       const pts = stroke.points;
       if (!pts || pts.length < 1) return;
 
@@ -1967,6 +2023,7 @@
           const isDashedEnabled = nonImageSelected && state.selectedStrokes.some(s => s.isDashed);
           
           document.getElementById('btn-invert-image').classList.toggle('hidden', !hasImage);
+          document.getElementById('btn-merge').classList.toggle('hidden', state.selectedStrokes.length < 2);
           document.getElementById('ellipse-angle-wrapper').classList.toggle('hidden', !hasAngleControl);
           
           document.getElementById('dashed-toggle-wrapper').classList.toggle('hidden', !nonImageSelected);
@@ -2096,6 +2153,31 @@
       fillCtx.restore();
     }
 
+    function copySelectionToClipboard() {
+        if (state.selectedStrokes.length === 0) return;
+        
+        const shapeContextMenu = document.getElementById('shape-context-menu');
+        if (shapeContextMenu && !shapeContextMenu.classList.contains('hidden')) {
+            shapeContextMenu.classList.add('hidden');
+        }
+
+        const data = JSON.stringify({ whiteboardClipboard: true, strokes: state.selectedStrokes.map(serialiseStroke) });
+        state.internalClipboard = data;
+        try { navigator.clipboard.writeText(data); } catch(e) {}
+        
+        state.duplicateFlashStart = performance.now();
+        const flashAnim = () => {
+            if (state.duplicateFlashStart && performance.now() - state.duplicateFlashStart < 600) {
+                triggerRedraw();
+                requestAnimationFrame(flashAnim);
+            } else if (state.duplicateFlashStart) {
+                state.duplicateFlashStart = 0;
+                triggerRedraw();
+            }
+        };
+        requestAnimationFrame(flashAnim);
+    }
+
     function duplicateSelection() {
         if (state.selectedStrokes.length === 0) return;
         
@@ -2114,6 +2196,39 @@
         state.strokes.push(...newSelected);
         state.selectedStrokes = newSelected;
         saveHistory(); 
+        
+        state.duplicateFlashStart = performance.now();
+        const flashAnim = () => {
+            if (state.duplicateFlashStart && performance.now() - state.duplicateFlashStart < 600) {
+                triggerRedraw();
+                requestAnimationFrame(flashAnim);
+            } else if (state.duplicateFlashStart) {
+                state.duplicateFlashStart = 0;
+                triggerRedraw();
+            }
+        };
+        requestAnimationFrame(flashAnim);
+    }
+
+    function mergeSelection() {
+        if (state.selectedStrokes.length < 2) return;
+        
+        const shapeContextMenu = document.getElementById('shape-context-menu');
+        if (shapeContextMenu && !shapeContextMenu.classList.contains('hidden')) {
+            shapeContextMenu.classList.add('hidden');
+        }
+
+        const mergedStroke = {
+            id: window.crypto?.randomUUID?.() || `stroke-${Date.now()}-${nextStrokeId++}`,
+            type: 'group',
+            strokes: cloneStrokes(state.selectedStrokes)
+        };
+        computeStrokeBounds(mergedStroke);
+        
+        state.strokes = state.strokes.filter(s => !state.selectedStrokes.includes(s));
+        state.strokes.push(mergedStroke);
+        state.selectedStrokes = [mergedStroke];
+        saveHistory();
         
         state.duplicateFlashStart = performance.now();
         const flashAnim = () => {
@@ -2441,7 +2556,8 @@
                     const worldBoxCenter = groupRot ? rotCenter : { x: (box.minX + box.maxX)/2, y: (box.minY + box.maxY)/2 };
                     state.rotationStartAngle = Math.atan2(rawWorld.y - worldBoxCenter.y, rawWorld.x - worldBoxCenter.x);
                     state.rotationCenter = worldBoxCenter;
-                    state.initialStrokesForMove = state.selectedStrokes.map(s => JSON.stringify({points: s.points, scale: s.scale || 1, rotation: s.rotation || 0}));
+                    const getOriginalData = s => s.type === 'group' ? { type: 'group', strokes: s.strokes.map(getOriginalData) } : { points: s.points ? s.points.map(p => ({x: p.x, y: p.y})) : null, scale: s.scale || 1, rotation: s.rotation || 0 };
+                    state.initialStrokesForMove = state.selectedStrokes.map(s => JSON.stringify(getOriginalData(s)));
                     return;
                 }
             }
@@ -2451,8 +2567,9 @@
             state.isResizingStroke = true;
             state.resizeHandle = hitHandle;
             state.startCoords = rawWorld;
-            state.initialStrokesForMove = state.selectedStrokes.map(s => JSON.stringify({points: s.points, scale: s.scale || 1, rotation: s.rotation || 0}));
-            state.initialPointsBoundsForResize = getRawGroupBounds(state.selectedStrokes);
+            const getOriginalData = s => s.type === 'group' ? { type: 'group', strokes: s.strokes.map(getOriginalData) } : { points: s.points ? s.points.map(p => ({x: p.x, y: p.y})) : null, scale: s.scale || 1, rotation: s.rotation || 0, width: s.width };
+            state.initialStrokesForMove = state.selectedStrokes.map(s => JSON.stringify(getOriginalData(s)));
+            state.initialPointsBoundsForResize = groupBounds;
             return;
         }
 
@@ -2482,7 +2599,8 @@
                 if (state.selectedStrokes.length > 0) {
                     state.isMovingStroke = true;
                     state.startCoords = rawWorld;
-                    state.initialStrokesForMove = state.selectedStrokes.map(s => JSON.stringify({points: s.points, scale: s.scale || 1}));
+                    const getOriginalData = s => s.type === 'group' ? { type: 'group', strokes: s.strokes.map(getOriginalData) } : { points: s.points ? s.points.map(p => ({x: p.x, y: p.y})) : null, scale: s.scale || 1, rotation: s.rotation || 0 };
+                    state.initialStrokesForMove = state.selectedStrokes.map(s => JSON.stringify(getOriginalData(s)));
                 } else {
                     state.isMovingStroke = false;
                 }
@@ -2492,7 +2610,8 @@
                 }
                 state.isMovingStroke = true;
                 state.startCoords = rawWorld;
-                state.initialStrokesForMove = state.selectedStrokes.map(s => JSON.stringify({points: s.points, scale: s.scale || 1}));
+                const getOriginalData = s => s.type === 'group' ? { type: 'group', strokes: s.strokes.map(getOriginalData) } : { points: s.points ? s.points.map(p => ({x: p.x, y: p.y})) : null, scale: s.scale || 1, rotation: s.rotation || 0 };
+                state.initialStrokesForMove = state.selectedStrokes.map(s => JSON.stringify(getOriginalData(s)));
             }
         } else {
           if (!(e.ctrlKey || e.metaKey)) state.selectedStrokes = [];
@@ -2598,10 +2717,17 @@
           if (e.shiftKey) angle = Math.round(angle / (Math.PI / 12)) * (Math.PI / 12);
           state.selectedStrokes.forEach((stroke, i) => {
               const original = JSON.parse(state.initialStrokesForMove[i]);
-              const oldCenter = getStrokeTransformCenter({ points: original.points });
-              const newCenter = rotatePoint(oldCenter, state.rotationCenter, angle);
-              stroke.points = original.points.map(point => ({ x: point.x + newCenter.x - oldCenter.x, y: point.y + newCenter.y - oldCenter.y }));
-              stroke.rotation = original.rotation + angle;
+              const rotatePoints = (t, o) => {
+                  if (t.type === 'group') {
+                      t.strokes.forEach((sub, j) => rotatePoints(sub, o.strokes[j]));
+                  } else if (t.points) {
+                      const oldCenter = getStrokeTransformCenter(o);
+                      const newCenter = rotatePoint(oldCenter, state.rotationCenter, angle);
+                      t.points = o.points.map(point => ({ x: point.x + newCenter.x - oldCenter.x, y: point.y + newCenter.y - oldCenter.y }));
+                      t.rotation = (o.rotation || 0) + angle;
+                  }
+              };
+              rotatePoints(stroke, original);
               computeStrokeBounds(stroke);
           });
           triggerRedraw(); return;
@@ -2664,31 +2790,40 @@
           
           state.selectedStrokes.forEach((stroke, i) => {
               const originalData = JSON.parse(state.initialStrokesForMove[i]);
-              const originalPoints = originalData.points;
-              stroke.points = originalPoints.map(p => {
-                  const relX = origW === 0 ? 0 : (p.x - origMinX) / origW;
-                  const relY = origH === 0 ? 0 : (p.y - origMinY) / origH;
-                  return { x: newMinX + relX * (newMaxX - newMinX), y: newMinY + relY * (newMaxY - newMinY) };
-              });
-
-              if (groupRot) {
-                  const oldCenter = getStrokeTransformCenter({ points: originalPoints });
-                  const newCenter = getStrokeTransformCenter(stroke);
-                  const dCx = newCenter.x - oldCenter.x;
-                  const dCy = newCenter.y - oldCenter.y;
-                  const cosR = Math.cos(groupRot);
-                  const sinR = Math.sin(groupRot);
-                  // Apply translation correction to prevent visually shifting the pivot away from the fixed edge
-                  const tx = (dCx * cosR - dCy * sinR) - dCx;
-                  const ty = (dCx * sinR + dCy * cosR) - dCy;
-                  stroke.points.forEach(p => { p.x += tx; p.y += ty; });
-              }
-              
-              if (stroke.type === 'axis' || stroke.type === 'text') {
-                  const scaleX = origW === 0 ? 1 : Math.abs((newMaxX - newMinX) / origW);
-                  const scaleY = origH === 0 ? 1 : Math.abs((newMaxY - newMinY) / origH);
-                  stroke.scale = (originalData.scale || 1) * Math.max(scaleX, scaleY);
-              }
+              const resizePoints = (t, o) => {
+                  if (t.type === 'group') {
+                      t.strokes.forEach((sub, j) => resizePoints(sub, o.strokes[j]));
+                  } else {
+                      if (t.points) {
+                          t.points = o.points.map(p => {
+                              const relX = origW === 0 ? 0 : (p.x - origMinX) / origW;
+                              const relY = origH === 0 ? 0 : (p.y - origMinY) / origH;
+                              return { x: newMinX + relX * (newMaxX - newMinX), y: newMinY + relY * (newMaxY - newMinY) };
+                          });
+                      }
+                      if (groupRot) {
+                          const oldCenter = getStrokeTransformCenter(o);
+                          const newCenter = getStrokeTransformCenter(t);
+                          const dCx = newCenter.x - oldCenter.x;
+                          const dCy = newCenter.y - oldCenter.y;
+                          const cosR = Math.cos(groupRot);
+                          const sinR = Math.sin(groupRot);
+                          const tx = (dCx * cosR - dCy * sinR) - dCx;
+                          const ty = (dCx * sinR + dCy * cosR) - dCy;
+                          if (t.points) t.points.forEach(p => { p.x += tx; p.y += ty; });
+                      }
+                      const scaleX = origW === 0 ? 1 : Math.abs((newMaxX - newMinX) / origW);
+                      const scaleY = origH === 0 ? 1 : Math.abs((newMaxY - newMinY) / origH);
+                      const maxScale = Math.max(scaleX, scaleY);
+                      if (t.type === 'axis' || t.type === 'text') {
+                          t.scale = (o.scale || 1) * maxScale;
+                      }
+                      if (o.width !== undefined) {
+                          t.width = o.width * maxScale;
+                      }
+                  }
+              };
+              resizePoints(stroke, originalData);
               computeStrokeBounds(stroke);
           });
           triggerRedraw(); return;
@@ -2718,7 +2853,14 @@
 
         state.selectedStrokes.forEach((stroke, i) => {
           const originalData = JSON.parse(state.initialStrokesForMove[i]);
-          stroke.points = originalData.points.map(p => ({ x: p.x + dx, y: p.y + dy }));
+          const movePoints = (t, o) => {
+              if (t.type === 'group') {
+                  t.strokes.forEach((sub, j) => movePoints(sub, o.strokes[j]));
+              } else if (t.points) {
+                  t.points = o.points.map(p => ({ x: p.x + dx, y: p.y + dy }));
+              }
+          };
+          movePoints(stroke, originalData);
           computeStrokeBounds(stroke);
         });
         triggerRedraw(); return;
@@ -2983,9 +3125,11 @@
         if (state.isRightClickErasing) { state.isRightClickErasing = false; setTool(state.previousTool); }
         if (state.isAltSelecting) { state.isAltSelecting = false; setTool(state.previousToolForAlt); }
       }
+      if (key === 'c' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); copySelectionToClipboard(); }
       if (key === 'z' && !e.shiftKey && (e.ctrlKey || e.metaKey)) { e.preventDefault(); undo(); }
       if ((key === 'y' && (e.ctrlKey || e.metaKey)) || (key === 'z' && e.shiftKey && (e.ctrlKey || e.metaKey))) { e.preventDefault(); redo(); }
       if (key === 'd' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); duplicateSelection(); }
+      if (key === 'm' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); mergeSelection(); }
       if (e.key === 'Delete' || e.key === 'Backspace') {
         if (state.tool === 'selector' && state.selectedStrokes.length > 0) {
           state.strokes = state.strokes.filter(s => !state.selectedStrokes.includes(s));
@@ -3226,7 +3370,9 @@
     document.getElementById('btn-clear').addEventListener('click', showResetDialog);
     document.getElementById('btn-undo').addEventListener('click', undo);
     document.getElementById('btn-redo').addEventListener('click', redo);
+    document.getElementById('btn-copy').addEventListener('click', () => copySelectionToClipboard());
     document.getElementById('btn-duplicate').addEventListener('click', () => duplicateSelection());
+    document.getElementById('btn-merge').addEventListener('click', () => mergeSelection());
 
     document.getElementById('btn-layer-top').addEventListener('click', () => {
         if (state.selectedStrokes.length === 0) return;
@@ -3350,23 +3496,85 @@
       reader.readAsDataURL(file);
     }
     
+    function processPastedShapes(text, x, y) {
+        try {
+            const parsed = JSON.parse(text);
+            if (parsed.whiteboardClipboard && Array.isArray(parsed.strokes)) {
+                hydrateBoardStrokes(parsed.strokes).then(() => {
+                    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+                    parsed.strokes.forEach(s => {
+                        computeStrokeBounds(s);
+                        if (s.bounds) {
+                            minX = Math.min(minX, s.bounds.minX); minY = Math.min(minY, s.bounds.minY);
+                            maxX = Math.max(maxX, s.bounds.maxX); maxY = Math.max(maxY, s.bounds.maxY);
+                        }
+                    });
+                    if (minX !== Infinity) {
+                        const centerX = (minX + maxX) / 2;
+                        const centerY = (minY + maxY) / 2;
+                        const dx = x - centerX;
+                        const dy = y - centerY;
+                        const movePoints = (t) => {
+                            if (t.type === 'group') t.strokes.forEach(movePoints);
+                            else if (t.points) t.points.forEach(p => { p.x += dx; p.y += dy; });
+                        };
+                        parsed.strokes.forEach(s => {
+                            delete s.id; ensureStrokeId(s); movePoints(s); computeStrokeBounds(s);
+                        });
+                    }
+                    state.strokes.push(...parsed.strokes);
+                    state.selectedStrokes = parsed.strokes;
+                    saveHistory(); triggerRedraw();
+                });
+                return true;
+            }
+        } catch(err) {}
+        return false;
+    }
+
+    window.addEventListener('copy', e => {
+      if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
+      if (state.selectedStrokes.length > 0) {
+        const data = JSON.stringify({ whiteboardClipboard: true, strokes: state.selectedStrokes.map(serialiseStroke) });
+        state.internalClipboard = data;
+        e.clipboardData.setData('text/plain', data);
+        e.preventDefault();
+      }
+    });
+
     window.addEventListener('paste', e => {
+      if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
       let x = (-state.cameraX + window.innerWidth / 2) / state.zoom;
       let y = (-state.cameraY + window.innerHeight / 2) / state.zoom;
+      
+      const text = e.clipboardData.getData('text/plain');
+      if (text && processPastedShapes(text, x, y)) return;
+      if (!text && state.internalClipboard && processPastedShapes(state.internalClipboard, x, y)) return;
+
       for (const item of e.clipboardData.items) {
         if (item.type.indexOf('image') === 0) { handleImageFile(item.getAsFile(), x, y); break; }
       }
     });
 
     document.getElementById('btn-paste').addEventListener('click', async () => {
+        let x = (-state.cameraX + window.innerWidth / 2) / state.zoom;
+        let y = (-state.cameraY + window.innerHeight / 2) / state.zoom;
+        
+        try {
+            if (navigator.clipboard && navigator.clipboard.readText) {
+                const text = await navigator.clipboard.readText();
+                if (text && processPastedShapes(text, x, y)) return;
+            }
+        } catch(e) {}
+
+        if (state.internalClipboard && processPastedShapes(state.internalClipboard, x, y)) return;
+
         try {
             if (!navigator.clipboard || !navigator.clipboard.read) {
                 alert("Clipboard API not supported in this browser. Please use the 'Ctrl+V' keyboard shortcut.");
                 return;
             }
             const clipboardItems = await navigator.clipboard.read();
-            let x = (-state.cameraX + window.innerWidth / 2) / state.zoom;
-            let y = (-state.cameraY + window.innerHeight / 2) / state.zoom;
             let foundImage = false;
             for (const item of clipboardItems) {
                 const imageTypes = item.types.filter(type => type.startsWith('image/'));
@@ -3378,7 +3586,7 @@
                     break;
                 }
             }
-            if (!foundImage) alert("No image found in clipboard. Copy an image file or pixels first.");
+            if (!foundImage) alert("No image found in clipboard. Copy an image file, selection, or use Ctrl+V.");
         } catch (err) {
             console.error("Clipboard access failed:", err);
             alert("Could not read clipboard. Please ensure clipboard permissions are granted or use Ctrl+V.");
@@ -3395,6 +3603,7 @@
     function serialiseStroke(stroke) {
         normaliseBoardStroke(stroke);
         const copy = { ...stroke };
+        if (copy.type === 'group') copy.strokes = copy.strokes.map(serialiseStroke);
         // Bounds are derived from points and must not become persisted state.
         // They are rebuilt on every load so old caches cannot break hit-testing.
         delete copy.bounds;
@@ -3419,42 +3628,45 @@
     // can restore a board whose images cannot be drawn or erased.
     function hydrateBoardStrokes(strokes) {
       const usedIds = new Set();
-      strokes.forEach(stroke => {
-        normaliseBoardStroke(stroke);
-        if (usedIds.has(stroke.id)) {
-          delete stroke.id;
-          ensureStrokeId(stroke);
-        }
-        usedIds.add(stroke.id);
-      });
-      return Promise.all(strokes.map(stroke => new Promise((resolve, reject) => {
-        normaliseBoardStroke(stroke);
-        computeStrokeBounds(stroke);
-        if (!((stroke.type === 'image' || stroke.type === 'fill') && stroke.src)) {
-          resolve();
+      const normalize = s => {
+        normaliseBoardStroke(s);
+        if (usedIds.has(s.id)) { delete s.id; ensureStrokeId(s); }
+        usedIds.add(s.id);
+        if (s.type === 'group') s.strokes.forEach(normalize);
+      };
+      strokes.forEach(normalize);
+
+      const promises = [];
+      const queueHydrate = s => {
+        normaliseBoardStroke(s);
+        if (s.type === 'group') {
+          s.strokes.forEach(queueHydrate);
+          computeStrokeBounds(s);
           return;
         }
-
-        const img = new Image();
-        img.onload = () => {
-          try {
-            if (stroke.type === 'fill') {
-              const imageCanvas = document.createElement('canvas');
-              imageCanvas.width = img.width;
-              imageCanvas.height = img.height;
-              imageCanvas.getContext('2d', {willReadFrequently: true}).drawImage(img, 0, 0);
-              stroke.img = imageCanvas;
-            } else {
-              stroke.img = img;
-            }
-            resolve();
-          } catch (error) {
-            reject(error);
-          }
-        };
-        img.onerror = () => reject(new Error('Unable to load an image in this whiteboard.'));
-        img.src = stroke.src;
-      })));
+        computeStrokeBounds(s);
+        if (!((s.type === 'image' || s.type === 'fill') && s.src)) return;
+        promises.push(new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onload = () => {
+            try {
+              if (s.type === 'fill') {
+                const imageCanvas = document.createElement('canvas');
+                imageCanvas.width = img.width; imageCanvas.height = img.height;
+                imageCanvas.getContext('2d', {willReadFrequently: true}).drawImage(img, 0, 0);
+                s.img = imageCanvas;
+              } else {
+                s.img = img;
+              }
+              resolve();
+            } catch (error) { reject(error); }
+          };
+          img.onerror = () => reject(new Error('Unable to load an image in this whiteboard.'));
+          img.src = s.src;
+        }));
+      };
+      strokes.forEach(queueHydrate);
+      return Promise.all(promises);
     }
 
     document.getElementById('btn-load-file').addEventListener('click', () => document.getElementById('file-import').click());
