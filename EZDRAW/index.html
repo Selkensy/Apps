@@ -3547,19 +3547,51 @@
       let x = (-state.cameraX + window.innerWidth / 2) / state.zoom;
       let y = (-state.cameraY + window.innerHeight / 2) / state.zoom;
       
+      // 1. Prioritize OS clipboard text if it contains our whiteboard elements
       const text = e.clipboardData.getData('text/plain');
       if (text && processPastedShapes(text, x, y)) return;
-      if (!text && state.internalClipboard && processPastedShapes(state.internalClipboard, x, y)) return;
 
+      // 2. Fall back to OS clipboard image if present
+      let foundImage = false;
       for (const item of e.clipboardData.items) {
-        if (item.type.indexOf('image') === 0) { handleImageFile(item.getAsFile(), x, y); break; }
+        if (item.type.indexOf('image') === 0) {
+          handleImageFile(item.getAsFile(), x, y);
+          foundImage = true;
+          break;
+        }
       }
+      if (foundImage) return;
+
+      // 3. Fall back to internal element-copy if no active clipboard image or valid system text was processed
+      if (state.internalClipboard && processPastedShapes(state.internalClipboard, x, y)) return;
     });
 
     document.getElementById('btn-paste').addEventListener('click', async () => {
         let x = (-state.cameraX + window.innerWidth / 2) / state.zoom;
         let y = (-state.cameraY + window.innerHeight / 2) / state.zoom;
         
+        // Unambiguous override: always attempt to read and paste an image from the system clipboard first
+        try {
+            if (navigator.clipboard && navigator.clipboard.read) {
+                const clipboardItems = await navigator.clipboard.read();
+                let foundImage = false;
+                for (const item of clipboardItems) {
+                    const imageTypes = item.types.filter(type => type.startsWith('image/'));
+                    if (imageTypes.length > 0) {
+                        const blob = await item.getType(imageTypes[0]);
+                        const file = new File([blob], "pasted.png", { type: imageTypes[0] });
+                        handleImageFile(file, x, y);
+                        foundImage = true;
+                        break;
+                    }
+                }
+                if (foundImage) return;
+            }
+        } catch (err) {
+            console.warn("Could not read clipboard items directly:", err);
+        }
+
+        // Fallback: check for copied whiteboard elements in the system text clipboard next
         try {
             if (navigator.clipboard && navigator.clipboard.readText) {
                 const text = await navigator.clipboard.readText();
@@ -3567,30 +3599,10 @@
             }
         } catch(e) {}
 
+        // Final fallback: use pending internal clipboard if system copy check yields nothing
         if (state.internalClipboard && processPastedShapes(state.internalClipboard, x, y)) return;
 
-        try {
-            if (!navigator.clipboard || !navigator.clipboard.read) {
-                alert("Clipboard API not supported in this browser. Please use the 'Ctrl+V' keyboard shortcut.");
-                return;
-            }
-            const clipboardItems = await navigator.clipboard.read();
-            let foundImage = false;
-            for (const item of clipboardItems) {
-                const imageTypes = item.types.filter(type => type.startsWith('image/'));
-                if (imageTypes.length > 0) {
-                    const blob = await item.getType(imageTypes[0]);
-                    const file = new File([blob], "pasted.png", { type: imageTypes[0] });
-                    handleImageFile(file, x, y);
-                    foundImage = true;
-                    break;
-                }
-            }
-            if (!foundImage) alert("No image found in clipboard. Copy an image file, selection, or use Ctrl+V.");
-        } catch (err) {
-            console.error("Clipboard access failed:", err);
-            alert("Could not read clipboard. Please ensure clipboard permissions are granted or use Ctrl+V.");
-        }
+        alert("No image or copied element found in clipboard. Copy an image file, selection, or use Ctrl+V.");
     });
     
     window.addEventListener('dragover', e => e.preventDefault());
