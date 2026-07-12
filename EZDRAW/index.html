@@ -1152,7 +1152,10 @@
       isPanning: false,
       isMovingStroke: false,
       isResizingStroke: false,
+      isRotatingStroke: false,
       resizeHandle: -1,
+      rotationStartAngle: 0,
+      rotationCenter: null,
       isMarqueeSelecting: false,
       marqueeStart: { x: 0, y: 0 },
       marqueeEnd: { x: 0, y: 0 },
@@ -1263,6 +1266,39 @@
       return Math.sqrt(Math.pow(p.x - (v.x + t * (w.x - v.x)), 2) + Math.pow(p.y - (v.y + t * (w.y - v.y)), 2));
     }
 
+    function getStrokeTransformCenter(stroke) {
+      const points = stroke.points || [];
+      if (!points.length) return { x: 0, y: 0 };
+      let minX = points[0].x, maxX = points[0].x, minY = points[0].y, maxY = points[0].y;
+      points.forEach(point => {
+        minX = Math.min(minX, point.x); maxX = Math.max(maxX, point.x);
+        minY = Math.min(minY, point.y); maxY = Math.max(maxY, point.y);
+      });
+      return { x: (minX + maxX) / 2, y: (minY + maxY) / 2 };
+    }
+
+    function rotatePoint(point, center, angle) {
+      const cos = Math.cos(angle), sin = Math.sin(angle);
+      const x = point.x - center.x, y = point.y - center.y;
+      return { x: center.x + x * cos - y * sin, y: center.y + x * sin + y * cos };
+    }
+
+    function finalizeStrokeBounds(stroke) {
+      if (!stroke.bounds || !stroke.rotation) return;
+      const center = getStrokeTransformCenter(stroke);
+      const { minX, minY, maxX, maxY } = stroke.bounds;
+      const corners = [
+        rotatePoint({ x: minX, y: minY }, center, stroke.rotation),
+        rotatePoint({ x: maxX, y: minY }, center, stroke.rotation),
+        rotatePoint({ x: maxX, y: maxY }, center, stroke.rotation),
+        rotatePoint({ x: minX, y: maxY }, center, stroke.rotation)
+      ];
+      stroke.bounds = {
+        minX: Math.min(...corners.map(p => p.x)), minY: Math.min(...corners.map(p => p.y)),
+        maxX: Math.max(...corners.map(p => p.x)), maxY: Math.max(...corners.map(p => p.y))
+      };
+    }
+
     function computeStrokeBounds(stroke) {
       // Bounds are a runtime cache used to reject distant hit tests. A legacy
       // stroke without a saved width must not produce NaN bounds.
@@ -1274,21 +1310,21 @@
           minX: p0.x - dx - stroke.width, minY: p0.y - dy - stroke.width,
           maxX: p0.x + dx + stroke.width, maxY: p0.y + dy + stroke.width
         };
-        return;
+        return finalizeStrokeBounds(stroke);
       } else if (stroke.type === 'text') {
         const r = (stroke.size * (stroke.scale || 1)) / 2;
         stroke.bounds = {
             minX: stroke.points[0].x - r, minY: stroke.points[0].y - r,
             maxX: stroke.points[0].x + r, maxY: stroke.points[0].y + r
         };
-        return;
+        return finalizeStrokeBounds(stroke);
       } else if (stroke.type === 'ellipse') {
         const { cx, cy, rx, ry } = getEllipseParams(stroke);
         stroke.bounds = {
           minX: cx - rx - stroke.width, minY: cy - ry - stroke.width,
           maxX: cx + rx + stroke.width, maxY: cy + ry + stroke.width
         };
-        return;
+        return finalizeStrokeBounds(stroke);
       } else if (stroke.type === 'rect' || stroke.type === 'triangle') {
         const { p1, p2 } = getShapeCorners(stroke);
         const minX = Math.min(p1.x, p2.x);
@@ -1299,7 +1335,7 @@
           minX: minX - stroke.width, minY: minY - stroke.width,
           maxX: maxX + stroke.width, maxY: maxY + stroke.width
         };
-        return;
+        return finalizeStrokeBounds(stroke);
       }
       const pts = stroke.points;
       if (!pts || pts.length === 0) return { minX: 0, minY: 0, maxX: 0, maxY: 0 };
@@ -1314,6 +1350,7 @@
         minX: minX - stroke.width, minY: minY - stroke.width,
         maxX: maxX + stroke.width, maxY: maxY + stroke.width
       };
+      finalizeStrokeBounds(stroke);
     }
 
     function ensureStrokeId(stroke) {
@@ -1373,6 +1410,10 @@
       
       if (pt.x < bounds.minX - tolerance || pt.x > bounds.maxX + tolerance ||
           pt.y < bounds.minY - tolerance || pt.y > bounds.maxY + tolerance) return false;
+
+      // Geometry is stored unrotated; transform the pointer back into that
+      // local space before the existing precise hit tests run.
+      if (stroke.rotation) pt = rotatePoint(pt, getStrokeTransformCenter(stroke), -stroke.rotation);
 
       if (stroke.type === 'pen' || stroke.type === 'line' || stroke.type === 'text') {
         if (stroke.points.length === 1) return Math.hypot(pt.x - stroke.points[0].x, pt.y - stroke.points[0].y) <= tolerance;
@@ -1675,10 +1716,17 @@
       const pts = stroke.points;
       if (!pts || pts.length < 1) return;
 
+      renderingContext.save();
+      if (stroke.rotation) {
+        const center = getStrokeTransformCenter(stroke);
+        renderingContext.translate(center.x, center.y);
+        renderingContext.rotate(stroke.rotation);
+        renderingContext.translate(-center.x, -center.y);
+      }
+
       if ((stroke.type === 'image' || stroke.type === 'fill') && stroke.img) {
           const w = pts[1].x - pts[0].x;
           const h = pts[1].y - pts[0].y;
-          renderingContext.save();
           if (stroke.type === 'image' && stroke.invert) renderingContext.filter = 'invert(100%)';
           renderingContext.drawImage(stroke.img, pts[0].x, pts[0].y, w, h);
           renderingContext.restore();
@@ -1741,6 +1789,7 @@
                   renderingContext.stroke();
               }
               renderingContext.setLineDash([]);
+              renderingContext.restore();
               return; 
           } else if (stroke.type === 'triangle') {
               const start = stroke.startAngle || 0;
@@ -1837,6 +1886,7 @@
       }
       
       renderingContext.setLineDash([]); // Ensure we don't bleed dashes to other things
+      renderingContext.restore();
     }
 
     function draw() {
@@ -1853,12 +1903,31 @@
 
       drawGrid(left, top, right, bottom);
 
-      state.strokes.forEach(stroke => renderStrokePath(stroke, ctx));
+      // Fills are a paint layer. They deliberately ignore the ordinary object
+      // stack so a fill can never cover the strokes that contain or surround it.
+      state.strokes.filter(stroke => stroke.type === 'fill').forEach(stroke => renderStrokePath(stroke, ctx));
+      state.strokes.filter(stroke => stroke.type !== 'fill').forEach(stroke => renderStrokePath(stroke, ctx));
       if (state.tempStroke) renderStrokePath(state.tempStroke, ctx);
 
       if (state.tool === 'selector' && state.selectedStrokes.length > 0) {
-        const gb = getGroupBounds(state.selectedStrokes);
+        const worldGb = getGroupBounds(state.selectedStrokes);
+        let gb = worldGb;
+        let groupRot = 0;
+        let rotCenter = null;
+        if (state.selectedStrokes.length === 1 && state.selectedStrokes[0].rotation) {
+            groupRot = state.selectedStrokes[0].rotation;
+            rotCenter = getStrokeTransformCenter(state.selectedStrokes[0]);
+            gb = getRawGroupBounds(state.selectedStrokes);
+        }
+        
         if (gb) {
+          ctx.save();
+          if (groupRot) {
+              ctx.translate(rotCenter.x, rotCenter.y);
+              ctx.rotate(groupRot);
+              ctx.translate(-rotCenter.x, -rotCenter.y);
+          }
+          
           ctx.strokeStyle = '#4f46e5';
           ctx.lineWidth = 1.5 / state.zoom;
           ctx.setLineDash([4 / state.zoom, 4 / state.zoom]);
@@ -1885,8 +1954,10 @@
           [{x: box.minX, y: box.minY}, {x: box.maxX, y: box.minY}, {x: box.maxX, y: box.maxY}, {x: box.minX, y: box.maxY}]
           .forEach(c => ctx.fillRect(c.x - handleSize/2, c.y - handleSize/2, handleSize, handleSize));
           
-          const screenX = gb.maxX * state.zoom + state.cameraX;
-          const screenY = gb.minY * state.zoom + state.cameraY;
+          ctx.restore();
+          
+          const screenX = worldGb.maxX * state.zoom + state.cameraX;
+          const screenY = worldGb.minY * state.zoom + state.cameraY;
           shapeContextMenu.style.transform = `translate(${screenX + 16}px, ${screenY}px)`;
           if(shapeContextMenu.classList.contains('hidden')) shapeContextMenu.classList.remove('hidden');
 
@@ -1998,12 +2069,31 @@
       if (state.selectedStrokes.length > 0) {
           let modified = false;
           state.selectedStrokes.forEach(s => {
-              if (s.type !== 'image') { s.color = color; modified = true; }
+              if (s.type === 'fill') {
+                  recolorFill(s, color);
+                  modified = true;
+              } else if (s.type !== 'image') {
+                  s.color = color;
+                  modified = true;
+              }
           });
           if (modified) { saveHistory(); triggerRedraw(); }
       } else {
           triggerRedraw();
       }
+    }
+
+    // A fill is stored as an alpha mask baked with its colour. Recolour the
+    // existing mask instead of regenerating it, so eraser edits stay intact.
+    function recolorFill(fill, color) {
+      fill.color = color;
+      if (!fill.img || !fill.img.getContext) return;
+      const fillCtx = fill.img.getContext('2d', { willReadFrequently: true });
+      fillCtx.save();
+      fillCtx.globalCompositeOperation = 'source-in';
+      fillCtx.fillStyle = color;
+      fillCtx.fillRect(0, 0, fill.img.width, fill.img.height);
+      fillCtx.restore();
     }
 
     function duplicateSelection() {
@@ -2048,7 +2138,8 @@
       offCtx.save();
       offCtx.translate(state.cameraX, state.cameraY);
       offCtx.scale(state.zoom, state.zoom);
-      state.strokes.forEach(stroke => renderStrokePath(stroke, offCtx));
+      // Existing fills are paint, not boundaries. Only strokes define a bucket region.
+      state.strokes.filter(stroke => stroke.type !== 'fill').forEach(stroke => renderStrokePath(stroke, offCtx));
       offCtx.restore();
 
       const imgData = offCtx.getImageData(0, 0, w, h);
@@ -2111,25 +2202,72 @@
 
       if (filledPixels === 0) return;
 
-      const expandedVisited = new Uint8Array(w * h);
-      for (let y = minY; y <= maxY; y++) {
-          for (let x = minX; x <= maxX; x++) {
-              if (visited[y * w + x]) {
-                  expandedVisited[y * w + x] = 1;
-                  if (x > 0) expandedVisited[y * w + (x - 1)] = 1;
-                  if (x < w - 1) expandedVisited[y * w + (x + 1)] = 1;
-                  if (y > 0) expandedVisited[(y - 1) * w + x] = 1;
-                  if (y < h - 1) expandedVisited[(y + 1) * w + x] = 1;
-              }
+      // The first pass only locates the region. Build the persisted mask in
+      // world space at a fixed density, so creation zoom never sets its quality.
+      const locatorMin = toWorldCoords(minX, minY);
+      const locatorMax = toWorldCoords(maxX + 1, maxY + 1);
+      const padding = Math.max(12, 6 / state.zoom);
+      const worldMinX = Math.min(locatorMin.x, locatorMax.x) - padding;
+      const worldMinY = Math.min(locatorMin.y, locatorMax.y) - padding;
+      const worldMaxX = Math.max(locatorMin.x, locatorMax.x) + padding;
+      const worldMaxY = Math.max(locatorMin.y, locatorMax.y) + padding;
+      const worldWidth = worldMaxX - worldMinX;
+      const worldHeight = worldMaxY - worldMinY;
+      const fixedDensity = 2;
+      // Keep exceptionally large fills safe without lowering quality in normal use.
+      const maxFillPixels = 16 * 1024 * 1024;
+      const density = Math.min(fixedDensity, Math.sqrt(maxFillPixels / (worldWidth * worldHeight)));
+      const maskW = Math.max(1, Math.ceil(worldWidth * density));
+      const maskH = Math.max(1, Math.ceil(worldHeight * density));
+      const maskCanvas = document.createElement('canvas');
+      maskCanvas.width = maskW; maskCanvas.height = maskH;
+      const maskCtx = maskCanvas.getContext('2d', { willReadFrequently: true });
+      maskCtx.save();
+      maskCtx.scale(density, density);
+      maskCtx.translate(-worldMinX, -worldMinY);
+      state.strokes.filter(stroke => stroke.type !== 'fill').forEach(stroke => renderStrokePath(stroke, maskCtx));
+      maskCtx.restore();
+
+      const maskData = maskCtx.getImageData(0, 0, maskW, maskH).data;
+      const startWorld = toWorldCoords(startX, startY);
+      const fillX = Math.max(0, Math.min(maskW - 1, Math.floor((startWorld.x - worldMinX) * density)));
+      const fillY = Math.max(0, Math.min(maskH - 1, Math.floor((startWorld.y - worldMinY) * density)));
+      if (maskData[(fillY * maskW + fillX) * 4 + 3] > 0) return;
+
+      const fillVisited = new Uint8Array(maskW * maskH);
+      const fillQueue = [fillX, fillY];
+      fillVisited[fillY * maskW + fillX] = 1;
+      let fillMinX = fillX, fillMaxX = fillX, fillMinY = fillY, fillMaxY = fillY;
+      let touchesMaskEdge = false;
+      while (fillQueue.length) {
+          const y = fillQueue.pop(), x = fillQueue.pop();
+          if (x === 0 || y === 0 || x === maskW - 1 || y === maskH - 1) { touchesMaskEdge = true; break; }
+          fillMinX = Math.min(fillMinX, x); fillMaxX = Math.max(fillMaxX, x);
+          fillMinY = Math.min(fillMinY, y); fillMaxY = Math.max(fillMaxY, y);
+          for (const [nx, ny] of [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]]) {
+            const index = ny * maskW + nx;
+            if (!fillVisited[index] && maskData[index * 4 + 3] === 0) {
+              fillVisited[index] = 1;
+              fillQueue.push(nx, ny);
+            }
           }
       }
-      minX = Math.max(0, minX - 1);
-      maxX = Math.min(w - 1, maxX + 1);
-      minY = Math.max(0, minY - 1);
-      maxY = Math.min(h - 1, maxY + 1);
+      if (touchesMaskEdge) {
+        const status = document.getElementById('status-bar');
+        const previous = status.textContent;
+        status.textContent = 'Fill aborted: Region is unclosed or exceeds the fill area.';
+        setTimeout(() => { status.textContent = previous; }, 3000);
+        return;
+      }
 
-      const outW = maxX - minX + 1;
-      const outH = maxY - minY + 1;
+      // Give the fill a small overlap with its boundary strokes. At the normal
+      // 2x mask density this is one drawing unit, enough for the later stroke
+      // pass to hide raster/anti-aliased fill edges without visibly enlarging it.
+      const FILL_BLEED_MASK_PIXELS = 2;
+      fillMinX = Math.max(0, fillMinX - FILL_BLEED_MASK_PIXELS); fillMaxX = Math.min(maskW - 1, fillMaxX + FILL_BLEED_MASK_PIXELS);
+      fillMinY = Math.max(0, fillMinY - FILL_BLEED_MASK_PIXELS); fillMaxY = Math.min(maskH - 1, fillMaxY + FILL_BLEED_MASK_PIXELS);
+      const outW = fillMaxX - fillMinX + 1;
+      const outH = fillMaxY - fillMinY + 1;
       const resCanvas = document.createElement('canvas');
       resCanvas.width = outW; resCanvas.height = outH;
       const resCtx = resCanvas.getContext('2d', { willReadFrequently: true });
@@ -2138,7 +2276,24 @@
       
       for (let y = 0; y < outH; y++) {
           for (let x = 0; x < outW; x++) {
-              if (expandedVisited[(y + minY) * w + (x + minX)]) {
+              const sourceX = x + fillMinX, sourceY = y + fillMinY;
+              const sourceIndex = sourceY * maskW + sourceX;
+              // A compact, rounded bleed stays below the dedicated stroke pass.
+              // Include diagonals as well so pixelated curves cannot leave seams.
+              const covered = fillVisited[sourceIndex] ||
+                (sourceX > 0 && fillVisited[sourceIndex - 1]) ||
+                (sourceX < maskW - 1 && fillVisited[sourceIndex + 1]) ||
+                (sourceY > 0 && fillVisited[sourceIndex - maskW]) ||
+                (sourceY < maskH - 1 && fillVisited[sourceIndex + maskW]) ||
+                (sourceX > 0 && sourceY > 0 && fillVisited[sourceIndex - maskW - 1]) ||
+                (sourceX < maskW - 1 && sourceY > 0 && fillVisited[sourceIndex - maskW + 1]) ||
+                (sourceX > 0 && sourceY < maskH - 1 && fillVisited[sourceIndex + maskW - 1]) ||
+                (sourceX < maskW - 1 && sourceY < maskH - 1 && fillVisited[sourceIndex + maskW + 1]) ||
+                (sourceX > 1 && fillVisited[sourceIndex - 2]) ||
+                (sourceX < maskW - 2 && fillVisited[sourceIndex + 2]) ||
+                (sourceY > 1 && fillVisited[sourceIndex - (maskW * 2)]) ||
+                (sourceY < maskH - 2 && fillVisited[sourceIndex + (maskW * 2)]);
+              if (covered) {
                   const outIdx = (y * outW + x) * 4;
                   resData[outIdx] = fillRgba[0];
                   resData[outIdx+1] = fillRgba[1];
@@ -2149,8 +2304,8 @@
       }
       resCtx.putImageData(resImgData, 0, 0);
 
-      const tl = toWorldCoords(minX, minY);
-      const br = toWorldCoords(maxX + 1, maxY + 1);
+      const tl = { x: worldMinX + fillMinX / density, y: worldMinY + fillMinY / density };
+      const br = { x: worldMinX + (fillMaxX + 1) / density, y: worldMinY + (fillMaxY + 1) / density };
       
       const fillStroke = {
           type: 'fill',
@@ -2164,6 +2319,25 @@
       state.strokes.push(fillStroke);
       saveHistory();
       triggerRedraw();
+    }
+
+    function getRotationCornerAtPoint(point, box) {
+      const corners = [
+        { x: box.minX, y: box.minY, sx: -1, sy: -1 }, { x: box.maxX, y: box.minY, sx: 1, sy: -1 },
+        { x: box.maxX, y: box.maxY, sx: 1, sy: 1 }, { x: box.minX, y: box.maxY, sx: -1, sy: 1 }
+      ];
+      const minDistance = Math.max(10, 8 / state.zoom), maxDistance = minDistance + 22 / state.zoom;
+      return corners.find(corner => {
+        const dx = point.x - corner.x, dy = point.y - corner.y;
+        return dx * corner.sx > minDistance && dy * corner.sy > minDistance &&
+          Math.hypot(dx, dy) >= minDistance && Math.hypot(dx, dy) <= maxDistance;
+      });
+    }
+
+    function getRotationCursor() {
+      const color = document.body.classList.contains('theme-dark') ? '#ffffff' : '#111111';
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"><path d="M22 10a9 9 0 1 0 1 8" fill="none" stroke="${color}" stroke-width="2.8" stroke-linecap="round"/><path d="M18 5l5 5-6 2" fill="${color}" stroke="${color}" stroke-linejoin="round"/></svg>`;
+      return `url("data:image/svg+xml,${encodeURIComponent(svg)}") 14 14, crosshair`;
     }
 
     function handlePointerDown(e) {
@@ -2186,7 +2360,7 @@
       }
 
       if (e.button === 2) {
-        if (state.isDrawing || state.isMovingStroke || state.isResizingStroke || state.isMarqueeSelecting) {
+        if (state.isDrawing || state.isMovingStroke || state.isResizingStroke || state.isRotatingStroke || state.isMarqueeSelecting) {
             state.actionSnapActive = true;
             handlePointerMove(e);
             return;
@@ -2226,7 +2400,16 @@
       if (state.tool === 'selector') {
         state.isDrawing = false;
         let hitHandle = -1;
-        const groupBounds = getGroupBounds(state.selectedStrokes);
+        let groupBounds = getGroupBounds(state.selectedStrokes);
+        let groupRot = 0;
+        let rotCenter = null;
+        if (state.selectedStrokes.length === 1 && state.selectedStrokes[0].rotation) {
+            groupRot = state.selectedStrokes[0].rotation;
+            rotCenter = getStrokeTransformCenter(state.selectedStrokes[0]);
+            groupBounds = getRawGroupBounds(state.selectedStrokes);
+        }
+        
+        const testWorld = groupRot ? rotatePoint(rawWorld, rotCenter, -groupRot) : rawWorld;
         
         if (groupBounds && state.selectedStrokes.length > 0 && !(e.ctrlKey || e.metaKey)) {
             const box = {
@@ -2239,10 +2422,28 @@
                 {x: (box.minX + box.maxX)/2, y: box.minY}, {x: box.maxX, y: (box.minY + box.maxY)/2},
                 {x: (box.minX + box.maxX)/2, y: box.maxY}, {x: box.minX, y: (box.minY + box.maxY)/2}
             ];
+            let minHandleDist = Infinity;
             for(let i=0; i<8; i++) {
-               if (Math.abs(rawWorld.x - handles[i].x) <= handleSize && Math.abs(rawWorld.y - handles[i].y) <= handleSize) {
-                   hitHandle = i; break;
+               const dx = Math.abs(testWorld.x - handles[i].x);
+               const dy = Math.abs(testWorld.y - handles[i].y);
+               if (dx <= handleSize && dy <= handleSize) {
+                   const dist = Math.hypot(dx, dy);
+                   if (dist < minHandleDist) {
+                       hitHandle = i;
+                       minHandleDist = dist;
+                   }
                }
+            }
+            if (hitHandle === -1) {
+                const rotCorner = getRotationCornerAtPoint(testWorld, box);
+                if (rotCorner) {
+                    state.isRotatingStroke = true;
+                    const worldBoxCenter = groupRot ? rotCenter : { x: (box.minX + box.maxX)/2, y: (box.minY + box.maxY)/2 };
+                    state.rotationStartAngle = Math.atan2(rawWorld.y - worldBoxCenter.y, rawWorld.x - worldBoxCenter.x);
+                    state.rotationCenter = worldBoxCenter;
+                    state.initialStrokesForMove = state.selectedStrokes.map(s => JSON.stringify({points: s.points, scale: s.scale || 1, rotation: s.rotation || 0}));
+                    return;
+                }
             }
         }
 
@@ -2250,14 +2451,20 @@
             state.isResizingStroke = true;
             state.resizeHandle = hitHandle;
             state.startCoords = rawWorld;
-            state.initialStrokesForMove = state.selectedStrokes.map(s => JSON.stringify({points: s.points, scale: s.scale || 1}));
+            state.initialStrokesForMove = state.selectedStrokes.map(s => JSON.stringify({points: s.points, scale: s.scale || 1, rotation: s.rotation || 0}));
             state.initialPointsBoundsForResize = getRawGroupBounds(state.selectedStrokes);
             return;
         }
 
         let clickedOnStroke = null;
-        for (let i = state.strokes.length - 1; i >= 0; i--) {
-          if (hitTestStroke(rawWorld, state.strokes[i])) { clickedOnStroke = state.strokes[i]; break; }
+        // Keep hit testing aligned with rendering: visible strokes take priority
+        // over the paint layer, while a clear part of a fill remains selectable.
+        const hitTestOrder = [
+          ...state.strokes.filter(s => s.type !== 'fill').reverse(),
+          ...state.strokes.filter(s => s.type === 'fill').reverse()
+        ];
+        for (const stroke of hitTestOrder) {
+          if (hitTestStroke(rawWorld, stroke)) { clickedOnStroke = stroke; break; }
         }
 
         let clickedOnSelected = false;
@@ -2335,8 +2542,17 @@
       const rawWorld = toWorldCoords(e.clientX, e.clientY);
       const snappedWorld = snapPoint(rawWorld);
 
-      if (!state.isDrawing && !state.isMovingStroke && !state.isResizingStroke && !state.isMarqueeSelecting && state.tool === 'selector' && state.selectedStrokes.length > 0) {
-          const gb = getGroupBounds(state.selectedStrokes);
+      if (!state.isDrawing && !state.isMovingStroke && !state.isResizingStroke && !state.isRotatingStroke && !state.isMarqueeSelecting && state.tool === 'selector' && state.selectedStrokes.length > 0) {
+          let gb = getGroupBounds(state.selectedStrokes);
+          let groupRot = 0;
+          let rotCenter = null;
+          if (state.selectedStrokes.length === 1 && state.selectedStrokes[0].rotation) {
+              groupRot = state.selectedStrokes[0].rotation;
+              rotCenter = getStrokeTransformCenter(state.selectedStrokes[0]);
+              gb = getRawGroupBounds(state.selectedStrokes);
+          }
+          const testWorld = groupRot ? rotatePoint(rawWorld, rotCenter, -groupRot) : rawWorld;
+          
           if (gb) {
               const box = { minX: gb.minX - 6, minY: gb.minY - 6, maxX: gb.maxX + 6, maxY: gb.maxY + 6 };
               const handleSize = Math.max(10, 8 / state.zoom);
@@ -2347,10 +2563,24 @@
                   {x: (box.minX + box.maxX)/2, y: box.maxY, c: 'ns-resize'}, {x: box.minX, y: (box.minY + box.maxY)/2, c: 'ew-resize'}
               ];
               let hovered = false;
+              let bestHandle = -1, minHandleDist = Infinity;
               for(let i=0; i<8; i++) {
-                 if (Math.abs(rawWorld.x - handles[i].x) <= handleSize && Math.abs(rawWorld.y - handles[i].y) <= handleSize) {
-                     canvas.style.cursor = handles[i].c; hovered = true; break;
+                 const dx = Math.abs(testWorld.x - handles[i].x);
+                 const dy = Math.abs(testWorld.y - handles[i].y);
+                 if (dx <= handleSize && dy <= handleSize) {
+                     const dist = Math.hypot(dx, dy);
+                     if (dist < minHandleDist) {
+                         bestHandle = i;
+                         minHandleDist = dist;
+                     }
                  }
+              }
+              if (bestHandle !== -1) {
+                  canvas.style.cursor = handles[bestHandle].c;
+                  hovered = true;
+              }
+              if (!hovered && getRotationCornerAtPoint(testWorld, box)) {
+                  canvas.style.cursor = getRotationCursor(); hovered = true;
               }
               if (!hovered) {
                   let hitInner = false;
@@ -2363,6 +2593,20 @@
           }
       }
 
+      if (state.isRotatingStroke && state.selectedStrokes.length > 0) {
+          let angle = Math.atan2(rawWorld.y - state.rotationCenter.y, rawWorld.x - state.rotationCenter.x) - state.rotationStartAngle;
+          if (e.shiftKey) angle = Math.round(angle / (Math.PI / 12)) * (Math.PI / 12);
+          state.selectedStrokes.forEach((stroke, i) => {
+              const original = JSON.parse(state.initialStrokesForMove[i]);
+              const oldCenter = getStrokeTransformCenter({ points: original.points });
+              const newCenter = rotatePoint(oldCenter, state.rotationCenter, angle);
+              stroke.points = original.points.map(point => ({ x: point.x + newCenter.x - oldCenter.x, y: point.y + newCenter.y - oldCenter.y }));
+              stroke.rotation = original.rotation + angle;
+              computeStrokeBounds(stroke);
+          });
+          triggerRedraw(); return;
+      }
+
       if (state.isResizingStroke) {
           let dx = rawWorld.x - state.startCoords.x;
           let dy = rawWorld.y - state.startCoords.y;
@@ -2370,6 +2614,19 @@
           if (state.actionSnapActive) {
               dx = snappedWorld.x - forceSnapPoint(state.startCoords).x;
               dy = snappedWorld.y - forceSnapPoint(state.startCoords).y;
+          }
+
+          let groupRot = 0;
+          if (state.selectedStrokes.length === 1 && state.selectedStrokes[0].rotation) {
+              groupRot = state.selectedStrokes[0].rotation;
+          }
+          if (groupRot) {
+              const cos = Math.cos(-groupRot);
+              const sin = Math.sin(-groupRot);
+              const ldx = dx * cos - dy * sin;
+              const ldy = dx * sin + dy * cos;
+              dx = ldx;
+              dy = ldy;
           }
           
           const origBounds = state.initialPointsBoundsForResize;
@@ -2413,6 +2670,19 @@
                   const relY = origH === 0 ? 0 : (p.y - origMinY) / origH;
                   return { x: newMinX + relX * (newMaxX - newMinX), y: newMinY + relY * (newMaxY - newMinY) };
               });
+
+              if (groupRot) {
+                  const oldCenter = getStrokeTransformCenter({ points: originalPoints });
+                  const newCenter = getStrokeTransformCenter(stroke);
+                  const dCx = newCenter.x - oldCenter.x;
+                  const dCy = newCenter.y - oldCenter.y;
+                  const cosR = Math.cos(groupRot);
+                  const sinR = Math.sin(groupRot);
+                  // Apply translation correction to prevent visually shifting the pivot away from the fixed edge
+                  const tx = (dCx * cosR - dCy * sinR) - dCx;
+                  const ty = (dCx * sinR + dCy * cosR) - dCy;
+                  stroke.points.forEach(p => { p.x += tx; p.y += ty; });
+              }
               
               if (stroke.type === 'axis' || stroke.type === 'text') {
                   const scaleX = origW === 0 ? 1 : Math.abs((newMaxX - newMinX) / origW);
@@ -2532,6 +2802,13 @@
           
           if (state.isResizingStroke) {
             state.isResizingStroke = false; state.initialPointsBoundsForResize = null; saveHistory(); return;
+          }
+
+          if (state.isRotatingStroke) {
+            state.isRotatingStroke = false;
+            state.rotationCenter = null;
+            state.initialStrokesForMove = null;
+            saveHistory(); return;
           }
 
           if (state.isMarqueeSelecting) {
@@ -2736,6 +3013,12 @@
     window.addEventListener('blur', () => {
         if (state.isAltSelecting) { state.isAltSelecting = false; setTool(state.previousToolForAlt); }
         if (state.isRightClickErasing) { state.isRightClickErasing = false; setTool(state.previousTool); }
+        if (state.isRotatingStroke) {
+          state.isRotatingStroke = false;
+          state.rotationCenter = null;
+          state.initialStrokesForMove = null;
+          saveHistory();
+        }
         isoConstraintPressed = false;
     });
 
@@ -2747,10 +3030,12 @@
       state.isDrawing = false;
       state.isMovingStroke = false;
       state.isResizingStroke = false;
+      state.isRotatingStroke = false;
       state.isMarqueeSelecting = false;
       state.tempStroke = null;
       state.initialStrokesForMove = null;
       state.initialPointsBoundsForResize = null;
+      state.rotationCenter = null;
       state.selectedStrokes = [];
       
       triggerRedraw();
