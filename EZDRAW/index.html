@@ -1157,6 +1157,7 @@
       isMovingStroke: false,
       isResizingStroke: false,
       isRotatingStroke: false,
+      hasModifiedStroke: false,
       resizeHandle: -1,
       rotationStartAngle: 0,
       rotationCenter: null,
@@ -1198,6 +1199,19 @@
       if (state.historyIndex < state.history.length - 1) {
         state.history = state.history.slice(0, state.historyIndex + 1);
       }
+      
+      const serializeForCompare = (strokes) => {
+          try {
+              return JSON.stringify(strokes, (k, v) => (k === 'img' || k === 'bounds') ? undefined : v);
+          } catch (e) { return null; }
+      };
+      
+      const currentStateStr = serializeForCompare(state.strokes);
+      if (state.history.length > 0) {
+          const lastStateStr = serializeForCompare(state.history[state.history.length - 1]);
+          if (currentStateStr !== null && currentStateStr === lastStateStr) return;
+      }
+      
       state.history.push(cloneStrokes(state.strokes));
       if (state.history.length > 50) state.history.shift();
       state.historyIndex = state.history.length - 1;
@@ -1206,6 +1220,8 @@
 
     function undo() {
       if (state.historyIndex > 0) {
+        state.isDrawing = state.isMovingStroke = state.isResizingStroke = state.isRotatingStroke = state.isMarqueeSelecting = false;
+        state.tempStroke = state.initialStrokesForMove = state.initialPointsBoundsForResize = state.rotationCenter = null;
         state.historyIndex--;
         state.strokes = cloneStrokes(state.history[state.historyIndex]);
         state.selectedStrokes = [];
@@ -1215,6 +1231,8 @@
 
     function redo() {
       if (state.historyIndex < state.history.length - 1) {
+        state.isDrawing = state.isMovingStroke = state.isResizingStroke = state.isRotatingStroke = state.isMarqueeSelecting = false;
+        state.tempStroke = state.initialStrokesForMove = state.initialPointsBoundsForResize = state.rotationCenter = null;
         state.historyIndex++;
         state.strokes = cloneStrokes(state.history[state.historyIndex]);
         state.selectedStrokes = [];
@@ -2127,11 +2145,15 @@
           let modified = false;
           state.selectedStrokes.forEach(s => {
               if (s.type === 'fill') {
-                  recolorFill(s, color);
-                  modified = true;
+                  if (s.color !== color) {
+                      recolorFill(s, color);
+                      modified = true;
+                  }
               } else if (s.type !== 'image') {
-                  s.color = color;
-                  modified = true;
+                  if (s.color !== color) {
+                      s.color = color;
+                      modified = true;
+                  }
               }
           });
           if (modified) { saveHistory(); triggerRedraw(); }
@@ -2441,11 +2463,14 @@
         { x: box.minX, y: box.minY, sx: -1, sy: -1 }, { x: box.maxX, y: box.minY, sx: 1, sy: -1 },
         { x: box.maxX, y: box.maxY, sx: 1, sy: 1 }, { x: box.minX, y: box.maxY, sx: -1, sy: 1 }
       ];
-      const minDistance = Math.max(10, 8 / state.zoom), maxDistance = minDistance + 22 / state.zoom;
+      const handleSize = Math.max(10, 8 / state.zoom);
+      const rotationZone = handleSize + 24 / state.zoom;
       return corners.find(corner => {
         const dx = point.x - corner.x, dy = point.y - corner.y;
-        return dx * corner.sx > minDistance && dy * corner.sy > minDistance &&
-          Math.hypot(dx, dy) >= minDistance && Math.hypot(dx, dy) <= maxDistance;
+        if (Math.hypot(dx, dy) > rotationZone) return false;
+        // Reject clicks deeply inside the inner quadrant of the shape to avoid conflict with moving
+        if (dx * corner.sx < 0 && dy * corner.sy < 0) return false;
+        return true;
       });
     }
 
@@ -2553,6 +2578,7 @@
                 const rotCorner = getRotationCornerAtPoint(testWorld, box);
                 if (rotCorner) {
                     state.isRotatingStroke = true;
+                    state.hasModifiedStroke = false;
                     const worldBoxCenter = groupRot ? rotCenter : { x: (box.minX + box.maxX)/2, y: (box.minY + box.maxY)/2 };
                     state.rotationStartAngle = Math.atan2(rawWorld.y - worldBoxCenter.y, rawWorld.x - worldBoxCenter.x);
                     state.rotationCenter = worldBoxCenter;
@@ -2565,6 +2591,7 @@
 
         if (hitHandle !== -1) {
             state.isResizingStroke = true;
+            state.hasModifiedStroke = false;
             state.resizeHandle = hitHandle;
             state.startCoords = rawWorld;
             const getOriginalData = s => s.type === 'group' ? { type: 'group', strokes: s.strokes.map(getOriginalData) } : { points: s.points ? s.points.map(p => ({x: p.x, y: p.y})) : null, scale: s.scale || 1, rotation: s.rotation || 0, width: s.width };
@@ -2598,6 +2625,7 @@
                 }
                 if (state.selectedStrokes.length > 0) {
                     state.isMovingStroke = true;
+                    state.hasModifiedStroke = false;
                     state.startCoords = rawWorld;
                     const getOriginalData = s => s.type === 'group' ? { type: 'group', strokes: s.strokes.map(getOriginalData) } : { points: s.points ? s.points.map(p => ({x: p.x, y: p.y})) : null, scale: s.scale || 1, rotation: s.rotation || 0 };
                     state.initialStrokesForMove = state.selectedStrokes.map(s => JSON.stringify(getOriginalData(s)));
@@ -2609,6 +2637,7 @@
                     state.selectedStrokes = [clickedOnStroke];
                 }
                 state.isMovingStroke = true;
+                state.hasModifiedStroke = false;
                 state.startCoords = rawWorld;
                 const getOriginalData = s => s.type === 'group' ? { type: 'group', strokes: s.strokes.map(getOriginalData) } : { points: s.points ? s.points.map(p => ({x: p.x, y: p.y})) : null, scale: s.scale || 1, rotation: s.rotation || 0 };
                 state.initialStrokesForMove = state.selectedStrokes.map(s => JSON.stringify(getOriginalData(s)));
@@ -2713,6 +2742,7 @@
       }
 
       if (state.isRotatingStroke && state.selectedStrokes.length > 0) {
+          state.hasModifiedStroke = true;
           let angle = Math.atan2(rawWorld.y - state.rotationCenter.y, rawWorld.x - state.rotationCenter.x) - state.rotationStartAngle;
           if (e.shiftKey) angle = Math.round(angle / (Math.PI / 12)) * (Math.PI / 12);
           state.selectedStrokes.forEach((stroke, i) => {
@@ -2734,6 +2764,7 @@
       }
 
       if (state.isResizingStroke) {
+          state.hasModifiedStroke = true;
           let dx = rawWorld.x - state.startCoords.x;
           let dy = rawWorld.y - state.startCoords.y;
           
@@ -2830,6 +2861,7 @@
       }
 
       if (state.isMovingStroke && state.selectedStrokes.length > 0) {
+        state.hasModifiedStroke = true;
         let dx = rawWorld.x - state.startCoords.x;
         let dy = rawWorld.y - state.startCoords.y;
         
@@ -2943,14 +2975,17 @@
           state.actionSnapActive = false;
           
           if (state.isResizingStroke) {
-            state.isResizingStroke = false; state.initialPointsBoundsForResize = null; saveHistory(); return;
+            state.isResizingStroke = false; state.initialPointsBoundsForResize = null; 
+            if (state.hasModifiedStroke) saveHistory(); 
+            return;
           }
 
           if (state.isRotatingStroke) {
             state.isRotatingStroke = false;
             state.rotationCenter = null;
             state.initialStrokesForMove = null;
-            saveHistory(); return;
+            if (state.hasModifiedStroke) saveHistory(); 
+            return;
           }
 
           if (state.isMarqueeSelecting) {
@@ -2975,43 +3010,52 @@
                 if (!s.bounds) return false;
                 if (!rectIntersect(s.bounds.minX, s.bounds.minY, s.bounds.maxX, s.bounds.maxY, minX, minY, maxX, maxY)) return false;
                 
-                if (s.type === 'image' || s.type === 'fill') {
-                    if (!s.img) return true;
-                    const ixMin = Math.max(minX, s.bounds.minX), ixMax = Math.min(maxX, s.bounds.maxX);
-                    const iyMin = Math.max(minY, s.bounds.minY), iyMax = Math.min(maxY, s.bounds.maxY);
-                    if (ixMin > ixMax || iyMin > iyMax) return false;
-                    const ctx = s.img.getContext ? s.img.getContext('2d', { willReadFrequently: true }) : null;
-                    if (!ctx) return true;
-                    const [p1, p2] = s.points;
-                    const bMinX = Math.min(p1.x, p2.x), bMinY = Math.min(p1.y, p2.y);
-                    const w = Math.max(p1.x, p2.x) - bMinX, h = Math.max(p1.y, p2.y) - bMinY;
-                    const stepsX = Math.min(10, Math.max(1, ixMax - ixMin)), stepsY = Math.min(10, Math.max(1, iyMax - iyMin));
-                    for (let i = 0; i <= stepsX; i++) {
-                        for (let j = 0; j <= stepsY; j++) {
-                            const px = ixMin + (ixMax - ixMin) * (i / stepsX), py = iyMin + (iyMax - iyMin) * (j / stepsY);
-                            const imgX = Math.floor(((px - bMinX) / w) * s.img.width), imgY = Math.floor(((py - bMinY) / h) * s.img.height);
-                            if (imgX >= 0 && imgX < s.img.width && imgY >= 0 && imgY < s.img.height) {
-                                if (ctx.getImageData(imgX, imgY, 1, 1).data[3] > 0) return true;
+                const checkStroke = (stroke) => {
+                    if (stroke.type === 'group') {
+                        return stroke.strokes.some(checkStroke);
+                    }
+                    
+                    if (stroke.type === 'image' || stroke.type === 'fill') {
+                        if (!stroke.img) return true;
+                        const ixMin = Math.max(minX, stroke.bounds.minX), ixMax = Math.min(maxX, stroke.bounds.maxX);
+                        const iyMin = Math.max(minY, stroke.bounds.minY), iyMax = Math.min(maxY, stroke.bounds.maxY);
+                        if (ixMin > ixMax || iyMin > iyMax) return false;
+                        const ctx = stroke.img.getContext ? stroke.img.getContext('2d', { willReadFrequently: true }) : null;
+                        if (!ctx) return true;
+                        const [p1, p2] = stroke.points;
+                        const bMinX = Math.min(p1.x, p2.x), bMinY = Math.min(p1.y, p2.y);
+                        const w = Math.max(p1.x, p2.x) - bMinX, h = Math.max(p1.y, p2.y) - bMinY;
+                        const stepsX = Math.min(10, Math.max(1, ixMax - ixMin)), stepsY = Math.min(10, Math.max(1, iyMax - iyMin));
+                        for (let i = 0; i <= stepsX; i++) {
+                            for (let j = 0; j <= stepsY; j++) {
+                                const px = ixMin + (ixMax - ixMin) * (i / stepsX), py = iyMin + (iyMax - iyMin) * (j / stepsY);
+                                const imgX = Math.floor(((px - bMinX) / w) * stroke.img.width), imgY = Math.floor(((py - bMinY) / h) * stroke.img.height);
+                                if (imgX >= 0 && imgX < stroke.img.width && imgY >= 0 && imgY < stroke.img.height) {
+                                    if (ctx.getImageData(imgX, imgY, 1, 1).data[3] > 0) return true;
+                                }
                             }
+                        }
+                        return false;
+                    }
+                    
+                    if (stroke.type === 'text') {
+                        const r = (stroke.size * (stroke.scale || 1)) / 2;
+                        return rectIntersect(stroke.points[0].x - r, stroke.points[0].y - r, stroke.points[0].x + r, stroke.points[0].y + r, minX, minY, maxX, maxY);
+                    }
+                    
+                    const polylines = (stroke.type === 'pen' || stroke.type === 'line') ? [stroke] : shapeToPolylines(stroke);
+                    for (let poly of polylines) {
+                        const pts = poly.points;
+                        if (!pts) continue;
+                        if (pts.length === 1 && pts[0].x >= minX && pts[0].x <= maxX && pts[0].y >= minY && pts[0].y <= maxY) return true;
+                        for (let i = 0; i < pts.length - 1; i++) {
+                            if (lineRectIntersect(pts[i], pts[i+1], minX, minY, maxX, maxY)) return true;
                         }
                     }
                     return false;
-                }
+                };
                 
-                if (s.type === 'text') {
-                    const r = (s.size * (s.scale || 1)) / 2;
-                    return rectIntersect(s.points[0].x - r, s.points[0].y - r, s.points[0].x + r, s.points[0].y + r, minX, minY, maxX, maxY);
-                }
-                
-                const polylines = (s.type === 'pen' || s.type === 'line') ? [s] : shapeToPolylines(s);
-                for (let poly of polylines) {
-                    const pts = poly.points;
-                    if (pts.length === 1 && pts[0].x >= minX && pts[0].x <= maxX && pts[0].y >= minY && pts[0].y <= maxY) return true;
-                    for (let i = 0; i < pts.length - 1; i++) {
-                        if (lineRectIntersect(pts[i], pts[i+1], minX, minY, maxX, maxY)) return true;
-                    }
-                }
-                return false;
+                return checkStroke(s);
             });
 
             if (e.ctrlKey || e.metaKey) {
@@ -3026,7 +3070,9 @@
           }
 
           if (state.isMovingStroke) {
-            state.isMovingStroke = false; state.initialStrokesForMove = null; saveHistory(); return;
+            state.isMovingStroke = false; state.initialStrokesForMove = null; 
+            if (state.hasModifiedStroke) saveHistory(); 
+            return;
           }
 
           if (!state.isDrawing) return;
@@ -3351,9 +3397,11 @@
           let modified = false;
           state.selectedStrokes.forEach(s => {
               if (s.type !== 'image' && s.type !== 'text') {
-                  s.width = state.width;
-                  computeStrokeBounds(s);
-                  modified = true;
+                  if (s.width !== state.width) {
+                      s.width = state.width;
+                      computeStrokeBounds(s);
+                      modified = true;
+                  }
               }
           });
           if (modified) { saveHistory(); triggerRedraw(); }
@@ -3553,11 +3601,25 @@
 
       // 2. Fall back to OS clipboard image if present
       let foundImage = false;
-      for (const item of e.clipboardData.items) {
-        if (item.type.indexOf('image') === 0) {
-          handleImageFile(item.getAsFile(), x, y);
-          foundImage = true;
-          break;
+      if (e.clipboardData.files && e.clipboardData.files.length > 0) {
+        for (let i = 0; i < e.clipboardData.files.length; i++) {
+          if (e.clipboardData.files[i].type.startsWith('image/')) {
+            handleImageFile(e.clipboardData.files[i], x, y);
+            foundImage = true;
+            break;
+          }
+        }
+      }
+      if (!foundImage && e.clipboardData.items) {
+        for (let i = 0; i < e.clipboardData.items.length; i++) {
+          if (e.clipboardData.items[i].type.indexOf('image') === 0) {
+            const file = e.clipboardData.items[i].getAsFile();
+            if (file) {
+              handleImageFile(file, x, y);
+              foundImage = true;
+              break;
+            }
+          }
         }
       }
       if (foundImage) return;
