@@ -876,7 +876,8 @@
       <kbd>Ctrl+Click</kbd> <span>Add or remove individual objects from selection</span>
       <kbd>Ctrl+Shift</kbd> <span>(while moving) Snap movement to 45°</span>
       <kbd>Ctrl+D</kbd> <span>Duplicate Selection</span>
-      <kbd>Ctrl+M</kbd> <span>Merge Selected Objects</span>
+      <kbd>Ctrl+G</kbd> <span>Group Selected Objects</span>
+      <kbd>Ctrl+Shift+G</kbd> <span>Ungroup Selected Objects</span>
       <kbd>Ctrl+Wheel</kbd> <span>With selection: Move Layer up/down</span>
       <kbd>F</kbd> <span>Focus Custom Color Picker</span>
       <kbd>G</kbd> <span>Toggle Infinite Grid</span>
@@ -899,7 +900,8 @@
   <div id="shape-context-menu" class="hidden">
 	<button class="context-btn" id="btn-duplicate">Duplicate (Ctrl+D)</button>
     <button class="context-btn" id="btn-copy">Copy (Ctrl+C)</button>
-    <button class="context-btn hidden" id="btn-merge">Merge (Ctrl+M)</button>
+    <button class="context-btn hidden" id="btn-merge">Group (Ctrl+G)</button>
+    <button class="context-btn hidden" id="btn-ungroup">Ungroup (Ctrl+Shift+G)</button>
     <button class="context-btn" id="btn-layer-top">Move to Top</button>
     <button class="context-btn" id="btn-layer-bottom">Move to Bottom</button>
     <button class="context-btn hidden" id="btn-invert-image">Invert Colors</button>
@@ -2039,9 +2041,11 @@
           const nonImageSelected = state.selectedStrokes.some(s => s.type !== 'image');
           const hasAngleControl = state.selectedStrokes.some(s => s.type === 'ellipse' || s.type === 'rect' || s.type === 'triangle');
           const isDashedEnabled = nonImageSelected && state.selectedStrokes.some(s => s.isDashed);
+          const isGroup = state.selectedStrokes.length === 1 && state.selectedStrokes[0].type === 'group';
           
           document.getElementById('btn-invert-image').classList.toggle('hidden', !hasImage);
           document.getElementById('btn-merge').classList.toggle('hidden', state.selectedStrokes.length < 2);
+          document.getElementById('btn-ungroup').classList.toggle('hidden', !isGroup);
           document.getElementById('ellipse-angle-wrapper').classList.toggle('hidden', !hasAngleControl);
           
           document.getElementById('dashed-toggle-wrapper').classList.toggle('hidden', !nonImageSelected);
@@ -2250,6 +2254,40 @@
         state.strokes = state.strokes.filter(s => !state.selectedStrokes.includes(s));
         state.strokes.push(mergedStroke);
         state.selectedStrokes = [mergedStroke];
+        saveHistory();
+        
+        state.duplicateFlashStart = performance.now();
+        const flashAnim = () => {
+            if (state.duplicateFlashStart && performance.now() - state.duplicateFlashStart < 600) {
+                triggerRedraw();
+                requestAnimationFrame(flashAnim);
+            } else if (state.duplicateFlashStart) {
+                state.duplicateFlashStart = 0;
+                triggerRedraw();
+            }
+        };
+        requestAnimationFrame(flashAnim);
+    }
+
+    function ungroupSelection() {
+        if (state.selectedStrokes.length !== 1 || state.selectedStrokes[0].type !== 'group') return;
+        
+        const shapeContextMenu = document.getElementById('shape-context-menu');
+        if (shapeContextMenu && !shapeContextMenu.classList.contains('hidden')) {
+            shapeContextMenu.classList.add('hidden');
+        }
+
+        const group = state.selectedStrokes[0];
+        const newStrokes = cloneStrokes(group.strokes).map(s => {
+            delete s.id;
+            ensureStrokeId(s);
+            computeStrokeBounds(s);
+            return s;
+        });
+        
+        state.strokes = state.strokes.filter(s => s !== group);
+        state.strokes.push(...newStrokes);
+        state.selectedStrokes = newStrokes;
         saveHistory();
         
         state.duplicateFlashStart = performance.now();
@@ -2745,6 +2783,13 @@
           state.hasModifiedStroke = true;
           let angle = Math.atan2(rawWorld.y - state.rotationCenter.y, rawWorld.x - state.rotationCenter.x) - state.rotationStartAngle;
           if (e.shiftKey) angle = Math.round(angle / (Math.PI / 12)) * (Math.PI / 12);
+          
+          let groupCenter = state.rotationCenter;
+          if (state.selectedStrokes.length > 1) {
+              const gb = getRawGroupBounds(state.selectedStrokes.map((s, idx) => JSON.parse(state.initialStrokesForMove[idx])));
+              if (gb) groupCenter = { x: (gb.minX + gb.maxX) / 2, y: (gb.minY + gb.maxY) / 2 };
+          }
+
           state.selectedStrokes.forEach((stroke, i) => {
               const original = JSON.parse(state.initialStrokesForMove[i]);
               const rotatePoints = (t, o) => {
@@ -2752,8 +2797,15 @@
                       t.strokes.forEach((sub, j) => rotatePoints(sub, o.strokes[j]));
                   } else if (t.points) {
                       const oldCenter = getStrokeTransformCenter(o);
-                      const newCenter = rotatePoint(oldCenter, state.rotationCenter, angle);
+                      const newCenter = rotatePoint(oldCenter, groupCenter, angle);
                       t.points = o.points.map(point => ({ x: point.x + newCenter.x - oldCenter.x, y: point.y + newCenter.y - oldCenter.y }));
+                      
+                      if (t.type === 'ellipse') {
+                          // Preserve explicit sweep angles exactly as drawn; context rotation handles visual orbit
+                          if (o.startAngle !== undefined) t.startAngle = o.startAngle;
+                          if (o.endAngle !== undefined) t.endAngle = o.endAngle;
+                      }
+                      // Apply standard rigid-body context rotation universally to all shapes
                       t.rotation = (o.rotation || 0) + angle;
                   }
               };
@@ -2845,7 +2897,15 @@
                       }
                       const scaleX = origW === 0 ? 1 : Math.abs((newMaxX - newMinX) / origW);
                       const scaleY = origH === 0 ? 1 : Math.abs((newMaxY - newMinY) / origH);
-                      const maxScale = Math.max(scaleX, scaleY);
+                      let maxScale = 1;
+                      if (state.resizeHandle === 4 || state.resizeHandle === 6) {
+                          maxScale = scaleY;
+                      } else if (state.resizeHandle === 5 || state.resizeHandle === 7) {
+                          maxScale = scaleX;
+                      } else {
+                          maxScale = (origW === 0 && origH === 0) ? 1 : Math.hypot(newMaxX - newMinX, newMaxY - newMinY) / Math.hypot(origW, origH);
+                      }
+                      
                       if (t.type === 'axis' || t.type === 'text') {
                           t.scale = (o.scale || 1) * maxScale;
                       }
@@ -3045,8 +3105,12 @@
                     
                     const polylines = (stroke.type === 'pen' || stroke.type === 'line') ? [stroke] : shapeToPolylines(stroke);
                     for (let poly of polylines) {
-                        const pts = poly.points;
+                        let pts = poly.points;
                         if (!pts) continue;
+                        if (stroke.rotation) {
+                            const center = getStrokeTransformCenter(stroke);
+                            pts = pts.map(p => rotatePoint(p, center, stroke.rotation));
+                        }
                         if (pts.length === 1 && pts[0].x >= minX && pts[0].x <= maxX && pts[0].y >= minY && pts[0].y <= maxY) return true;
                         for (let i = 0; i < pts.length - 1; i++) {
                             if (lineRectIntersect(pts[i], pts[i+1], minX, minY, maxX, maxY)) return true;
@@ -3175,7 +3239,8 @@
       if (key === 'z' && !e.shiftKey && (e.ctrlKey || e.metaKey)) { e.preventDefault(); undo(); }
       if ((key === 'y' && (e.ctrlKey || e.metaKey)) || (key === 'z' && e.shiftKey && (e.ctrlKey || e.metaKey))) { e.preventDefault(); redo(); }
       if (key === 'd' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); duplicateSelection(); }
-      if (key === 'm' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); mergeSelection(); }
+      if (key === 'g' && (e.ctrlKey || e.metaKey) && !e.shiftKey) { e.preventDefault(); mergeSelection(); }
+      if (key === 'g' && (e.ctrlKey || e.metaKey) && e.shiftKey) { e.preventDefault(); ungroupSelection(); }
       if (e.key === 'Delete' || e.key === 'Backspace') {
         if (state.tool === 'selector' && state.selectedStrokes.length > 0) {
           state.strokes = state.strokes.filter(s => !state.selectedStrokes.includes(s));
@@ -3421,6 +3486,7 @@
     document.getElementById('btn-copy').addEventListener('click', () => copySelectionToClipboard());
     document.getElementById('btn-duplicate').addEventListener('click', () => duplicateSelection());
     document.getElementById('btn-merge').addEventListener('click', () => mergeSelection());
+    document.getElementById('btn-ungroup').addEventListener('click', () => ungroupSelection());
 
     document.getElementById('btn-layer-top').addEventListener('click', () => {
         if (state.selectedStrokes.length === 0) return;
