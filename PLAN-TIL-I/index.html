@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TIL-Ingegneria Study Plan (Aggiornato)</title>
+    <title>TIL-Ingegneria 5-Day Bootcamp</title>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,13 +15,13 @@
 
     <style>
         :root {
-            --bg-color: #9b9b9b;
+            --bg-color: #18181b; /* Scurito per un look più "focus" */
             --text-main: #f4f4f5;
             --text-muted: #a1a1aa;
             
-            --glass-bg: rgba(24, 24, 27, 0.4);
+            --glass-bg: rgba(24, 24, 27, 0.6);
             --glass-border: rgba(255, 255, 255, 0.08);
-            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
             
             --accent-math: #60a5fa;
             --accent-physics: #fb923c;
@@ -30,9 +30,9 @@
             --accent-it: #94a3b8;
             --accent-rep: #f472b6;
             
-            --blob-1: #cbcbcb;
-			--blob-2: #f1f1f1;
-			--blob-3: #ffffff;    
+            --blob-1: #3f3f46;
+			--blob-2: #27272a;
+			--blob-3: #52525b;    
         }
 
         * {
@@ -118,6 +118,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            color: #ef4444; /* Rosso urgenza */
         }
 
         .progress-container { width: 100%; }
@@ -140,12 +141,11 @@
 
         .progress-bar-fill {
             height: 100%;
-            background: var(--text-main);
+            background: #ef4444;
             width: 0%;
             transition: width 0.4s ease;
         }
         
-        /* Data Import/Export Actions */
         .data-actions {
             display: flex;
             gap: 8px;
@@ -174,11 +174,6 @@
             background: rgba(255, 255, 255, 0.1);
             color: var(--text-main);
             border-color: rgba(255, 255, 255, 0.15);
-        }
-
-        .data-actions button svg {
-            width: 14px;
-            height: 14px;
         }
 
         .timeline {
@@ -241,7 +236,7 @@
 
         /* Task Card */
         .task-card {
-            background: rgba(0,0,0,0.2);
+            background: rgba(0,0,0,0.3);
             border: 1px solid var(--glass-border);
             border-radius: 12px;
             padding: 20px;
@@ -251,11 +246,11 @@
         }
 
         .task-card:hover {
-            background: rgba(255,255,255,0.03);
-            border-color: rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.2);
         }
 
-        .task-card.completed { opacity: 0.1; background: rgba(0,0,0,0.4); }
+        .task-card.completed { opacity: 0.3; background: rgba(0,0,0,0.5); }
 
         .checkbox-wrapper { padding-top: 4px; }
 
@@ -327,7 +322,7 @@
         }
 
         .llm-prompt {
-            background: rgba(0,0,0,0.3);
+            background: rgba(0,0,0,0.4);
             padding: 16px;
             border-radius: 8px;
             border-left: 3px solid rgba(255,255,255,0.2);
@@ -358,7 +353,6 @@
         .subj-it { color: var(--accent-it); border-color: rgba(148, 163, 184, 0.3); background: rgba(148, 163, 184, 0.05); }
         .subj-sim { color: #facc15; border-color: rgba(250, 204, 21, 0.3); background: rgba(250, 204, 21, 0.05); }
 
-        /* Special Days */
         .special-day-container {
             display: flex;
             flex-direction: column;
@@ -394,10 +388,10 @@
         
         <aside class="glass-panel sidebar">
             <div class="sidebar-header">
-                <h1><i data-lucide="graduation-cap"></i> Plan TIL-I</h1>
+                <h1><i data-lucide="flame"></i> TIL 5-Day Sprint</h1>
                 <div class="progress-container">
                     <div class="progress-stats">
-                        <span>Progresso globale</span>
+                        <span>Progresso Bootcamp</span>
                         <span id="progress-text">0%</span>
                     </div>
                     <div class="progress-bar-bg">
@@ -405,7 +399,6 @@
                     </div>
                 </div>
                 
-                <!-- Import / Export Actions -->
                 <div class="data-actions">
                     <button onclick="triggerImport()" title="Carica progresso salvato">
                         <i data-lucide="upload"></i> Importa
@@ -414,9 +407,7 @@
                         <i data-lucide="download"></i> Esporta
                     </button>
                 </div>
-                <!-- Hidden file input for import -->
                 <input type="file" id="import-file" accept=".json" style="display: none;" onchange="handleImport(event)">
-
             </div>
             <div class="timeline" id="timeline"></div>
         </aside>
@@ -429,138 +420,83 @@
     </div>
 
     <script>
-        // -- Data Definition --
-        // Organizzato per l'11 Luglio 2026. Giorno 1 e 2 mantenuti per i dati completati storici.
+        // -- NUOVO PIANO DI STUDI: BOOTCAMP DI 5 GIORNI --
+        // Regola base: Esercizi PRIMA della teoria. Teoria solo sugli errori. Ottimizzazione del tempo.
         const studyPlan = [
             {
-                date: "2026-07-02", label: "02 Luglio", type: "studio",
-                title: "Giorno 1: Fondamenti Algebra e Cinematica (Completato)",
-                desc: "Attività storiche completate.",
+                date: "2026-07-02", label: "02 Luglio", type: "storico",
+                title: "Giorno 1: Storico Completato",
+                desc: "Attività completate prima del cambio di strategia.",
                 tasks: [
-                    { id: "02-1", subj: "math", subjLabel: "Matematica", time: "2h 30m", type: "Teoria + Esercizi", title: "Insiemi numerici, Monomi, Polinomi", prompt: "Agisci come tutor per il test di ammissione TIL-Ingegneria. Spiega in modo conciso le regole di base dei numeri reali (frazioni, potenze, radicali). Successivamente, genera 10 espressioni con monomi e polinomi (inclusa fattorizzazione e prodotti notevoli) con livello di difficoltà da test universitario. Non fornire le soluzioni subito; aspetta che te le chieda." },
-                    { id: "02-2", subj: "physics", subjLabel: "Fisica", time: "2h 30m", type: "Teoria + Esercizi", title: "Vettori, Grandezze e Cinematica 1D", prompt: "Agisci come tutor per il test TIL-Ingegneria. Fornisci un breve riassunto sulle unità di misura del Sistema Internazionale e sulla scomposizione dei vettori (somma, differenza, prodotto scalare). Spiega poi le leggi orarie del moto rettilineo uniforme e uniformemente accelerato. Infine, genera 8 problemi pratici misti a risposta multipla (5 opzioni) su questi argomenti. Fornisci le soluzioni solo su mia richiesta." },
-                    { id: "02-3", subj: "logic", subjLabel: "Logica", time: "1h 00m", type: "Esercitazione", title: "Sillogismi e Deduzioni Base", prompt: "Agisci come creatore di test per il TIL-Ingegneria. Genera una batteria di 10 quiz a risposta multipla (5 opzioni) su deduzioni logiche e sillogismi classici. Fornisci solo le domande. Quando ti invierò le mie risposte (es. 1A, 2B), correggile e spiegami il ragionamento esatto per ogni eventuale errore." }
+                    { id: "02-1", subj: "math", subjLabel: "Matematica", time: "Completato", type: "Archivio", title: "Algebra Base", prompt: "Completato." },
+                    { id: "02-2", subj: "physics", subjLabel: "Fisica", time: "Completato", type: "Archivio", title: "Cinematica 1D", prompt: "Completato." }
                 ]
             },
             {
-                date: "2026-07-03", label: "03 Luglio", type: "studio",
-                title: "Giorno 2: Equazioni e Disequazioni (Parzialmente Completato)",
-                desc: "Solo la sezione di matematica completata prima dello stop.",
+                date: "2026-07-03", label: "03 Luglio", type: "storico",
+                title: "Giorno 2: Storico Completato",
+                desc: "Attività completate prima del cambio di strategia.",
                 tasks: [
-                    { id: "03-1", subj: "math", subjLabel: "Matematica", time: "2h 30m", type: "Teoria + Esercizi", title: "Equazioni e Disequazioni (I e II grado)", prompt: "Agisci come tutor di matematica per il TIL-Ingegneria. Ripassiamo le regole di risoluzione per equazioni e disequazioni di 1° e 2° grado (inclusi sistemi e studio del discriminante). Genera 15 esercizi rapidi a risposta multipla (5 opzioni) in cui devo trovare gli intervalli di soluzione. Dammi solo le domande, le soluzioni le chiederò dopo." }
+                    { id: "03-1", subj: "math", subjLabel: "Matematica", time: "Completato", type: "Archivio", title: "Equazioni e Disequazioni", prompt: "Completato." }
                 ]
             },
             {
-                date: "2026-07-11", label: "11 Luglio", type: "studio",
-                title: "Giorno 3: Meccanica e Logica d'Avvio",
-                desc: "Oggi recuperiamo le attività in sospeso e impostiamo il ritmo.",
+                date: "2026-07-15", label: "15 Luglio", type: "studio intensivo",
+                title: "Giorno 1 Sprint: Geometria Analitica e Dinamica",
+                desc: "Basta leggere, si passa ai test. Facciamo emergere le lacune sugli argomenti più probabili e colpiamo solo quelle.",
                 tasks: [
-                    { id: "03-2", subj: "physics", subjLabel: "Fisica", time: "2h 00m", type: "Teoria + Esercizi", title: "Cinematica 2D (Parabolico, Circolare)", prompt: "Agisci come tutor di fisica per il test universitario TIL. Spiegami le formule del moto parabolico e del moto circolare uniforme (velocità angolare, tangenziale, accelerazione centripeta). Genera poi 6 esercizi a risposta multipla (5 opzioni, assumendo g = 9.8 m/s²) su questi moti. Mostrami solo i testi dei problemi." },
-                    { id: "04-2", subj: "physics", subjLabel: "Fisica", time: "2h 30m", type: "Teoria + Esercizi", title: "Dinamica (Leggi di Newton e Attrito)", prompt: "Agisci come tutor di fisica per il TIL-Ingegneria. Spiega i 3 principi della dinamica e le formule per le forze (peso, elastica, attrito statico/dinamico, tensione). Proponimi 6 problemi a risposta multipla (5 opzioni) che coinvolgono piani inclinati, carrucole e masse collegate. Aspetta che io provi a risolverli." },
-                    { id: "03-4", subj: "logic", subjLabel: "Logica", time: "45m", type: "Esercitazione", title: "Condizioni Suff/Nec", prompt: "Agisci come tutor di logica per il test di ammissione a Ingegneria. Spiegami la differenza formale tra condizione necessaria e condizione sufficiente. Successivamente, crea 8 quiz a risposta multipla (5 opzioni) a trabocchetto su questo specifico argomento. Aspetta le mie risposte." },
-                    { id: "03-3", subj: "reading", subjLabel: "Comprensione", time: "45m", type: "Mantenimento", title: "Lettura Analitica", prompt: "Agisci come esaminatore per il test TIL-Ingegneria. Genera un testo di divulgazione scientifica di circa 400 parole. Formula poi 5 domande a risposta multipla (5 opzioni) basate RIGOROSAMENTE su ciò che è scritto nel testo (inferenze, significato di termini, scopo dell'autore). Aspetta le mie risposte per la correzione." }
+                    { id: "15-1", subj: "math", subjLabel: "Matematica", time: "1h 30m", type: "Drill Analitico", title: "Diagnostic: Rette, Circonferenze, Parabole", prompt: "Mancano 5 giorni al TIL-Ingegneria. Non spiegarmi la teoria in anticipo. Fammi un test diagnostico di 12 domande a risposta multipla (5 opzioni) su Geometria Analitica: Equazione della retta, parallelismo/perpendicolarità, circonferenza (centro/raggio) e parabola. Voglio solo le domande. Quando ti darò le risposte, dimmi quali ho sbagliato, spiegami SOLO la regola che mi manca e dammi il 'trucco' più veloce per risolverle senza fare troppi calcoli." },
+                    { id: "15-2", subj: "math", subjLabel: "Matematica", time: "1h 30m", type: "Drill Analitico", title: "Diagnostic: Esponenziali e Logaritmi", prompt: "Mancano 5 giorni al test TIL. Genera un test diagnostico di 10 domande a risposta multipla su proprietà dei logaritmi ed equazioni/disequazioni esponenziali. Inserisci casi tipici da test universitario. Aspetta le mie risposte, poi correggimi focalizzandoti sulle 'furbizie' algebriche per risolvere a occhio." },
+                    { id: "15-3", subj: "physics", subjLabel: "Fisica", time: "2h 00m", type: "Drill Analitico", title: "Diagnostic: Dinamica ed Energia", prompt: "Preparazione emergenza TIL. Genera 10 problemi a risposta multipla (5 opzioni) su: Leggi di Newton, attrito, lavoro, energia cinetica, energia potenziale e conservazione dell'energia. Mettimi alla prova. Non darmi soluzioni finché non rispondo. Se sbaglio, spiegami come avrei potuto escludere le risposte palesemente errate tramite l'analisi dimensionale o il buon senso fisico." },
+                    { id: "15-4", subj: "logic", subjLabel: "Logica", time: "1h 00m", type: "Speed Run", title: "Condizioni e Deduzioni", prompt: "Voglio massimizzare i punti in logica. Fammi un quiz di 10 domande a raffica su: condizione necessaria vs sufficiente, sillogismi e deduzioni. Dammi le domande una dopo l'altra oppure tutte insieme. Correggerai duramente i miei errori logici mostrandomi il 'metodo grafico' (diagrammi di Venn o frecce) per non sbagliare più." }
                 ]
             },
             {
-                date: "2026-07-12", label: "12 Luglio", type: "studio",
-                title: "Giorno 4: Geometria Coordinata e Rappresentazione",
-                desc: "Avvio della fase rapida. Intera geometria cartesiana bidimensionale.",
+                date: "2026-07-16", label: "16 Luglio", type: "simulazione",
+                title: "Giorno 2 Sprint: Prima Simulazione e Termo/Fluidi",
+                desc: "Primo scontro reale con il tempo. Scopriremo esattamente quanto siamo lenti e dove recuperare minuti preziosi.",
                 tasks: [
-                    { id: "04-1", subj: "math", subjLabel: "Matematica", time: "2h 30m", type: "Teoria + Esercizi", title: "Geometria Analitica (Retta e Circonferenza)", prompt: "Agisci come tutor per il TIL-Ingegneria. Spiegami l'equazione della retta nel piano cartesiano, le condizioni di parallelismo/perpendicolarità e la distanza punto-retta. Poi spiegami l'equazione della circonferenza. Genera 10 problemi a risposta multipla dove devo ricavare equazioni, centri, raggi o intersezioni. Soluzioni solo su richiesta." },
-                    { id: "05-1", subj: "math", subjLabel: "Matematica", time: "2h 00m", type: "Teoria + Esercizi", title: "Geometria Analitica (Ellisse, Parabola, Iperbole)", prompt: "Agisci come tutor per il test di ingegneria. Riassumi le equazioni canoniche e le proprietà (fuochi, vertici, asintoti) di ellisse, parabola e iperbole. Genera 8 quiz a risposta multipla (5 opzioni) in cui devo riconoscere la conica dall'equazione o trovarne gli elementi caratteristici. Non mostrare le soluzioni." },
-                    { id: "05-2", subj: "physics", subjLabel: "Fisica", time: "2h 30m", type: "Teoria + Esercizi", title: "Lavoro, Energia, Conservazione", prompt: "Agisci come tutor per il test TIL. Spiega i concetti di lavoro, potenza, energia cinetica, energia potenziale gravitazionale ed elastica. Illustra il teorema dell'energia cinetica e la conservazione dell'energia meccanica. Genera 8 problemi classici a risposta multipla (es. pendolo, montagne russe, blocco contro molla). Aspetta le mie risposte." },
-                    { id: "04-3", subj: "rep", subjLabel: "Rappresentazione", time: "1h 30m", type: "Teoria + Esercizi", title: "Fondamenti Proiezioni Ortogonali", prompt: "Agisci come professore di disegno tecnico per il test TIL. Spiegami dettagliatamente le basi delle proiezioni ortogonali (Pianta, Prospetto, Profilo). Poiché comunichiamo in modo testuale, descrivimi a parole 5 oggetti 3D semplici (es. un cubo con uno spigolo smussato) e ponimi delle domande a risposta multipla su come apparirebbero le loro viste bidimensionali." }
+                    { id: "16-1", subj: "sim", subjLabel: "Simulazione", time: "1h 30m", type: "Test A Tempo", title: "Simulazione Diagnostica (Full)", prompt: "Agisci come il sistema del Politecnico di Torino. Genera una simulazione completa del TIL-I: 42 domande (16 Mate, 10 Fisica, 5 Comprensione, 5 Logica, 3 Rappresentazione, 3 Informatica). Le opzioni sono 5. NON FORNIRE SOLUZIONI. Questa simulazione mi serve per calibrare il tempo (90 minuti). Aspetta il mio blocco di risposte (es. 1A, 2C...)." },
+                    { id: "16-2", subj: "sim", subjLabel: "Revisione", time: "1h 30m", type: "Autopsia Test", title: "Autopsia della Simulazione", prompt: "Ecco le domande della simulazione che ho sbagliato o saltato: [INCOLLA QUI DOMANDE E TUE RISPOSTE]. Non farmi una lezione accademica. Dimmi: 1) Quale formula o regola non sapevo? 2) C'era un modo per 'tirare a indovinare' con intelligenza escludendo opzioni assurde? 3) Questa domanda era da saltare a priori perché troppo lunga?" },
+                    { id: "16-3", subj: "physics", subjLabel: "Fisica", time: "2h 00m", type: "Drill Analitico", title: "Termodinamica e Fluidi Base", prompt: "Crash course pratico. Genera 10 quiz a risposta multipla su: Legge di Stevino, Archimede, equazione di stato dei gas ideali, calore specifico e I Principio della termodinamica. Domande classiche da test, niente calcoli mostruosi. Valuta le mie risposte e dammi un formulario ultra-compatto su questi due argomenti." },
+                    { id: "16-4", subj: "math", subjLabel: "Matematica", time: "1h 00m", type: "Drill Analitico", title: "Goniometria e Trigonometria Flash", prompt: "Trigonometria in pillole. Fammi 8 quiz a risposta multipla incentrati su: angoli notevoli, relazione fondamentale, formule di addizione (base) e grafici di seno/coseno. Verifica se so ricavare i valori a mente. Correggimi dopo." }
                 ]
             },
             {
-                date: "2026-07-13", label: "13 Luglio", type: "studio",
-                title: "Giorno 5: Funzioni Trascendenti, Fluidi e Termologia",
-                desc: "Copriamo logaritmi, trigonometria e meccanica dei fluidi.",
+                date: "2026-07-17", label: "17 Luglio", type: "studio intensivo",
+                title: "Giorno 3 Sprint: Elettromagnetismo e Punti Facili (IT/Rep)",
+                desc: "Giornata dedicata a raschiare il barile dei punti: le materie minori e i circuiti fisici che sono pura applicazione di formule.",
                 tasks: [
-                    { id: "06-1", subj: "math", subjLabel: "Matematica", time: "2h 30m", type: "Teoria + Esercizi", title: "Esponenziali e Logaritmi", prompt: "Agisci come tutor di matematica per il TIL. Definisci la funzione esponenziale e logaritmica. Elenca tutte le proprietà dei logaritmi (cambio base, somma, prodotto, potenze). Crea 12 quesiti a risposta multipla su equazioni e disequazioni esponenziali e logaritmiche di difficoltà crescente. Niente soluzioni in anticipo." },
-                    { id: "08-1", subj: "math", subjLabel: "Matematica", time: "2h 30m", type: "Teoria + Esercizi", title: "Goniometria e Trigonometria", prompt: "Agisci come tutor per il TIL-Ingegneria. Spiega la circonferenza goniometrica, le definizioni di seno, coseno, tangente, gli angoli notevoli, le formule principali (addizione, duplicazione) e la risoluzione dei triangoli rettangoli. Genera 10 quiz a risposta multipla su equazioni goniometriche ed espressioni. Non dare le soluzioni." },
-                    { id: "06-2", subj: "physics", subjLabel: "Fisica", time: "2h 00m", type: "Teoria + Esercizi", title: "Meccanica dei Fluidi", prompt: "Agisci come tutor di fisica per il test TIL. Spiega pressione idrostatica, legge di Stevino, spinta di Archimede, portata, equazione di continuità e teorema di Bernoulli/Torricelli. Genera 8 problemi a risposta multipla su galleggiamento, tubi a U e fori in serbatoi. Attendi le mie risposte." },
-                    { id: "07-3", subj: "physics", subjLabel: "Fisica", time: "1h 30m", type: "Teoria + Esercizi", title: "Calorimetria", prompt: "Agisci come tutor di fisica. Spiega in vista di un test a crocette i concetti di: temperatura, calore specifico, capacità termica, scambi di calore, equilibrio termico e calore latente nei cambi di stato. Genera 5 problemi a risposta multipla (5 opzioni) sul calcolo della temperatura di equilibrio." },
-                    { id: "06-3", subj: "it", subjLabel: "Informatica", time: "1h 30m", type: "Ripasso Rapido", title: "Ripasso generale IT", prompt: "Agisci come tutor informatico per il test TIL-Ingegneria. Conosco già la programmazione, quindi fammi un ripasso a punti strettissimo solo sui concetti teorici richiesti dal bando: differenze compilato/interpretato, modelli di sistema operativo, basi reti (IP, Firewall, Web Server), logica booleana e multithreading. Fai seguire 10 domande a risposta multipla su questi temi." }
-                ]
-            },
-            {
-                date: "2026-07-14", label: "14 Luglio", type: "simulazione",
-                title: "Giorno 6: Prima Simulazione e Termodinamica",
-                desc: "Primo test generale a tempo e completamento del modulo di termodinamica.",
-                tasks: [
-                    { id: "07-1", subj: "sim", subjLabel: "Simulazione", time: "1h 30m", type: "Test A Tempo", title: "Simulazione TIL-I #1", prompt: "Agisci come simulatore del test d'ammissione TIL-Ingegneria. Genera una prova completa a risposta multipla (5 opzioni per quesito): 16 Matematica, 5 Comprensione, 5 Logica, 10 Fisica, 3 Rappresentazione, 3 Informatica. Limita gli argomenti di Mate/Fisica a quelli base (fino a logaritmi e fluidi) inserendo solo un paio di quesiti più avanzati. Elencami tutte le 42 domande senza fornire alcuna soluzione. Aspetterai che io invii l'elenco delle mie risposte per procedere alla valutazione." },
-                    { id: "07-2", subj: "sim", subjLabel: "Revisione", time: "2h 00m", type: "Analisi Errori", title: "Correzione e Studio Errori #1", prompt: "Sono uno studente che si prepara per il TIL-Ingegneria. Ho sbagliato queste domande in una simulazione: [INCOLLARE QUI LE DOMANDE E LE MIE RISPOSTE SBAGLIATE]. Per ciascuna, spiegami passo-passo il ragionamento corretto per arrivare alla soluzione e riassumi la regola teorica che mi manca." },
-                    { id: "08-2", subj: "physics", subjLabel: "Fisica", time: "2h 30m", type: "Teoria + Esercizi", title: "Termodinamica (Gas e I Principio)", prompt: "Agisci come tutor di fisica. Ripassa la legge dei gas ideali e le trasformazioni (isobara, isocora, isoterma, adiabatica). Spiega il I principio della termodinamica (Lavoro, calore, variazione energia interna). Genera 8 problemi a risposta multipla (5 opzioni) su calcolo di lavoro e calore nei gas. Attendi le mie soluzioni." },
-                    { id: "09-2", subj: "physics", subjLabel: "Fisica", time: "2h 00m", type: "Teoria + Esercizi", title: "Termodinamica (II Principio e Cicli)", prompt: "Agisci come tutor di fisica per il TIL. Spiega gli enunciati del II principio della termodinamica (Kelvin, Clausius). Spiega il funzionamento e le formule di macchine termiche, macchine frigorifere, rendimento e Ciclo di Carnot. Genera 6 quiz a risposta multipla su questi argomenti." },
-                    { id: "05-3", subj: "logic", subjLabel: "Logica", time: "45m", type: "Esercitazione", title: "Negazione di proposizioni", prompt: "Agisci come tutor di logica. Spiegami le regole di De Morgan e come si negano affermazioni contenenti quantificatori (tutti, almeno uno, nessuno, solo). Poi, proponimi 10 frasi da negare tramite domande a risposta multipla (5 opzioni per ciascuna). Dammi solo i quiz." },
-                    { id: "08-3", subj: "logic", subjLabel: "Logica", time: "45m", type: "Esercitazione", title: "Ordinamenti e Relazioni", prompt: "Agisci come creatore di test TIL. Genera 5 complessi quiz di logica a risposta multipla basati su relazioni d'ordine e posizionamenti (es. 'A è più alto di B, C siede vicino ad A...'). Fornisci solo le domande." }
-                ]
-            },
-            {
-                date: "2026-07-15", label: "15 Luglio", type: "studio",
-                title: "Giorno 7: Funzioni Avanzate ed Elettrostatica",
-                desc: "Teoria fondamentale dei campi elettrici e dei moduli matematici.",
-                tasks: [
-                    { id: "09-1", subj: "math", subjLabel: "Matematica", time: "2h 00m", type: "Teoria + Esercizi", title: "Grafici di Funzioni Elementari e Traslazioni", prompt: "Agisci come tutor di matematica. Spiega come riconoscere l'andamento dei grafici di funzioni polinomiali, esponenziali, logaritmiche, trigonometriche e valore assoluto. Spiega l'effetto delle trasformazioni geometriche (es. f(x)+k, f(x-k), |f(x)|). Crea 10 quiz descrittivi a risposta multipla dove devo associare la descrizione di un grafico alla sua funzione, o viceversa." },
-                    { id: "10-1", subj: "math", subjLabel: "Matematica", time: "2h 30m", type: "Teoria + Esercizi", title: "Irrazionali e Valore Assoluto", prompt: "Agisci come tutor per il TIL-Ingegneria. Spiega rigorosamente i metodi risolutivi per equazioni e disequazioni irrazionali (indici pari/dispari) e con uno o più valori assoluti. Genera 10 quiz complessi a risposta multipla che richiedono l'applicazione di queste regole. Aspetta che io provi a risolverli." },
-                    { id: "10-2", subj: "physics", subjLabel: "Fisica", time: "2h 30m", type: "Teoria + Esercizi", title: "Elettrostatica (Legge Coulomb, Campo e Potenziale)", prompt: "Agisci come tutor di fisica per il test TIL. Spiega carica elettrica, Legge di Coulomb, e le definizioni/formule per campo elettrico e potenziale generati da cariche puntiformi. Genera 8 problemi a risposta multipla (5 opzioni) su forze e campi generati da sistemi di 2-3 cariche puntiformi." },
-                    { id: "12-2", subj: "physics", subjLabel: "Fisica", time: "2h 00m", type: "Teoria + Esercizi", title: "Elettrostatica (Conduttori, Dielettrici, Condensatori)", prompt: "Agisci come tutor di fisica. Spiega induzione elettrostatica, capacità elettrica, condensatori in serie/parallelo, energia immagazzinata e l'effetto di un dielettrico. Genera 6 quiz a risposta multipla per calcolare capacità equivalenti o differenze di potenziale. Soluzioni solo su richiesta." },
-                    { id: "09-3", subj: "rep", subjLabel: "Rappresentazione", time: "1h 00m", type: "Esercitazione", title: "Sezioni e Assonometrie", prompt: "Agisci come tutor per la sezione 'Conoscenze tecniche di base' (Rappresentazione). Spiega la differenza tra assonometria isometrica e cavaliera e il concetto di sezione tecnica. Genera 5 domande a risposta multipla testuali per testare il mio ragionamento spaziale su solidi intersecati o tagliati." },
-                    { id: "09-4", subj: "reading", subjLabel: "Comprensione", time: "45m", type: "Mantenimento", title: "Testo di natura storico-sociologica", prompt: "Agisci come esaminatore per il test TIL. Genera un brano di sociologia o storia di media complessità (circa 400 parole). Formula 5 domande a risposta multipla (5 opzioni) per valutare inferenze e comprensione del testo. Nessuna soluzione in anticipo." }
-                ]
-            },
-            {
-                date: "2026-07-16", label: "16 Luglio", type: "studio",
-                title: "Giorno 8: Geometria Solida, Circuiti e Ripasso Algebra",
-                desc: "Chiusura di tutti i moduli teorici prima della maratona di test finale.",
-                tasks: [
-                    { id: "12-1", subj: "math", subjLabel: "Matematica", time: "2h 00m", type: "Teoria + Esercizi", title: "Geometria Euclidea Piana e Solida", prompt: "Agisci come tutor per il test TIL. Fai un ripasso rapido dei teoremi di Euclide e Pitagora. Poi concentrati sulla geometria solida: elenca le formule di aree e volumi per cubo, parallelepipedo, piramide, cilindro, cono e sfera. Genera 8 quesiti a risposta multipla applicativi su questi solidi." },
-                    { id: "13-1", subj: "math", subjLabel: "Matematica", time: "2h 30m", type: "Ripasso", title: "Ripasso Attivo: Algebra ed Esponenziali", prompt: "Agisci come generatore di test per il TIL. Produci 20 quesiti a risposta multipla (5 opzioni) sfidanti che mescolino polinomi, radicali, equazioni, disequazioni (anche fratte), esponenziali e logaritmi. Fornisci solo i testi delle domande in modo che io possa cronometrarmi. Correggerai dopo le mie risposte." },
-                    { id: "13-2", subj: "physics", subjLabel: "Fisica", time: "2h 30m", type: "Teoria + Esercizi", title: "Circuiti in Corrente Continua", prompt: "Agisci come tutor di fisica per il test TIL. Spiega corrente, resistenza, resistività, leggi di Ohm, effetto Joule, resistori in serie/parallelo e le due leggi di Kirchhoff. Genera 8 problemi a risposta multipla per calcolare correnti, tensioni e potenze dissipate in semplici circuiti. Aspetta le mie risposte." },
-                    { id: "12-3", subj: "logic", subjLabel: "Logica", time: "1h 00m", type: "Esercitazione", title: "Mix Logica Deduttiva", prompt: "Agisci come creatore di test TIL. Genera un mix di 12 domande a risposta multipla (5 opzioni) di logica (suddivise tra ordinamenti, negazioni, condizione sufficiente/necessaria e sillogismi). Mostrami solo le domande e attendi le mie risposte." }
-                ]
-            },
-            {
-                date: "2026-07-17", label: "17 Luglio", type: "simulazione",
-                title: "Giorno 9: Seconda Simulazione e Drill Fisico/Comprensione",
-                desc: "Test su tutto il programma ministeriale e rafforzamento pratico.",
-                tasks: [
-                    { id: "14-1", subj: "sim", subjLabel: "Simulazione", time: "1h 30m", type: "Test A Tempo", title: "Simulazione TIL-I #2", prompt: "Agisci come simulatore del test TIL-Ingegneria del Politecnico. Genera una simulazione completa di 42 domande a risposta multipla (5 opzioni): 16 Matematica, 10 Fisica, 5 Comprensione testo, 5 Logica, 3 Rappresentazione, 3 Informatica. Copri TUTTO il programma ministeriale di un liceo scientifico, escluso il calcolo differenziale/integrale. Mostrami tutte le domande senza soluzioni e attendi l'elenco delle mie risposte (es. 1A, 2C) per fornirmi punteggio e correzione." },
-                    { id: "14-2", subj: "sim", subjLabel: "Revisione", time: "2h 00m", type: "Analisi Errori", title: "Analisi profonda simulazione #2", prompt: "Mi preparo al test TIL. Ho sbagliato domande sui seguenti argomenti specifici: [INSERIRE QUI GLI ARGOMENTI/CONCETTI SBAGLIATI]. Puoi spiegarmi brevemente la teoria che mi sfugge e generarmi 2 nuovi esercizi a risposta multipla per ciascuno di questi argomenti per verificare se ho capito?" },
-                    { id: "15-2", subj: "physics", subjLabel: "Fisica", time: "2h 30m", type: "Esercitazione", title: "Esercizi Misti: Cinematica, Dinamica, Energia", prompt: "Agisci come preparatore per il test TIL. Genera 15 quesiti a risposta multipla (5 opzioni) di meccanica classica (vettori, leggi del moto, forze, conservazione energia meccanica). Inserisci trabocchetti tipici dei test (es. unità di misura da convertire). Aspetta le mie risposte." },
-                    { id: "16-2", subj: "physics", subjLabel: "Fisica", time: "2h 30m", type: "Esercitazione", title: "Esercizi Misti: Termodinamica, Fluidi, Elettricità", prompt: "Agisci come preparatore per il test TIL. Genera 15 quesiti a risposta multipla (5 opzioni) misti su termodinamica (gas, principi, cicli), meccanica dei fluidi (Archimede, Bernoulli) e circuiti elettrici/elettrostatica. Solo le domande, per favore." },
-                    { id: "14-3", subj: "reading", subjLabel: "Comprensione", time: "45m", type: "Mantenimento", title: "Comprensione Avanzata", prompt: "Agisci come esaminatore TIL. Genera un testo filosofico o argomentativo denso (circa 400 parole). Formula 5 domande a risposta multipla a trabocchetto che testino la capacità di fare deduzioni basate ESCLUSIVAMENTE sul testo, e non sulla cultura generale. Attendi le mie risposte." }
+                    { id: "17-1", subj: "physics", subjLabel: "Fisica", time: "2h 00m", type: "Drill Analitico", title: "Elettrostatica e Circuiti", prompt: "Genera 12 quiz a risposta multipla su: Legge di Coulomb, Campo Elettrico, Potenziale e Circuiti DC (Leggi di Ohm, resistenze in serie/parallelo, potenza dissipata). Attendi le mie risposte. Se sbaglio le resistenze equivalenti, spiegami il metodo più veloce per calcolarle a mente." },
+                    { id: "17-2", subj: "rep", subjLabel: "Rappresentazione", time: "1h 00m", type: "Punti Facili", title: "Rappresentazione e Viste (Crash Course)", prompt: "Nel test TIL ci sono 3 domande di rappresentazione. Spiegami in 5 righe come funzionano le proiezioni ortogonali (Pianta, Prospetto, Profilo). Poi, fammi 5 test testuali di intelligenza spaziale (es. 'Immagina un cilindro tagliato obliquamente... che forma ha la sezione?')." },
+                    { id: "17-3", subj: "it", subjLabel: "Informatica", time: "1h 00m", type: "Punti Facili", title: "Informatica Teorica (Crash Course)", prompt: "Nel test TIL ci sono 3 domande di informatica di base (architettura, reti, OS, logica booleana). Riassumimi i concetti CHIAVE in elenchi puntati (es. differenza RAM/ROM, TCP/IP base, porte logiche AND/OR/NOT). Poi fammi 8 domande a risposta multipla su questi concetti." },
+                    { id: "17-4", subj: "reading", subjLabel: "Comprensione", time: "1h 00m", type: "Speed Run", title: "Comprensione: Lettura a Scansione", prompt: "Voglio allenare la 'lettura a scansione' per risparmiare tempo. Genera un testo di 400 parole, noioso e tecnico. Fammi 5 domande. L'obiettivo è rispondere leggendo prima le domande e cercando le keyword nel testo, NON leggendo il testo tutto dall'inizio alla fine. Attendi le mie risposte." }
                 ]
             },
             {
                 date: "2026-07-18", label: "18 Luglio", type: "simulazione",
-                title: "Giorno 10: Terza Simulazione, Drill Mat e Memorizzazione",
-                desc: "Ultima prova generale a tempo, consolidamento formule rapide e trucchi.",
+                title: "Giorno 4 Sprint: Simulazione Finale e Ottimizzazione",
+                desc: "Ultima simulazione vera. Dobbiamo implementare la regola d'oro: saltare subito le domande dove non si sa da dove iniziare.",
                 tasks: [
-                    { id: "17-1", subj: "sim", subjLabel: "Simulazione", time: "1h 30m", type: "Test A Tempo", title: "Simulazione TIL-I #3", prompt: "Agisci come simulatore UFFICIALE del test TIL-Ingegneria. Genera un'ultima simulazione completa di 42 domande a risposta multipla (16 Mate, 10 Fisica, 5 Comprensione, 5 Logica, 3 Rappresentazione, 3 Informatica). Calibra la difficoltà esattamente sul livello universitario del Politecnico. Non inserire le soluzioni. L'obiettivo è abituarmi al limite rigoroso di 90 minuti. Aspetta l'elenco delle mie risposte." },
-                    { id: "17-2", subj: "sim", subjLabel: "Revisione", time: "2h 30m", type: "Analisi Errori", title: "Correzione Finale e Studio Lacune", prompt: "Sono un candidato al TIL-Ingegneria. Ho sbagliato queste specifiche domande nell'ultima simulazione: [INCOLLARE QUI LE DOMANDE SBAGLIATE]. Correggile spiegando il procedimento corretto usando un approccio pratico. Soprattutto, mostrami eventuali 'trucchi' (es. esclusione delle opzioni, stime numeriche veloci) per risolvere quesiti simili in meno di 2 minuti l'uno." },
-                    { id: "15-1", subj: "math", subjLabel: "Matematica", time: "2h 30m", type: "Esercitazione", title: "Esercizi Misti: Geometria Analitica e Funzioni", prompt: "Agisci come preparatore per il test TIL. Genera 15 quesiti a risposta multipla (5 opzioni) complessi su geometria analitica (rette e coniche) e riconoscimento grafico di funzioni traslate. Richiedi rapidità di calcolo e furbizia nel ragionamento grafico. Non dare le soluzioni." },
-                    { id: "16-1", subj: "math", subjLabel: "Matematica", time: "2h 30m", type: "Esercitazione", title: "Esercizi Misti: Trigonometria, Valore Assoluto", prompt: "Agisci come preparatore per il test TIL. Genera 15 quesiti a risposta multipla (5 opzioni) specifici su goniometria/trigonometria, equazioni con modulo e irrazionali. Le domande devono richiedere manipolazione algebrica veloce. Attendi che io provi a risolverle." },
-                    { id: "15-3", subj: "logic", subjLabel: "Logica", time: "45m", type: "Esercitazione", title: "Speed-test Logica", prompt: "Agisci come preparatore per il test TIL. Genera 10 domande di logica mista a risposta multipla (condizioni, deduzioni, ordinamenti). Voglio usarle come speed-test, quindi forniscimi solo i testi." },
-                    { id: "16-3", subj: "rep", subjLabel: "Rappresentazione", time: "1h 00m", type: "Esercitazione", title: "Drill Rappresentazione Spaziale", prompt: "Agisci come creatore di test per il TIL. Genera 5 quesiti a risposta multipla puramente testuali per valutare l'immaginazione spaziale. Esempio di stile: 'Immagina un dado classico in cui vedi l'1 in alto e il 2 di fronte; se lo ruoti di 90 gradi verso destra, quale numero appare di fronte?'. Attendi le mie risposte." },
-                    { id: "18-1", subj: "math", subjLabel: "Matematica", time: "1h 30m", type: "Ripasso", title: "Memorizzazione Formule Mat", prompt: "Agisci come tutor per il TIL. Sto ripassando per l'esame. Genera un test 'fill-in-the-blank' (riempi gli spazi) testuale con tutte le principali formule di geometria analitica (coniche e rette), trigonometria, regole dei logaritmi e volumi dei solidi. Io risponderò digitando le formule mancanti." },
-                    { id: "18-2", subj: "physics", subjLabel: "Fisica", time: "1h 30m", type: "Ripasso", title: "Memorizzazione Formule Fis", prompt: "Agisci come tutor per il TIL. Genera un test 'fill-in-the-blank' (riempi gli spazi) con le formule fondamentali di cinematica, dinamica, lavoro/energia, termodinamica, fluidi ed elettromagnetismo. Io risponderò digitando le equazioni mancanti per fissarle in memoria." },
-                    { id: "18-3", subj: "reading", subjLabel: "Comprensione", time: "45m", type: "Mantenimento", title: "Ultima Lettura", prompt: "Agisci come esaminatore TIL. Fornisci un brano di testo preciso (250 parole) su un argomento tecnico o storico, accompagnato da 5 domande a risposta multipla molto precise basate solo sul testo, per mantenere l'abitudine alla lettura attenta. Aspetta le mie risposte." }
+                    { id: "18-1", subj: "sim", subjLabel: "Simulazione", time: "1h 30m", type: "Test A Tempo", title: "Simulazione Ufficiale #2", prompt: "Agisci come simulatore del test TIL-I. Genera 42 domande bilanciate secondo il bando ufficiale. Calibra la difficoltà per renderla medio-alta, ma con alcune domande molto facili (come nel test reale). Il mio obiettivo oggi è applicare il triage: risponderò solo a quelle di cui sono sicuro e salterò le altre per evitare il -0.25. Aspetta le mie risposte (indicherò 'S' per saltata)." },
+                    { id: "18-2", subj: "sim", subjLabel: "Revisione", time: "1h 30m", type: "Autopsia Test", title: "Analisi Finale Tattica", prompt: "Ho completato l'ultima simulazione. Ecco i miei risultati: [INCOLLA RISULTATI]. Analizziamo la mia strategia: le domande che ho saltato erano davvero impossibili o mi sono arreso troppo presto? Spiegami le soluzioni delle omesse/sbagliate usando ESCLUSIVAMENTE scorciatoie e deduzioni." },
+                    { id: "18-3", subj: "math", subjLabel: "Matematica", time: "1h 30m", type: "Mischia", title: "Math Mix: Radicali, Moduli, Funzioni", prompt: "Copriamo le ultime lacune algebriche. Genera 10 quiz misti su: disequazioni con valore assoluto, equazioni irrazionali e traslazione di grafici di funzioni (es. come cambia il grafico di f(x) se faccio |f(x-1)|). Attendi le mie risposte." }
                 ]
             },
             {
                 date: "2026-07-19", label: "19 Luglio", type: "ripasso",
-                title: "Giorno 11: Ripasso Generale (Giorno prima)",
-                desc: "Rifinitura tattica e mentale. Nessun esercizio pesante o nozione nuova.",
+                title: "Giorno 5 Sprint: Giorno Pre-Esame",
+                desc: "Nessun nuovo argomento. Solo formule, schemi mentali e riscaldamento leggero. Vietato stancarsi.",
                 tasks: [
-                    { id: "19-1", subj: "sim", subjLabel: "Strategia", time: "1h 00m", type: "Ripasso Mentale", title: "Lettura riassunti e Strategia esame", prompt: "Mi preparo a sostenere il test di ammissione universitario TIL-Ingegneria domani (42 quesiti in 90 minuti: 16 mate, 10 fisica, 10 logica/lettura, 6 conoscenze tecniche; punteggi: +1 esatta, -0.25 errata, 0 omessa). Agisci come un mental coach e tutor esperto: elenca 5 consigli tattici fondamentali per la gestione del tempo e dello stress (es. saltare le domande lunghe, quando conviene rischiare, ecc.). Fammeli riassumere a parole mie per assicurarmi di averli interiorizzati." }
+                    { id: "19-1", subj: "math", subjLabel: "Matematica", time: "1h 00m", type: "Memory", title: "Dump Formulario Matematica", prompt: "Agisci come un esaminatore pignolo. Interrogami a raffica sulle formule matematiche che DEVO sapere a memoria per il TIL. Chiedimi, una alla volta, cose come 'Formula della distanza punto-retta', 'Equazione asintoti iperbole', 'Seno di 60 gradi', 'Proprietà cambio base logaritmi'. Se sbaglio o tentenno, correggimi subito." },
+                    { id: "19-2", subj: "physics", subjLabel: "Fisica", time: "1h 00m", type: "Memory", title: "Dump Formulario Fisica", prompt: "Stessa cosa della matematica, ma per la fisica. Interrogami sulle formule pure: 'Energia cinetica', 'Spinta di Archimede', 'Legge dei gas perfetti', 'Resistenza equivalente in parallelo', 'Equazione oraria moto accelerato'. Risponderò velocemente." },
+                    { id: "19-3", subj: "sim", subjLabel: "Strategia", time: "45m", type: "Focus", title: "Pianificazione Gara", prompt: "Domani ho il test TIL-I. Scrivimi un decalogo comportamentale (10 regole d'oro) per affrontare i 90 minuti. Parla di gestione dell'ansia, quando usare l'eliminazione delle risposte, come comportarsi se si va nel panico e la regola aurea per evitare il punteggio negativo. Deve essere un discorso motivazionale ed estremamente pragmatico." }
                 ]
             },
             {
                 date: "2026-07-20", label: "20 Luglio", type: "esame",
-                title: "Giorno 12: TIL-INGEGNERIA",
-                desc: "Ci siamo. Mantieni la calma e applica la strategia studiata.",
+                title: "Giorno del Test: TIL-I",
+                desc: "Testa bassa, respiro profondo. Leggi bene le domande. Vai a prenderti l'ammissione.",
                 tasks: []
             }
         ];
@@ -569,22 +505,26 @@
         let currentDayIndex = 0;
         let completedTasks = new Set();
 
+        // Autocompleta lo storico (Giorni 1 e 2)
+        const historicalTasks = ["02-1", "02-2", "03-1"];
+
         const typeIcons = {
-            "Teoria + Esercizi": "book",
-            "Esercitazione": "pen-tool",
-            "Ripasso": "rotate-cw",
-            "Ripasso Rapido": "zap",
-            "Mantenimento": "book-open",
+            "Archivio": "archive",
+            "Drill Analitico": "target",
+            "Speed Run": "zap",
+            "Punti Facili": "gift",
             "Test A Tempo": "timer",
-            "Analisi Errori": "search",
-            "Ripasso Mentale": "brain"
+            "Autopsia Test": "stethoscope",
+            "Memory": "brain-circuit",
+            "Mischia": "swords",
+            "Focus": "crosshair"
         };
 
         const subjectIcons = {
             "math": "calculator",
             "physics": "atom",
-            "logic": "brain-circuit",
-            "reading": "align-left",
+            "logic": "puzzle",
+            "reading": "book-open",
             "rep": "box",
             "it": "monitor",
             "sim": "flag"
@@ -593,9 +533,20 @@
         function init() {
             loadState();
             
+            // Forza il completamento dello storico se non già salvato
+            historicalTasks.forEach(id => completedTasks.add(id));
+            saveState();
+
+            // Cerca la data di oggi o imposta sul 15 Luglio di default per la demo
             const today = new Date().toISOString().split('T')[0];
             const foundIndex = studyPlan.findIndex(d => d.date === today);
-            currentDayIndex = foundIndex !== -1 ? foundIndex : 0; 
+            
+            // Se la data non c'è, controlliamo se siamo prima del 15 (usiamo il 15) o dopo il 20
+            if (foundIndex !== -1) {
+                currentDayIndex = foundIndex;
+            } else {
+                currentDayIndex = 2; // Default su 15 Luglio
+            }
             
             renderSidebar();
             renderContent();
@@ -604,7 +555,7 @@
         }
 
         function loadState() {
-            const saved = localStorage.getItem('til_completed_tasks');
+            const saved = localStorage.getItem('til_bootcamp_tasks');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -618,10 +569,13 @@
         }
 
         function saveState() {
-            localStorage.setItem('til_completed_tasks', JSON.stringify(Array.from(completedTasks)));
+            localStorage.setItem('til_bootcamp_tasks', JSON.stringify(Array.from(completedTasks)));
         }
 
         function toggleTask(taskId) {
+            // Non permettere di un-checkare lo storico
+            if (historicalTasks.includes(taskId)) return;
+
             if (completedTasks.has(taskId)) {
                 completedTasks.delete(taskId);
             } else {
@@ -641,11 +595,14 @@
             let total = 0;
             let done = 0;
             
+            // Calcola il progresso escludendo lo storico per non falsare le % dei 5 giorni attivi
             studyPlan.forEach(day => {
-                day.tasks.forEach(task => {
-                    total++;
-                    if (completedTasks.has(task.id)) done++;
-                });
+                if (day.type !== 'storico') {
+                    day.tasks.forEach(task => {
+                        total++;
+                        if (completedTasks.has(task.id)) done++;
+                    });
+                }
             });
 
             const percentage = total === 0 ? 0 : Math.round((done / total) * 100);
@@ -673,18 +630,20 @@
                 let dayDone = day.tasks.filter(t => completedTasks.has(t.id)).length;
                 let statusColor = "rgba(255,255,255,0.2)";
                 
-                if (day.type === 'vacanza' || day.type === 'esame') {
-                    statusColor = "var(--accent-reading)";
+                if (day.type === 'esame') {
+                    statusColor = "var(--accent-physics)"; // Arancio per l'esame
+                } else if (day.type === 'storico') {
+                    statusColor = "rgba(255,255,255,0.1)"; // Grigio spento per lo storico
                 } else if (dayTotal > 0 && dayDone === dayTotal) {
-                    statusColor = "var(--accent-reading)";
+                    statusColor = "var(--accent-reading)"; // Verde
                 } else if (dayDone > 0) {
-                    statusColor = "var(--accent-physics)";
+                    statusColor = "#ef4444"; // Rosso per in progress
                 }
 
                 item.innerHTML = `
                     <div class="day-info">
                         <span class="day-date">${day.label}</span>
-                        <span class="day-type">${day.type}</span>
+                        <span class="day-type" style="${day.type==='storico' ? 'color:#52525b;' : ''}">${day.type}</span>
                     </div>
                     <div style="width: 8px; height: 8px; border-radius: 50%; background: ${statusColor};"></div>
                 `;
@@ -704,20 +663,20 @@
             const container = document.getElementById('tasks-container');
             container.innerHTML = '';
 
-            if (day.type === 'vacanza') {
+            if (day.type === 'esame') {
                 container.innerHTML = `
-                    <div class="special-day-container">
-                        <i data-lucide="coffee"></i>
-                        <h3>Giorno di Pausa</h3>
-                        <p>Nessuna attività programmata per oggi. Ricarica le energie!</p>
+                    <div class="special-day-container" style="color: var(--accent-physics)">
+                        <i data-lucide="crosshair"></i>
+                        <h3>Giorno del Test</h3>
+                        <p>Hai fatto il possibile in questi 5 giorni di fuoco. Applica la strategia. Salta ciò che non sai. In bocca al lupo.</p>
                     </div>
                 `;
-            } else if (day.type === 'esame') {
+            } else if (day.type === 'storico') {
                 container.innerHTML = `
-                    <div class="special-day-container" style="color: var(--accent-reading)">
-                        <i data-lucide="award"></i>
-                        <h3>Giorno del Test</h3>
-                        <p>Ingegneria ti aspetta. Dai il massimo!</p>
+                    <div class="special-day-container">
+                        <i data-lucide="archive"></i>
+                        <h3>Dati Archiviati</h3>
+                        <p>Queste attività fanno parte del vecchio piano e sono state già assimilate.</p>
                     </div>
                 `;
             } else {
@@ -725,6 +684,7 @@
                     const isDone = completedTasks.has(task.id);
                     const iconName = typeIcons[task.type] || "check-circle";
                     const subjIcon = subjectIcons[task.subj] || "book";
+                    const isHistorical = historicalTasks.includes(task.id);
                     
                     const card = document.createElement('div');
                     card.className = `task-card ${isDone ? 'completed' : ''}`;
@@ -732,8 +692,8 @@
                     
                     card.innerHTML = `
                         <div class="checkbox-wrapper">
-                            <div class="custom-checkbox" onclick="toggleTask('${task.id}')">
-                                <i data-lucide="check"></i>
+                            <div class="custom-checkbox" onclick="${isHistorical ? '' : `toggleTask('${task.id}')`}" style="${isHistorical ? 'cursor:not-allowed; border-color:var(--text-main); background:var(--text-main);' : ''}">
+                                <i data-lucide="check" style="${isHistorical ? 'opacity:1; transform:scale(1);' : ''}"></i>
                             </div>
                         </div>
                         <div class="task-details">
@@ -754,7 +714,7 @@
                             <h3 class="task-title">${task.title}</h3>
                             <div class="llm-prompt">
                                 <div class="prompt-label">
-                                    <i data-lucide="terminal" style="width: 14px; height: 14px;"></i> Prompt Zero-Shot (Copia per l'LLM)
+                                    <i data-lucide="terminal" style="width: 14px; height: 14px;"></i> Copia questo Prompt per l'AI
                                 </div>
                                 "${task.prompt}"
                             </div>
@@ -775,7 +735,7 @@
             
             const a = document.createElement('a');
             a.href = url;
-            a.download = `til_progresso_${new Date().toISOString().split('T')[0]}.json`;
+            a.download = `til_bootcamp_${new Date().toISOString().split('T')[0]}.json`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -796,6 +756,8 @@
                     const data = JSON.parse(e.target.result);
                     if (Array.isArray(data)) {
                         completedTasks = new Set(data);
+                        // Assicurati che lo storico rimanga spuntato
+                        historicalTasks.forEach(id => completedTasks.add(id));
                         saveState();
                         updateProgress();
                         renderSidebar();
@@ -807,7 +769,6 @@
                 } catch (err) {
                     alert("Si è verificato un errore durante la lettura del file.");
                 }
-                // Reset per consentire di re-importare lo stesso file
                 event.target.value = '';
             };
             reader.readAsText(file);
