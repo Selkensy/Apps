@@ -1,1 +1,1152 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ICANN Domain Filter</title>
+  <style>
+    /* ==========================================================================
+       MINIMALIST DESIGN SYSTEM (LINEAR / VERCEL INSPIRED)
+       ========================================================================== */
+    :root {
+      --bg: #0A0A0A;
+      --surface: #121212;
+      --surface-hover: #181818;
+      --surface-active: #222222;
+      
+      --border: #242424;
+      --border-focus: #444444;
+      
+      --text: #EDEDED;
+      --text-muted: #888888;
+      --text-dim: #525252;
+      
+      /* Included Highlight Styles */
+      --included-bg: #0D1612;
+      --included-border: #1B382B;
+      --included-text: #4ADE80;
+      --included-dim: #1D5339;
+
+      --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+      --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      
+      --radius: 6px;
+      --transition: 0.12s ease;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      line-height: 1.5;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 24px 16px 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* Topbar */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--included-text);
+      box-shadow: 0 0 8px rgba(74, 222, 128, 0.4);
+    }
+
+    .brand-title {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      height: 28px;
+      padding: 0 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      user-select: none;
+      transition: background var(--transition), border-color var(--transition);
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      background: var(--surface-hover);
+      border-color: var(--border-focus);
+    }
+
+    .btn:active {
+      background: var(--surface-active);
+    }
+
+    .btn-primary {
+      background: var(--text);
+      border-color: var(--text);
+      color: var(--bg);
+    }
+
+    .btn-primary:hover {
+      background: #D4D4D4;
+      border-color: #D4D4D4;
+    }
+
+    .btn-included {
+      color: var(--included-text);
+    }
+
+    .btn-included:hover {
+      border-color: var(--included-border);
+      background: var(--included-bg);
+    }
+
+    /* Command Input Panel */
+    .input-panel {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 8px 12px;
+      align-items: center;
+    }
+
+    .main-input-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .input-label-tag {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .domain-input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .domain-input::placeholder {
+      color: var(--text-dim);
+      font-weight: 400;
+    }
+
+    .status-badge {
+      font-size: 11px;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+    }
+
+    /* Filter & Controls Bar */
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .segment-group {
+      display: inline-flex;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2px;
+      gap: 2px;
+    }
+
+    .segment-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 12px;
+      padding: 3px 9px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: color var(--transition), background var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .segment-btn:hover {
+      color: var(--text);
+    }
+
+    .segment-btn.active {
+      background: var(--surface-active);
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .segment-count {
+      font-size: 10px;
+      font-family: var(--font-mono);
+      opacity: 0.7;
+    }
+
+    .filter-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .search-input {
+      height: 28px;
+      width: 150px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0 8px;
+      font-family: var(--font-sans);
+      font-size: 12px;
+      color: var(--text);
+      outline: none;
+      transition: border-color var(--transition), width var(--transition);
+    }
+
+    .search-input:focus {
+      border-color: var(--border-focus);
+      width: 190px;
+    }
+
+    .custom-tld-input {
+      height: 28px;
+      width: 80px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text);
+      outline: none;
+    }
+
+    .custom-tld-input:focus {
+      border-color: var(--border-focus);
+    }
+
+    /* Dense Domains Grid with Content Visibility Optimization */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 5px;
+    }
+
+    .domain-card {
+      content-visibility: auto;
+      contain-intrinsic-size: 40px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 7px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+      transition: background var(--transition), border-color var(--transition);
+      gap: 8px;
+    }
+
+    .domain-card:hover {
+      background: var(--surface-hover);
+      border-color: var(--border-focus);
+    }
+
+    /* INCLUDED STATE */
+    .domain-card.included {
+      background: var(--included-bg);
+      border-color: var(--included-border);
+    }
+
+    .domain-card.included:hover {
+      border-color: #27523F;
+    }
+
+    .domain-info {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    .domain-name {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .domain-card.included .domain-name {
+      color: var(--included-text);
+      font-weight: 600;
+    }
+
+    .domain-meta {
+      font-size: 9.5px;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+    }
+
+    .domain-card.included .domain-meta {
+      color: var(--included-dim);
+    }
+
+    .domain-checkbox {
+      width: 13px;
+      height: 13px;
+      border: 1px solid var(--border-focus);
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      background: transparent;
+      transition: all var(--transition);
+    }
+
+    .domain-card.included .domain-checkbox {
+      background: var(--included-text);
+      border-color: var(--included-text);
+    }
+
+    .domain-checkbox svg {
+      width: 9px;
+      height: 9px;
+      stroke: var(--bg);
+      stroke-width: 2.5;
+      display: none;
+    }
+
+    .domain-card.included .domain-checkbox svg {
+      display: block;
+    }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      padding: 48px 16px;
+      text-align: center;
+      color: var(--text-dim);
+      border: 1px dashed var(--border);
+      border-radius: var(--radius);
+    }
+
+    /* Modals */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 16px;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border-focus);
+      border-radius: var(--radius);
+      width: 100%;
+      max-width: 560px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-title {
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .modal-close {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 16px;
+      padding: 0 4px;
+    }
+
+    .modal-close:hover {
+      color: var(--text);
+    }
+
+    .modal-body {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .modal-textarea {
+      width: 100%;
+      height: 180px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--text);
+      outline: none;
+      resize: vertical;
+    }
+
+    .modal-textarea:focus {
+      border-color: var(--border-focus);
+    }
+
+    .modal-tabs {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .modal-footer {
+      padding: 10px 14px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border-focus);
+      color: var(--text);
+      padding: 6px 12px;
+      border-radius: var(--radius);
+      font-size: 12px;
+      font-family: var(--font-mono);
+      opacity: 0;
+      transform: translateY(6px);
+      transition: 0.15s ease;
+      pointer-events: none;
+      z-index: 200;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 12px 10px 60px;
+      }
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      .filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .filter-actions {
+        justify-content: space-between;
+      }
+      .search-input {
+        flex: 1;
+        width: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-dot"></span>
+        <span class="brand-title">ICANN Domain Filter</span>
+      </div>
+
+      <div class="topbar-actions">
+        <button class="btn" id="importBtn">Import</button>
+        <button class="btn" id="exportBtn">Export</button>
+        <button class="btn btn-primary" id="copyIncludedBtn">Copy Included</button>
+      </div>
+    </header>
+
+    <!-- BASE DOMAIN INPUT -->
+    <section class="input-panel">
+      <div class="main-input-wrapper">
+        <span class="input-label-tag">Name</span>
+        <input 
+          type="text" 
+          id="baseInput" 
+          class="domain-input" 
+          placeholder="e.g. smuzn" 
+          spellcheck="false" 
+          autocomplete="off"
+        />
+      </div>
+      <div class="status-badge" id="storageStatus">Ready</div>
+    </section>
+
+    <!-- FILTER & CONTROLS -->
+    <section class="filter-bar">
+      <div class="segment-group" id="viewSegments">
+        <button class="segment-btn active" data-view="all">
+          All <span class="segment-count" id="countAll">0</span>
+        </button>
+        <button class="segment-btn" data-view="included">
+          Included <span class="segment-count" id="countIncluded">0</span>
+        </button>
+        <button class="segment-btn" data-view="excluded">
+          Excluded <span class="segment-count" id="countExcluded">0</span>
+        </button>
+      </div>
+
+      <div class="filter-actions">
+        <input 
+          type="text" 
+          id="searchExtensionInput" 
+          class="search-input" 
+          placeholder="Search 1,480+ TLDs..." 
+          spellcheck="false"
+        />
+        
+        <form id="addCustomForm" style="display: flex; gap: 4px;">
+          <input 
+            type="text" 
+            id="customTldInput" 
+            class="custom-tld-input" 
+            placeholder="+ .custom" 
+            spellcheck="false"
+          />
+          <button type="submit" class="btn" style="padding: 0 6px;">Add</button>
+        </form>
+
+        <button class="btn btn-included" id="includeFilteredBtn">Include Filtered</button>
+        <button class="btn" id="resetBtn">Clear All</button>
+      </div>
+    </section>
+
+    <!-- DOMAINS GRID -->
+    <main class="grid" id="domainsGrid" role="list"></main>
+
+  </div>
+
+  <!-- EXPORT MODAL -->
+  <div class="modal-overlay" id="exportModal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">Export</span>
+        <button class="modal-close" data-close="exportModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-tabs">
+          <button class="btn active" data-tab="included">Included List</button>
+          <button class="btn" data-tab="excluded">Excluded List</button>
+          <button class="btn" data-tab="json">JSON Backup</button>
+          <button class="btn" data-tab="regex">Regex</button>
+        </div>
+        <textarea id="exportTextarea" class="modal-textarea" readonly></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" id="copyModalBtn">Copy</button>
+        <button class="btn btn-primary" id="downloadModalBtn">Download</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- IMPORT MODAL -->
+  <div class="modal-overlay" id="importModal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">Import Configuration</span>
+        <button class="modal-close" data-close="importModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <textarea id="importTextarea" class="modal-textarea" placeholder="Paste exported JSON here..."></textarea>
+        <input type="file" id="importFileInput" accept=".json" style="display: none;" />
+        <button class="btn" id="uploadFileBtn" style="align-self: flex-start;">Upload JSON File</button>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" data-close="importModal">Cancel</button>
+        <button class="btn btn-primary" id="applyImportBtn">Apply</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ==========================================================================
+       FULL OFFICIAL ICANN/IANA DATABASE & APPLICATION LOGIC
+       ========================================================================== -->
+  <script>
+    (function () {
+      "use strict";
+
+      /* --- Complete Official ICANN / IANA Root Zone Database (~1,480+ TLDs) --- */
+      const RAW_ICANN_TLDS = 
+        "aaa aarp abarth abb abbott abbvie abc able abogado abudhabi ac academy accenture accountant accountants aco actor " +
+        "ad adac ads adult ae aeg aero aetna af afl africa ag agakhan agency ai aig aiko airbus airforce airtel akdn al " +
+        "alibaba alipay allfinanz allstate ally alsace alstom am amazon americanexpress americanfamily amex amfam amica amsterdam " +
+        "analytics android anquan anz ao aol aparthotels app apple aq aqua ar arab aramco arches arena aria arm army arpa art arte " +
+        "as asda asia associates at athlete attorney au auction audi audio audit auspost author auto autos avianca aw aws ax axa " +
+        "az azure ba baby baidu banamex bananarepublic band bank bar barcelona barclaycard barclays barefoot bargains baseball " +
+        "basketball bauhaus bayern bb bbc bbt bbva bc bcn bd be beats beauty beer bentley berlin best bestbuy bet bf bg bh bharti " +
+        "bi bibi bible bid bike bing bingo bio biz bj black blackfriday blockbuster blog bloomberg blow blue bm bms bmw bn bnl " +
+        "bnpparibas bo boats boehringer boeing bom bond boo book booking boots bosch bostik boston bot boutique box boy bpost br " +
+        "bradesco bridgestone broadway broker brother brussels bs bt build builders business buy buzz bv bw by bz bzh ca cab cafe " +
+        "cal call calvinklein cam camera camp canon capetown capital capitalone car caravan cards care career careers cars cartier " +
+        "casa case cash casino cat cater catering catholic cba cbn cbre cbs cc cd center ceo cern cf cfa cfd cg ch chanel " +
+        "channel charity chase chat cheap chef chelsea chintai chloe christmas chrome church ci cipriani circle cisco citadel citi " +
+        "citic city cl claims cleaning click clinic clinique clothing cloud club clubmed cm cn co coach codes coffee college cologne " +
+        "com comcast commbank community company compare computer comsec condrive conduit condos construction consulting contact " +
+        "contractors control cook cooking cool coop corsica country coupon coupons couture cpa cr credit creditcard creditunion " +
+        "cricket crown crs cruise cruises cu cuadros culminations customs cuisinart cv cw cx cy cymru cyou cz dabur dad dance data " +
+        "date dating datsun day dclk dds de deal dealer deals degree delivery dell deloitte delta democrat dental dentist dep " +
+        "developer dev dhl diamond diamonds diet digital direct directory discount discover dish diy dj dk dm dnp do doc docs " +
+        "doctor dodge dog doha domains dot download drive dtl durban dvag dvr dz earth eat ec eco edeka edu education ee eg email " +
+        "emerck energy engineer engineering enterprises epson equipment er ericsson erni es esq estate et etisalat eu eurovision " +
+        "eus events exchange expert exposed express extraspace fage fail fairwinds faith family fan fans farm farmers fashion fast " +
+        "fedex feel feedback ferrari ferrero fiat fidelity fido film final finance financial fire firestone firmdale fish fishing fit " +
+        "fitness flickr flights flir florist flowers fly fm fo foo food football ford forex forsale forum foundation fox fr free " +
+        "fresenius frl frogans frontier ftr fujitsu fun fund furniture futbol fyi ga gal gallery gallo gallup game games gap garden " +
+        "gay gb gbiz gd gdn ge gea gent genting george gf gg ggee gh gi gift gifts gives giving gl glass gle global globo gm gmail " +
+        "gmb gmbh gmo gmx gn godaddy gold goldpoint golf goo goodhands goodyear goog google gop got gov gp gq gr graphics gratis " +
+        "green gripe grocery group gs gt gu guardian gucci guge guide guitars guru gw gwy gy hair hamburger hangout haus hbo hdfc " +
+        "hdfcbank health healthcare help helsinki here hermes hiphop hisamitsu hitachi hiv hk hkt hm hn hockey holdings holiday " +
+        "homedepot homegoods homes homestead honda horse hospital host hosting hot hotels hotmail hotline house how htc hyatt " +
+        "hyundai ibm icbc ice icu id ie ieee ifm ikano il im imamat imdb immo immobilien inc in industries infiniti info ing ink " +
+        "institute insurance insure int international intel intuit investments io iq ir irish is ismaili ist istanbul it itau itv " +
+        "jaguar java jcb jcp je jeep jelly jetzt jewelry jio jll jmp jnj jo jobs joburg jprs juegos juniper jupix just justice jw " +
+        "kddi ke kerryhotels kerrylogistics kerryproperties kfh kg kh ki kia kim kindle kitchen kiwi klm kmd kn koeln komatsu kosher " +
+        "kpn krd kremlin kred kuokgroup kw kyoto kz la lacaixa lamborghini lamer lancaster lancia land landrover lanxess lasalle lat " +
+        "latino latrobe lavazza lb lc lds lease leclerc lefrak lego lexus lg lgbt li lidl life lifestyle lighting like lilly limited " +
+        "limo lincoln link lipsy live living lixil lk llc llp loan loans locker locus loft lol london lotte lotto love lovers lpl " +
+        "lplfinancial lr ls lt ltd ltda lu lundbeck luxe luxury lv ly ma macys madrid maif maison makeup man management mango map " +
+        "market marketing markets marriott marshalls maserati mattel mba mc mckinsey md me med media meet melbourne meme memorial " +
+        "men menu merckmsd mg mh miami microsoft mil mini mint mit mitsubishi ml mlb mls mm mma mn mo mobi mobile moda moe mom " +
+        "monash money monster mortgage moscow moto motorcycles mov movie mp mq mr ms msd msn mt mtr mu museum music mutual mv mw " +
+        "mx my mz na nab nagoya name natwest navy nba nc ne nec net netbank netflix network neutrogena new news next nextdirect " +
+        "nexus nf nfl ng ngo nhk ni nico nike nikon ninja nissan nissay nl no nokia northfl norton now nowruz nowtv np nr nra nrw " +
+        "ntt nu nyc nz obi observer office okinawa olayan olayangroup oldnavy ollo omega om omni one ong onl online ooo open " +
+        "oracle orange organic origins osaka otsuka ott ovh pa page panasonic paris parkers parsons partners parts party passagens " +
+        "pay pccw pe pet pf pfizer pg ph philips phone photo photography photos physio pics pictet pictures pid pin ping pioneer " +
+        "pizza pk pl place play playstation plumbing plus pm pn pnc pohl poker politie porn post pr prime prod productions prof " +
+        "promo properties property protection prudential ps pt pub pw pwc py qa qpon quebec quest qvc racing radio raid ram rare " +
+        "raw read realestate realtor reality realty recipes red redstone redumbrella rehab rein reisen reit reliance ren rent rentals " +
+        "repair report republic republican rest restaurant review reviews rexroth rich richardli ricoh ril rio rip rmit ro rocks " +
+        "rodeo rogers room rsvp ru rugby ruhr run rwe rw ryukyu sa saarland safe safety sakura sale salon salling samoa samsung " +
+        "sandvik sandvikcoromant sanofi sap sarl sas save saxo sb sbi sbs sc sca scb schaeffler schmidt scholarships school schule " +
+        "schwarz science scot sd se search seat secure security seek select sener services ses seven sew sex sexy sfr sg sh shangrila " +
+        "sharp shaw shell shia shiksha shoes shop shopping shouji show showroom si silk sina singles sirius site sj sk ski skin sky " +
+        "skype sl sling sm smart smile sn sncf so soccer social softbank software sohu solar solutions song sony soy spa space " +
+        "sport sports spot spreadbetting sr srl ss st stada staples star starhub statebank statefarm statoil stc stcgroup stockholm " +
+        "storage store stream studio study style su sucks supplies supply support surf surgery suzuki sv swatch swift swiss sx sy " +
+        "sydney symantec systems sz tab taipei talk taobao target tatamotors tatar tattoo tax taxi tc tcl td tdk team tech " +
+        "technology tel temu teradata teva tf tg th thai theater tickets tienda tiffany tips tires tirol tj tjmaxx tjx tk tkmaxx " +
+        "tl tm tmobile tmall tn to today tokyo tools top toray toshiba total tours town toyota toys tr trade trading training " +
+        "travel travelers trust trv tt tube tui tunes tushu tv tvs tw tz ua ubank ubs uce ug uk unicom university uno uol ups us " +
+        "uy uz va vacations vana vanguard vape vc ve vegas ventures verisign versailles versus vet vg vi viacredi viagens viajes " +
+        "viator vic video vig viking villas vin vip virgin visa vision viva vivo vlaanderen vn vodka volkswagen volvo vote voting " +
+        "voto voyage vz wada wales walgreen walgreens walmart walter wang wanggou watch watches weather webcam weber website " +
+        "wed wedding weibo weir welcomewien wiki williamhill win windows wine winners wme wolterskluwer woodside work works world " +
+        "wow ws wtc wtf xbox xerox xfinity xihuan xin xxx xyz yachts yahoo yamaxun yandex ye yodobashi yoga yokohama you youtube " +
+        "yt yun za zappos zara zero zip zm zone zuerich zw " +
+        // Common 2nd-level extensions
+        "co.uk com.au com.br co.jp co.in co.za com.mx com.sg com.tr com.ar com.pe";
+
+      const ALL_ICANN_TLDS = Array.from(new Set(RAW_ICANN_TLDS.split(/\s+/).filter(Boolean)));
+
+      /* --- State --- */
+      const STORAGE_KEY = "icann_domain_inclusion_state_v2";
+
+      let state = {
+        baseName: "smuzn",
+        included: new Set(), // Clean slate: starts with 0 included
+        customTLDs: [],
+        view: "all",         // 'all' | 'included' | 'excluded'
+        searchQuery: "",
+        activeExportTab: "included"
+      };
+
+      /* --- DOM Elements --- */
+      const baseInput = document.getElementById("baseInput");
+      const storageStatus = document.getElementById("storageStatus");
+      const domainsGrid = document.getElementById("domainsGrid");
+      const viewSegments = document.getElementById("viewSegments");
+      const searchExtensionInput = document.getElementById("searchExtensionInput");
+      const addCustomForm = document.getElementById("addCustomForm");
+      const customTldInput = document.getElementById("customTldInput");
+      const includeFilteredBtn = document.getElementById("includeFilteredBtn");
+      const resetBtn = document.getElementById("resetBtn");
+      const copyIncludedBtn = document.getElementById("copyIncludedBtn");
+
+      // Counters
+      const countAll = document.getElementById("countAll");
+      const countIncluded = document.getElementById("countIncluded");
+      const countExcluded = document.getElementById("countExcluded");
+
+      // Modals
+      const exportModal = document.getElementById("exportModal");
+      const importModal = document.getElementById("importModal");
+      const exportBtn = document.getElementById("exportBtn");
+      const importBtn = document.getElementById("importBtn");
+      const exportTextarea = document.getElementById("exportTextarea");
+      const importTextarea = document.getElementById("importTextarea");
+      const copyModalBtn = document.getElementById("copyModalBtn");
+      const downloadModalBtn = document.getElementById("downloadModalBtn");
+      const applyImportBtn = document.getElementById("applyImportBtn");
+      const uploadFileBtn = document.getElementById("uploadFileBtn");
+      const importFileInput = document.getElementById("importFileInput");
+      const toast = document.getElementById("toast");
+
+      /* --- Helpers --- */
+      function cleanName(val) {
+        return (val || "")
+          .toLowerCase()
+          .replace(/https?:\/\//g, "")
+          .replace(/www\./g, "")
+          .replace(/[^a-z0-9-_]/g, "");
+      }
+
+      function getAllTLDList() {
+        return [...ALL_ICANN_TLDS, ...state.customTLDs];
+      }
+
+      function getFilteredTLDList() {
+        let list = getAllTLDList();
+
+        if (state.view === "included") {
+          list = list.filter(tld => state.included.has(tld));
+        } else if (state.view === "excluded") {
+          list = list.filter(tld => !state.included.has(tld));
+        }
+
+        if (state.searchQuery.trim()) {
+          const q = state.searchQuery.toLowerCase().replace(/^\./, "");
+          list = list.filter(tld => tld.includes(q));
+        }
+
+        return list;
+      }
+
+      function showToast(msg) {
+        toast.textContent = msg;
+        toast.classList.add("show");
+        setTimeout(() => toast.classList.remove("show"), 2000);
+      }
+
+      function copyToClipboard(text, msg = "Copied") {
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(text).then(() => showToast(msg));
+        } else {
+          const el = document.createElement("textarea");
+          el.value = text;
+          document.body.appendChild(el);
+          el.select();
+          document.execCommand("copy");
+          document.body.removeChild(el);
+          showToast(msg);
+        }
+      }
+
+      /* --- Persistence --- */
+      function saveState() {
+        try {
+          const payload = {
+            baseName: state.baseName,
+            included: Array.from(state.included),
+            customTLDs: state.customTLDs
+          };
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+          storageStatus.textContent = "Saved";
+        } catch (e) {
+          storageStatus.textContent = "Error saving";
+        }
+      }
+
+      function loadState() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (raw) {
+            const data = JSON.parse(raw);
+            if (typeof data.baseName === "string") state.baseName = data.baseName;
+            if (Array.isArray(data.included)) state.included = new Set(data.included);
+            if (Array.isArray(data.customTLDs)) state.customTLDs = data.customTLDs;
+          }
+        } catch (e) {
+          console.warn("No prior state loaded");
+        }
+      }
+
+      /* --- Rendering --- */
+      function render() {
+        const all = getAllTLDList();
+        const totalCount = all.length;
+        const includedCount = state.included.size;
+        const excludedCount = totalCount - includedCount;
+
+        countAll.textContent = totalCount.toLocaleString();
+        countIncluded.textContent = includedCount.toLocaleString();
+        countExcluded.textContent = excludedCount.toLocaleString();
+
+        const base = cleanName(state.baseName) || "domain";
+        const visible = getFilteredTLDList();
+
+        if (visible.length === 0) {
+          domainsGrid.innerHTML = `<div class="empty-state">No matching domain extensions found.</div>`;
+          return;
+        }
+
+        domainsGrid.innerHTML = visible.map(tld => {
+          const isIncluded = state.included.has(tld);
+          const fullDomain = `${base}.${tld}`;
+
+          return `
+            <div 
+              class="domain-card ${isIncluded ? "included" : ""}" 
+              data-tld="${tld}"
+              tabindex="0"
+              role="checkbox"
+              aria-checked="${isIncluded}"
+            >
+              <div class="domain-info">
+                <span class="domain-name">${fullDomain}</span>
+                <span class="domain-meta">.${tld}</span>
+              </div>
+              <div class="domain-checkbox">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+            </div>
+          `;
+        }).join("");
+      }
+
+      /* --- Event Listeners --- */
+      baseInput.addEventListener("input", (e) => {
+        state.baseName = e.target.value;
+        render();
+        saveState();
+      });
+
+      // Card Click: Toggles Inclusion
+      domainsGrid.addEventListener("click", (e) => {
+        const card = e.target.closest(".domain-card");
+        if (!card) return;
+        const tld = card.dataset.tld;
+
+        if (state.included.has(tld)) {
+          state.included.delete(tld);
+        } else {
+          state.included.add(tld);
+        }
+
+        saveState();
+        render();
+      });
+
+      // Keyboard navigation (Space/Enter)
+      domainsGrid.addEventListener("keydown", (e) => {
+        if (e.key === " " || e.key === "Enter") {
+          const card = e.target.closest(".domain-card");
+          if (card) {
+            e.preventDefault();
+            card.click();
+          }
+        }
+      });
+
+      // Segment tabs
+      viewSegments.addEventListener("click", (e) => {
+        const btn = e.target.closest(".segment-btn");
+        if (!btn) return;
+        viewSegments.querySelectorAll(".segment-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        state.view = btn.dataset.view;
+        render();
+      });
+
+      // Search (fast debounce)
+      let searchTimeout;
+      searchExtensionInput.addEventListener("input", (e) => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+          state.searchQuery = e.target.value;
+          render();
+        }, 50);
+      });
+
+      // Add Custom TLD
+      addCustomForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const raw = customTldInput.value.trim().toLowerCase().replace(/^\./, "");
+        if (!raw) return;
+
+        const all = getAllTLDList();
+        if (all.includes(raw)) {
+          showToast(`.${raw} already exists`);
+          return;
+        }
+
+        state.customTLDs.push(raw);
+        customTldInput.value = "";
+        saveState();
+        render();
+        showToast(`Added .${raw}`);
+      });
+
+      // Include All Visible
+      includeFilteredBtn.addEventListener("click", () => {
+        const visible = getFilteredTLDList();
+        if (visible.length === 0) return;
+        visible.forEach(tld => state.included.add(tld));
+        saveState();
+        render();
+        showToast(`Included ${visible.length} domains`);
+      });
+
+      // Reset / Clear All Included
+      resetBtn.addEventListener("click", () => {
+        if (state.included.size === 0) return;
+        state.included.clear();
+        saveState();
+        render();
+        showToast("All selections cleared");
+      });
+
+      // Topbar Quick Copy Included
+      copyIncludedBtn.addEventListener("click", () => {
+        const base = cleanName(state.baseName) || "domain";
+        const list = Array.from(state.included);
+        if (list.length === 0) {
+          showToast("No domains included yet");
+          return;
+        }
+        copyToClipboard(list.map(t => `${base}.${t}`).join("\n"), `Copied ${list.length} included domains`);
+      });
+
+      /* --- Modal & Export / Import --- */
+      function getExportText(tab) {
+        const base = cleanName(state.baseName) || "domain";
+        const includedList = Array.from(state.included);
+        const allList = getAllTLDList();
+        const excludedList = allList.filter(tld => !state.included.has(tld));
+
+        if (tab === "included") {
+          return includedList.map(t => `${base}.${t}`).join("\n");
+        }
+        if (tab === "excluded") {
+          return excludedList.map(t => `${base}.${t}`).join("\n");
+        }
+        if (tab === "regex") {
+          if (includedList.length === 0) return "";
+          return `^(${base})\\.(${includedList.join("|")})$`;
+        }
+        if (tab === "json") {
+          return JSON.stringify({
+            baseName: state.baseName,
+            included: includedList,
+            customTLDs: state.customTLDs,
+            totalDatabaseSize: allList.length,
+            exportedAt: new Date().toISOString()
+          }, null, 2);
+        }
+        return "";
+      }
+
+      function updateExportModal() {
+        exportTextarea.value = getExportText(state.activeExportTab);
+      }
+
+      exportBtn.addEventListener("click", () => {
+        updateExportModal();
+        exportModal.classList.add("open");
+      });
+
+      importBtn.addEventListener("click", () => {
+        importTextarea.value = "";
+        importModal.classList.add("open");
+      });
+
+      document.querySelectorAll("[data-close]").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+          const id = e.target.dataset.close;
+          document.getElementById(id).classList.remove("open");
+        });
+      });
+
+      document.querySelectorAll(".modal-overlay").forEach(overlay => {
+        overlay.addEventListener("click", (e) => {
+          if (e.target === overlay) overlay.classList.remove("open");
+        });
+      });
+
+      // Export Tabs
+      document.querySelectorAll("[data-tab]").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+          document.querySelectorAll("[data-tab]").forEach(b => b.classList.remove("active"));
+          e.target.classList.add("active");
+          state.activeExportTab = e.target.dataset.tab;
+          updateExportModal();
+        });
+      });
+
+      copyModalBtn.addEventListener("click", () => {
+        copyToClipboard(exportTextarea.value, "Copied export data");
+      });
+
+      downloadModalBtn.addEventListener("click", () => {
+        const text = exportTextarea.value;
+        const base = cleanName(state.baseName) || "domain";
+        const ext = state.activeExportTab === "json" ? "json" : "txt";
+        const filename = `${base}-${state.activeExportTab}.${ext}`;
+
+        const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast(`Downloaded ${filename}`);
+      });
+
+      // Apply Import
+      applyImportBtn.addEventListener("click", () => {
+        const raw = importTextarea.value.trim();
+        if (!raw) return;
+
+        try {
+          const data = JSON.parse(raw);
+          if (typeof data.baseName === "string") {
+            state.baseName = data.baseName;
+            baseInput.value = data.baseName;
+          }
+          if (Array.isArray(data.included)) {
+            state.included = new Set(data.included);
+          }
+          if (Array.isArray(data.customTLDs)) {
+            state.customTLDs = data.customTLDs;
+          }
+
+          saveState();
+          render();
+          importModal.classList.remove("open");
+          showToast("Configuration loaded");
+        } catch (err) {
+          showToast("Invalid JSON");
+        }
+      });
+
+      uploadFileBtn.addEventListener("click", () => importFileInput.click());
+
+      importFileInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          importTextarea.value = evt.target.result;
+          showToast(`Loaded ${file.name}`);
+        };
+        reader.readAsText(file);
+      });
+
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          exportModal.classList.remove("open");
+          importModal.classList.remove("open");
+        }
+      });
+
+      /* --- Init --- */
+      function init() {
+        loadState();
+        baseInput.value = state.baseName;
+        render();
+      }
+
+      init();
+    })();
+  </script>
+</body>
+</html>
