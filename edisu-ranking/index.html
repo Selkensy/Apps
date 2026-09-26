@@ -1,0 +1,3900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>EDISU // Housing Ranker & Ledger</title>
+  
+  <!-- Battle-tested SortableJS for high-precision, 60fps in-grid reordering -->
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+
+  <style>
+    /* ==========================================================================
+       ARCHIVAL UTILITY DESIGN SYSTEM (Linear / Raycast / Swiss Industrial)
+       ========================================================================== */
+    :root {
+      --bg-canvas: #121314;
+      --bg-surface: #1A1B1E;
+      --bg-surface-elevated: #24262B;
+      --border-subtle: #2D3039;
+      --border-strong: #404552;
+      --text-primary: #F1F2F4;
+      --text-secondary: #9A9FA5;
+      --text-muted: #636773;
+      --accent: #E28448;
+      --accent-subtle: rgba(226, 132, 72, 0.12);
+      --accent-hover: #EC955E;
+      --danger: #E05252;
+      --danger-subtle: rgba(224, 82, 82, 0.14);
+      --font-sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-canvas);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      line-height: 1.45;
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-subtle);
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--border-strong);
+    }
+
+    kbd {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-strong);
+      border-radius: 3px;
+      padding: 1px 4px;
+      min-width: 16px;
+      line-height: 1.2;
+    }
+
+    button {
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      border-radius: 4px;
+      padding: 5px 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+      user-select: none;
+    }
+    button:hover {
+      background: var(--bg-surface-elevated);
+      border-color: var(--border-strong);
+    }
+    button:active {
+      transform: translateY(1px);
+    }
+    button.primary {
+      background: var(--accent);
+      border-color: var(--accent-hover);
+      color: #121314;
+      font-weight: 600;
+    }
+    button.primary:hover {
+      background: var(--accent-hover);
+    }
+    button.danger-ghost:hover {
+      color: var(--danger);
+      border-color: var(--danger);
+      background: var(--danger-subtle);
+    }
+
+    input, textarea {
+      font-family: inherit;
+      font-size: 13px;
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      padding: 6px 10px;
+      outline: none;
+      transition: border-color 120ms ease;
+    }
+    input:focus, textarea:focus {
+      border-color: var(--accent);
+    }
+
+    /* ==========================================================================
+       COMMAND BAR / TOP NAVIGATION
+       ========================================================================== */
+    header.command-bar {
+      min-height: 52px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 16px;
+      gap: 16px;
+      position: relative;
+      z-index: 10;
+      flex-shrink: 0;
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-mark {
+      width: 14px;
+      height: 14px;
+      background: var(--accent);
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .brand-title {
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-family: var(--font-mono);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+    .brand-title span {
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .metrics-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-secondary);
+      background: var(--bg-canvas);
+      padding: 4px 10px;
+      border-radius: 4px;
+      border: 1px solid var(--border-subtle);
+      white-space: nowrap;
+    }
+    .metric-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    .search-container {
+      flex: 1;
+      max-width: 360px;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .search-container input {
+      width: 100%;
+      padding-left: 28px;
+      padding-right: 32px;
+      font-size: 12px;
+      height: 32px;
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      color: var(--text-primary);
+      transition: border-color 140ms ease, box-shadow 140ms ease;
+    }
+    .search-container input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent);
+    }
+    .search-container svg {
+      position: absolute;
+      left: 9px;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+    .search-kbd {
+      position: absolute;
+      right: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      z-index: 2;
+    }
+    .search-kbd kbd {
+      cursor: pointer;
+      transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+    }
+    .search-kbd:hover kbd {
+      background: var(--border-strong);
+      color: var(--text-primary);
+      border-color: var(--accent);
+    }
+    .search-kbd-clear {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-family: var(--font-mono);
+      cursor: pointer;
+      line-height: 1;
+      transition: all 120ms ease;
+    }
+    .search-kbd-clear:hover {
+      background: var(--border-strong);
+      color: var(--text-primary);
+      border-color: var(--accent);
+    }
+
+    .actions-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ==========================================================================
+       MAIN WORKSPACE & IN-GRID RANKING
+       ========================================================================== */
+    .app-workspace {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 0%;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .discovery-pane {
+      flex: 1 1 0%;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      height: 100%;
+      background: var(--bg-canvas);
+      overflow: hidden;
+    }
+
+    .pane-toolbar {
+      min-height: 40px;
+      padding: 6px 16px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      user-select: none;
+      flex-shrink: 0;
+      gap: 12px;
+    }
+    .pane-title {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+    .pane-title .title-text {
+      white-space: nowrap;
+    }
+    .pane-subtitle {
+      font-size: 10px;
+      color: var(--text-muted);
+      font-weight: 400;
+      text-transform: none;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .pane-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .icon-btn {
+      padding: 4px 8px;
+      color: var(--text-secondary);
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 4px;
+    }
+    .icon-btn:hover {
+      background: var(--bg-surface-elevated);
+      border-color: var(--border-subtle);
+      color: var(--text-primary);
+    }
+    .icon-btn.active {
+      background: var(--bg-surface-elevated);
+      border-color: var(--border-strong);
+      color: var(--accent);
+    }
+
+    /* Grid container with buttery 60fps scrolling & touch safety */
+    .feed-container {
+      flex: 1 1 0%;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-y;
+      overscroll-behavior-y: contain;
+      padding: 16px;
+    }
+
+    .feed-container.grid-layout {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      grid-auto-rows: max-content;
+      gap: 16px;
+      align-content: start;
+    }
+
+    .feed-container.list-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* ==========================================================================
+       TACTILE LOCATION CARD
+       ========================================================================== */
+    .residence-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: border-color 140ms ease, box-shadow 140ms ease;
+      cursor: pointer;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+      height: auto;
+      min-height: max-content;
+      contain: layout style;
+      content-visibility: auto;
+      contain-intrinsic-size: auto 340px;
+    }
+    .feed-container.list-layout .residence-card {
+      contain-intrinsic-size: auto 56px;
+    }
+    .feed-container.reorder-layout .residence-card {
+      contain-intrinsic-size: auto 62px;
+    }
+    body.is-dragging .residence-card {
+      content-visibility: visible !important;
+    }
+    .residence-card:hover {
+      border-color: var(--border-strong);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.38);
+    }
+    .residence-card.is-selected {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent), 0 6px 18px rgba(0, 0, 0, 0.35);
+    }
+
+    /* 16:10 Cover Media across all cards with safe minimum height */
+    .card-thumb-wrap {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      min-height: 160px; /* Crucial fallback: prevents 0px height collapse in mobile flexbox */
+      background: #151619;
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .card-thumb-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 220ms ease;
+      image-rendering: auto;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+    }
+    .residence-card:hover .card-thumb-wrap img {
+      transform: scale(1.025);
+    }
+
+    /* Media Overlay: Rank Pill on left, action icons & drag handle on right */
+    .card-media-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 8px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      pointer-events: none;
+      background: linear-gradient(180deg, rgba(12, 13, 14, 0.8) 0%, rgba(12, 13, 14, 0) 100%);
+      z-index: 2;
+    }
+
+    .card-rank-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-primary);
+      background: rgba(18, 19, 20, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      padding: 3px 7px;
+      border-radius: 4px;
+      pointer-events: auto;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      user-select: none;
+      transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+    }
+    .card-rank-badge:hover {
+      background: rgba(26, 27, 30, 0.95);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .card-rank-badge.top-rank {
+      color: var(--accent);
+      border-color: var(--accent);
+      background: rgba(226, 132, 72, 0.22);
+    }
+
+    .card-media-actions {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      pointer-events: auto;
+    }
+
+    .card-action-btn {
+      cursor: pointer;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 4px;
+      background: rgba(18, 19, 20, 0.78);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      transition: color 120ms ease, border-color 120ms ease, background 120ms ease;
+      padding: 0;
+    }
+    .card-action-btn:hover {
+      color: var(--text-primary);
+      border-color: rgba(255, 255, 255, 0.28);
+      background: rgba(26, 27, 30, 0.95);
+    }
+    .card-action-btn.danger-hover:hover {
+      color: var(--danger);
+      border-color: var(--danger);
+      background: rgba(224, 82, 82, 0.24);
+    }
+
+    .card-drag-handle {
+      pointer-events: auto;
+      cursor: grab;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 4px;
+      touch-action: none;
+      -webkit-touch-callout: none;
+      user-select: none;
+      -webkit-user-select: none;
+      background: rgba(18, 19, 20, 0.78);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      transition: color 120ms ease, border-color 120ms ease, background 120ms ease;
+    }
+    .card-drag-handle svg {
+      pointer-events: none;
+    }
+    .card-drag-handle:hover {
+      color: var(--text-primary);
+      border-color: rgba(255, 255, 255, 0.28);
+      background: rgba(26, 27, 30, 0.95);
+    }
+    .card-drag-handle:active {
+      cursor: grabbing;
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    /* Structured Card Content with guaranteed breathing room and no clipping */
+    .card-content {
+      padding: 12px 14px 16px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1 1 auto;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+
+    .card-header-block {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      min-width: 0;
+      flex-shrink: 0;
+    }
+    .card-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.35;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .card-address {
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .card-address svg {
+      flex-shrink: 0;
+      color: var(--text-muted);
+    }
+
+    .card-note-preview {
+      font-size: 10.5px;
+      color: var(--accent);
+      background: var(--accent-subtle);
+      border: 1px solid rgba(226, 132, 72, 0.2);
+      padding: 3px 8px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+      flex-shrink: 0;
+    }
+    .card-note-preview svg {
+      flex-shrink: 0;
+    }
+    .card-note-preview span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Dedicated Amenity Section: Clean padding ensuring chips never touch the bottom card border */
+    .card-amenities-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      min-height: 28px;
+      height: auto;
+      width: 100%;
+      margin-top: 4px;
+      padding-top: 2px;
+      padding-bottom: 2px;
+      flex-shrink: 0;
+    }
+
+    /* Legible Metadata Chips without truncation */
+    .amenity-chip {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 999px;
+      padding: 3px 8px;
+      line-height: 1.25;
+      white-space: nowrap;
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      user-select: none;
+      transition: border-color 120ms ease, color 120ms ease;
+    }
+    .amenity-chip > span:last-child {
+      white-space: nowrap;
+    }
+    .amenity-chip:hover {
+      border-color: var(--border-strong);
+      color: var(--text-primary);
+    }
+    .chip-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: 0.85;
+      flex-shrink: 0;
+    }
+
+    /* Distinct "+N more" chip with warm accent styling */
+    .amenity-chip-more {
+      font-size: 10.5px;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--accent);
+      background: var(--accent-subtle);
+      border: 1px solid rgba(226, 132, 72, 0.35);
+      border-radius: 999px;
+      padding: 3px 8px;
+      line-height: 1.25;
+      white-space: nowrap;
+      flex-shrink: 0;
+      user-select: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      transition: border-color 120ms ease, background 120ms ease, color 120ms ease;
+    }
+    .amenity-chip-more:hover {
+      background: rgba(226, 132, 72, 0.24);
+      border-color: var(--accent);
+      color: var(--text-primary);
+    }
+    .amenity-chip-more.is-expanded {
+      color: var(--text-muted);
+      background: var(--bg-canvas);
+      border-color: var(--border-subtle);
+    }
+    .amenity-chip-more.is-expanded:hover {
+      color: var(--text-primary);
+      border-color: var(--border-strong);
+    }
+
+    /* List Layout Prefix & Action Hooks */
+    .card-list-prefix {
+      display: none;
+    }
+    .card-list-actions {
+      display: none;
+    }
+
+    /* List Layout Variant (Compact Ledger Mode) */
+    .list-layout .residence-card {
+      flex-direction: row;
+      align-items: center;
+      padding: 8px 12px;
+      gap: 10px;
+      min-height: 56px;
+    }
+    .list-layout .card-thumb-wrap {
+      width: 58px;
+      height: 44px;
+      min-height: 44px;
+      aspect-ratio: auto;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+    .list-layout .card-media-overlay {
+      display: none !important;
+    }
+    .list-layout .card-list-prefix {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .list-layout .card-drag-handle {
+      width: 28px;
+      height: 38px;
+      min-width: 28px;
+      border-radius: 4px;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      touch-action: none;
+    }
+    .list-layout .card-drag-handle:hover {
+      background: var(--border-strong);
+      color: var(--text-primary);
+    }
+    .list-layout .card-drag-handle:active {
+      cursor: grabbing;
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #121314;
+    }
+    .list-layout .card-content {
+      padding: 0;
+      flex-direction: row;
+      align-items: center;
+      gap: 10px;
+      justify-content: space-between;
+      flex: 1;
+      min-width: 0;
+    }
+    .list-layout .card-header-block {
+      flex: 1.2;
+      min-width: 0;
+    }
+    .list-layout .card-note-preview {
+      display: none;
+    }
+    .list-layout .card-amenities-wrap {
+      flex: 1.2;
+      min-width: 0;
+      margin: 0;
+    }
+    .list-layout .card-list-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    /* ==========================================================================
+       TACTILE REORDER LAYOUT (MOBILE & TOUCH OPTIMIZED)
+       ========================================================================== */
+    .feed-container.reorder-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 12px;
+      padding-bottom: 84px;
+    }
+    .reorder-layout .residence-card {
+      flex-direction: row;
+      align-items: center;
+      padding: 8px 12px;
+      gap: 10px;
+      min-height: 62px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+    }
+    .reorder-layout .card-thumb-wrap {
+      width: 48px;
+      height: 48px;
+      min-height: 48px;
+      aspect-ratio: auto;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+    .reorder-layout .card-media-overlay {
+      display: none !important;
+    }
+    .reorder-layout .card-content {
+      padding: 0;
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 2px;
+    }
+    .reorder-layout .card-note-preview,
+    .reorder-layout .card-amenities-wrap {
+      display: none !important;
+    }
+    .reorder-layout .card-title {
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .reorder-layout .card-address {
+      font-size: 11px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .reorder-layout .card-reorder-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .reorder-layout .card-reorder-actions {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+    .reorder-layout .card-drag-handle {
+      width: 42px;
+      height: 42px;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-strong);
+      color: var(--text-primary);
+      border-radius: 6px;
+      touch-action: none;
+    }
+    .reorder-layout .reorder-nudge-btn {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      user-select: none;
+      touch-action: manipulation;
+    }
+    .reorder-layout .reorder-nudge-btn:active {
+      background: var(--accent);
+      color: #121314;
+      border-color: var(--accent);
+    }
+
+    /* Sortable Dragging Feedback - Compact Dragged Card Pinned to Touch */
+    .sortable-ghost {
+      opacity: 0.25 !important;
+      background: var(--bg-surface-elevated) !important;
+      border: 2px dashed var(--accent) !important;
+      border-radius: 8px !important;
+      pointer-events: none !important;
+    }
+    .sortable-chosen {
+      opacity: 0.45 !important;
+      border-color: var(--accent) !important;
+    }
+    .sortable-fallback {
+      box-sizing: border-box !important;
+      overflow: hidden !important;
+      opacity: 0.96 !important;
+      background: var(--bg-surface-elevated) !important;
+      box-shadow: 0 16px 36px rgba(0,0,0,0.85) !important;
+      border: 2px solid var(--accent) !important;
+      border-radius: 8px !important;
+      z-index: 99999 !important;
+      pointer-events: none !important;
+      transition: none !important;
+      height: 54px !important;
+      min-height: 54px !important;
+      max-height: 54px !important;
+      max-width: min(420px, calc(100vw - 24px)) !important;
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      padding: 6px 12px !important;
+      gap: 10px !important;
+    }
+    .sortable-fallback .card-thumb-wrap {
+      width: 44px !important;
+      height: 40px !important;
+      min-height: 40px !important;
+      aspect-ratio: auto !important;
+      border-radius: 4px !important;
+      flex-shrink: 0 !important;
+    }
+    .sortable-fallback .card-media-overlay {
+      display: none !important;
+    }
+    .sortable-fallback .card-content {
+      padding: 0 !important;
+      flex: 1 !important;
+      min-width: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: center !important;
+    }
+    .sortable-fallback .card-title {
+      font-size: 12.5px !important;
+      font-weight: 700 !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+    }
+    .sortable-fallback .card-address,
+    .sortable-fallback .card-amenities-wrap,
+    .sortable-fallback .card-note-preview,
+    .sortable-fallback .card-media-actions,
+    .sortable-fallback .card-list-actions {
+      display: none !important;
+    }
+    .sortable-fallback .card-list-prefix .card-drag-handle {
+      display: none !important;
+    }
+    body.is-dragging {
+      user-select: none !important;
+      -webkit-user-select: none !important;
+    }
+    body.is-dragging .feed-container {
+      touch-action: none !important;
+    }
+
+    /* Clean Empty Catalog State */
+    .empty-catalog-state {
+      grid-column: 1 / -1;
+      margin: 48px auto;
+      max-width: 480px;
+      border: 1px dashed var(--border-subtle);
+      border-radius: 8px;
+      padding: 36px 24px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      background: var(--bg-surface);
+    }
+    .empty-catalog-state h3 {
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .empty-catalog-state p {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .empty-catalog-state .empty-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    /* ==========================================================================
+       TACTILE QUICK RANK PICKER (BOTTOM SHEET ON MOBILE)
+       ========================================================================== */
+    .rank-picker-modal {
+      width: 100%;
+      max-width: 420px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      box-shadow: 0 24px 48px rgba(0,0,0,0.7);
+    }
+    .sheet-handle-bar {
+      display: none;
+    }
+    .rank-picker-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .rank-picker-res-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      flex: 1;
+    }
+    .rank-picker-thumb {
+      width: 44px;
+      height: 44px;
+      border-radius: 6px;
+      object-fit: cover;
+      background: #141517;
+      border: 1px solid var(--border-subtle);
+      flex-shrink: 0;
+    }
+    .rank-picker-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .rank-picker-subtitle {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+    }
+    .rank-stepper-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 8px 12px;
+      gap: 12px;
+    }
+    .stepper-btn {
+      height: 42px;
+      min-width: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-strong);
+      border-radius: 6px;
+      cursor: pointer;
+      user-select: none;
+      touch-action: manipulation;
+    }
+    .stepper-btn:active {
+      background: var(--accent);
+      color: #121314;
+      border-color: var(--accent);
+    }
+    .rank-display-box {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 4px;
+      font-family: var(--font-mono);
+      user-select: none;
+    }
+    .rank-display-hash {
+      font-size: 18px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .rank-display-num {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .rank-display-total {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-left: 2px;
+    }
+    .rank-slider-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .slider-labels {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      color: var(--text-muted);
+    }
+    .rank-scrubber-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 8px;
+      border-radius: 4px;
+      background: var(--bg-surface-elevated);
+      outline: none;
+      border: 1px solid var(--border-subtle);
+      margin: 6px 0;
+      cursor: pointer;
+    }
+    .rank-scrubber-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: grab;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      border: 2px solid #fff;
+    }
+    .rank-scrubber-slider::-moz-range-thumb {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: grab;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      border: 2px solid #fff;
+    }
+    .rank-placement-preview {
+      font-size: 12px;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      padding: 8px 12px;
+      border-radius: 6px;
+      text-align: center;
+      color: var(--text-secondary);
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .rank-preset-chips {
+      display: flex;
+      gap: 6px;
+      justify-content: space-between;
+    }
+    .preset-chip {
+      flex: 1;
+      justify-content: center;
+      padding: 6px 4px;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: var(--font-mono);
+    }
+    .rank-picker-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .rank-cancel-btn {
+      flex: 1;
+      justify-content: center;
+      height: 38px;
+    }
+    .rank-apply-btn {
+      flex: 2;
+      justify-content: center;
+      height: 38px;
+    }
+
+    /* Floating Mobile Reorder Dock */
+    .mobile-reorder-dock {
+      display: none;
+    }
+
+    /* ==========================================================================
+       INSPECTION & GALLERY LIGHTBOX
+       ========================================================================== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 11, 12, 0.78);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 160ms ease-out, visibility 160ms ease-out;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .lightbox-modal {
+      width: 100%;
+      max-width: 1020px;
+      height: 640px;
+      max-height: 86vh;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      display: grid;
+      grid-template-columns: 1.32fr 1fr;
+      overflow: hidden;
+      box-shadow: 0 20px 48px rgba(0,0,0,0.65);
+      transform: translateY(10px);
+      transition: transform 160ms ease-out;
+    }
+    .modal-overlay.active .lightbox-modal {
+      transform: translateY(0);
+    }
+
+    .gallery-stage {
+      background: #0d0e10;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--border-subtle);
+      user-select: none;
+      min-width: 0;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+    .gallery-main-view {
+      position: relative;
+      flex: 1 1 0%;
+      min-height: 0;
+      height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: #0d0e10;
+    }
+    .gallery-backdrop {
+      position: absolute;
+      inset: -24px;
+      background-size: cover;
+      background-position: center;
+      filter: blur(28px) brightness(0.24) saturate(1.2);
+      opacity: 0.8;
+      pointer-events: none;
+      z-index: 1;
+      transition: background-image 160ms ease, opacity 160ms ease;
+      will-change: transform, opacity;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+    }
+    .gallery-main-view img#lightboxMainImg {
+      position: relative;
+      z-index: 2;
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.65);
+      cursor: zoom-in;
+      transition: transform 140ms ease;
+    }
+    .gallery-main-view img#lightboxMainImg:hover {
+      transform: scale(1.02);
+    }
+
+    .gallery-zoom-badge {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      z-index: 4;
+      background: rgba(18, 19, 20, 0.82);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: var(--text-primary);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+    }
+    .gallery-zoom-badge:hover {
+      background: rgba(26, 27, 30, 0.95);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* ==========================================================================
+       ZOOMED FULLSCREEN GALLERY MODAL
+       ========================================================================== */
+    .zoom-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(6, 7, 8, 0.95);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 180ms ease, visibility 180ms ease;
+    }
+    .zoom-overlay.active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+    .zoom-dialog {
+      position: relative;
+      width: 96vw;
+      height: 94vh;
+      max-width: 1600px;
+      display: flex;
+      flex-direction: column;
+      background: rgba(18, 19, 21, 0.94);
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85);
+    }
+    .zoom-header {
+      height: 48px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+      flex-shrink: 0;
+      z-index: 2;
+    }
+    .zoom-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+    .zoom-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .zoom-counter {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      background: var(--bg-canvas);
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--border-subtle);
+      white-space: nowrap;
+    }
+    .zoom-stage {
+      flex: 1;
+      min-height: 0;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: #08090a;
+    }
+    .zoom-backdrop {
+      position: absolute;
+      inset: -30px;
+      background-size: cover;
+      background-position: center;
+      filter: blur(36px) brightness(0.2) saturate(1.2);
+      opacity: 0.7;
+      pointer-events: none;
+      transition: background-image 160ms ease;
+      will-change: transform, opacity;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+    }
+    .zoom-stage img#zoomMainImg {
+      position: relative;
+      z-index: 2;
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      cursor: zoom-out;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.7);
+      user-select: none;
+    }
+    .zoom-nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 3;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(20, 22, 26, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 140ms ease, transform 140ms ease;
+      padding: 0;
+    }
+    .zoom-nav-btn:hover {
+      background: rgba(30, 33, 40, 0.95);
+      transform: translateY(-50%) scale(1.06);
+    }
+    .zoom-nav-prev { left: 16px; }
+    .zoom-nav-next { right: 16px; }
+    .zoom-strip {
+      height: 64px;
+      background: var(--bg-canvas);
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      overflow-x: auto;
+      flex-shrink: 0;
+      z-index: 2;
+    }
+    .zoom-strip .gallery-thumb-item {
+      height: 44px;
+      width: 58px;
+    }
+    .gallery-nav {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+      pointer-events: none;
+      z-index: 3;
+    }
+    .gallery-nav button {
+      pointer-events: none;
+      background: rgba(18, 19, 20, 0.65);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: #fff;
+      border-radius: 50%;
+      width: 34px;
+      height: 34px;
+      padding: 0;
+      justify-content: center;
+    }
+    .modal-overlay.active .gallery-nav button {
+      pointer-events: auto;
+    }
+    .gallery-nav button:hover {
+      background: rgba(18, 19, 20, 0.95);
+    }
+
+    .gallery-strip {
+      height: 74px;
+      flex-shrink: 0;
+      background: var(--bg-canvas);
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      overflow-x: auto;
+      position: relative;
+      z-index: 2;
+    }
+    .gallery-thumb-item {
+      width: 64px;
+      height: 48px;
+      border-radius: 4px;
+      object-fit: contain;
+      background: rgba(13, 14, 16, 0.95);
+      border: 1px solid var(--border-subtle);
+      cursor: pointer;
+      opacity: 0.55;
+      flex-shrink: 0;
+      padding: 2px;
+      transition: opacity 120ms ease, border-color 120ms ease;
+    }
+    .gallery-thumb-item:hover {
+      opacity: 0.85;
+      border-color: var(--border-strong);
+    }
+    .gallery-thumb-item.active {
+      opacity: 1;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent);
+    }
+
+    .specs-stage {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      height: 100%;
+      max-height: 100%;
+      gap: 16px;
+    }
+    .specs-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .specs-header h2 {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+    .specs-meta-block {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .meta-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    .meta-row svg {
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .meta-row a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .meta-row a:hover {
+      text-decoration: underline;
+    }
+
+    .detail-section-title {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .desc-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .note-editor textarea {
+      width: 100%;
+      height: 64px;
+      resize: vertical;
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .specs-action-bar {
+      margin-top: auto;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    /* ==========================================================================
+       IMPORT / PASTE MODAL & DROPZONE
+       ========================================================================== */
+    .generic-modal {
+      width: 100%;
+      max-width: 580px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    }
+    .generic-modal textarea {
+      width: 100%;
+      height: 180px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      resize: vertical;
+    }
+
+    #dropOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(18, 19, 20, 0.88);
+      border: 2px dashed var(--accent);
+      z-index: 999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 12px;
+      color: var(--accent);
+      font-family: var(--font-mono);
+      font-size: 16px;
+      pointer-events: none;
+    }
+
+    /* ==========================================================================
+       IMPORT / EXPORT ACTIVITY HUD & PERFORMANCE ANIMATIONS
+       ========================================================================== */
+    .activity-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 11, 12, 0.78);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 1100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 180ms ease, visibility 180ms ease;
+    }
+    .activity-overlay.active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+    .activity-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      padding: 24px 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      width: 320px;
+      box-shadow: 0 20px 48px rgba(0,0,0,0.7);
+      text-align: center;
+      transform: scale(0.96);
+      transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .activity-overlay.active .activity-card {
+      transform: scale(1);
+    }
+    .activity-icon-wrap {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+    }
+    .activity-spinner-ring {
+      width: 28px;
+      height: 28px;
+      border: 3px solid rgba(226, 132, 72, 0.2);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spinRing 650ms linear infinite;
+    }
+    @keyframes spinRing {
+      to { transform: rotate(360deg); }
+    }
+    .activity-title {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+    }
+    .activity-subtitle {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-top: -6px;
+    }
+    .activity-progress-track {
+      width: 100%;
+      height: 4px;
+      background: var(--bg-canvas);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+    .activity-progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-hover));
+      border-radius: 2px;
+      transition: width 120ms ease;
+    }
+    @keyframes cardEntrance {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .card-animate {
+      animation: cardEntrance 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    #toastContainer {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 1000;
+      pointer-events: none;
+    }
+    .toast-msg {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-strong);
+      color: var(--text-primary);
+      padding: 8px 14px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      animation: slideIn 140ms ease-out;
+    }
+    .toast-msg.error {
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+    @keyframes slideIn {
+      from { transform: translateX(20px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* ==========================================================================
+       MOBILE RESPONSIVENESS & TACTILE REORDERING
+       ========================================================================== */
+    @media (max-width: 768px) {
+      header.command-bar {
+        padding: 8px 12px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .brand-section {
+        min-width: auto;
+      }
+      .metrics-group {
+        font-size: 10.5px;
+        padding: 3px 8px;
+        gap: 6px;
+      }
+      .search-container {
+        order: 3;
+        max-width: 100%;
+        width: 100%;
+        flex-basis: 100%;
+      }
+      .actions-group {
+        margin-left: auto;
+      }
+      .actions-group button {
+        min-height: 32px;
+        padding: 4px 8px;
+      }
+      .actions-group .btn-label {
+        display: none;
+      }
+
+      .pane-toolbar {
+        padding: 6px 12px;
+      }
+      .pane-subtitle {
+        display: none;
+      }
+
+      /* Hide keyboard shortcut badges on mobile */
+      #exportBtn kbd,
+      .search-container .search-kbd {
+        display: none !important;
+      }
+
+      .feed-container {
+        padding: 12px;
+      }
+      .feed-container.grid-layout {
+        grid-template-columns: 1fr;
+        grid-auto-rows: max-content;
+        gap: 14px;
+      }
+
+      /* List layout optimization on mobile */
+      .list-layout .residence-card {
+        padding: 6px 8px;
+        gap: 8px;
+      }
+      .list-layout .card-thumb-wrap {
+        width: 50px;
+        height: 38px;
+        min-height: 38px;
+      }
+      .list-layout .card-content {
+        padding: 0;
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+      }
+      .list-layout .card-header-block {
+        width: 100%;
+      }
+      .list-layout .card-title {
+        font-size: 12.5px;
+      }
+      .list-layout .card-address {
+        font-size: 11px;
+      }
+      .list-layout .card-amenities-wrap {
+        display: none;
+      }
+
+      .card-media-actions {
+        gap: 6px;
+      }
+      .card-drag-handle {
+        width: 38px;
+        height: 38px;
+        min-width: 38px;
+      }
+      .card-action-btn {
+        width: 34px;
+        height: 34px;
+      }
+      .card-rank-badge {
+        font-size: 12px;
+        padding: 5px 9px;
+      }
+
+      /* Reorder layout mobile sizing */
+      .reorder-layout .residence-card {
+        padding: 8px 10px;
+        gap: 8px;
+      }
+      .reorder-layout .card-thumb-wrap {
+        width: 44px;
+        height: 44px;
+        min-height: 44px;
+      }
+      .reorder-layout .card-reorder-actions {
+        gap: 4px;
+      }
+      .reorder-layout .reorder-nudge-btn {
+        width: 36px;
+        height: 36px;
+      }
+      .reorder-layout .card-drag-handle {
+        width: 40px;
+        height: 40px;
+      }
+
+      /* Modal Bottom-Sheet Styles on Mobile */
+      .modal-overlay {
+        padding: 0;
+        align-items: flex-end;
+      }
+      .sheet-handle-bar {
+        display: block;
+        width: 38px;
+        height: 4px;
+        background: var(--border-strong);
+        border-radius: 2px;
+        margin: -6px auto 10px auto;
+        opacity: 0.7;
+      }
+      .rank-picker-modal {
+        max-width: 100%;
+        border-radius: 16px 16px 0 0;
+        border-bottom: none;
+        padding: 16px 18px 24px 18px;
+        animation: slideUpSheet 180ms cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      @keyframes slideUpSheet {
+        from { transform: translateY(100%); }
+        to { transform: translateY(0); }
+      }
+      .stepper-btn {
+        height: 46px;
+      }
+      .rank-apply-btn, .rank-cancel-btn {
+        height: 44px;
+        font-size: 13px;
+      }
+
+      .lightbox-modal {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+        width: 100%;
+        max-width: 100%;
+        height: 92vh;
+        height: 92dvh;
+        max-height: 92vh;
+        border-radius: 14px 14px 0 0;
+        border-bottom: none;
+      }
+      .gallery-stage {
+        border-right: none;
+        border-bottom: 1px solid var(--border-subtle);
+        height: auto;
+        flex-shrink: 0;
+      }
+      .gallery-main-view {
+        height: 240px;
+        min-height: 240px;
+        max-height: 240px;
+        flex: none;
+      }
+      .gallery-strip {
+        height: 58px;
+        padding: 6px 10px;
+      }
+      .gallery-thumb-item {
+        width: 52px;
+        height: 40px;
+      }
+      .specs-stage {
+        height: 100%;
+        max-height: none;
+        overflow-y: auto;
+        padding: 16px;
+      }
+
+      .zoom-overlay {
+        padding: 0;
+      }
+      .zoom-dialog {
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+        border-radius: 0;
+        border: none;
+      }
+      .zoom-nav-btn {
+        width: 38px;
+        height: 38px;
+      }
+      .zoom-nav-prev { left: 8px; }
+      .zoom-nav-next { right: 8px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========================================================================
+       TOP COMMAND BAR
+       ======================================================================== -->
+  <header class="command-bar">
+    <div class="brand-section">
+      <div class="brand-mark"></div>
+      <div class="brand-title">EDISU <span>// Ranker</span></div>
+    </div>
+
+    <div class="metrics-group">
+      <span class="metric-dot"></span>
+      <div>TOTAL: <strong id="metricLoaded">0</strong></div>
+      <span style="color:var(--border-strong)">|</span>
+      <div>RANKED: <strong id="metricRanked" style="color:var(--accent);">0</strong></div>
+    </div>
+
+    <div class="actions-group">
+      <button id="pasteJsonBtn" title="Paste raw scraped JSON string">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>
+        <span class="btn-label">Paste JSON</span>
+      </button>
+
+      <button id="importFileBtn" onclick="document.getElementById('fileInput').click()" title="Import JSON file">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <span class="btn-label">Import File</span>
+      </button>
+      <input type="file" id="fileInput" accept=".json" style="display: none">
+
+      <button class="primary" id="exportBtn" title="Export rankings to JSON (Shortcut: E)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span class="btn-label">Export</span>
+        <kbd style="color:#121314; border-color:rgba(0,0,0,0.3); background:rgba(255,255,255,0.3)">E</kbd>
+      </button>
+
+      <button class="danger-ghost" id="clearBtn" title="Clear all data">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+      </button>
+    </div>
+
+    <div class="search-container">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="text" id="searchInput" placeholder="Filter by name, address, amenities..." autocomplete="off" spellcheck="false">
+      <div class="search-kbd" id="searchKbdWrap" title="Press / or click to search">
+        <kbd>/</kbd>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       MAIN IN-GRID RANKING WORKSPACE
+       ======================================================================== -->
+  <main class="app-workspace">
+    <section class="discovery-pane" id="discoveryPane">
+      <div class="pane-toolbar">
+        <div class="pane-title">
+          <span class="title-text">Ranked Listings Grid</span>
+          <span class="pane-subtitle">(Click card to inspect • Drag handle ⋮⋮ to reposition rank)</span>
+          <span id="filteredMatchTag" style="display:none; color:var(--accent); font-weight:400;">(filtered)</span>
+        </div>
+        <div class="pane-controls">
+          <button class="icon-btn active" id="viewGridBtn" title="Grid Layout">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          </button>
+          <button class="icon-btn" id="viewListBtn" title="Compact List Layout">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          </button>
+          <button class="icon-btn" id="autoRankBtn" title="Auto-rank by most Room Types & Amenities (Shortcut: A)">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <span>Auto Rank</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="feed-container grid-layout" id="feedList">
+        <!-- Cards rendered dynamically -->
+      </div>
+    </section>
+  </main>
+
+  <!-- ========================================================================
+       MODAL: INSPECT / LIGHTBOX / GALLERY
+       ======================================================================== -->
+  <div class="modal-overlay" id="lightboxOverlay">
+    <div class="lightbox-modal">
+      <div class="gallery-stage">
+        <div class="gallery-main-view">
+          <div class="gallery-backdrop" id="lightboxBackdrop"></div>
+          <img id="lightboxMainImg" src="" alt="Listing photo preview" title="Click to open zoomed gallery" decoding="async">
+          <button class="gallery-zoom-badge" id="lbZoomBtn" title="Zoom photo (almost full screen)">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+            <span>Zoom</span>
+          </button>
+          <div class="gallery-nav">
+            <button id="lbPrevBtn" title="Previous photo (←)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <button id="lbNextBtn" title="Next photo (→)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="gallery-strip" id="lightboxThumbStrip">
+          <!-- Thumbnails rendered dynamically -->
+        </div>
+      </div>
+
+      <div class="specs-stage">
+        <div class="specs-header">
+          <div>
+            <h2 id="lbTitle">Residence Name</h2>
+            <div id="lbSlug" style="font-family:var(--font-mono); font-size:11px; color:var(--text-muted);">slug-reference</div>
+          </div>
+          <button class="icon-btn" onclick="closeLightbox()" title="Close (Esc)">✕</button>
+        </div>
+
+        <div class="specs-meta-block">
+          <div class="meta-row">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span id="lbAddress">Via Example 123, Torino</span>
+            <a id="lbMapLink" href="#" target="_blank" rel="noopener">Google Maps ↗</a>
+          </div>
+          <div class="meta-row" id="lbPhoneRow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <a id="lbPhone" href="#">+39 011 000000</a>
+          </div>
+          <div class="meta-row">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            <a id="lbSourceLink" href="#" target="_blank" rel="noopener">EDISU Portal Official Page ↗</a>
+          </div>
+        </div>
+
+        <div>
+          <div class="detail-section-title">Room Types Available</div>
+          <div class="pill-tags" id="lbRooms" style="display:flex; flex-wrap:wrap; gap:4px;"></div>
+        </div>
+
+        <div>
+          <div class="detail-section-title">Amenities & Facilities</div>
+          <div class="pill-tags" id="lbAmenities" style="display:flex; flex-wrap:wrap; gap:4px;"></div>
+        </div>
+
+        <div>
+          <div class="detail-section-title">Description</div>
+          <p class="desc-text" id="lbDesc">...</p>
+        </div>
+
+        <div class="note-editor">
+          <div class="detail-section-title">Field Notes & Personal Evaluation</div>
+          <textarea id="lbNotes" placeholder="Write internal notes (e.g. 5m from campus, great kitchen, quiet courtyard)..."></textarea>
+        </div>
+
+        <div class="specs-action-bar">
+          <div id="lbRankStatus" style="font-family:var(--font-mono); font-size:12px;"></div>
+          <div style="display:flex; gap:6px;">
+            <button id="lbToggleRankBtn" class="primary">Promote to Rank #1</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODAL: ZOOMED FULLSCREEN GALLERY
+       ======================================================================== -->
+  <div class="modal-overlay zoom-overlay" id="zoomGalleryOverlay" onclick="handleZoomOverlayClick(event)">
+    <div class="zoom-dialog" onclick="event.stopPropagation()">
+      <div class="zoom-header">
+        <div class="zoom-title-wrap">
+          <span class="zoom-title" id="zoomTitle">Residence Name</span>
+          <span class="zoom-counter" id="zoomCounter">1 / 1</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <kbd style="display:inline-flex;">Esc to close</kbd>
+          <button class="icon-btn" onclick="closeZoomGallery()" title="Close zoomed gallery (Esc)">✕</button>
+        </div>
+      </div>
+      <div class="zoom-stage">
+        <div class="zoom-backdrop" id="zoomBackdrop"></div>
+        <img id="zoomMainImg" src="" alt="Zoomed photo view" onclick="closeZoomGallery()" title="Click image to close zoom" decoding="async">
+        <button class="zoom-nav-btn zoom-nav-prev" id="zoomPrevBtn" title="Previous photo (←)" onclick="stepZoomImg(-1)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="zoom-nav-btn zoom-nav-next" id="zoomNextBtn" title="Next photo (→)" onclick="stepZoomImg(1)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+      <div class="zoom-strip" id="zoomThumbStrip">
+        <!-- Zoom gallery thumbnails -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODAL: TACTILE QUICK RANK PICKER (BOTTOM SHEET ON MOBILE)
+       ======================================================================== -->
+  <div class="modal-overlay" id="rankPickerOverlay">
+    <div class="generic-modal rank-picker-modal" id="rankPickerModal">
+      <div class="sheet-handle-bar"></div>
+      <div class="rank-picker-header">
+        <div class="rank-picker-res-info">
+          <img id="rankPickerThumb" src="" alt="Thumbnail" class="rank-picker-thumb" loading="lazy" decoding="async">
+          <div style="min-width:0; overflow:hidden;">
+            <div id="rankPickerTitle" class="rank-picker-title">Residence Name</div>
+            <div id="rankPickerSubtitle" class="rank-picker-subtitle">Current Position: #1</div>
+          </div>
+        </div>
+        <button class="icon-btn" onclick="closeRankPicker()" title="Close (Esc)">✕</button>
+      </div>
+
+      <!-- Tactile Stepper & Value Display -->
+      <div class="rank-stepper-container">
+        <button type="button" class="stepper-btn" id="rankStepDownBtn" title="Move rank up (closer to #1)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+          <span>-1</span>
+        </button>
+        
+        <div class="rank-display-box">
+          <span class="rank-display-hash">#</span>
+          <span class="rank-display-num" id="rankDisplayVal">1</span>
+          <span class="rank-display-total" id="rankPickerTotal">of 18</span>
+        </div>
+
+        <button type="button" class="stepper-btn" id="rankStepUpBtn" title="Move rank down (closer to last)">
+          <span>+1</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+      </div>
+
+      <!-- Interactive Scrubber Slider -->
+      <div class="rank-slider-wrapper">
+        <div class="slider-labels">
+          <span>#1 (Highest)</span>
+          <span id="rankSliderMidLabel">Middle</span>
+          <span id="rankSliderEndLabel">#Last</span>
+        </div>
+        <input type="range" id="rankPickerSlider" min="1" max="18" step="1" value="1" class="rank-scrubber-slider" aria-label="Rank Position Slider">
+      </div>
+
+      <!-- Live Context Placement Preview -->
+      <div class="rank-placement-preview" id="rankPlacementPreview">
+        Will be placed at rank <strong id="previewRankNum" style="color:var(--accent);">#1</strong>
+      </div>
+
+      <!-- Preset Jump Pills -->
+      <div class="rank-preset-chips">
+        <button type="button" class="preset-chip" onclick="setQuickRank(1)">⤒ Top #1</button>
+        <button type="button" class="preset-chip" onclick="setQuickRank(3)">Top 3</button>
+        <button type="button" class="preset-chip" onclick="setQuickRank(Math.ceil(state.listings.length/2))">Middle</button>
+        <button type="button" class="preset-chip" onclick="setQuickRank(state.listings.length)">Last ⤓</button>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="rank-picker-actions">
+        <button type="button" class="rank-cancel-btn" onclick="closeRankPicker()">Cancel</button>
+        <button type="button" class="primary rank-apply-btn" onclick="confirmRankPicker()">
+          <span>Apply Position</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODAL: PASTE RAW JSON
+       ======================================================================== -->
+  <div class="modal-overlay" id="pasteModalOverlay">
+    <div class="generic-modal">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="font-size:14px; font-weight:600;">Import Scraped JSON Payload</h3>
+        <button class="icon-btn" onclick="closePasteModal()">✕</button>
+      </div>
+      <p style="color:var(--text-secondary); font-size:12px;">
+        Paste a valid JSON array conforming to the EDISU scraper schema. It will immediately parse images, amenities, contacts, and update the ranking feed.
+      </p>
+      <textarea id="pasteTextarea" placeholder='[ { "url": "https://...", "items": [...] } ]'></textarea>
+      <div style="display:flex; justify-content:flex-end; gap:8px;">
+        <button onclick="closePasteModal()">Cancel</button>
+        <button class="primary" id="pasteSubmitBtn">Process & Merge Data</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Drag-and-drop Fullscreen Overlay for files -->
+  <div id="dropOverlay">
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+    <div>DROP JSON PAYLOAD TO IMPORT LISTINGS</div>
+  </div>
+
+  <!-- Activity HUD for Animated Import / Export -->
+  <div class="modal-overlay activity-overlay" id="activityOverlay">
+    <div class="activity-card">
+      <div class="activity-icon-wrap" id="activityIconWrap">
+        <div class="activity-spinner-ring"></div>
+      </div>
+      <div class="activity-title" id="activityTitle">Processing Data...</div>
+      <div class="activity-subtitle" id="activitySubtitle">Please wait</div>
+      <div class="activity-progress-track">
+        <div class="activity-progress-bar" id="activityProgressBar"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Hub -->
+  <div id="toastContainer"></div>
+
+  <!-- ========================================================================
+       APPLICATION LOGIC & RUNTIME
+       ======================================================================== -->
+  <script>
+    /* ==========================================================================
+       1. APPLICATION STATE & PERSISTENCE ENGINE
+       ========================================================================== */
+    const STORAGE_KEY = 'edisu_ranker_state_v2';
+
+    let state = {
+      listings: [],
+      notes: {},
+      activeUrl: null,
+      filterQuery: '',
+      viewMode: 'grid',
+      expandedCards: {},
+      lastUpdated: Date.now()
+    };
+
+    const PLACEHOLDER_IMG = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(
+      '<svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="800" height="500" fill="#18191C"/><line x1="0" y1="0" x2="800" y2="500" stroke="#25272E" stroke-width="1.5"/><line x1="800" y1="0" x2="0" y2="500" stroke="#25272E" stroke-width="1.5"/><rect x="340" y="210" width="120" height="80" rx="4" fill="#202227" stroke="#333742" stroke-width="1"/><circle cx="375" cy="240" r="10" fill="#E28448" opacity="0.85"/><path d="M350 280 L380 250 L410 275 L430 260 L450 280 Z" fill="#2E323D"/><text x="400" y="325" fill="#727885" font-family="ui-monospace, monospace" font-size="11" text-anchor="middle" letter-spacing="1">NO MEDIA PREVIEW</text></svg>'
+    );
+
+    function syncListingRanks() {
+      state.listings.forEach((item, idx) => {
+        item.rank = idx + 1;
+      });
+    }
+
+    function loadPersistedState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed.listings)) {
+            state.listings = parsed.listings;
+            state.notes = parsed.notes || {};
+            state.lastUpdated = parsed.lastUpdated || Date.now();
+            if (state.listings.some(l => l.rank !== null && l.rank !== undefined)) {
+              state.listings.sort((a, b) => {
+                const aRank = (a.rank !== null && a.rank !== undefined) ? a.rank : Infinity;
+                const bRank = (b.rank !== null && b.rank !== undefined) ? b.rank : Infinity;
+                return aRank - bRank;
+              });
+            }
+            syncListingRanks();
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn('Failed to parse localStorage state:', err);
+      }
+      state.listings = [];
+    }
+
+    function saveState() {
+      state.lastUpdated = Date.now();
+      const payload = {
+        listings: state.listings,
+        notes: state.notes,
+        lastUpdated: state.lastUpdated
+      };
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+      } catch (e) {
+        console.error('Storage quota exceeded or disabled', e);
+      }
+    }
+
+    /* ==========================================================================
+       2. DATA NORMALIZATION (HEURISTICS & FALLBACKS)
+       ========================================================================== */
+    function getRawRank(raw) {
+      if (!raw || typeof raw !== 'object') return null;
+      const val = raw.rank !== undefined ? raw.rank :
+                  raw.Rank !== undefined ? raw.Rank :
+                  raw.ranking !== undefined ? raw.ranking :
+                  raw.posizione !== undefined ? raw.posizione :
+                  raw.ordine !== undefined ? raw.ordine : undefined;
+      if (val !== undefined && val !== null && val !== '') {
+        const num = Number(val);
+        if (!isNaN(num)) return num;
+      }
+      return null;
+    }
+
+    function normalizeScrapedItem(raw) {
+      const url = raw.url || `synthetic://${Math.random().toString(36).substring(2, 9)}`;
+      const rank = getRawRank(raw);
+      
+      let slug = '';
+      try {
+        const cleanUrl = url.split('?')[0].replace(/\/+$/, '');
+        slug = cleanUrl.substring(cleanUrl.lastIndexOf('/') + 1);
+      } catch (e) {
+        slug = 'residenza';
+      }
+
+      let name = raw.name || '';
+      if (!name) {
+        const inferred = slug
+          .replace(/^(residenza-universitaria-|collegio-|residenza-)/i, '')
+          .replace(/[-_]/g, ' ')
+          .trim();
+        name = inferred ? "Residenza " + inferred.replace(/\b\w/g, l => l.toUpperCase()) : "Residenza Universitaria";
+      }
+
+      let subheader = raw.subheader || raw.images?.subheader_image || null;
+      let gallery = Array.isArray(raw.gallery) ? raw.gallery.filter(Boolean) : (Array.isArray(raw.images?.full_galleria) ? raw.images.full_galleria.filter(Boolean) : []);
+      
+      if (!subheader && gallery.length > 0) subheader = gallery[0];
+      if (subheader && !gallery.includes(subheader)) gallery.unshift(subheader);
+      if (gallery.length === 0 && subheader) gallery = [subheader];
+
+      let address = raw.address || '';
+      let phone = raw.phone || '';
+      let rooms = Array.isArray(raw.rooms) ? raw.rooms : [];
+      let amenities = Array.isArray(raw.amenities) ? raw.amenities : [];
+      let description = raw.description || '';
+
+      if (Array.isArray(raw.items)) {
+        raw.items.forEach(it => {
+          const tit = (it.titolo || '').toLowerCase();
+          
+          if (it.indirizzo && !address) address = it.indirizzo;
+          if (it.telefono && !phone) phone = it.telefono;
+
+          if (tit.includes('indirizzo') || tit.includes('contatt')) {
+            if (it.indirizzo) address = it.indirizzo;
+            if (it.telefono) phone = it.telefono;
+          } else if (tit.includes('camer') || tit.includes('tipolog') || tit.includes('posti')) {
+            if (rooms.length === 0) {
+              if (Array.isArray(it.contenuto)) {
+                rooms = it.contenuto;
+              } else if (typeof it.contenuto === 'string') {
+                rooms = it.contenuto.split(/[,;\n]/).map(s => s.trim()).filter(Boolean);
+              }
+            }
+          } else if (tit.includes('serviz') || tit.includes('inclus') || tit.includes('amenit')) {
+            if (amenities.length === 0) {
+              if (Array.isArray(it.contenuto)) {
+                amenities = it.contenuto;
+              } else if (typeof it.contenuto === 'string') {
+                amenities = it.contenuto.split(/[,;\n]/).map(s => s.trim()).filter(Boolean);
+              }
+            }
+          } else if (tit.includes('descriz') || tit.includes('struttura')) {
+            if (!description) {
+              description = typeof it.contenuto === 'string' ? it.contenuto : JSON.stringify(it.contenuto);
+            }
+          }
+        });
+      }
+
+      return {
+        url,
+        slug,
+        name,
+        rank,
+        subheader: subheader || PLACEHOLDER_IMG,
+        gallery: gallery.length > 0 ? gallery : [PLACEHOLDER_IMG],
+        address: address || 'Torino, Italia',
+        phone: phone || '',
+        rooms: rooms.length > 0 ? rooms : ['Camere per studenti (Bando EDISU)'],
+        amenities: amenities.length > 0 ? amenities : ['Wi-Fi', 'Servizio Portineria'],
+        description: description || 'Complesso residenziale per studenti universitari EDISU Piemonte.',
+        rawPayload: raw
+      };
+    }
+
+    /* ==========================================================================
+       3. UI RENDERING & IN-GRID RANKING ENGINE
+       ========================================================================== */
+    const feedContainer = document.getElementById('feedList');
+
+    function renderAll() {
+      renderFeed();
+      updateMetrics();
+    }
+
+    function updateMetrics() {
+      const total = state.listings.length;
+      document.getElementById('metricLoaded').textContent = total;
+      document.getElementById('metricRanked').textContent = total;
+    }
+
+    function switchViewMode(mode) {
+      state.viewMode = mode;
+      feedContainer.className = `feed-container ${mode}-layout`;
+
+      document.getElementById('viewGridBtn')?.classList.toggle('active', mode === 'grid');
+      document.getElementById('viewListBtn')?.classList.toggle('active', mode === 'list');
+
+      renderFeed();
+    }
+
+    let shouldAnimateCards = false;
+
+    function normalizeSearchStr(str) {
+      if (!str) return '';
+      return String(str)
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim();
+    }
+
+    function getFilteredListings() {
+      const q = normalizeSearchStr(state.filterQuery);
+      const tag = document.getElementById('filteredMatchTag');
+      if (!q) {
+        if (tag) tag.style.display = 'none';
+        return state.listings;
+      }
+      if (tag) tag.style.display = 'inline';
+
+      const terms = q.split(/\s+/).filter(Boolean);
+
+      return state.listings.filter(item => {
+        if (!item) return false;
+
+        const name = normalizeSearchStr(item.name);
+        const addr = normalizeSearchStr(item.address);
+        const slug = normalizeSearchStr(item.slug);
+        const desc = normalizeSearchStr(item.description);
+        const note = normalizeSearchStr(state.notes ? state.notes[item.url] : '');
+
+        let amenitiesText = '';
+        if (Array.isArray(item.amenities)) {
+          amenitiesText = normalizeSearchStr(item.amenities.map(a => typeof a === 'object' ? JSON.stringify(a) : a).join(' '));
+        } else if (item.amenities) {
+          amenitiesText = normalizeSearchStr(item.amenities);
+        }
+
+        let roomsText = '';
+        if (Array.isArray(item.rooms)) {
+          roomsText = normalizeSearchStr(item.rooms.map(r => typeof r === 'object' ? JSON.stringify(r) : r).join(' '));
+        } else if (item.rooms) {
+          roomsText = normalizeSearchStr(item.rooms);
+        }
+
+        const combined = `${name} ${addr} ${slug} ${desc} ${amenitiesText} ${roomsText} ${note}`;
+        return terms.every(term => combined.includes(term));
+      });
+    }
+
+    function getCardAmenitiesHtml(item, isExpanded, maxAvailableWidth = 270) {
+      const all = item.amenities || [];
+      if (all.length === 0) {
+        return `<span class="amenity-chip" style="color:var(--text-muted);"><span class="chip-dot" style="background:var(--text-muted);"></span><span>Standard EDISU Housing</span></span>`;
+      }
+
+      if (isExpanded) {
+        return all.map(am => 
+          `<span class="amenity-chip" title="${escapeHtml(am)}"><span class="chip-dot"></span><span>${escapeHtml(am)}</span></span>`
+        ).join('') + `
+          <button class="amenity-chip-more is-expanded" onclick="event.stopPropagation(); toggleCardAmenities('${item.url}', false)" title="Collapse amenities">Show less ▴</button>
+        `;
+      }
+
+      let fittedCount = 0;
+      let usedWidth = 0;
+
+      for (let i = 0; i < all.length; i++) {
+        const estChipWidth = Math.max(50, (all[i].length * 7.2) + 26);
+        const rem = all.length - (i + 1);
+        const moreBtnEst = rem > 0 ? 64 : 0;
+        if (usedWidth + estChipWidth + moreBtnEst > maxAvailableWidth && fittedCount > 0) {
+          break;
+        }
+        usedWidth += estChipWidth + 6;
+        fittedCount++;
+      }
+
+      fittedCount = Math.max(1, Math.min(fittedCount, 3));
+      const visible = all.slice(0, fittedCount);
+      const rem = all.length - fittedCount;
+      const moreHtml = rem > 0 
+        ? `<button class="amenity-chip-more" onclick="event.stopPropagation(); toggleCardAmenities('${item.url}', true)" title="Click to view all ${all.length} amenities">+${rem} more</button>` 
+        : '';
+
+      return visible.map(am => 
+        `<span class="amenity-chip" title="${escapeHtml(am)}"><span class="chip-dot"></span><span>${escapeHtml(am)}</span></span>`
+      ).join('') + moreHtml;
+    }
+
+    function toggleCardAmenities(url, expand) {
+      if (expand) {
+        state.expandedCards[url] = true;
+      } else {
+        delete state.expandedCards[url];
+      }
+      const card = feedContainer.querySelector(`[data-url="${url}"]`);
+      if (card) {
+        adjustCardAmenities(card);
+      }
+    }
+
+    function adjustCardAmenities(card) {
+      const url = card.getAttribute('data-url');
+      const item = state.listings.find(l => l.url === url);
+      if (!item) return;
+
+      const wrap = card.querySelector('.card-amenities-wrap');
+      if (!wrap) return;
+
+      const isExpanded = Boolean(state.expandedCards[url]);
+      const width = wrap.clientWidth || 270;
+      wrap.innerHTML = getCardAmenitiesHtml(item, isExpanded, width);
+    }
+
+    function adjustAllCardAmenities() {
+      const cards = feedContainer.querySelectorAll('.residence-card');
+      cards.forEach(card => adjustCardAmenities(card));
+    }
+
+    function renderFeed() {
+      feedContainer.innerHTML = '';
+
+      if (state.listings.length === 0) {
+        feedContainer.innerHTML = `
+          <div class="empty-catalog-state">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.5">
+              <rect x="3" y="3" width="18" height="18" rx="2"/><path d="m9 12 2 2 4-4"/>
+            </svg>
+            <h3>No Residences Loaded</h3>
+            <p>Import your scraped EDISU Piemonte JSON dataset or paste raw JSON payload to review and rank directly in the grid.</p>
+            <div class="empty-actions">
+              <button class="primary" onclick="document.getElementById('fileInput').click()">Import JSON File</button>
+              <button onclick="document.getElementById('pasteJsonBtn').click()">Paste Raw JSON</button>
+            </div>
+          </div>`;
+        return;
+      }
+
+      const items = getFilteredListings();
+
+      if (items.length === 0) {
+        feedContainer.innerHTML = `
+          <div style="grid-column: 1/-1; padding: 48px 20px; text-align: center; color: var(--text-muted); font-family: var(--font-mono); font-size: 12px;">
+            No residences match search criteria "${escapeHtml(state.filterQuery)}"
+          </div>`;
+        return;
+      }
+
+      const fragment = document.createDocumentFragment();
+
+      items.forEach((res, idx) => {
+        const globalRank = state.listings.findIndex(l => l.url === res.url);
+        const isSelected = state.activeUrl === res.url;
+        const note = state.notes[res.url] || '';
+        const isAboveFold = idx < 4;
+        const imgLoading = isAboveFold ? 'eager' : 'lazy';
+        const imgPriority = idx < 2 ? 'fetchpriority="high"' : 'fetchpriority="low"';
+
+        const card = document.createElement('article');
+        card.className = `residence-card ${isSelected ? 'is-selected' : ''}`;
+        card.setAttribute('data-url', res.url);
+
+        if (shouldAnimateCards) {
+          card.classList.add('card-animate');
+          card.style.animationDelay = `${Math.min(idx * 22, 380)}ms`;
+        }
+
+        let isPointerMoving = false;
+        let startPointerX = 0;
+        let startPointerY = 0;
+
+        card.addEventListener('pointerdown', (e) => {
+          if (e.target.closest('button') || e.target.closest('a') || e.target.closest('.card-drag-handle')) return;
+          isPointerMoving = false;
+          startPointerX = e.clientX;
+          startPointerY = e.clientY;
+        });
+
+        card.addEventListener('pointermove', (e) => {
+          if (Math.abs(e.clientX - startPointerX) > 6 || Math.abs(e.clientY - startPointerY) > 6) {
+            isPointerMoving = true;
+          }
+        });
+
+        card.addEventListener('click', (e) => {
+          if (isPointerMoving) return;
+          if (e.target.closest('button') || e.target.closest('a') || e.target.closest('.card-drag-handle')) return;
+          setActiveResidence(res.url);
+          openLightbox(res.url);
+        });
+
+        /* Dedicated Tactile Reorder Mode Template */
+        if (state.viewMode === 'reorder') {
+          card.innerHTML = `
+            <div class="card-reorder-left">
+              <button class="card-rank-badge ${globalRank === 0 ? 'top-rank' : ''}" title="Tap to set rank position" onclick="event.stopPropagation(); openRankPicker('${res.url}')">
+                #${globalRank + 1} <span style="font-size:9px; opacity:0.75;">▾</span>
+              </button>
+              <div class="card-thumb-wrap">
+                <img src="${res.subheader}" alt="${escapeHtml(res.name)}" onerror="this.onerror=null;this.src='${PLACEHOLDER_IMG}'" loading="${imgLoading}" decoding="async" ${imgPriority}>
+              </div>
+            </div>
+            <div class="card-content">
+              <h3 class="card-title" title="${escapeHtml(res.name)}">${escapeHtml(res.name)}</h3>
+              <div class="card-address" title="${escapeHtml(res.address)}">${escapeHtml(res.address)}</div>
+            </div>
+            <div class="card-reorder-actions">
+              <button class="reorder-nudge-btn" title="Send to Top #1" onclick="event.stopPropagation(); rankItemAtPosition('${res.url}', 0)" ${globalRank === 0 ? 'disabled style="opacity:0.3;pointer-events:none;"' : ''}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 11 12 5 6 11"/><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="2" x2="19" y2="2"/></svg>
+              </button>
+              <button class="reorder-nudge-btn" title="Move Up" onclick="event.stopPropagation(); moveListingStep('${res.url}', -1)" ${globalRank === 0 ? 'disabled style="opacity:0.3;pointer-events:none;"' : ''}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+              </button>
+              <button class="reorder-nudge-btn" title="Move Down" onclick="event.stopPropagation(); moveListingStep('${res.url}', 1)" ${globalRank === state.listings.length - 1 ? 'disabled style="opacity:0.3;pointer-events:none;"' : ''}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              <div class="card-drag-handle" title="Hold and drag to reorder">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/>
+                  <circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/>
+                  <circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/>
+                </svg>
+              </div>
+            </div>
+          `;
+          fragment.appendChild(card);
+          return;
+        }
+
+        const noteHtml = note ? `
+          <div class="card-note-preview" title="${escapeHtml(note)}">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <span>${escapeHtml(note)}</span>
+          </div>` : '';
+
+        const amenitiesHtml = getCardAmenitiesHtml(res, Boolean(state.expandedCards[res.url]));
+
+        card.innerHTML = `
+          <div class="card-list-prefix">
+            <div class="card-drag-handle" title="Drag to reorder">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                <circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/>
+                <circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/>
+                <circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/>
+              </svg>
+            </div>
+            <button class="card-rank-badge ${globalRank === 0 ? 'top-rank' : ''}" title="Tap to set rank position" onclick="event.stopPropagation(); openRankPicker('${res.url}')">
+              #${globalRank + 1} <span style="font-size:9px; opacity:0.75;">▾</span>
+            </button>
+          </div>
+          <div class="card-thumb-wrap">
+            <img src="${res.subheader}" alt="${escapeHtml(res.name)}" onerror="this.onerror=null;this.src='${PLACEHOLDER_IMG}'" loading="${imgLoading}" decoding="async" ${imgPriority}>
+            <div class="card-media-overlay">
+              <button class="card-rank-badge ${globalRank === 0 ? 'top-rank' : ''}" title="Tap to set rank position" onclick="event.stopPropagation(); openRankPicker('${res.url}')">
+                #${globalRank + 1} <span style="font-size:9px; opacity:0.75;">▾</span>
+              </button>
+              <div class="card-media-actions">
+                <button class="card-action-btn" title="Move Up" onclick="event.stopPropagation(); moveListingStep('${res.url}', -1)" ${globalRank === 0 ? 'disabled style="opacity:0.3;pointer-events:none;"' : ''}>
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+                </button>
+                <button class="card-action-btn" title="Move Down" onclick="event.stopPropagation(); moveListingStep('${res.url}', 1)" ${globalRank === state.listings.length - 1 ? 'disabled style="opacity:0.3;pointer-events:none;"' : ''}>
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <button class="card-action-btn danger-hover" title="Remove listing" onclick="event.stopPropagation(); deleteListing('${res.url}')">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+                <div class="card-drag-handle" title="Drag to reorder">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/>
+                    <circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/>
+                    <circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-content">
+            <div class="card-header-block">
+              <h3 class="card-title" title="${escapeHtml(res.name)}">${escapeHtml(res.name)}</h3>
+              <div class="card-address" title="${escapeHtml(res.address)}">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                <span>${escapeHtml(res.address)}</span>
+              </div>
+            </div>
+            ${noteHtml}
+            <div class="card-amenities-wrap">
+              ${amenitiesHtml}
+            </div>
+          </div>
+          <div class="card-list-actions">
+            <button class="card-action-btn" title="Move Up" onclick="event.stopPropagation(); moveListingStep('${res.url}', -1)" ${globalRank === 0 ? 'disabled style="opacity:0.3;pointer-events:none;"' : ''}>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+            </button>
+            <button class="card-action-btn" title="Move Down" onclick="event.stopPropagation(); moveListingStep('${res.url}', 1)" ${globalRank === state.listings.length - 1 ? 'disabled style="opacity:0.3;pointer-events:none;"' : ''}>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <button class="card-action-btn danger-hover" title="Remove listing" onclick="event.stopPropagation(); deleteListing('${res.url}')">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+        `;
+        fragment.appendChild(card);
+      });
+
+      feedContainer.appendChild(fragment);
+
+      if (shouldAnimateCards) {
+        requestAnimationFrame(() => {
+          shouldAnimateCards = false;
+        });
+      }
+
+      initSortable();
+    }
+
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(adjustAllCardAmenities, 100);
+    });
+
+    function setActiveResidence(url) {
+      state.activeUrl = url;
+      document.querySelectorAll('.residence-card').forEach(el => {
+        el.classList.toggle('is-selected', el.getAttribute('data-url') === url);
+      });
+    }
+
+    /* ==========================================================================
+       4. IN-GRID DRAG-AND-DROP REORDERING (SortableJS Touch-Optimized)
+       ========================================================================== */
+    let feedSortableInstance = null;
+
+    function initSortable() {
+      if (feedSortableInstance) {
+        feedSortableInstance.destroy();
+      }
+
+      const isList = state.viewMode === 'list';
+
+      feedSortableInstance = new Sortable(feedContainer, {
+        animation: 180,
+        handle: '.card-drag-handle',
+        draggable: '.residence-card',
+        ghostClass: 'sortable-ghost',
+        chosenClass: 'sortable-chosen',
+        fallbackClass: 'sortable-fallback',
+        forceFallback: true,
+        fallbackOnBody: true,
+        fallbackTolerance: 3,
+        scroll: feedContainer,
+        scrollSensitivity: 100,
+        scrollSpeed: 20,
+        bubbleScroll: true,
+        direction: 'vertical',
+        swapThreshold: isList ? 0.5 : 0.65,
+        invertSwap: !isList,
+        touchStartThreshold: 3,
+        delay: 0,
+        delayOnTouchOnly: false,
+        onStart: function() {
+          document.body.classList.add('is-dragging');
+          if (navigator.vibrate) {
+            try { navigator.vibrate(18); } catch(e){}
+          }
+        },
+        onEnd: function(evt) {
+          document.body.classList.remove('is-dragging');
+          document.querySelectorAll('.sortable-fallback').forEach(el => el.remove());
+          if (navigator.vibrate) {
+            try { navigator.vibrate(10); } catch(e){}
+          }
+          feedContainer.querySelectorAll('.residence-card').forEach(el => {
+            el.style.transform = '';
+          });
+          if (evt.oldIndex === evt.newIndex) return;
+          if (state.filterQuery.trim()) {
+            showToast('Clear search filter before reordering all listings', true);
+            renderFeed();
+            return;
+          }
+          const moved = state.listings.splice(evt.oldIndex, 1)[0];
+          state.listings.splice(evt.newIndex, 0, moved);
+          syncListingRanks();
+          saveState();
+          renderFeed();
+          updateMetrics();
+          showToast(`Repositioned "${moved.name}" to #${evt.newIndex + 1}`);
+        }
+      });
+    }
+
+    function moveListingStep(url, delta) {
+      const idx = state.listings.findIndex(l => l.url === url);
+      if (idx === -1) return;
+      const targetIdx = idx + delta;
+      if (targetIdx < 0 || targetIdx >= state.listings.length) return;
+      const item = state.listings.splice(idx, 1)[0];
+      state.listings.splice(targetIdx, 0, item);
+      syncListingRanks();
+      if (navigator.vibrate) try { navigator.vibrate(15); } catch(e){}
+      saveState();
+      renderFeed();
+      updateMetrics();
+      showToast(`Moved "${item.name}" to #${targetIdx + 1}`);
+    }
+
+    let rankPickerUrl = null;
+    let pendingRankPos = 1;
+
+    function openRankPicker(url) {
+      const res = state.listings.find(l => l.url === url);
+      if (!res) return;
+      rankPickerUrl = url;
+      const currentIdx = state.listings.findIndex(l => l.url === url);
+      pendingRankPos = currentIdx + 1;
+
+      document.getElementById('rankPickerTitle').textContent = res.name;
+      document.getElementById('rankPickerSubtitle').textContent = `Current Position: #${currentIdx + 1} of ${state.listings.length}`;
+      
+      const thumb = document.getElementById('rankPickerThumb');
+      if (thumb) thumb.src = res.subheader || PLACEHOLDER_IMG;
+
+      const slider = document.getElementById('rankPickerSlider');
+      if (slider) {
+        slider.min = 1;
+        slider.max = state.listings.length;
+        slider.value = pendingRankPos;
+      }
+
+      document.getElementById('rankPickerTotal').textContent = `of ${state.listings.length}`;
+      document.getElementById('rankSliderEndLabel').textContent = `#${state.listings.length}`;
+
+      updateRankPickerUI();
+
+      const overlay = document.getElementById('rankPickerOverlay');
+      overlay.classList.add('active');
+      if (navigator.vibrate) try { navigator.vibrate(15); } catch(e){}
+    }
+
+    function updateRankPickerUI() {
+      const total = state.listings.length;
+      pendingRankPos = Math.max(1, Math.min(total, pendingRankPos));
+
+      const display = document.getElementById('rankDisplayVal');
+      if (display) display.textContent = pendingRankPos;
+
+      const slider = document.getElementById('rankPickerSlider');
+      if (slider) slider.value = pendingRankPos;
+
+      const preview = document.getElementById('rankPlacementPreview');
+      if (preview && rankPickerUrl) {
+        const curIdx = state.listings.findIndex(l => l.url === rankPickerUrl);
+        const curRank = curIdx + 1;
+        if (pendingRankPos === curRank) {
+          preview.innerHTML = `Retains current rank <strong style="color:var(--text-primary)">#${pendingRankPos}</strong>`;
+        } else if (pendingRankPos === 1) {
+          preview.innerHTML = `Promoting to <strong style="color:var(--accent)">Top #1 Rank</strong> (Above all listings)`;
+        } else if (pendingRankPos === total) {
+          preview.innerHTML = `Moving to <strong style="color:var(--danger)">Last Rank #${total}</strong>`;
+        } else {
+          const targetIndex = pendingRankPos - 1;
+          const otherItem = state.listings[targetIndex >= curIdx ? targetIndex : targetIndex - 1];
+          const neighborName = otherItem ? escapeHtml(otherItem.name) : 'adjacent residence';
+          preview.innerHTML = `Moving to <strong style="color:var(--accent)">#${pendingRankPos}</strong> (near ${neighborName})`;
+        }
+      }
+    }
+
+    function stepRankPicker(delta) {
+      pendingRankPos += delta;
+      updateRankPickerUI();
+      if (navigator.vibrate) try { navigator.vibrate(10); } catch(e){}
+    }
+
+    function setQuickRank(targetPos) {
+      if (!rankPickerUrl) return;
+      pendingRankPos = targetPos;
+      updateRankPickerUI();
+      if (navigator.vibrate) try { navigator.vibrate(15); } catch(e){}
+    }
+
+    function confirmRankPicker() {
+      if (!rankPickerUrl) return;
+      const targetPos = pendingRankPos;
+      if (isNaN(targetPos) || targetPos < 1 || targetPos > state.listings.length) {
+        showToast(`Please select a rank between 1 and ${state.listings.length}`, true);
+        return;
+      }
+      rankItemAtPosition(rankPickerUrl, targetPos - 1);
+      closeRankPicker();
+    }
+
+    function closeRankPicker() {
+      const overlay = document.getElementById('rankPickerOverlay');
+      if (overlay) overlay.classList.remove('active');
+      rankPickerUrl = null;
+    }
+
+    document.getElementById('rankPickerSlider')?.addEventListener('input', (e) => {
+      pendingRankPos = parseInt(e.target.value, 10);
+      updateRankPickerUI();
+      if (navigator.vibrate) try { navigator.vibrate(8); } catch(e){}
+    });
+    document.getElementById('rankStepDownBtn')?.addEventListener('click', () => stepRankPicker(-1));
+    document.getElementById('rankStepUpBtn')?.addEventListener('click', () => stepRankPicker(1));
+
+    /* ==========================================================================
+       5. REORDERING & ACTIONS
+       ========================================================================== */
+    function deleteListing(url) {
+      const idx = state.listings.findIndex(l => l.url === url);
+      if (idx === -1) return;
+      const name = state.listings[idx].name;
+      state.listings.splice(idx, 1);
+      delete state.notes[url];
+      delete state.expandedCards[url];
+      if (state.activeUrl === url) {
+        state.activeUrl = state.listings[0]?.url || null;
+      }
+      saveState();
+      renderFeed();
+      updateMetrics();
+      showToast(`Removed "${name}" from rankings`);
+    }
+
+    function rankItemAtPosition(url, targetPos) {
+      const existIdx = state.listings.findIndex(l => l.url === url);
+      if (existIdx === -1) return;
+
+      const item = state.listings.splice(existIdx, 1)[0];
+      if (targetPos === 0) {
+        state.listings.unshift(item);
+      } else if (targetPos === -1 || targetPos >= state.listings.length) {
+        state.listings.push(item);
+      } else {
+        state.listings.splice(targetPos, 0, item);
+      }
+
+      syncListingRanks();
+      saveState();
+      renderFeed();
+      updateMetrics();
+
+      const newPos = state.listings.findIndex(l => l.url === url) + 1;
+      showToast(`Moved "${item.name}" to #${newPos}`);
+    }
+
+    /* ==========================================================================
+       6. LIGHTBOX / INSPECTOR RUNTIME
+       ========================================================================== */
+    let currentLightboxResidence = null;
+    let currentLightboxImgIdx = 0;
+
+    const lightboxOverlay = document.getElementById('lightboxOverlay');
+    const lbMainImg = document.getElementById('lightboxMainImg');
+    const lbThumbStrip = document.getElementById('lightboxThumbStrip');
+    const lbNotes = document.getElementById('lbNotes');
+
+    function openLightbox(url) {
+      const res = state.listings.find(l => l.url === url);
+      if (!res) return;
+
+      currentLightboxResidence = res;
+      currentLightboxImgIdx = 0;
+      setActiveResidence(url);
+
+      document.getElementById('lbTitle').textContent = res.name;
+      document.getElementById('lbSlug').textContent = res.slug;
+      document.getElementById('lbAddress').textContent = res.address;
+      document.getElementById('lbMapLink').href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(res.address)}`;
+      
+      const phoneRow = document.getElementById('lbPhoneRow');
+      const phoneLink = document.getElementById('lbPhone');
+      if (res.phone) {
+        phoneRow.style.display = 'flex';
+        phoneLink.textContent = res.phone;
+        phoneLink.href = `tel:${res.phone.replace(/\s+/g, '')}`;
+      } else {
+        phoneRow.style.display = 'none';
+      }
+
+      document.getElementById('lbSourceLink').href = res.url;
+      document.getElementById('lbDesc').textContent = res.description;
+
+      const roomsContainer = document.getElementById('lbRooms');
+      roomsContainer.innerHTML = res.rooms.map(r => `<span class="amenity-chip"><span>${escapeHtml(r)}</span></span>`).join('');
+
+      const amenitiesContainer = document.getElementById('lbAmenities');
+      amenitiesContainer.innerHTML = res.amenities.map(a => `<span class="amenity-chip"><span class="chip-dot"></span><span>${escapeHtml(a)}</span></span>`).join('');
+
+      lbNotes.value = state.notes[res.url] || '';
+
+      lbMainImg.onclick = () => openZoomGallery();
+      const zoomBadge = document.getElementById('lbZoomBtn');
+      if (zoomBadge) zoomBadge.onclick = () => openZoomGallery();
+
+      renderLightboxGallery();
+      updateLightboxRankAction();
+
+      lightboxOverlay.classList.add('active');
+    }
+
+    function openZoomGallery(idx) {
+      if (!currentLightboxResidence) return;
+      if (typeof idx === 'number') {
+        currentLightboxImgIdx = idx;
+      }
+      renderZoomGallery();
+      document.getElementById('zoomGalleryOverlay').classList.add('active');
+    }
+
+    function closeZoomGallery() {
+      const zoomOverlay = document.getElementById('zoomGalleryOverlay');
+      if (zoomOverlay) zoomOverlay.classList.remove('active');
+      renderLightboxGallery();
+    }
+
+    function handleZoomOverlayClick(e) {
+      if (e.target.id === 'zoomGalleryOverlay') {
+        closeZoomGallery();
+      }
+    }
+
+    function renderZoomGallery() {
+      const res = currentLightboxResidence;
+      if (!res) return;
+      const zoomImg = document.getElementById('zoomMainImg');
+      const zoomBackdrop = document.getElementById('zoomBackdrop');
+      const zoomTitle = document.getElementById('zoomTitle');
+      const zoomCounter = document.getElementById('zoomCounter');
+      const zoomStrip = document.getElementById('zoomThumbStrip');
+
+      const gallery = res.gallery && res.gallery.length > 0 ? res.gallery : [PLACEHOLDER_IMG];
+      const activeUrl = gallery[currentLightboxImgIdx] || PLACEHOLDER_IMG;
+
+      zoomTitle.textContent = res.name;
+      zoomCounter.textContent = `${currentLightboxImgIdx + 1} / ${gallery.length}`;
+      zoomImg.decoding = 'async';
+      zoomImg.src = activeUrl;
+      if (zoomBackdrop) {
+        zoomBackdrop.style.backgroundImage = activeUrl !== PLACEHOLDER_IMG ? `url("${activeUrl}")` : 'none';
+      }
+
+      zoomStrip.innerHTML = '';
+      gallery.forEach((url, i) => {
+        const thumb = document.createElement('img');
+        thumb.className = `gallery-thumb-item ${i === currentLightboxImgIdx ? 'active' : ''}`;
+        thumb.loading = 'lazy';
+        thumb.decoding = 'async';
+        thumb.src = url;
+        thumb.onerror = () => thumb.src = PLACEHOLDER_IMG;
+        thumb.onclick = () => {
+          currentLightboxImgIdx = i;
+          renderZoomGallery();
+          renderLightboxGallery();
+        };
+        zoomStrip.appendChild(thumb);
+      });
+    }
+
+    function stepZoomImg(delta) {
+      if (!currentLightboxResidence) return;
+      const gallery = currentLightboxResidence.gallery || [];
+      if (gallery.length === 0) return;
+      currentLightboxImgIdx = (currentLightboxImgIdx + delta + gallery.length) % gallery.length;
+      renderZoomGallery();
+      renderLightboxGallery();
+    }
+
+    function renderLightboxGallery() {
+      const res = currentLightboxResidence;
+      const backdrop = document.getElementById('lightboxBackdrop');
+      if (!res || !res.gallery || res.gallery.length === 0) {
+        lbMainImg.src = PLACEHOLDER_IMG;
+        if (backdrop) backdrop.style.backgroundImage = 'none';
+        lbThumbStrip.innerHTML = '';
+        return;
+      }
+
+      const activeImg = res.gallery[currentLightboxImgIdx] || PLACEHOLDER_IMG;
+      lbMainImg.decoding = 'async';
+      lbMainImg.src = activeImg;
+      if (backdrop) {
+        backdrop.style.backgroundImage = activeImg !== PLACEHOLDER_IMG ? `url("${activeImg}")` : 'none';
+      }
+      lbThumbStrip.innerHTML = '';
+
+      res.gallery.forEach((imgUrl, i) => {
+        const thumb = document.createElement('img');
+        thumb.className = `gallery-thumb-item ${i === currentLightboxImgIdx ? 'active' : ''}`;
+        thumb.loading = 'lazy';
+        thumb.decoding = 'async';
+        thumb.src = imgUrl;
+        thumb.onerror = () => thumb.src = PLACEHOLDER_IMG;
+        thumb.onclick = () => {
+          currentLightboxImgIdx = i;
+          renderLightboxGallery();
+        };
+        lbThumbStrip.appendChild(thumb);
+      });
+    }
+
+    function updateLightboxRankAction() {
+      const res = currentLightboxResidence;
+      if (!res) return;
+      const rankIdx = state.listings.findIndex(l => l.url === res.url);
+      const statusText = document.getElementById('lbRankStatus');
+      const toggleBtn = document.getElementById('lbToggleRankBtn');
+
+      statusText.innerHTML = `Rank Position: <strong style="color:var(--accent)">#${rankIdx + 1}</strong> of ${state.listings.length}`;
+
+      if (rankIdx > 0) {
+        toggleBtn.textContent = 'Promote to Rank #1';
+        toggleBtn.className = 'primary';
+        toggleBtn.onclick = () => {
+          rankItemAtPosition(res.url, 0);
+          updateLightboxRankAction();
+        };
+      } else {
+        toggleBtn.textContent = 'Demote to Last Rank';
+        toggleBtn.className = 'icon-btn';
+        toggleBtn.onclick = () => {
+          rankItemAtPosition(res.url, -1);
+          updateLightboxRankAction();
+        };
+      }
+    }
+
+    function closeLightbox() {
+      closeZoomGallery();
+      if (currentLightboxResidence && lbNotes.value.trim() !== (state.notes[currentLightboxResidence.url] || '')) {
+        saveCurrentNote();
+      }
+      lightboxOverlay.classList.remove('active');
+      currentLightboxResidence = null;
+    }
+
+    function saveCurrentNote() {
+      if (!currentLightboxResidence) return;
+      const note = lbNotes.value.trim();
+      if (note) {
+        state.notes[currentLightboxResidence.url] = note;
+      } else {
+        delete state.notes[currentLightboxResidence.url];
+      }
+      saveState();
+      renderFeed();
+    }
+
+    let noteDebounceTimer = null;
+    lbNotes.addEventListener('input', () => {
+      if (!currentLightboxResidence) return;
+      state.notes[currentLightboxResidence.url] = lbNotes.value;
+      clearTimeout(noteDebounceTimer);
+      noteDebounceTimer = setTimeout(() => {
+        saveState();
+      }, 250);
+    });
+
+    document.getElementById('lbPrevBtn').onclick = () => {
+      if (!currentLightboxResidence) return;
+      const len = currentLightboxResidence.gallery.length;
+      currentLightboxImgIdx = (currentLightboxImgIdx - 1 + len) % len;
+      renderLightboxGallery();
+    };
+
+    document.getElementById('lbNextBtn').onclick = () => {
+      if (!currentLightboxResidence) return;
+      const len = currentLightboxResidence.gallery.length;
+      currentLightboxImgIdx = (currentLightboxImgIdx + 1) % len;
+      renderLightboxGallery();
+    };
+
+    /* ==========================================================================
+       7. IMPORT, EXPORT & CLIPBOARD DATA PORTABILITY (WITH ANIMATION & CHUNKING)
+       ========================================================================== */
+    function showActivityHUD(title, subtitle, initialProgress = 0) {
+      const overlay = document.getElementById('activityOverlay');
+      const titleEl = document.getElementById('activityTitle');
+      const subEl = document.getElementById('activitySubtitle');
+      const barEl = document.getElementById('activityProgressBar');
+      const iconWrap = document.getElementById('activityIconWrap');
+      if (!overlay) return;
+      if (titleEl) titleEl.textContent = title;
+      if (subEl) subEl.textContent = subtitle;
+      if (barEl) barEl.style.width = `${initialProgress}%`;
+      if (iconWrap) iconWrap.innerHTML = `<div class="activity-spinner-ring"></div>`;
+      overlay.classList.add('active');
+    }
+
+    function updateActivityHUD(progress, subtitle) {
+      const subEl = document.getElementById('activitySubtitle');
+      const barEl = document.getElementById('activityProgressBar');
+      if (subEl && subtitle !== undefined) subEl.textContent = subtitle;
+      if (barEl) barEl.style.width = `${Math.min(100, Math.max(0, progress))}%`;
+    }
+
+    function hideActivityHUD() {
+      const overlay = document.getElementById('activityOverlay');
+      if (overlay) overlay.classList.remove('active');
+    }
+
+    function finishActivityHUD(title, subtitle, callback) {
+      const titleEl = document.getElementById('activityTitle');
+      const subEl = document.getElementById('activitySubtitle');
+      const barEl = document.getElementById('activityProgressBar');
+      const iconWrap = document.getElementById('activityIconWrap');
+      if (titleEl && title) titleEl.textContent = title;
+      if (subEl && subtitle) subEl.textContent = subtitle;
+      if (barEl) barEl.style.width = '100%';
+      if (iconWrap) {
+        iconWrap.innerHTML = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`;
+      }
+      setTimeout(() => {
+        hideActivityHUD();
+        if (callback) callback();
+      }, 420);
+    }
+
+    function exportRankingToJson() {
+      const count = state.listings.length;
+      if (count === 0) {
+        showToast('No listings available to export', true);
+        return;
+      }
+
+      showActivityHUD('Exporting Rankings', `Compiling ${count} ranked listings...`, 20);
+
+      setTimeout(() => {
+        try {
+          updateActivityHUD(55, 'Assembling metadata & notes...');
+          const rankedObjects = state.listings.map((item, idx) => ({
+            rank: idx + 1,
+            name: item.name,
+            url: item.url,
+            address: item.address,
+            phone: item.phone,
+            notes: state.notes[item.url] || '',
+            originalPayload: item.rawPayload
+          }));
+
+          const exportBundle = {
+            meta: {
+              generator: "EDISU Piemonte Ranking Station v2.0",
+              exportedAt: new Date().toISOString(),
+              totalCount: count
+            },
+            ranked: rankedObjects
+          };
+
+          updateActivityHUD(80, 'Creating JSON payload...');
+
+          // High-performance Blob export avoids string URI length limitations and memory stalls
+          const jsonString = JSON.stringify(exportBundle, null, 2);
+          const blob = new Blob([jsonString], { type: 'application/json' });
+          const blobUrl = URL.createObjectURL(blob);
+
+          const downloadAnchor = document.createElement('a');
+          downloadAnchor.href = blobUrl;
+          downloadAnchor.download = `edisu_rankings_${new Date().toISOString().slice(0,10)}.json`;
+          document.body.appendChild(downloadAnchor);
+          downloadAnchor.click();
+          downloadAnchor.remove();
+
+          setTimeout(() => URL.revokeObjectURL(blobUrl), 1500);
+
+          updateActivityHUD(100, 'Export finalized');
+          finishActivityHUD('Export Successful', `Saved ${count} residences to JSON`, () => {
+            showToast(`Exported ${count} ranked listings to JSON`);
+          });
+        } catch (err) {
+          hideActivityHUD();
+          showToast(`Export failed: ${err.message}`, true);
+        }
+      }, 160);
+    }
+
+    function processIncomingData(rawJsonString) {
+      let parsed;
+      try {
+        parsed = JSON.parse(rawJsonString);
+      } catch (err) {
+        showToast(`JSON Parse Error: ${err.message}`, true);
+        return false;
+      }
+
+      let itemsToIngest = [];
+      if (Array.isArray(parsed)) {
+        itemsToIngest = parsed;
+      } else if (parsed && typeof parsed === 'object') {
+        const list = parsed.ranked || parsed.listings || parsed.residences || parsed.data || parsed.items;
+        if (Array.isArray(list)) {
+          itemsToIngest = list;
+        }
+      }
+
+      if (!Array.isArray(itemsToIngest) || itemsToIngest.length === 0) {
+        showToast("Payload must contain a JSON array of residence objects.", true);
+        return false;
+      }
+
+      // Unpack wrapped payloads while preserving rank & notes
+      itemsToIngest = itemsToIngest.map(r => {
+        if (r && typeof r === 'object') {
+          const rank = getRawRank(r);
+          if (r.originalPayload && typeof r.originalPayload === 'object') {
+            const merged = { ...r.originalPayload };
+            if (rank !== null && getRawRank(merged) === null) {
+              merged.rank = rank;
+            }
+            if (r.notes && r.url) state.notes[r.url] = r.notes;
+            return merged;
+          }
+          if (r.notes && r.url) {
+            state.notes[r.url] = r.notes;
+          }
+        }
+        return r;
+      });
+
+      // Sort incoming items by "rank": x if present
+      const anyIncomingRank = itemsToIngest.some(r => getRawRank(r) !== null);
+      if (anyIncomingRank) {
+        itemsToIngest.sort((a, b) => {
+          const rankA = getRawRank(a);
+          const rankB = getRawRank(b);
+          if (rankA !== null && rankB !== null) return rankA - rankB;
+          if (rankA !== null) return -1;
+          if (rankB !== null) return 1;
+          return 0;
+        });
+      }
+
+      const totalItems = itemsToIngest.length;
+      showActivityHUD('Importing Listings', `Parsing & ranking ${totalItems} incoming items...`, 15);
+
+      const existingMap = new Map();
+      state.listings.forEach(item => existingMap.set(item.url, item));
+      const newlyAdded = [];
+      let currentIndex = 0;
+      const CHUNK_SIZE = 40;
+
+      function processChunk() {
+        const chunkEnd = Math.min(currentIndex + CHUNK_SIZE, totalItems);
+        for (; currentIndex < chunkEnd; currentIndex++) {
+          const norm = normalizeScrapedItem(itemsToIngest[currentIndex]);
+          if (existingMap.has(norm.url)) {
+            const existing = existingMap.get(norm.url);
+            if (norm.rank !== null) existing.rank = norm.rank;
+            if (norm.rawPayload) existing.rawPayload = norm.rawPayload;
+          } else {
+            newlyAdded.push(norm);
+            existingMap.set(norm.url, norm);
+          }
+        }
+
+        const pct = Math.round((currentIndex / totalItems) * 75);
+        updateActivityHUD(pct, `Processed ${currentIndex} of ${totalItems} items...`);
+
+        if (currentIndex < totalItems) {
+          requestAnimationFrame(processChunk);
+        } else {
+          updateActivityHUD(90, 'Updating rankings and grid layout...');
+          state.listings.push(...newlyAdded);
+
+          // Apply ranking order by "rank": x if present
+          if (state.listings.some(l => l.rank !== null && l.rank !== undefined)) {
+            state.listings.sort((a, b) => {
+              const aRank = (a.rank !== null && a.rank !== undefined) ? a.rank : Infinity;
+              const bRank = (b.rank !== null && b.rank !== undefined) ? b.rank : Infinity;
+              return aRank - bRank;
+            });
+          }
+
+          syncListingRanks();
+          shouldAnimateCards = true;
+          saveState();
+          renderAll();
+
+          updateActivityHUD(100, `Done! Ranked ${state.listings.length} listings`);
+          finishActivityHUD('Import Complete', `Loaded ${newlyAdded.length} new residences`, () => {
+            showToast(`Ingested & ranked ${newlyAdded.length} listings (${totalItems} processed)`);
+          });
+        }
+      }
+
+      requestAnimationFrame(processChunk);
+      return true;
+    }
+
+    const pasteModal = document.getElementById('pasteModalOverlay');
+    const pasteTextarea = document.getElementById('pasteTextarea');
+
+    document.getElementById('pasteJsonBtn').onclick = () => {
+      pasteTextarea.value = '';
+      pasteModal.classList.add('active');
+      pasteTextarea.focus();
+    };
+
+    function closePasteModal() {
+      pasteModal.classList.remove('active');
+    }
+
+    document.getElementById('pasteSubmitBtn').onclick = () => {
+      const val = pasteTextarea.value.trim();
+      if (!val) {
+        showToast('Clipboard area is empty', true);
+        return;
+      }
+      if (processIncomingData(val)) {
+        closePasteModal();
+      }
+    };
+
+    document.getElementById('fileInput').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        processIncomingData(evt.target.result);
+        e.target.value = '';
+      };
+      reader.readAsText(file);
+    });
+
+    const dropOverlay = document.getElementById('dropOverlay');
+    let dragCounter = 0;
+
+    function isFileDragEvent(e) {
+      if (!e.dataTransfer) return false;
+      const types = e.dataTransfer.types;
+      return Boolean(types && (types.includes ? types.includes('Files') : Array.from(types).indexOf('Files') !== -1));
+    }
+
+    window.addEventListener('dragenter', (e) => {
+      if (!isFileDragEvent(e)) return;
+      e.preventDefault();
+      dragCounter++;
+      dropOverlay.style.display = 'flex';
+    });
+
+    window.addEventListener('dragleave', (e) => {
+      if (!isFileDragEvent(e)) return;
+      e.preventDefault();
+      dragCounter--;
+      if (dragCounter <= 0) {
+        dropOverlay.style.display = 'none';
+        dragCounter = 0;
+      }
+    });
+
+    window.addEventListener('dragover', (e) => {
+      if (isFileDragEvent(e)) {
+        e.preventDefault();
+      }
+    });
+
+    window.addEventListener('drop', (e) => {
+      if (!isFileDragEvent(e)) return;
+      e.preventDefault();
+      dragCounter = 0;
+      dropOverlay.style.display = 'none';
+
+      const files = e.dataTransfer.files;
+      if (files && files.length > 0) {
+        const file = files[0];
+        if (file.name.endsWith('.json') || file.type.includes('json')) {
+          const reader = new FileReader();
+          reader.onload = (evt) => processIncomingData(evt.target.result);
+          reader.readAsText(file);
+        } else {
+          showToast('Dropped file is not a valid JSON document', true);
+        }
+      }
+    });
+
+    /* ==========================================================================
+       8. KEYBOARD SHORTCUTS ENGINE
+       ========================================================================== */
+    window.addEventListener('keydown', (e) => {
+      const activeTag = document.activeElement ? document.activeElement.tagName : '';
+      const isInputActive = activeTag === 'INPUT' || activeTag === 'TEXTAREA' || activeTag === 'SELECT';
+
+      if (e.key === 'Escape') {
+        const zoomOverlay = document.getElementById('zoomGalleryOverlay');
+        if (zoomOverlay && zoomOverlay.classList.contains('active')) {
+          closeZoomGallery();
+          return;
+        }
+        if (lightboxOverlay.classList.contains('active')) {
+          closeLightbox();
+          return;
+        }
+        if (pasteModal.classList.contains('active')) {
+          closePasteModal();
+          return;
+        }
+        if (isInputActive) {
+          document.activeElement.blur();
+          return;
+        }
+      }
+
+      if (isInputActive) return;
+
+      const zoomOverlay = document.getElementById('zoomGalleryOverlay');
+      if (zoomOverlay && zoomOverlay.classList.contains('active')) {
+        if (e.key === 'ArrowLeft') {
+          stepZoomImg(-1);
+          return;
+        }
+        if (e.key === 'ArrowRight') {
+          stepZoomImg(1);
+          return;
+        }
+      }
+
+      // Focus search with '/' or Cmd+K / Ctrl+K
+      if ((e.key === '/' || ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K'))) && !isInputActive) {
+        e.preventDefault();
+        if (searchInput) {
+          searchInput.focus();
+          searchInput.select();
+        }
+        return;
+      }
+
+      if (document.activeElement === searchInput) {
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          if (searchInput.value) {
+            searchInput.value = '';
+            state.filterQuery = '';
+            updateSearchUI();
+            renderFeed();
+          } else {
+            searchInput.blur();
+          }
+          return;
+        }
+      }
+
+      if (e.key === 'e' || e.key === 'E') {
+        e.preventDefault();
+        exportRankingToJson();
+        return;
+      }
+
+      if (e.key === 'a' || e.key === 'A') {
+        e.preventDefault();
+        autoRankByRoomsAndAmenities();
+        return;
+      }
+
+      const filtered = getFilteredListings();
+      if (filtered.length > 0) {
+        if (e.key === 'j' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          moveFeedSelection(1, filtered);
+          return;
+        }
+        if (e.key === 'k' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          moveFeedSelection(-1, filtered);
+          return;
+        }
+      }
+
+      if (e.key === ' ' || e.key === 'Enter') {
+        if (state.activeUrl && !lightboxOverlay.classList.contains('active')) {
+          e.preventDefault();
+          openLightbox(state.activeUrl);
+          return;
+        }
+      }
+
+      if (lightboxOverlay.classList.contains('active')) {
+        if (e.key === 'ArrowLeft') {
+          document.getElementById('lbPrevBtn').click();
+          return;
+        }
+        if (e.key === 'ArrowRight') {
+          document.getElementById('lbNextBtn').click();
+          return;
+        }
+      }
+
+      if (e.key >= '1' && e.key <= '9') {
+        const slot = parseInt(e.key, 10) - 1;
+        const targetUrl = lightboxOverlay.classList.contains('active') 
+          ? (currentLightboxResidence ? currentLightboxResidence.url : null)
+          : state.activeUrl;
+
+        if (targetUrl) {
+          e.preventDefault();
+          rankItemAtPosition(targetUrl, slot);
+          if (lightboxOverlay.classList.contains('active')) {
+            updateLightboxRankAction();
+          }
+        }
+      }
+    });
+
+    function moveFeedSelection(direction, filteredList) {
+      if (!state.activeUrl) {
+        setActiveResidence(filteredList[0].url);
+        scrollCardIntoView(filteredList[0].url);
+        return;
+      }
+
+      const curIdx = filteredList.findIndex(item => item.url === state.activeUrl);
+      if (curIdx === -1) {
+        setActiveResidence(filteredList[0].url);
+        scrollCardIntoView(filteredList[0].url);
+        return;
+      }
+
+      const nextIdx = Math.min(Math.max(0, curIdx + direction), filteredList.length - 1);
+      setActiveResidence(filteredList[nextIdx].url);
+      scrollCardIntoView(filteredList[nextIdx].url);
+    }
+
+    function scrollCardIntoView(url) {
+      const card = feedContainer.querySelector(`[data-url="${url}"]`);
+      if (card) {
+        card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+
+    /* ==========================================================================
+       9. EVENT LISTENERS
+       ========================================================================== */
+    const searchInput = document.getElementById('searchInput');
+    const searchKbdWrap = document.getElementById('searchKbdWrap');
+
+    function updateSearchUI() {
+      const hasVal = Boolean(searchInput.value.trim());
+      if (searchKbdWrap) {
+        if (hasVal) {
+          searchKbdWrap.innerHTML = '<span class="search-kbd-clear" title="Clear filter (Esc)">✕</span>';
+        } else {
+          searchKbdWrap.innerHTML = '<kbd>/</kbd>';
+        }
+      }
+    }
+
+    searchInput.addEventListener('input', () => {
+      state.filterQuery = searchInput.value;
+      updateSearchUI();
+      renderFeed();
+    });
+
+    if (searchKbdWrap) {
+      searchKbdWrap.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (searchInput.value.trim()) {
+          searchInput.value = '';
+          state.filterQuery = '';
+          updateSearchUI();
+          renderFeed();
+          searchInput.focus();
+        } else {
+          searchInput.focus();
+          searchInput.select();
+        }
+      });
+    }
+
+    document.getElementById('viewGridBtn').onclick = () => switchViewMode('grid');
+    document.getElementById('viewListBtn').onclick = () => switchViewMode('list');
+
+    document.getElementById('exportBtn').onclick = exportRankingToJson;
+
+    function autoRankByRoomsAndAmenities() {
+      if (state.listings.length <= 1) {
+        showToast('Not enough listings to auto-rank', true);
+        return;
+      }
+
+      state.listings.sort((a, b) => {
+        const aRooms = Array.isArray(a.rooms) ? a.rooms.length : 0;
+        const bRooms = Array.isArray(b.rooms) ? b.rooms.length : 0;
+        const aAmenities = Array.isArray(a.amenities) ? a.amenities.length : 0;
+        const bAmenities = Array.isArray(b.amenities) ? b.amenities.length : 0;
+        const aTotal = aRooms + aAmenities;
+        const bTotal = bRooms + bAmenities;
+
+        if (bTotal !== aTotal) {
+          return bTotal - aTotal;
+        }
+        if (bRooms !== aRooms) {
+          return bRooms - aRooms;
+        }
+        if (bAmenities !== aAmenities) {
+          return bAmenities - aAmenities;
+        }
+        return a.name.localeCompare(b.name);
+      });
+
+      saveState();
+      renderFeed();
+      updateMetrics();
+      showToast(`Auto-ranked ${state.listings.length} residences by room types & amenities`);
+    }
+
+    document.getElementById('autoRankBtn').onclick = autoRankByRoomsAndAmenities;
+
+    document.getElementById('clearBtn').onclick = () => {
+      if (state.listings.length === 0) return;
+      if (confirm("Clear all listings and reset rankings? All data will be emptied.")) {
+        localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem('edisu_last_auto_json');
+        state.listings = [];
+        state.notes = {};
+        state.activeUrl = null;
+        state.expandedCards = {};
+        saveState();
+        renderAll();
+        showToast('All listings cleared');
+      }
+    };
+
+    /* ==========================================================================
+       10. UTILITIES & TOASTS
+       ========================================================================== */
+    function showToast(msg, isError = false) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast-msg ${isError ? 'error' : ''}`;
+      toast.innerHTML = `
+        <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:${isError ? 'var(--danger)' : 'var(--accent)'}"></span>
+        <span>${escapeHtml(msg)}</span>
+      `;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        toast.style.transition = 'all 180ms ease-out';
+        setTimeout(() => toast.remove(), 200);
+      }, 2600);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    /* ==========================================================================
+       11. INITIALIZATION & AUTO-IMPORT
+       ========================================================================== */
+    async function autoImportLocalRankingJson() {
+      try {
+        const response = await fetch('./ranking.json', { cache: 'no-cache' });
+        if (!response.ok) return;
+        const text = await response.text();
+        if (!text || !text.trim()) return;
+
+        const lastAutoImport = localStorage.getItem('edisu_last_auto_json');
+        if (state.listings.length === 0 || lastAutoImport !== text) {
+          localStorage.setItem('edisu_last_auto_json', text);
+          processIncomingData(text);
+        }
+      } catch (err) {
+        // Silently skip if file not found or if local browser security restricts file:// fetch
+        console.info('Auto-import ranking.json skipped:', err.message);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadPersistedState();
+      renderAll();
+      initSortable();
+
+      if (state.listings.length > 0) {
+        state.activeUrl = state.listings[0].url;
+      }
+
+      autoImportLocalRankingJson();
+    });
+  </script>
+</body>
+</html>
