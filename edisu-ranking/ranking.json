@@ -1,12 +1,141 @@
 {
   "meta": {
     "generator": "EDISU Piemonte Ranking Station v2.0",
-    "exportedAt": "2026-09-27T00:17:57.042Z",
-    "totalCount": 18
+    "exportedAt": "2026-09-27T14:54:36.930Z",
+    "totalCount": 50
   },
   "ranked": [
     {
       "rank": 1,
+      "name": "Residenza Appartamenti Fondazione Saracco",
+      "url": "https://www.edisu.piemonte.it/sedi/university-residence/appartamenti-fondazione-saracco",
+      "address": "Via Giotto, 51\n10126 Torino TO\nItalia",
+      "phone": "+39 350 1319741 (Reception Lingotto)",
+      "notes": "",
+      "originalPayload": {
+        "url": "https://www.edisu.piemonte.it/sedi/university-residence/appartamenti-fondazione-saracco",
+        "status": "success",
+        "images": {
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/sedi-residenza-universitaria-immagini/saracco/EsternoFondazioneSaracco.jpeg.webp?itok=oc32jHZc",
+          "full_galleria": [
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/saracco/saracco_edificio.jpg?itok=rcfa6a2u",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/saracco/EDISU_AppartamentiFondazioneSaracco_001.jpg?itok=BR5pxnvI",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/saracco/EDISU_AppartamentiFondazioneSaracco_017_0.jpg?itok=pPditDFu",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/saracco/Progetto%20senza%20titolo%20%281%29.png?itok=VrB3o6Wo",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/saracco/EDISU_AppartamentiFondazioneSaracco_004.jpg?itok=8fK2uAYu",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/saracco/saracco_cucina.jpg?itok=HS6erFi0",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/saracco/EDISU_AppartamentiFondazioneSaracco_012.jpg?itok=--ySFFBl"
+          ]
+        },
+        "items_count": 5,
+        "items": [
+          {
+            "titolo": "Indirizzo e numero di telefono",
+            "indirizzo": "Via Giotto, 51\n10126 Torino TO\nItalia",
+            "telefono": "+39 350 1319741 (Reception Lingotto)",
+            "orari_reception": "+39 350 1319741 (Reception Lingotto)",
+            "periodo_di_chiusura": null
+          },
+          {
+            "titolo": "Struttura",
+            "contenuto": "Gli appartamenti, completamente arredati, si trovano nelle vicinanze della Facoltà di Medicina e Chirurgia (Università degli Studi di Torino), si compongono di camere singole/doppie e cucina abitabile."
+          },
+          {
+            "titolo": "Camere",
+            "contenuto": [
+              "9 singole",
+              "17 doppie",
+              "1 tripla"
+            ]
+          },
+          {
+            "titolo": "Dotazioni camere",
+            "contenuto": [
+              "Bagno",
+              "Cucina con forno a microonde",
+              "Collegamento Internet Wi-Fi",
+              "Lavatrice"
+            ]
+          },
+          {
+            "titolo": "Servizi",
+            "contenuto": [
+              "Lavatrici",
+              "Manutenzione ordinaria e straordinaria",
+              "Parcheggio biciclette al coperto",
+              "Pulizia delle camere su richiesta (a pagamento)",
+              "Rete Wi-Fi"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "rank": 2,
+      "name": "Residenza Appartamento Madama Cristina",
+      "url": "https://www.edisu.piemonte.it/sedi/university-residence/appartamento-madama-cristina",
+      "address": "C.so Raffaello, 20\n10128 Torino TO\nItalia",
+      "phone": "+39 011 6531300 (Reception Verdi)",
+      "notes": "",
+      "originalPayload": {
+        "url": "https://www.edisu.piemonte.it/sedi/university-residence/appartamento-madama-cristina",
+        "status": "success",
+        "images": {
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/sedi-residenza-universitaria-immagini/madama-cristina/EDISU_AppartamentoMadamaCristina_012.jpg.webp?itok=pOkDryNk",
+          "full_galleria": [
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/madama-cristina/EDISU_AppartamentoMadamaCristina_006_0.jpg?itok=g-gAyIyV",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/madama-cristina/EDISU_AppartamentoMadamaCristina_001.jpg?itok=0TbYvtWU",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/madama-cristina/EDISU_AppartamentoMadamaCristina_009.jpg?itok=Ye43Bhw0",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/madama-cristina/EDISU_AppartamentoMadamaCristina_002.jpg?itok=8Nbg3ndk",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/madama-cristina/madamacristina_doccia.jpg?itok=GoK7YP4g"
+          ]
+        },
+        "items_count": 5,
+        "items": [
+          {
+            "titolo": "Indirizzo e numero di telefono",
+            "indirizzo": "C.so Raffaello, 20\n10128 Torino TO\nItalia",
+            "telefono": "+39 011 6531300 (Reception Verdi)",
+            "orari_reception": "+39 011 6531300 (Reception Verdi)",
+            "periodo_di_chiusura": null
+          },
+          {
+            "titolo": "Struttura",
+            "contenuto": "La residenza si trova nei pressi del centro città, in posizione comoda per raggiungere l'Università degli studi di Torino e il Politecnico."
+          },
+          {
+            "titolo": "Camere",
+            "contenuto": [
+              "2 singole",
+              "2 doppie"
+            ]
+          },
+          {
+            "titolo": "Dotazioni camere",
+            "contenuto": [
+              "Bagno",
+              "Cucina",
+              "Collegamento Internet Wi-Fi",
+              "Lavatrice"
+            ]
+          },
+          {
+            "titolo": "Servizi",
+            "contenuto": [
+              "Cucine comuni",
+              "Lavatrici/asciugatrici (servizio gratuito)",
+              "Manutenzione ordinaria e straordinaria",
+              "Palestra (tessera obbligatoria a pagamento) presso la residenza Verdi",
+              "Parcheggio interno biciclette",
+              "Portineria e reception diurna e notturna presso residenza Verdi",
+              "Rete Wi-Fi in tutta la struttura"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "rank": 3,
       "name": "Residenza Borsellino",
       "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-borsellino",
       "address": "Via Paolo Borsellino, 42\n10138 Torino TO\nItalia",
@@ -78,7 +207,395 @@
       }
     },
     {
-      "rank": 2,
+      "rank": 4,
+      "name": "Residenza Housing Universitario Residenza Duca",
+      "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/housing-universitario-residenza-duca",
+      "address": "Corso Duca degli Abruzzi 48/E\n10129 Torino TO\nItalia",
+      "phone": "+39 352 000 5843",
+      "notes": "",
+      "originalPayload": {
+        "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/housing-universitario-residenza-duca",
+        "status": "success",
+        "images": {
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/schede-informative-sedi-residenza-universitaria-immagini/duca-degli-abruzzi/copertinaducadegliabruzziconlogo.png.webp?itok=JTdG5fQg",
+          "full_galleria": [
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria/immagini/unnamed.jpg?itok=Ctcbc62_",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria/immagini/residenza%20duca%20camera.jpg?itok=7M0LYNmu",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria/immagini/ducaresidenzainterno1.jpg?itok=669JwEi9",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria/immagini/ducaresidenzainterno.jpg?itok=97gxQJ1y",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria/immagini/5%20%282%29.jpg?itok=GEFt1gaV",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria/immagini/3%20%281%29.jpg?itok=Ofrx7Uv8",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/duca-degli-abruzzi/Esterno_Duca_Pigafetta.jpg?itok=2MAF3FWq",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/duca-degli-abruzzi/Aula_studio_Duca_Pigafetta.jpg?itok=v9UY0ncz",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/duca-degli-abruzzi/Bagno_Duca_Pigafetta.JPG?itok=qE9i3Xxr",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/duca-degli-abruzzi/Cucina_comune_Duca_Pigafetta.jpg?itok=gMVbgF_D",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/duca-degli-abruzzi/Cucina_comune_Duca_Pigafetta_2.jpg?itok=52gnOXbq",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/duca-degli-abruzzi/Hall_Duca_Pigafetta_2.jpg?itok=x4gLlziQ"
+          ]
+        },
+        "items_count": 5,
+        "items": [
+          {
+            "titolo": "Indirizzo e numero di telefono",
+            "indirizzo": "Corso Duca degli Abruzzi 48/E\n10129 Torino TO\nItalia",
+            "telefono": "+39 352 000 5843"
+          },
+          {
+            "titolo": "Struttura",
+            "contenuto": "Alloggio di buon livello nel quartiere della Cro­cetta, zona residenziale ben servita della città di Torino, vicino alle sedi principali del Politecnico di Torino che si trovano a soli 7 minuti a piedi dalla struttura.\nPosizione comoda per l'accesso a diversi servizi commerciali e culturali , fermate dei mezzi pubblici e facoltà universitarie."
+          },
+          {
+            "titolo": "Camere",
+            "contenuto": [
+              "2 singole con bagno condiviso",
+              "5 doppie"
+            ]
+          },
+          {
+            "titolo": "Dotazioni camere",
+            "contenuto": [
+              "Aria condizionata",
+              "WiFi",
+              "Bagno",
+              "Frigorifero",
+              "Lavatrice"
+            ]
+          },
+          {
+            "titolo": "Servizi",
+            "contenuto": [
+              "Cucine in comune",
+              "Collegamenti WiFi"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "rank": 5,
+      "name": "Residenza Codegone",
+      "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-codegone",
+      "address": "Via Paolo Borsellino, 38 int.9\n10138 Torino TO\nItalia",
+      "phone": "+39 011 19743600",
+      "notes": "",
+      "originalPayload": {
+        "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-codegone",
+        "status": "success",
+        "images": {
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/sedi-residenza-universitaria-immagini/codegone/CAMPLUS%20CODEGONE-1%20ESTERNO.jpg.webp?itok=r_dC78lu",
+          "full_galleria": [
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/codegone/CAMPLUS%20CODEGONE-%20camera%20doppia%202.jpg?itok=dQxKq9mN",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/codegone/CAMPLUS%20CODEGONE--%20Terrazzo.jpg?itok=LsJQULdg",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/codegone/CAMPLUS%20CODEGONE-CUCINA%20COMUNE.jpg?itok=wE5MQv59",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/codegone/CAMPLUS%20CODEGONE-LAVANDERIA%202.jpg?itok=805ZYi6E",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/codegone/CAMPLUS%20CODEGONE-SALA%20STUDIO.jpg?itok=-CMVDHTx"
+          ]
+        },
+        "items_count": 5,
+        "items": [
+          {
+            "titolo": "Indirizzo e numero di telefono",
+            "indirizzo": "Via Paolo Borsellino, 38 int.9\n10138 Torino TO\nItalia",
+            "telefono": "+39 011 19743600"
+          },
+          {
+            "titolo": "Struttura",
+            "contenuto": "La residenza universitaria Codegone è situata a fianco della Cittadella Politecnica."
+          },
+          {
+            "titolo": "Camere",
+            "contenuto": [
+              "62 singole",
+              "12 doppie"
+            ]
+          },
+          {
+            "titolo": "Dotazioni camere",
+            "contenuto": [
+              "Bagno",
+              "Frigorifero",
+              "Wi-Fi e Cavo LAN"
+            ]
+          },
+          {
+            "titolo": "Servizi",
+            "contenuto": [
+              "Distributori di bevande e snacks",
+              "Fornitura e cambio periodico dotazione biancheria",
+              "Fotocopiatrice (a pagamento)",
+              "Locale con lavatrici, asciugatrici e una zona stiro a pagamento)",
+              "Locali cucine comuni",
+              "Palestra (presso Residenza universitaria Olimpia)",
+              "Parcheggio biciclette",
+              "Sala giochi e tv",
+              "Sale studio"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "rank": 6,
+      "name": "Residenza Carlo Mollino",
+      "url": "https://www.edisu.piemonte.it/sedi/university-residence/residenza-universitaria-carlo-mollino",
+      "address": "Corso Peschiera, 90\n10138 Torino TO\nItalia",
+      "phone": "+39 011 1975200",
+      "notes": "",
+      "originalPayload": {
+        "url": "https://www.edisu.piemonte.it/sedi/university-residence/residenza-universitaria-carlo-mollino",
+        "status": "success",
+        "images": {
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/sedi-residenza-universitaria-immagini/mollino/MOLLINO_copertina.jpg.webp?itok=QpljFhGf",
+          "full_galleria": [
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/mollino/CAMPLUS%20MOLLINO-esterni.jpg?itok=xwzt64pA",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/mollino/CAMPLUS%20MOLLINO%20palestra.jpg?itok=FKqZWnA8",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/mollino/CAMPLUS%20MOLLINO-%20sala%20studio.jpg?itok=M8o98BRk",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/mollino/CAMPLUS%20MOLLINO%20-interno%20camera%20doppia.jpg?itok=bPrMKn02",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/mollino/CAMPLUS%20MOLLINO%20campo%20calcetto%20terzo%20piano.jpg?itok=qazgLRe_"
+          ]
+        },
+        "items_count": 5,
+        "items": [
+          {
+            "titolo": "Indirizzo e numero di telefono",
+            "indirizzo": "Corso Peschiera, 90\n10138 Torino TO\nItalia",
+            "telefono": "+39 011 1975200"
+          },
+          {
+            "titolo": "Struttura",
+            "contenuto": "La residenza universitaria Carlo Mollino è situata nell’area della Cittadella Politecnica."
+          },
+          {
+            "titolo": "Camere",
+            "contenuto": [
+              "31 doppie"
+            ]
+          },
+          {
+            "titolo": "Dotazioni camere",
+            "contenuto": [
+              "Bagno",
+              "Frigorifero",
+              "Wi-Fi e Cavo LAN"
+            ]
+          },
+          {
+            "titolo": "Servizi",
+            "contenuto": [
+              "Campo da calcetto (a pagamento)",
+              "Distributori di bevande e snack",
+              "Fotocopiatrice (a pagamento)",
+              "Locale lavatrice, asciugatrice e zona stiro (a pagamento)",
+              "Locali cucine comuni",
+              "Palestra",
+              "Parcheggio biciclette",
+              "Reception diurna",
+              "Sala giochi e tv",
+              "Sale studio"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "rank": 7,
+      "name": "Residenza Campus Sanpaolo",
+      "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-campus-sanpaolo",
+      "address": "Via Caraglio, 97\n10141 Torino TO\nItalia",
+      "phone": "+39 011 3828416",
+      "notes": "",
+      "originalPayload": {
+        "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-campus-sanpaolo",
+        "status": "success",
+        "images": {
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/sedi-residenza-universitaria-immagini/campus-san-paolo/EDISU_CampusSanPaolo_004_0.jpg.webp?itok=UCIQK-1c",
+          "full_galleria": [
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/campus-san-paolo/EDISU_CampusSanPaolo_001_0.jpg?itok=z2LxeLrD",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/campus-san-paolo/sanpaolo_cortile.jpg?itok=VOrE62pg",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/campus-san-paolo/_MG_2009%20copy.jpg?itok=AsASCfDm",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/campus-san-paolo/_MG_2031%20copy.jpg?itok=iscP61mU",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/campus-san-paolo/EDISU_CampusSanPaolo_020_0.jpg?itok=mFF876N8",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/campus-san-paolo/EDISU_CampusSanPaolo_029_0.jpg?itok=-jajgBQ2",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/campus-san-paolo/sanpaolo_tavoli.jpg?itok=Axwf1LCv",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/campus-san-paolo/EDISU_CampusSanPaolo_019_0.jpg?itok=R5gjkkD0",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/campus-san-paolo/EDISU_CampusSanPaolo_018_0.jpg?itok=QUmKtDBq",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/campus-san-paolo/EDISU_CampusSanPaolo_024_0.jpg?itok=S3czJ3kd",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/campus-san-paolo/sanpaolo_lavatrici_asciugatrici.jpg?itok=fyYRm0Gb"
+          ]
+        },
+        "items_count": 6,
+        "items": [
+          {
+            "titolo": "Indirizzo e numero di telefono",
+            "indirizzo": "Via Caraglio, 97\n10141 Torino TO\nItalia",
+            "telefono": "+39 011 3828416"
+          },
+          {
+            "titolo": "Struttura",
+            "contenuto": "La Residenza si trova nelle immediate vicinanze della Cittadella Politecnica (Politecnico di Torino)."
+          },
+          {
+            "titolo": "Come raggiungere la sede",
+            "contenuto": [
+              "GTT Calcola Percorso",
+              "muoversiatorino.it",
+              "Servizio Ferroviario"
+            ]
+          },
+          {
+            "titolo": "Camere",
+            "contenuto": [
+              "22 doppie (+1 posto letto in camera doppia condivisa con utente privato)"
+            ]
+          },
+          {
+            "titolo": "Dotazioni camere",
+            "contenuto": [
+              "Bagno",
+              "Wi-Fi",
+              "Frigorifero"
+            ]
+          },
+          {
+            "titolo": "Servizi",
+            "contenuto": [
+              "Distributori bevande e snack/bar",
+              "Fotocopiatrice (a pagamento)",
+              "Locali con lavatrici, asciugatrici e zona stiro (a pagamento)",
+              "Locali cucina",
+              "Palestra",
+              "Parcheggio biciclette",
+              "Bike sharing",
+              "Reception diurna e notturna",
+              "Locale conversazione/Tv",
+              "Sala studio"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "rank": 8,
+      "name": "Residenza Appartamenti Ex Moi",
+      "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/appartamenti-ex-moi",
+      "address": "Via Giordano Bruno, 201\n10134 Torino TO\nItalia",
+      "phone": "+39 351 6373117 (Reception Paoli)",
+      "notes": "",
+      "originalPayload": {
+        "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/appartamenti-ex-moi",
+        "status": "success",
+        "images": {
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/sedi-residenza-universitaria-immagini/moi/_DGF1214-HDR.jpg.webp?itok=HrGxMEeI",
+          "full_galleria": [
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/moi/Camera2_MOI.jpg?itok=z4b0d3sd",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/moi/SalaTV_MOI.jpg?itok=R2Mvhqlb",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/moi/Salotto_MOI.jpg?itok=rX6KBnQv",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/moi/Camera3_MOI.jpg?itok=iUsZ7Maw",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/moi/Camera1_MOI.jpg?itok=SZ3FwZ7T"
+          ]
+        },
+        "items_count": 5,
+        "items": [
+          {
+            "titolo": "Indirizzo e numero di telefono",
+            "indirizzo": "Via Giordano Bruno, 201\n10134 Torino TO\nItalia",
+            "telefono": "+39 351 6373117 (Reception Paoli)"
+          },
+          {
+            "titolo": "Struttura",
+            "contenuto": "Gli Appartamenti appena ristrutturati a seguito della riqualificazione delle palazzine Ex MOI a pochi passi dalla Facoltà di Management dell’Università di Torino, sono situati nel quartiere torinese Borgo Filadelfia n una zona molto bene servita dai mezzi pubblici."
+          },
+          {
+            "titolo": "Camere",
+            "contenuto": "150 posti letto in appartamenti con camere singole e doppie"
+          },
+          {
+            "titolo": "Dotazioni camere",
+            "contenuto": [
+              "Angolo cottura",
+              "Bagno con doccia",
+              "Frigorifero"
+            ]
+          },
+          {
+            "titolo": "Servizi",
+            "contenuto": "-"
+          }
+        ]
+      }
+    },
+    {
+      "rank": 9,
+      "name": "Residenza Giulia Di Barolo",
+      "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-giulia-di-barolo",
+      "address": "Via Giuseppe Verdi, 26/G\n10124 Torino TO\nItalia",
+      "phone": "+39 011 6531300 (Reception Residenza Verdi)",
+      "notes": "",
+      "originalPayload": {
+        "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-giulia-di-barolo",
+        "status": "success",
+        "images": {
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/sedi-residenza-universitaria-immagini/giulia-di-barolo/EDISU_ResidenzaGiuliaDiBarolo_002.jpg.webp?itok=V5gbEvS7",
+          "full_galleria": [
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/giulia-di-barolo/EDISU_ResidenzaGiuliaDiBarolo_005.jpg?itok=_zPATvq1",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/giulia-di-barolo/EDISU_ResidenzaGiuliaDiBarolo_014.jpg?itok=EqXYRnIu",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/giulia-di-barolo/EDISU_ResidenzaGiuliaDiBarolo_009.jpg?itok=PnBEMQJS",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/giulia-di-barolo/giuliadibarolo_bagno.jpg?itok=t1QaM5nC",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/giulia-di-barolo/giuliadibarolo_sala_studio.jpg?itok=rUOYl4TA"
+          ]
+        },
+        "items_count": 5,
+        "items": [
+          {
+            "titolo": "Indirizzo e numero di telefono",
+            "indirizzo": "Via Giuseppe Verdi, 26/G\n10124 Torino TO\nItalia",
+            "telefono": "+39 011 6531300 (Reception Residenza Verdi)",
+            "orari_reception": "+39 011 6531300 (Reception Residenza Verdi)",
+            "periodo_di_chiusura": null
+          },
+          {
+            "titolo": "Struttura",
+            "contenuto": "La residenza Giulia di Barolo ha sede in un edificio ottocentesco con una affascinante corte interna recuperato e ristrutturato per essere utilizzato come struttura universitaria. Con i suoi 50 posti letto offre camere singole e doppie alcune dotate di angolo cottura, con ambienti comuni moderni, funzionali e accoglienti, pensati per garantire comfort e praticità. La posizione è comoda e ben collegata, ideale per chi cerca un soggiorno tranquillo ma vicino ai principali servizi universitari ed urbani. Ubicata nelle immediate vicinanze dell'Università degli Studi di Torino (Palazzo Nuovo), del palazzetto Aldo Moro, dalla centrale Piazza Vittorio Veneto e di una delle più importanti sale studio dell’EDISU con i suoi 292 posti a sedere.\nNelle vicinanze la Ristoreria River Canteen dell’EDISU di Lungo Po 22 (Murazzi) e la Mensa di Via Principe Amedo 48."
+          },
+          {
+            "titolo": "Camere",
+            "contenuto": [
+              "21 singole",
+              "14 doppie"
+            ]
+          },
+          {
+            "titolo": "Dotazioni camere",
+            "contenuto": [
+              "Angolo cottura (alcune camere)",
+              "Bagno",
+              "Wi-Fi",
+              "Frigorifero",
+              "Telefono"
+            ]
+          },
+          {
+            "titolo": "Servizi",
+            "contenuto": [
+              "Cucine comuni ai piani",
+              "Fornitura e cambio periodico dotazione biancheria",
+              "Fotocopiatrice (a pagamento)",
+              "Lavatrici/asciugatrici (a pagamento)",
+              "Locale Stiro",
+              "Manutenzione ordinaria e straordinaria",
+              "Palestra (tessera obbligatoria a pagamento) presso Residenza universitaria Verdi",
+              "Parcheggio interno biciclette",
+              "Portineria e reception diurna e notturna presso residenza Verdi",
+              "Pulizia giornaliera delle aree comuni",
+              "Rete Wi-Fi in tutta la struttura",
+              "Sala studio e conversazione/TV e Sala giochi"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "rank": 10,
       "name": "Residenza Olimpia",
       "url": "https://www.edisu.piemonte.it/sedi/university-residence/residenza-universitaria-olimpia",
       "address": "Lungo Dora Siena, 104\n10153 Torino TO\nItalia",
@@ -157,210 +674,7 @@
       }
     },
     {
-      "rank": 3,
-      "name": "Residenza Carlo Mollino",
-      "url": "https://www.edisu.piemonte.it/sedi/university-residence/residenza-universitaria-carlo-mollino",
-      "address": "Corso Peschiera, 90\n10138 Torino TO\nItalia",
-      "phone": "+39 011 1975200",
-      "notes": "",
-      "originalPayload": {
-        "url": "https://www.edisu.piemonte.it/sedi/university-residence/residenza-universitaria-carlo-mollino",
-        "status": "success",
-        "images": {
-          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/sedi-residenza-universitaria-immagini/mollino/MOLLINO_copertina.jpg.webp?itok=QpljFhGf",
-          "full_galleria": [
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/mollino/CAMPLUS%20MOLLINO-esterni.jpg?itok=xwzt64pA",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/mollino/CAMPLUS%20MOLLINO%20palestra.jpg?itok=FKqZWnA8",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/mollino/CAMPLUS%20MOLLINO-%20sala%20studio.jpg?itok=M8o98BRk",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/mollino/CAMPLUS%20MOLLINO%20-interno%20camera%20doppia.jpg?itok=bPrMKn02",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/mollino/CAMPLUS%20MOLLINO%20campo%20calcetto%20terzo%20piano.jpg?itok=qazgLRe_"
-          ]
-        },
-        "items_count": 5,
-        "items": [
-          {
-            "titolo": "Indirizzo e numero di telefono",
-            "indirizzo": "Corso Peschiera, 90\n10138 Torino TO\nItalia",
-            "telefono": "+39 011 1975200"
-          },
-          {
-            "titolo": "Struttura",
-            "contenuto": "La residenza universitaria Carlo Mollino è situata nell’area della Cittadella Politecnica."
-          },
-          {
-            "titolo": "Camere",
-            "contenuto": [
-              "31 doppie"
-            ]
-          },
-          {
-            "titolo": "Dotazioni camere",
-            "contenuto": [
-              "Bagno",
-              "Frigorifero",
-              "Wi-Fi e Cavo LAN"
-            ]
-          },
-          {
-            "titolo": "Servizi",
-            "contenuto": [
-              "Campo da calcetto (a pagamento)",
-              "Distributori di bevande e snack",
-              "Fotocopiatrice (a pagamento)",
-              "Locale lavatrice, asciugatrice e zona stiro (a pagamento)",
-              "Locali cucine comuni",
-              "Palestra",
-              "Parcheggio biciclette",
-              "Reception diurna",
-              "Sala giochi e tv",
-              "Sale studio"
-            ]
-          }
-        ]
-      }
-    },
-    {
-      "rank": 4,
-      "name": "Residenza Codegone",
-      "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-codegone",
-      "address": "Via Paolo Borsellino, 38 int.9\n10138 Torino TO\nItalia",
-      "phone": "+39 011 19743600",
-      "notes": "",
-      "originalPayload": {
-        "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-codegone",
-        "status": "success",
-        "images": {
-          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/sedi-residenza-universitaria-immagini/codegone/CAMPLUS%20CODEGONE-1%20ESTERNO.jpg.webp?itok=r_dC78lu",
-          "full_galleria": [
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/codegone/CAMPLUS%20CODEGONE-%20camera%20doppia%202.jpg?itok=dQxKq9mN",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/codegone/CAMPLUS%20CODEGONE--%20Terrazzo.jpg?itok=LsJQULdg",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/codegone/CAMPLUS%20CODEGONE-CUCINA%20COMUNE.jpg?itok=wE5MQv59",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/codegone/CAMPLUS%20CODEGONE-LAVANDERIA%202.jpg?itok=805ZYi6E",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/codegone/CAMPLUS%20CODEGONE-SALA%20STUDIO.jpg?itok=-CMVDHTx"
-          ]
-        },
-        "items_count": 5,
-        "items": [
-          {
-            "titolo": "Indirizzo e numero di telefono",
-            "indirizzo": "Via Paolo Borsellino, 38 int.9\n10138 Torino TO\nItalia",
-            "telefono": "+39 011 19743600"
-          },
-          {
-            "titolo": "Struttura",
-            "contenuto": "La residenza universitaria Codegone è situata a fianco della Cittadella Politecnica."
-          },
-          {
-            "titolo": "Camere",
-            "contenuto": [
-              "62 singole",
-              "12 doppie"
-            ]
-          },
-          {
-            "titolo": "Dotazioni camere",
-            "contenuto": [
-              "Bagno",
-              "Frigorifero",
-              "Wi-Fi e Cavo LAN"
-            ]
-          },
-          {
-            "titolo": "Servizi",
-            "contenuto": [
-              "Distributori di bevande e snacks",
-              "Fornitura e cambio periodico dotazione biancheria",
-              "Fotocopiatrice (a pagamento)",
-              "Locale con lavatrici, asciugatrici e una zona stiro a pagamento)",
-              "Locali cucine comuni",
-              "Palestra (presso Residenza universitaria Olimpia)",
-              "Parcheggio biciclette",
-              "Sala giochi e tv",
-              "Sale studio"
-            ]
-          }
-        ]
-      }
-    },
-    {
-      "rank": 5,
-      "name": "Residenza Campus Sanpaolo",
-      "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-campus-sanpaolo",
-      "address": "Via Caraglio, 97\n10141 Torino TO\nItalia",
-      "phone": "+39 011 3828416",
-      "notes": "",
-      "originalPayload": {
-        "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-campus-sanpaolo",
-        "status": "success",
-        "images": {
-          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/sedi-residenza-universitaria-immagini/campus-san-paolo/EDISU_CampusSanPaolo_004_0.jpg.webp?itok=UCIQK-1c",
-          "full_galleria": [
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/campus-san-paolo/EDISU_CampusSanPaolo_001_0.jpg?itok=z2LxeLrD",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/campus-san-paolo/sanpaolo_cortile.jpg?itok=VOrE62pg",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/campus-san-paolo/_MG_2009%20copy.jpg?itok=AsASCfDm",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/campus-san-paolo/_MG_2031%20copy.jpg?itok=iscP61mU",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/campus-san-paolo/EDISU_CampusSanPaolo_020_0.jpg?itok=mFF876N8",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/campus-san-paolo/EDISU_CampusSanPaolo_029_0.jpg?itok=-jajgBQ2",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/campus-san-paolo/sanpaolo_tavoli.jpg?itok=Axwf1LCv",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/campus-san-paolo/EDISU_CampusSanPaolo_019_0.jpg?itok=R5gjkkD0",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/campus-san-paolo/EDISU_CampusSanPaolo_018_0.jpg?itok=QUmKtDBq",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/campus-san-paolo/EDISU_CampusSanPaolo_024_0.jpg?itok=S3czJ3kd",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/campus-san-paolo/sanpaolo_lavatrici_asciugatrici.jpg?itok=fyYRm0Gb"
-          ]
-        },
-        "items_count": 6,
-        "items": [
-          {
-            "titolo": "Indirizzo e numero di telefono",
-            "indirizzo": "Via Caraglio, 97\n10141 Torino TO\nItalia",
-            "telefono": "+39 011 3828416"
-          },
-          {
-            "titolo": "Struttura",
-            "contenuto": "La Residenza si trova nelle immediate vicinanze della Cittadella Politecnica (Politecnico di Torino)."
-          },
-          {
-            "titolo": "Come raggiungere la sede",
-            "contenuto": [
-              "GTT Calcola Percorso",
-              "muoversiatorino.it",
-              "Servizio Ferroviario"
-            ]
-          },
-          {
-            "titolo": "Camere",
-            "contenuto": [
-              "22 doppie (+1 posto letto in camera doppia condivisa con utente privato)"
-            ]
-          },
-          {
-            "titolo": "Dotazioni camere",
-            "contenuto": [
-              "Bagno",
-              "Wi-Fi",
-              "Frigorifero"
-            ]
-          },
-          {
-            "titolo": "Servizi",
-            "contenuto": [
-              "Distributori bevande e snack/bar",
-              "Fotocopiatrice (a pagamento)",
-              "Locali con lavatrici, asciugatrici e zona stiro (a pagamento)",
-              "Locali cucina",
-              "Palestra",
-              "Parcheggio biciclette",
-              "Bike sharing",
-              "Reception diurna e notturna",
-              "Locale conversazione/Tv",
-              "Sala studio"
-            ]
-          }
-        ]
-      }
-    },
-    {
-      "rank": 6,
+      "rank": 11,
       "name": "Residenza Cxturin Marconi",
       "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-cxturin-marconi",
       "address": "Via Belfiore, 23\n10100 Torino TO\nItalia",
@@ -419,7 +733,66 @@
       }
     },
     {
-      "rank": 7,
+      "rank": 12,
+      "name": "Residenza Appartamenti Residenza Universitaria Farini",
+      "url": "https://www.edisu.piemonte.it/sedi/university-residence/appartamenti-residenza-universitaria-farini",
+      "address": "Corso Farini, 32\n10153 Torino TO\nItalia",
+      "phone": "+39 011 08292500 (Reception Olimpia)",
+      "notes": "",
+      "originalPayload": {
+        "url": "https://www.edisu.piemonte.it/sedi/university-residence/appartamenti-residenza-universitaria-farini",
+        "status": "success",
+        "images": {
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/sedi-residenza-universitaria-immagini/corso-farini/Farini_facciata.jpg.webp?itok=yETjT6PE",
+          "full_galleria": [
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/corso-farini/Residenza_Farini%20%283%29.jpeg?itok=qoQFXXzI",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/corso-farini/Residenza_Farini%20%281%29.jpeg?itok=ePtnkOZT",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/corso-farini/EDISU_AppartamentiFarini_001%20%281%29.jpg?itok=kUD4e24C",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/corso-farini/EDISU_AppartamentiFarini_003%20%281%29.jpg?itok=HZuLR8f_",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/corso-farini/farini_bagno.jpg?itok=CYb1Y2Tu"
+          ]
+        },
+        "items_count": 5,
+        "items": [
+          {
+            "titolo": "Indirizzo e numero di telefono",
+            "indirizzo": "Corso Farini, 32\n10153 Torino TO\nItalia",
+            "telefono": "+39 011 08292500 (Reception Olimpia)",
+            "orari_reception": "+39 011 08292500 (Reception Olimpia)",
+            "periodo_di_chiusura": null
+          },
+          {
+            "titolo": "Struttura",
+            "contenuto": "Gli appartamenti, completamente arredati, si compongono di camere singole e doppie, bagni e cucina abitabile. Situati nelle vicinanze della residenza universitaria Olimpia e del Campus Luigi Einaudi, gli appartamenti non sono lontani da Piazza Vittorio e dal centro cittadino."
+          },
+          {
+            "titolo": "Camere",
+            "contenuto": [
+              "4 appartamenti con tre singole",
+              "2 appartamenti con due doppie"
+            ]
+          },
+          {
+            "titolo": "Dotazioni camere",
+            "contenuto": [
+              "Bagno",
+              "Cucina con forno a microonde",
+              "Lavatrice"
+            ]
+          },
+          {
+            "titolo": "Servizi",
+            "contenuto": [
+              "Fornitura e cambio periodico dotazione biancheria",
+              "Locali cucina",
+              "Palestra (presso Residenza universitaria Olimpia)"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "rank": 13,
       "name": "Residenza Cxturin Vanchiglia",
       "url": "https://www.edisu.piemonte.it/sedi/university-residence/residenza-universitaria-cxturin-vanchiglia",
       "address": "Lungo Po Machiavelli, 37\n10153 Torino TO\nItalia",
@@ -475,7 +848,73 @@
       }
     },
     {
-      "rank": 8,
+      "rank": 14,
+      "name": "Residenza Appartamento Turati",
+      "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/appartamento-turati",
+      "address": "C.so Filippo Turati, 6\n10128 Torino TO\nItalia",
+      "phone": "+39 351 6373117 (Reception Paoli)",
+      "notes": "",
+      "originalPayload": {
+        "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/appartamento-turati",
+        "status": "success",
+        "images": {
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/sedi-residenza-universitaria-immagini/turati/EDISU_AppartamentoTurati_029.jpg.webp?itok=92Vm1N12",
+          "full_galleria": [
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/turati/EDISU_AppartamentoTurati_027.jpg?itok=lIHrD5PE",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/turati/EDISU_AppartamentoTurati_002.jpg?itok=NlAEaz7I",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/turati/EDISU_AppartamentoTurati_019.jpg?itok=7tcbKkXq",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/turati/EDISU_AppartamentoTurati_001.jpg?itok=G1-zHFxN",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/turati/turati_cucina.jpg?itok=26i8cJ9P",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/turati/EDISU_AppartamentoTurati_024.jpg?itok=8gN-WAtl"
+          ]
+        },
+        "items_count": 5,
+        "items": [
+          {
+            "titolo": "Indirizzo e numero di telefono",
+            "indirizzo": "C.so Filippo Turati, 6\n10128 Torino TO\nItalia",
+            "telefono": "+39 351 6373117 (Reception Paoli)",
+            "orari_reception": "+39 351 6373117 (Reception Paoli)",
+            "periodo_di_chiusura": null
+          },
+          {
+            "titolo": "Struttura",
+            "contenuto": "La residenza si trova nei pressi del centro città, in posizione comoda per raggiungere l'Università degli studi di Torino e il Politecnico. La struttura è costituita da appartamenti indipendenti disposti su tre piani completamente arredati. Ciascuno di essi si compone di camere singole/doppie e cucina in comune."
+          },
+          {
+            "titolo": "Camere",
+            "contenuto": [
+              "6 singole",
+              "8 doppie"
+            ]
+          },
+          {
+            "titolo": "Dotazioni camere",
+            "contenuto": [
+              "Bagno",
+              "Wi-Fi",
+              "Cucina con piano cottura a induzione, forno e forno a microonde",
+              "Telefono"
+            ]
+          },
+          {
+            "titolo": "Servizi",
+            "contenuto": [
+              "Cucine comuni ai piani",
+              "Lavatrici/asciugatrici",
+              "Locale Stiro",
+              "Manutenzione ordinaria e straordinaria",
+              "Parcheggio interno biciclette",
+              "Pulizia giornaliera delle aree comuni",
+              "Pulizia camera su richiesta (a pagamento)",
+              "Rete Wi-Fi in tutta la struttura"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "rank": 15,
       "name": "Residenza Alexandra",
       "url": "https://www.edisu.piemonte.it/sedi/university-residence/residenza-universitaria-alexandra",
       "address": "Lungo Dora Napoli, 14\n10152 Torino TO\nItalia",
@@ -539,7 +978,57 @@
       }
     },
     {
-      "rank": 9,
+      "rank": 16,
+      "name": "Residenza Campus Rovigo 24",
+      "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-campus-rovigo-24",
+      "address": "Via Rovigo, 24\n10134 Torino TO\nItalia",
+      "phone": "",
+      "notes": "",
+      "originalPayload": {
+        "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-campus-rovigo-24",
+        "status": "success",
+        "images": {
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/schede-informative-sedi-residenza-universitaria-immagini/rovigo24/copertinarovigo24conlogo.png.webp?itok=B6zDwX4o",
+          "full_galleria": []
+        },
+        "items_count": 5,
+        "items": [
+          {
+            "titolo": "Indirizzo e numero di telefono",
+            "indirizzo": "Via Rovigo, 24\n10134 Torino TO\nItalia",
+            "telefono": null
+          },
+          {
+            "titolo": "Struttura",
+            "contenuto": "La residenza si trova nel quartiere Aurora, nella Circoscrizione 7 di Torino, in un’area a ridosso di Borgo Dora, Porta Palazzo e corso Regina Margherita. Il contesto è caratterizzato da un tessuto urbano consolidato, con una significativa presenza di attività commerciali e servizi di quartiere. La posizione è funzionale per una residenza universitaria: l’area è relativamente vicina al centro cittadino e consente di raggiungere le principali zone universitarie e centrali attraverso il trasporto pubblico e la mobilità ciclabile."
+          },
+          {
+            "titolo": "Camere",
+            "contenuto": [
+              "2 singole con bagno condiviso",
+              "2 doppie con bagno condiviso"
+            ]
+          },
+          {
+            "titolo": "Dotazioni camere",
+            "contenuto": [
+              "Aria condizionata",
+              "WiFi",
+              "Frigorifero (45lt)"
+            ]
+          },
+          {
+            "titolo": "Servizi",
+            "contenuto": [
+              "Cucina in comune",
+              "Collegamenti WiFi"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "rank": 17,
       "name": "Residenza Artigianelli",
       "url": "https://www.edisu.piemonte.it/sedi/university-residence/residenza-universitaria-artigianelli",
       "address": "Corso Palestro, 14\n10122 Torino TO\nItalia",
@@ -593,72 +1082,378 @@
       }
     },
     {
-      "rank": 10,
-      "name": "Residenza Housing Universitario Residenza Duca",
-      "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/housing-universitario-residenza-duca",
-      "address": "Corso Duca degli Abruzzi 48/E\n10129 Torino TO\nItalia",
-      "phone": "+39 352 000 5843",
+      "rank": 18,
+      "name": "Residenza Studentto Ad Maiora",
+      "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-studentto-ad-maiora",
+      "address": "Via San Giacomo, 8\n10092 Beinasco TO\nItalia",
+      "phone": "+39 339 274 5232",
       "notes": "",
       "originalPayload": {
-        "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/housing-universitario-residenza-duca",
+        "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-studentto-ad-maiora",
         "status": "success",
         "images": {
-          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/schede-informative-sedi-residenza-universitaria-immagini/duca-degli-abruzzi/copertinaducadegliabruzziconlogo.png.webp?itok=JTdG5fQg",
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/sedi-residenza-universitaria-immagini/beinasco/Ingresso_AdMaiora.jpg.webp?itok=-P_Hmwcj",
           "full_galleria": [
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria/immagini/unnamed.jpg?itok=Ctcbc62_",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria/immagini/residenza%20duca%20camera.jpg?itok=7M0LYNmu",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria/immagini/ducaresidenzainterno1.jpg?itok=669JwEi9",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria/immagini/ducaresidenzainterno.jpg?itok=97gxQJ1y",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria/immagini/5%20%282%29.jpg?itok=GEFt1gaV",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria/immagini/3%20%281%29.jpg?itok=Ofrx7Uv8",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/duca-degli-abruzzi/Esterno_Duca_Pigafetta.jpg?itok=2MAF3FWq",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/duca-degli-abruzzi/Aula_studio_Duca_Pigafetta.jpg?itok=v9UY0ncz",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/duca-degli-abruzzi/Bagno_Duca_Pigafetta.JPG?itok=qE9i3Xxr",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/duca-degli-abruzzi/Cucina_comune_Duca_Pigafetta.jpg?itok=gMVbgF_D",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/duca-degli-abruzzi/Cucina_comune_Duca_Pigafetta_2.jpg?itok=52gnOXbq",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/duca-degli-abruzzi/Hall_Duca_Pigafetta_2.jpg?itok=x4gLlziQ"
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/beinasco/Studentato_Camera.jpg?itok=Y4DKYFuZ",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/beinasco/Studentato_Cucina.jpg?itok=ULz62qZi",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/beinasco/Studentato_Letto.jpg?itok=G5alLGTf",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/beinasco/Studentato_Bagno.jpg?itok=JBxrX6S6",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/beinasco/Studentato_Lavanderia.jpg?itok=Y4-sAw3c",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/beinasco/Studentato_SalaPranzo.jpg?itok=RuOxuQo6",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/beinasco/Studentato_SalaStudio.jpg?itok=cZf8t7Dt",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/beinasco/Studentato_palestra2.jpg?itok=DFrtdt8Y",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/beinasco/Studentato_palestra.jpg?itok=cs68vIax",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/beinasco/Scrivania_stanza_Ad_Maiora.JPG?itok=-tSuw22C",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/beinasco/Sala_Comune_Ad_Maiora_5.JPG?itok=zaq-i0eG",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/beinasco/Sala_Comune_Ad_Maiora_4.JPG?itok=ERfJmJ2e",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/beinasco/Sala_Comune_Ad_Maiora_3.JPG?itok=uX6v5oYy",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/beinasco/Sala_Comune_Ad_Maiora_2.JPG?itok=U_QbJ3P9",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/beinasco/Sala_cinema_Ad_Maiora.JPG?itok=_QN9glzE",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/beinasco/Ingresso_esterno_Ad_Maiora.JPG?itok=SVgocfs9",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/beinasco/Cucina_privata_Ad_Maiora_0.JPG?itok=EFV_VW9W",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/beinasco/Corridoi_Ad_Maiora_0.JPG?itok=hkmHX5ge",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/beinasco/Armadio_Ad_Maiora_0.JPG?itok=XpDay6UF",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/beinasco/Ingresso_AdMaiora.jpg?itok=lANJu3S7"
           ]
         },
-        "items_count": 5,
+        "items_count": 6,
         "items": [
           {
             "titolo": "Indirizzo e numero di telefono",
-            "indirizzo": "Corso Duca degli Abruzzi 48/E\n10129 Torino TO\nItalia",
-            "telefono": "+39 352 000 5843"
+            "indirizzo": "Via San Giacomo, 8\n10092 Beinasco TO\nItalia",
+            "telefono": "+39 339 274 5232"
           },
           {
             "titolo": "Struttura",
-            "contenuto": "Alloggio di buon livello nel quartiere della Cro­cetta, zona residenziale ben servita della città di Torino, vicino alle sedi principali del Politecnico di Torino che si trovano a soli 7 minuti a piedi dalla struttura.\nPosizione comoda per l'accesso a diversi servizi commerciali e culturali , fermate dei mezzi pubblici e facoltà universitarie."
+            "contenuto": "in aggiornamento"
+          },
+          {
+            "titolo": "Come raggiungere la residenza",
+            "contenuto": [
+              "GTT Calcola Percorso",
+              "muoversiatorino.it",
+              "Servizio Ferroviario"
+            ]
           },
           {
             "titolo": "Camere",
             "contenuto": [
-              "2 singole con bagno condiviso",
-              "5 doppie"
+              "10 singole"
             ]
           },
           {
             "titolo": "Dotazioni camere",
             "contenuto": [
-              "Aria condizionata",
-              "WiFi",
               "Bagno",
-              "Frigorifero",
-              "Lavatrice"
+              "Wi-Fi",
+              "Frigorifero"
             ]
           },
           {
             "titolo": "Servizi",
             "contenuto": [
-              "Cucine in comune",
-              "Collegamenti WiFi"
+              "Videosorveglianza h24",
+              "Distributori di bevande e snacks",
+              "Cucina privata, completa di elettrodomestici",
+              "Lavatrici/asciugatrici",
+              "Manutenzione ordinaria e straordinaria",
+              "Palestra",
+              "Portineria e reception diurna",
+              "Pulizia delle aree comuni",
+              "Pulizia camera su richiesta (a pagamento)",
+              "Rete Wi-Fi in tutta la struttura",
+              "Sala studio e conversazione/TV"
             ]
           }
         ]
       }
     },
     {
-      "rank": 11,
+      "rank": 19,
+      "name": "Residenza Villa Claretta",
+      "url": "https://www.edisu.piemonte.it/sedi/university-residence/residenza-universitaria-villa-claretta",
+      "address": "Via Berta, 5\n10095 Grugliasco TO\nItalia",
+      "phone": "+39 011 789854",
+      "notes": "",
+      "originalPayload": {
+        "url": "https://www.edisu.piemonte.it/sedi/university-residence/residenza-universitaria-villa-claretta",
+        "status": "success",
+        "images": {
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/sedi-residenza-universitaria-immagini/villa-claretta/villaclaretta_esterno.jpg.webp?itok=xL_1oUZF",
+          "full_galleria": [
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/villa-claretta/EDISU_ResidenzaVillaClaretta_024.jpg?itok=1M153auu",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/villa-claretta/EDISU_ResidenzaVillaClaretta_021.jpg?itok=ONKxmL3I",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/villa-claretta/EDISU_ResidenzaVillaClaretta_017.jpg?itok=pgXj7703",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/villa-claretta/EDISU_ResidenzaVillaClaretta_006.jpg?itok=Uy_Ih00w",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/villa-claretta/EDISU_ResidenzaVillaClaretta_004.jpg?itok=STgaCIjr",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/villa-claretta/EDISU_ResidenzaVillaClaretta_039.jpg?itok=r10IcqpQ",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/villa-claretta/EDISU_ResidenzaVillaClaretta_041.jpg?itok=uAaF3Prb",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/villa-claretta/EDISU_ResidenzaVillaClaretta_047.jpg?itok=6xkO-ZuE",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/villa-claretta/EDISU_ResidenzaVillaClaretta_050.jpg?itok=qtv1Ndl0",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/villa-claretta/EDISU_ResidenzaVillaClaretta_063.jpg?itok=0Ipbc1W4",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/villa-claretta/EDISU_ResidenzaVillaClaretta_035.jpg?itok=-94yfiOq",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/villa-claretta/EDISU_ResidenzaVillaClaretta_037.jpg?itok=khvy78Gs"
+          ]
+        },
+        "items_count": 6,
+        "items": [
+          {
+            "titolo": "Indirizzo e numero di telefono",
+            "indirizzo": "Via Berta, 5\n10095 Grugliasco TO\nItalia",
+            "telefono": "+39 011 789854"
+          },
+          {
+            "titolo": "Struttura",
+            "contenuto": "Circondata dal verde di un parco storico della città di Grugliasco, la Residenza Villa Claretta ex Media Village in occasione dei giochi invernali 2006 offre un contesto unico per frequentare le Facoltà di Agraria e Veterinaria dell’Università di Torino situate nelle immediate vicinanze ed arricchito dalla presenza del moderno palazzetto dello sport del CUS Torino, aperto tutti i giorni e dotato di campi indoor per numerose attività sportive.\nL’ambiente accogliente e tranquillo con i suoi 430 posti letto distribuiti in camere singole e doppie con bagno privato accoglie studenti e docenti universitari combina quiete naturale, comodità urbana e la possibilità di vivere appieno l’esperienza universitaria in un contesto ricco di servizi e spazi verdi.\nNelle vicinanze la mensa universitaria EDISU di Via Berta 5 e la mensa Campus Braccini."
+          },
+          {
+            "titolo": "Come raggiungere la residenza",
+            "contenuto": [
+              "Metropolitana Linea 1 direzione Fermi, prendere il bus n° 76 fino alla fermata Lamarmora.",
+              "GTT Calcolo Percorso",
+              "muoversiatorino.it",
+              "Servizio Ferroviario"
+            ]
+          },
+          {
+            "titolo": "Camere",
+            "contenuto": [
+              "196 singole di cui 21 per disabili",
+              "117 doppie"
+            ]
+          },
+          {
+            "titolo": "Dotazioni camere",
+            "contenuto": [
+              "Bagno",
+              "Wi-Fi e presa ethernet",
+              "Presa TV digitale terrestre e satellitare",
+              "Frigorifero",
+              "Telefono (solo ad uso interno)"
+            ]
+          },
+          {
+            "titolo": "Servizi",
+            "contenuto": [
+              "Cucine comuni al piano terra",
+              "Distributori di bevande e snacks",
+              "Fotocopiatrice (a pagamento)",
+              "Lavatrici/asciugatrici (a pagamento) e assi da stiro",
+              "Manutenzione ordinaria e straordinaria",
+              "Palestra (tessera obbligatoria a pagamento)",
+              "Parcheggio biciclette e monopattini con postazioni di ricarica",
+              "Prestito libri e scambio libri",
+              "Portineria e reception diurna e notturna",
+              "Pulizia giornaliera delle aree comuni",
+              "Pulizia camera su richiesta (a pagamento)",
+              "Rete Wi-Fi in tutta la struttura",
+              "5 sale studio",
+              "Stanza Tv",
+              "2 sale giochi",
+              "Servizio di foresteria"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "rank": 20,
+      "name": "Residenza Unihub Bologna",
+      "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-unihub-bologna",
+      "address": "Via Bologna 94/96\n10154 Torino TO\nItalia",
+      "phone": "In aggiornamento - Updating",
+      "notes": "",
+      "originalPayload": {
+        "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-unihub-bologna",
+        "status": "success",
+        "images": {
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/schede-informative-sedi-residenza-universitaria-immagini/unihub-bologna/copertinaunihubbologna.png.webp?itok=tDf7KlRS",
+          "full_galleria": [
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/unihub-bologna/Unihub_Bologna_bagno_0.jpeg?itok=5aMY3sam",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/unihub-bologna/Unihub_Bologna_cucina_0.jpeg?itok=fptRT4bS",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/unihub-bologna/Unihub_Bologna_cucina_2_0.jpeg?itok=5GpASXTF",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/unihub-bologna/Unihub_Bologna_cucina_3_0.jpeg?itok=45Thh7Sr",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/unihub-bologna/Unihub_Bologna_stanza_doppia_0.jpeg?itok=mxdcOrJ8",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/unihub-bologna/Unihub_Bologna_stanza_doppia_2_0.jpeg?itok=BZ15xWLy",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/unihub-bologna/Unihub_Bologna_stanza_doppia_3_0.jpeg?itok=E27tsaZf",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/unihub-bologna/Unihub_Bologna_stanza_doppia_4_0.jpeg?itok=pFgFrpae",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/unihub-bologna/Unihub_Bologna_stanza_singola_0.jpeg?itok=_gSAGBg8",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/unihub-bologna/Unihub_Bologna_stanza_singola_2_0.jpeg?itok=3PStT-vI"
+          ]
+        },
+        "items_count": 5,
+        "items": [
+          {
+            "titolo": "Indirizzo e numero di telefono",
+            "indirizzo": "Via Bologna 94/96\n10154 Torino TO\nItalia",
+            "telefono": "In aggiornamento - Updating"
+          },
+          {
+            "titolo": "Struttura",
+            "contenuto": "Appartamenti  strutturati in  3 camere singole (3 posti) e 6 camere doppie (12 posti letto) tutti ubicati al 2 piano della struttura; ciascun appartamento condivide bagno e cucina comune per un massimo di 3 studenti."
+          },
+          {
+            "titolo": "Camere",
+            "contenuto": [
+              "3 singole",
+              "6 doppie"
+            ]
+          },
+          {
+            "titolo": "Dotazioni camere",
+            "contenuto": [
+              "Lavatrice (una in ciascun appartamento)",
+              "WiFi"
+            ]
+          },
+          {
+            "titolo": "Servizi",
+            "contenuto": "IN AGGIORNAMENTO"
+          }
+        ]
+      }
+    },
+    {
+      "rank": 21,
+      "name": "Residenza Campus Allamano",
+      "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-campus-allamano",
+      "address": "Via Crea, 15\n10095 Grugliasco TO\nItalia",
+      "phone": "+39 011 789854",
+      "notes": "",
+      "originalPayload": {
+        "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-campus-allamano",
+        "status": "success",
+        "images": {
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/schede-informative-sedi-residenza-universitaria-immagini/allamano/copertinallamanoconlogo.png.webp?itok=0Fxb61LB",
+          "full_galleria": [
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/allamano/Campus_Allamano_3.jpg?itok=n3MTRBM_",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/allamano/Campus_Allamano_1.jpg?itok=K3TOHese"
+          ]
+        },
+        "items_count": 6,
+        "items": [
+          {
+            "titolo": "Indirizzo e numero di telefono",
+            "indirizzo": "Via Crea, 15\n10095 Grugliasco TO\nItalia",
+            "telefono": "+39 011 789854"
+          },
+          {
+            "titolo": "Struttura",
+            "contenuto": "Lo Residenza Campus Allamano è stata interamente progettata per offrire ambienti accoglienti, pratici e inclusivi, capaci di rispondere con efficacia alle esigenze della vita universitaria e favorire il benessere quotidiano. Offre una serie di servizi e spazi progettati per garantire agli studenti comfort, funzionalità e benessere e numerose occasioni di socialità durante la permanenza nella struttura. La maggior parte degli ambienti comuni sono collocati su un unico piano, soluzione architettonica che facilita l’accessibilità e la fruizione ottimale degli spazi."
+          },
+          {
+            "titolo": "Come raggiungere la residenza",
+            "contenuto": [
+              "https://www.sfmtorino.it/",
+              "https://www.gtt.to.it/cms/ricerca-percorsi",
+              "https://www.muoversiatorino.it/it/"
+            ]
+          },
+          {
+            "titolo": "Camere",
+            "contenuto": [
+              "54 doppie",
+              "1 posto letto in camera doppia"
+            ]
+          },
+          {
+            "titolo": "Dotazioni camere",
+            "contenuto": [
+              "Bagno privato",
+              "Connessione Wi-Fi e cavo",
+              "Frigorifero"
+            ]
+          },
+          {
+            "titolo": "Servizi",
+            "contenuto": [
+              "Area esterna relax",
+              "Area fitness",
+              "Aree studio private",
+              "Area coworking con tavoli condivisi",
+              "Cucine comuni ai piani",
+              "Biblioteca",
+              "Lavatrici ed asciugatrici (a pagamento)",
+              "Locale stiro",
+              "Portineria e reception diurna e notturna",
+              "Sala studio",
+              "Sala conversazione/TV e sala giochi"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "rank": 22,
+      "name": "Residenza Campus Fontana",
+      "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-campus-fontana",
+      "address": "Strada Rigolfo, 30\n10024 Moncalieri TO\nItalia",
+      "phone": "011-7701676; 393-8396224",
+      "notes": "",
+      "originalPayload": {
+        "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-campus-fontana",
+        "status": "success",
+        "images": {
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/schede-informative-sedi-residenza-universitaria-immagini/fontana/Copertina_Campus_Fontana.png.webp?itok=14iHdSHL",
+          "full_galleria": [
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/fontana/Campus_fontana_1.jpg?itok=YIajAsq8",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/fontana/Campus_fontana_2.jpg?itok=63YMK4Jd",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/fontana/Campus_fontana_3.jpg?itok=0WY67Jr4",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/fontana/Campus_fontana_4.jpg?itok=GW-uQBpW",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/fontana/Campus_fontana_6.jpg?itok=9KwMaT2s"
+          ]
+        },
+        "items_count": 6,
+        "items": [
+          {
+            "titolo": "Indirizzo e numero di telefono",
+            "indirizzo": "Strada Rigolfo, 30\n10024 Moncalieri TO\nItalia",
+            "telefono": "011-7701676; 393-8396224"
+          },
+          {
+            "titolo": "Struttura",
+            "contenuto": "Campus Fontana, situato a Moncalieri in Strada Rigolfo 30 e a pochi minuti dalla stazione ferroviaria di Trofarello, è una nuova residenza universitaria progettata per offrire autonomia e comfort agli studenti.\nL'offerta abitativa si articola in: 6 minialloggi per singolo posto letto, 8 mini alloggi per due posti letto e 1 mini alloggio composto da due camere singole condivise con zona giorno. Due posti letto, situati all'interno di un unico mini alloggio al piano terra, sono specificamente attrezzati per utenti con disabilità."
+          },
+          {
+            "titolo": "Come raggiungere la residenza",
+            "contenuto": [
+              "https://www.sfmtorino.it/",
+              "https://www.gtt.to.it/cms/ricerca-percorsi",
+              "https://www.muoversiatorino.it/it/"
+            ]
+          },
+          {
+            "titolo": "Camere",
+            "contenuto": "8 posti letto in camere doppie"
+          },
+          {
+            "titolo": "Dotazioni camere",
+            "contenuto": [
+              "Bagno",
+              "Zona cottura",
+              "Lavatrice/asciugatrice",
+              "Sistema di climatizzazione autonomo"
+            ]
+          },
+          {
+            "titolo": "Servizi",
+            "contenuto": [
+              "Riscaldamento",
+              "Wi-Fi",
+              "Pulizia periodica degli spazi condominiali",
+              "Pronto intervento attivo 24 su 24",
+              "Area relax verandata",
+              "Deposito",
+              "Parcheggio per biciclette e monopattini coperto con punti di ricarica",
+              "Servizio ristorazione a pagamento",
+              "Agevolazioni di foresteria per accoglienza parenti e amici"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "rank": 23,
       "name": "Residenza Corsica",
       "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-corsica",
       "address": "Corso Corsica , 7/53 - 7/55\n10135 Torino TO\nItalia",
@@ -719,57 +1514,7 @@
       }
     },
     {
-      "rank": 12,
-      "name": "Residenza Appartamenti Ex Moi",
-      "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/appartamenti-ex-moi",
-      "address": "Via Giordano Bruno, 201\n10134 Torino TO\nItalia",
-      "phone": "+39 351 6373117 (Reception Paoli)",
-      "notes": "",
-      "originalPayload": {
-        "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/appartamenti-ex-moi",
-        "status": "success",
-        "images": {
-          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/sedi-residenza-universitaria-immagini/moi/_DGF1214-HDR.jpg.webp?itok=HrGxMEeI",
-          "full_galleria": [
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/moi/Camera2_MOI.jpg?itok=z4b0d3sd",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/moi/SalaTV_MOI.jpg?itok=R2Mvhqlb",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/moi/Salotto_MOI.jpg?itok=rX6KBnQv",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/moi/Camera3_MOI.jpg?itok=iUsZ7Maw",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/moi/Camera1_MOI.jpg?itok=SZ3FwZ7T"
-          ]
-        },
-        "items_count": 5,
-        "items": [
-          {
-            "titolo": "Indirizzo e numero di telefono",
-            "indirizzo": "Via Giordano Bruno, 201\n10134 Torino TO\nItalia",
-            "telefono": "+39 351 6373117 (Reception Paoli)"
-          },
-          {
-            "titolo": "Struttura",
-            "contenuto": "Gli Appartamenti appena ristrutturati a seguito della riqualificazione delle palazzine Ex MOI a pochi passi dalla Facoltà di Management dell’Università di Torino, sono situati nel quartiere torinese Borgo Filadelfia n una zona molto bene servita dai mezzi pubblici."
-          },
-          {
-            "titolo": "Camere",
-            "contenuto": "150 posti letto in appartamenti con camere singole e doppie"
-          },
-          {
-            "titolo": "Dotazioni camere",
-            "contenuto": [
-              "Angolo cottura",
-              "Bagno con doccia",
-              "Frigorifero"
-            ]
-          },
-          {
-            "titolo": "Servizi",
-            "contenuto": "-"
-          }
-        ]
-      }
-    },
-    {
-      "rank": 13,
+      "rank": 24,
       "name": "Residenza Albenga",
       "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-albenga",
       "address": "Via Albenga, 6-8\n10134 Torino TO\nItalia",
@@ -827,54 +1572,269 @@
       }
     },
     {
-      "rank": 14,
-      "name": "Residenza Unihub Bologna",
-      "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-unihub-bologna",
-      "address": "Via Bologna 94/96\n10154 Torino TO\nItalia",
-      "phone": "In aggiornamento - Updating",
+      "rank": 25,
+      "name": "Residenza Lostudentato",
+      "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-lostudentato",
+      "address": "Via Frejus, 48/50\n10095 Grugliasco TO\nItalia",
+      "phone": "+39 3337307054",
       "notes": "",
       "originalPayload": {
-        "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-unihub-bologna",
+        "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-lostudentato",
         "status": "success",
         "images": {
-          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/schede-informative-sedi-residenza-universitaria-immagini/unihub-bologna/copertinaunihubbologna.png.webp?itok=tDf7KlRS",
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/schede-informative-sedi-residenza-universitaria-immagini/lostudentato/copertinalostudentatoconlogo.png.webp?itok=GpHzdhEx",
           "full_galleria": [
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/unihub-bologna/Unihub_Bologna_bagno_0.jpeg?itok=5aMY3sam",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/unihub-bologna/Unihub_Bologna_cucina_0.jpeg?itok=fptRT4bS",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/unihub-bologna/Unihub_Bologna_cucina_2_0.jpeg?itok=5GpASXTF",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/unihub-bologna/Unihub_Bologna_cucina_3_0.jpeg?itok=45Thh7Sr",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/unihub-bologna/Unihub_Bologna_stanza_doppia_0.jpeg?itok=mxdcOrJ8",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/unihub-bologna/Unihub_Bologna_stanza_doppia_2_0.jpeg?itok=BZ15xWLy",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/unihub-bologna/Unihub_Bologna_stanza_doppia_3_0.jpeg?itok=E27tsaZf",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/unihub-bologna/Unihub_Bologna_stanza_doppia_4_0.jpeg?itok=pFgFrpae",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/unihub-bologna/Unihub_Bologna_stanza_singola_0.jpeg?itok=_gSAGBg8",
-            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/unihub-bologna/Unihub_Bologna_stanza_singola_2_0.jpeg?itok=3PStT-vI"
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/lostudentato/Facciata_Lostudentato.png?itok=_ihI4DDo",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/lostudentato/LoStudentato_interni.jpg?itok=EZ6nzHH5",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/lostudentato/Stanza_doppia_Lostudentato.JPG?itok=uVOx3pz7",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/lostudentato/Sala_relax_Lostudentato.png?itok=nzzhHClC",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/lostudentato/Stanza_singola_Lostudentat_2.JPG?itok=QnZ_R9ls",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/lostudentato/Stanza_doppia_Lostudentato_5.JPG?itok=gn41DwPX",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/lostudentato/Stanza_doppia_Lostudentato_3.JPG?itok=xblEtbt-",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/lostudentato/Stanza_doppia_Lostudentato_2.JPG?itok=YofBSaik",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/lostudentato/Stanza_comune_Lostudentato_2.JPG?itok=9qIsC53n",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/lostudentato/Stanza_comune_Lostudentato.JPG?itok=yzjnUi4O",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/lostudentato/Stanz_doppia_Lostudentato_4.JPG?itok=UHii5IEE",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/lostudentato/Scrivania_stanza_Lostudentato.JPG?itok=bM-Ehh7u",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/lostudentato/Bagno_Lostudentato.png?itok=FHVojZMv",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/lostudentato/Lavanderia_comune_Lostudentato.png?itok=u_G51afF",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/lostudentato/Interno_stanza_Lostudentato_2.JPG?itok=EPvYYQnS",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/lostudentato/Interno_stanza_Lostudentato.JPG?itok=QvS15av0",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/lostudentato/Cucina_comune_Lostudentato_3.JPG?itok=5kqB-yk6",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/lostudentato/Cucina_comune_Lostudentato_2.png?itok=TgTNZLCV",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/lostudentato/Cucina_comune_Lostudentato_2.JPG?itok=gOn_Tn10",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/lostudentato/Cucina_comune_2.png?itok=CaI0ezt_",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/lostudentato/Bagno_Lostudentato_2.png?itok=M3cP9o7k"
           ]
         },
-        "items_count": 5,
+        "items_count": 6,
         "items": [
           {
             "titolo": "Indirizzo e numero di telefono",
-            "indirizzo": "Via Bologna 94/96\n10154 Torino TO\nItalia",
-            "telefono": "In aggiornamento - Updating"
+            "indirizzo": "Via Frejus, 48/50\n10095 Grugliasco TO\nItalia",
+            "telefono": "+39 3337307054"
           },
           {
             "titolo": "Struttura",
-            "contenuto": "Appartamenti  strutturati in  3 camere singole (3 posti) e 6 camere doppie (12 posti letto) tutti ubicati al 2 piano della struttura; ciascun appartamento condivide bagno e cucina comune per un massimo di 3 studenti."
+            "contenuto": "LoStudentato è una residenza dedicata agli studenti universitari, situata a Grugliasco in Via Frejus 48–50, in posizione particolarmente comoda rispetto al Polo universitario della Città delle Scienze.\nLa struttura dispone di 18 camere, suddivise tra camere singole e doppie, con differenti configurazioni e alcune dotate di bagno privato o balcone. La residenza è stata pensata per offrire agli studenti non soltanto un alloggio, ma un ambiente confortevole e funzionale in cui vivere e studiare durante il proprio percorso universitario.\nOltre alle camere, sono presenti diversi spazi comuni dedicati allo studio e alla vita quotidiana degli studenti, tra cui sala studio, cucina comune, aree relax, cortile con giardino interno e spazi per il deposito di biciclette e bagagli."
+          },
+          {
+            "titolo": "Come raggiungere la residenza",
+            "contenuto": [
+              "https://www.sfmtorino.it/",
+              "https://www.gtt.to.it/cms/ricerca-percorsi",
+              "https://www.muoversiatorino.it/it/"
+            ]
           },
           {
             "titolo": "Camere",
             "contenuto": [
-              "3 singole",
-              "6 doppie"
+              "3 in singola",
+              "6 in doppia"
             ]
           },
           {
             "titolo": "Dotazioni camere",
             "contenuto": [
-              "Lavatrice (una in ciascun appartamento)",
-              "WiFi"
+              "Rete Wi-Fi ad alta velocità",
+              "Climatizzazione autonoma (riscaldamento/raffrescamento)",
+              "Accesso sicuro tramite chiave elettronica"
             ]
+          },
+          {
+            "titolo": "Servizi",
+            "contenuto": [
+              "Connessione Wi-Fi;",
+              "Utenze di energia elettrica e acqua;",
+              "Riscaldamento e raffrescamento;",
+              "Pulizia periodica delle aree comuni;",
+              "Servizio di pulizia delle camere, disponibile a pagamento;",
+              "Cucina comune attrezzata;",
+              "Sala studio;",
+              "Sala giochi e area relax;",
+              "Cortile con giardino interno;",
+              "Deposito biciclette e bagagli;",
+              "Lavanderia interna con lavatrici e asciugatrici a pagamento;",
+              "Servizio di noleggio e cambio biancheria da letto a pagamento;",
+              "Servizio transfer, su richiesta, da e per stazioni ferroviarie e aeroporti a pagamento;",
+              "Sistema di controllo degli accessi tramite badge/codici personali;",
+              "Videosorveglianza delle aree previste;",
+              "Assistenza telefonica agli ospiti."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "rank": 26,
+      "name": "Residenza Vm Campus Grugliasco",
+      "url": "https://www.edisu.piemonte.it/sedi/university-residence/residenza-universitaria-vm-campus-grugliasco",
+      "address": "Via Morandi 4\n10095 Grugliasco TO\nItalia",
+      "phone": "",
+      "notes": "",
+      "originalPayload": {
+        "url": "https://www.edisu.piemonte.it/sedi/university-residence/residenza-universitaria-vm-campus-grugliasco",
+        "status": "success",
+        "images": {
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/schede-informative-sedi-residenza-universitaria-immagini/verde-mattone/copertinavmcampusgrugliasco.png.webp?itok=Uui80cz1",
+          "full_galleria": [
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/verde-mattone/Cucina_Verde_Mattone.jpg?itok=FjCuQ8VP",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/verde-mattone/Singola_Verde_Mattone.jpg?itok=1DEWK90M",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/verde-mattone/Sala_TV_Verde_Mattone.jpg?itok=IKK2rNwa",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/verde-mattone/Sala_studio_Verde_Mattone.jpg?itok=IsDYV53P",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/verde-mattone/Palestra_Verde_Mattone.jpg?itok=OooXvfaQ",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/verde-mattone/Doppia_Verde_Mattone.jpg?itok=pKHkO6zH",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/verde-mattone/Bagno_Verde_Mattone.jpg?itok=gPGjNqca",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/verde-mattone/Relax_Verde_Mattone.jpg?itok=tJGPSgw6"
+          ]
+        },
+        "items_count": 6,
+        "items": [
+          {
+            "titolo": "Indirizzo e numero di telefono",
+            "indirizzo": "Via Morandi 4\n10095 Grugliasco TO\nItalia",
+            "telefono": null
+          },
+          {
+            "titolo": "Struttura",
+            "contenuto": "Nuova struttura situata nella città di Grugliasco non lontana dalle Facoltà di Agraria e di Veterinaria dell'Università degli studi di Torino."
+          },
+          {
+            "titolo": "Come raggiungere la residenza",
+            "contenuto": [
+              "GTT Calcola Percorso",
+              "muoversiatorino.it",
+              "Servizio Ferroviario"
+            ]
+          },
+          {
+            "titolo": "Camere",
+            "contenuto": [
+              "15 singole",
+              "1 doppia"
+            ]
+          },
+          {
+            "titolo": "Dotazioni camere",
+            "contenuto": [
+              "Bagno",
+              "Wi-Fi"
+            ]
+          },
+          {
+            "titolo": "Servizi",
+            "contenuto": [
+              "Locale cucina dotati di piano cottura",
+              "Sala conversazione",
+              "Area fitness",
+              "Sala studio",
+              "Giardino con area esterna"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "rank": 27,
+      "name": "Residenza Vm Campus Stupinigi",
+      "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-vm-campus-stupinigi",
+      "address": "Viale Torino, 6 - 8\n10042 Nichelino TO\nItalia",
+      "phone": "011-7701676 / 393-8396224",
+      "notes": "",
+      "originalPayload": {
+        "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-vm-campus-stupinigi",
+        "status": "success",
+        "images": {
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/schede-informative-sedi-residenza-universitaria-immagini/stupinigi-verde-mattone/copertinacampusvmstupinigiconlogo.png.webp?itok=YECiy6JY",
+          "full_galleria": [
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/stupinigi-verde-mattone/Interno_Campus_Stupinigi_Verde_Mattone.jpg?itok=geWwDbYH",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/stupinigi-verde-mattone/Campus_Stupinigi_2.jpeg?itok=MoBojBcm",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/stupinigi-verde-mattone/Campus_Stupinigi_3.jpeg?itok=CZVHqc1S"
+          ]
+        },
+        "items_count": 6,
+        "items": [
+          {
+            "titolo": "Indirizzo e numero di telefono",
+            "indirizzo": "Viale Torino, 6 - 8\n10042 Nichelino TO\nItalia",
+            "telefono": "011-7701676 / 393-8396224"
+          },
+          {
+            "titolo": "Struttura",
+            "contenuto": "La struttura, recentemente rinnovata negli spazi interni, propone un nuovo concetto di residenza universitaria, pensato per offrire agli studenti un ambiente confortevole, funzionale e ideale per accompagnarli durante il loro percorso universitario.\nLa residenza è composta da alloggi, con una capienza variabile da 3 a 8 posti letto. Ogni alloggio dispone di uno o più bagni, a disposizione di un massimo di due o tre studenti, oltre a una cucina e a una zona giorno condivise, pensate per favorire la convivialità e la socializzazione tra gli ospiti."
+          },
+          {
+            "titolo": "Come raggiungere la residenza",
+            "contenuto": [
+              "https://www.sfmtorino.it/",
+              "https://www.gtt.to.it/cms/ricerca-percorsi",
+              "https://www.muoversiatorino.it/it/"
+            ]
+          },
+          {
+            "titolo": "Camere",
+            "contenuto": [
+              "6 singole in appartamento",
+              "5 doppie in appartamento"
+            ]
+          },
+          {
+            "titolo": "Dotazioni camere",
+            "contenuto": [
+              "Bagno",
+              "Angolo cottura",
+              "Frigorifero",
+              "Rete Wi-Fi",
+              "Lavatrice e Asciugatrice"
+            ]
+          },
+          {
+            "titolo": "Servizi",
+            "contenuto": [
+              "Deposito biciclette",
+              "Deposito per bagagli e oggetti ingombranti",
+              "Grande cortile interno attrezzato con tavoli da ping pong, sedute e zone pic-nic",
+              "Punti di ricarica per le E-bike",
+              "Pulizie delle parti comuni",
+              "Sala studio",
+              "Sala relax/TV/giochi comune"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "rank": 28,
+      "name": "Residenza Studentato Don Bosco Vigevano",
+      "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-studentato-don-bosco-vigevano",
+      "address": "Corso Vigevano, 8\n10152 Torino TO\nItalia",
+      "phone": "",
+      "notes": "",
+      "originalPayload": {
+        "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-studentato-don-bosco-vigevano",
+        "status": "success",
+        "images": {
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/schede-informative-sedi-residenza-universitaria-immagini/don-bosco-vigevano/copertinavigevanoconlogo.png.webp?itok=EQgEk_Gl",
+          "full_galleria": []
+        },
+        "items_count": 5,
+        "items": [
+          {
+            "titolo": "Indirizzo e numero di telefono",
+            "indirizzo": "Corso Vigevano, 8\n10152 Torino TO\nItalia",
+            "telefono": null
+          },
+          {
+            "titolo": "Struttura",
+            "contenuto": "IN AGGIORNAMENTO"
+          },
+          {
+            "titolo": "Camere",
+            "contenuto": "2 posti letto in doppie"
+          },
+          {
+            "titolo": "Dotazioni camere",
+            "contenuto": "IN AGGIORNAMENTO"
           },
           {
             "titolo": "Servizi",
@@ -884,57 +1844,7 @@
       }
     },
     {
-      "rank": 15,
-      "name": "Residenza Campus Rovigo 24",
-      "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-campus-rovigo-24",
-      "address": "Via Rovigo, 24\n10134 Torino TO\nItalia",
-      "phone": "",
-      "notes": "",
-      "originalPayload": {
-        "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-campus-rovigo-24",
-        "status": "success",
-        "images": {
-          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/schede-informative-sedi-residenza-universitaria-immagini/rovigo24/copertinarovigo24conlogo.png.webp?itok=B6zDwX4o",
-          "full_galleria": []
-        },
-        "items_count": 5,
-        "items": [
-          {
-            "titolo": "Indirizzo e numero di telefono",
-            "indirizzo": "Via Rovigo, 24\n10134 Torino TO\nItalia",
-            "telefono": null
-          },
-          {
-            "titolo": "Struttura",
-            "contenuto": "La residenza si trova nel quartiere Aurora, nella Circoscrizione 7 di Torino, in un’area a ridosso di Borgo Dora, Porta Palazzo e corso Regina Margherita. Il contesto è caratterizzato da un tessuto urbano consolidato, con una significativa presenza di attività commerciali e servizi di quartiere. La posizione è funzionale per una residenza universitaria: l’area è relativamente vicina al centro cittadino e consente di raggiungere le principali zone universitarie e centrali attraverso il trasporto pubblico e la mobilità ciclabile."
-          },
-          {
-            "titolo": "Camere",
-            "contenuto": [
-              "2 singole con bagno condiviso",
-              "2 doppie con bagno condiviso"
-            ]
-          },
-          {
-            "titolo": "Dotazioni camere",
-            "contenuto": [
-              "Aria condizionata",
-              "WiFi",
-              "Frigorifero (45lt)"
-            ]
-          },
-          {
-            "titolo": "Servizi",
-            "contenuto": [
-              "Cucina in comune",
-              "Collegamenti WiFi"
-            ]
-          }
-        ]
-      }
-    },
-    {
-      "rank": 16,
+      "rank": 29,
       "name": "Residenza Studentato Don Bosco Lauro Rossi",
       "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-studentato-don-bosco-lauro-rossi",
       "address": "Via Lauro Rossi, 34\n10155 Torino TO\nItalia",
@@ -982,7 +1892,66 @@
       }
     },
     {
-      "rank": 17,
+      "rank": 30,
+      "name": "Residenza Campus Aba",
+      "url": "https://www.edisu.piemonte.it/sedi/university-residence/residenza-universitaria-campus-aba",
+      "address": "Via Villafranca, 5\n10024 Moncalieri TO\nItalia",
+      "phone": "In aggiornamento - Updating",
+      "notes": "",
+      "originalPayload": {
+        "url": "https://www.edisu.piemonte.it/sedi/university-residence/residenza-universitaria-campus-aba",
+        "status": "success",
+        "images": {
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/schede-informative-sedi-residenza-universitaria-immagini/campus-aba/copertinacampusabaconlogo.png.webp?itok=vC8XnmwE",
+          "full_galleria": []
+        },
+        "items_count": 6,
+        "items": [
+          {
+            "titolo": "Indirizzo e numero di telefono",
+            "indirizzo": "Via Villafranca, 5\n10024 Moncalieri TO\nItalia",
+            "telefono": "In aggiornamento - Updating"
+          },
+          {
+            "titolo": "Struttura",
+            "contenuto": "La struttura, situata a Moncalieri, a circa 700 metri dal centro storico e dalla stazione ferroviaria, si sviluppa su cinque piani, sui quali sono distribuite le camere con bagno interno destinate agli studenti."
+          },
+          {
+            "titolo": "Come raggiungere la residenza",
+            "contenuto": [
+              "https://www.sfmtorino.it/",
+              "https://www.gtt.to.it/cms/ricerca-percorsi",
+              "https://www.muoversiatorino.it/it/"
+            ]
+          },
+          {
+            "titolo": "Camere",
+            "contenuto": [
+              "2 singole",
+              "21 doppie"
+            ]
+          },
+          {
+            "titolo": "Dotazioni camere",
+            "contenuto": [
+              "Frigorifero",
+              "Wi-fi"
+            ]
+          },
+          {
+            "titolo": "Servizi",
+            "contenuto": [
+              "Sala pranzo dotata di forni a microonde e bollitori",
+              "Posti auto (a pagamento)",
+              "Parcheggio biciclette",
+              "Servizio di ricarica biciclette (a pagamento)"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "rank": 31,
       "name": "Residenza Roccavione Studium Libertas",
       "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-roccavione-studium-libertas",
       "address": "Via Conte di Roccavione, 68\n10147 Torino TO\nItalia",
@@ -1022,33 +1991,44 @@
       }
     },
     {
-      "rank": 18,
-      "name": "Residenza Studentato Don Bosco Vigevano",
-      "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-studentato-don-bosco-vigevano",
-      "address": "Corso Vigevano, 8\n10152 Torino TO\nItalia",
-      "phone": "",
+      "rank": 32,
+      "name": "Residenza La Mole Housing",
+      "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-la-mole-housing",
+      "address": "Via Camillo Cenni 17\n10095 Grugliasco TO\nItalia",
+      "phone": "In aggiornamento - Updating",
       "notes": "",
       "originalPayload": {
-        "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-studentato-don-bosco-vigevano",
+        "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-la-mole-housing",
         "status": "success",
         "images": {
-          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/schede-informative-sedi-residenza-universitaria-immagini/don-bosco-vigevano/copertinavigevanoconlogo.png.webp?itok=EQgEk_Gl",
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/schede-informative-sedi-residenza-universitaria-immagini/la-mole-housing/copertinalamolehousingconlogo.png.webp?itok=J7Wb_yr_",
           "full_galleria": []
         },
-        "items_count": 5,
+        "items_count": 6,
         "items": [
           {
             "titolo": "Indirizzo e numero di telefono",
-            "indirizzo": "Corso Vigevano, 8\n10152 Torino TO\nItalia",
-            "telefono": null
+            "indirizzo": "Via Camillo Cenni 17\n10095 Grugliasco TO\nItalia",
+            "telefono": "In aggiornamento - Updating"
           },
           {
             "titolo": "Struttura",
-            "contenuto": "IN AGGIORNAMENTO"
+            "contenuto": [
+              "1 singola",
+              "6 posti letto in camere doppie"
+            ]
+          },
+          {
+            "titolo": "Come raggiungere la residenza",
+            "contenuto": [
+              "https://www.sfmtorino.it/",
+              "https://www.gtt.to.it/cms/ricerca-percorsi",
+              "https://www.muoversiatorino.it/it/"
+            ]
           },
           {
             "titolo": "Camere",
-            "contenuto": "2 posti letto in doppie"
+            "contenuto": "IN AGGIORNAMENTO"
           },
           {
             "titolo": "Dotazioni camere",
@@ -1057,6 +2037,1226 @@
           {
             "titolo": "Servizi",
             "contenuto": "IN AGGIORNAMENTO"
+          }
+        ]
+      }
+    },
+    {
+      "rank": 33,
+      "name": "Residenza Studentato Cascina Gonzole",
+      "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-studentato-cascina-gonzole",
+      "address": "Regione Gonzole, 3\n10043 Orbassano TO\nItalia",
+      "phone": "+ 39 349 606 8363",
+      "notes": "",
+      "originalPayload": {
+        "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-studentato-cascina-gonzole",
+        "status": "success",
+        "images": {
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/schede-informative-sedi-residenza-universitaria-immagini/gonzole/copertinacascinagonzoleconlogo.png.webp?itok=Zfy42wpg",
+          "full_galleria": [
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/gonzole/Bagno_residenza_Gonzole.jpg?itok=XIiy1gSD",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/gonzole/Cucina_stanza_residenza_Gonzole.jpg?itok=kiWk3fbR",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/gonzole/Interno_residenza_Gonzole.jpg?itok=NQN2VoyP",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/gonzole/Letto_residenza_Gonzole.jpg?itok=J_VwTHH6"
+          ]
+        },
+        "items_count": 6,
+        "items": [
+          {
+            "titolo": "Indirizzo e numero di telefono",
+            "indirizzo": "Regione Gonzole, 3\n10043 Orbassano TO\nItalia",
+            "telefono": "+ 39 349 606 8363"
+          },
+          {
+            "titolo": "Struttura",
+            "contenuto": "Lo Studentato Gonzole, in Regione Gonzole 3 ad Orbassano, è un moderno complesso universitario con miniappartamenti con camere singole e doppie e spazi comuni per studio, socializzazione e benessere. La struttura punta su comfort, efficienza energetica e sostenibilità ambientale. È situato vicino all’Ospedale San Luigi Gonzaga, alla Facoltà di Medicina e Chirurgia in Inglese e alla futura Città delle Scienze e dell’Ambiente di Grugliasco. Inoltre, la stazione ferroviaria FM5, a circa 300 metri, garantisce rapidi collegamenti con Torino e l’area metropolitana."
+          },
+          {
+            "titolo": "Come raggiungere la residenza",
+            "contenuto": [
+              "https://www.sfmtorino.it/",
+              "https://www.gtt.to.it/cms/ricerca-percorsi",
+              "https://www.muoversiatorino.it/it/"
+            ]
+          },
+          {
+            "titolo": "Camere",
+            "contenuto": [
+              "7 singole in miniappartamenti con angolo cottura",
+              "5 doppie in miniappartamenti con angolo cottura"
+            ]
+          },
+          {
+            "titolo": "Dotazioni camere",
+            "contenuto": [
+              "Bagno privato",
+              "Rete Wi-fi"
+            ]
+          },
+          {
+            "titolo": "Servizi",
+            "contenuto": [
+              "Campo sportivo",
+              "Lavatrici ed asciugatrici a pagamento",
+              "Pulizia delle parti comuni",
+              "Sale lettura e Sale TV",
+              "Servizio di noleggio bici elettriche (a breve disponibile)",
+              "Servizio di telesorveglianza"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "rank": 34,
+      "name": "Residenza Housing Universitario Montegrappa 16",
+      "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-housing-universitario-montegrappa-16",
+      "address": "Via Montegrappa, 16\n10043 Orbassano TO\nItalia",
+      "phone": "",
+      "notes": "",
+      "originalPayload": {
+        "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-housing-universitario-montegrappa-16",
+        "status": "success",
+        "images": {
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/schede-informative-sedi-residenza-universitaria-immagini/housing-montegrappa-16/copertinamontegrappaconlogo.png.webp?itok=tTM0QAmh",
+          "full_galleria": []
+        },
+        "items_count": 6,
+        "items": [
+          {
+            "titolo": "Indirizzo e numero di telefono",
+            "indirizzo": "Via Montegrappa, 16\n10043 Orbassano TO\nItalia",
+            "telefono": null
+          },
+          {
+            "titolo": "Struttura",
+            "contenuto": "La residenza Montegrappa, sita nel Comune di Orbassano, si sviluppa su tre piani, piano terra, primo piano e secondo piano. L’intera disponibilità della struttura è destinata a EDISU Piemonte, per un totale di 25 posti letto, pari al 100% della capacità ricettiva della struttura."
+          },
+          {
+            "titolo": "Come raggiungere la residenza",
+            "contenuto": [
+              "https://www.sfmtorino.it/",
+              "https://www.gtt.to.it/cms/ricerca-percorsi",
+              "https://www.muoversiatorino.it/it/"
+            ]
+          },
+          {
+            "titolo": "Camere",
+            "contenuto": [
+              "3 camere singole",
+              "11 camere doppie (di cui una accessibile a persone con disabilità)"
+            ]
+          },
+          {
+            "titolo": "Dotazioni camere",
+            "contenuto": [
+              "Angolo cottura interno",
+              "Frigorifero"
+            ]
+          },
+          {
+            "titolo": "Servizi",
+            "contenuto": [
+              "Cucina comune",
+              "Cortile interno",
+              "Deposito biciclette",
+              "Sala relax con televisione",
+              "Servizio di ricarica biciclette"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "rank": 35,
+      "name": "Residenza Housing Molino",
+      "url": "https://www.edisu.piemonte.it/sedi/university-residence/residenza-universitaria-housing-molino",
+      "address": "Via Cercenasco, 13\n10126 Torino TO\nItalia",
+      "phone": "+39 329 9738772",
+      "notes": "",
+      "originalPayload": {
+        "url": "https://www.edisu.piemonte.it/sedi/university-residence/residenza-universitaria-housing-molino",
+        "status": "success",
+        "images": {
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/schede-informative-sedi-residenza-universitaria-immagini/housing-molino/copertinahousingmolino.png.webp?itok=yGGUeTMM",
+          "full_galleria": [
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/housing-molino/Housing_Molino_2.png?itok=RlOIoUhY",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/housing-molino/Housing_Molino_1.png?itok=-Ld_1bpk"
+          ]
+        },
+        "items_count": 5,
+        "items": [
+          {
+            "titolo": "Indirizzo e numero di telefono",
+            "indirizzo": "Via Cercenasco, 13\n10126 Torino TO\nItalia",
+            "telefono": "+39 329 9738772",
+            "orari_reception": "Portineria e reception: Servizio reception per assistenza e ritiro posta\nPeriodo di chiusura: Agosto",
+            "periodo_di_chiusura": "Agosto"
+          },
+          {
+            "titolo": "Struttura",
+            "contenuto": "Housing Molino è una residenza universitaria progettata per offrire a studentesse e studenti un ambiente moderno e accogliente. La struttura dispone di appartamenti con bagno privato, cucina attrezzata, connessione Wi-Fi e Smart TV. Gli ospiti possono usufruire di spazi comuni dedicati allo studio e alla socialità, tra cui biblioteca, sala cinema, oltre a servizi come lavanderia self-service, copisteria a tariffe agevolate. Grazie alla vicinanza alle principali università e agli ottimi collegamenti con i mezzi pubblici, Housing Molino rappresenta una soluzione ideale per vivere e studiare a Torino."
+          },
+          {
+            "titolo": "Camere",
+            "contenuto": [
+              "1 singola in appartamento",
+              "4 doppie in appartamento"
+            ]
+          },
+          {
+            "titolo": "Dotazioni camere",
+            "contenuto": [
+              "Angolo cottura",
+              "Bagno privato",
+              "Connessione Wi-Fi e cavo",
+              "Smart TV da 32”"
+            ]
+          },
+          {
+            "titolo": "Servizi",
+            "contenuto": [
+              "Biblioteca in allestimento",
+              "Sala studio in allestimento",
+              "Sala cinema in allestimento",
+              "Lavatrici e asciugatrici a pagamento",
+              "Servizio Copisteria self-service a pagamento"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "rank": 36,
+      "name": "Residenza Sacchi Aggiornamento",
+      "url": "https://www.edisu.piemonte.it/sedi/university-residence/residenza-universitaria-sacchi-aggiornamento",
+      "address": "Via Sacchi, 55\n10125 Torino TO\nItalia",
+      "phone": "-",
+      "notes": "",
+      "originalPayload": {
+        "url": "https://www.edisu.piemonte.it/sedi/university-residence/residenza-universitaria-sacchi-aggiornamento",
+        "status": "success",
+        "images": {
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/schede-informative-sedi-residenza-universitaria-immagini/sacchi/copertinaviasacchiconlogo.png.webp?itok=JHQpV7RF",
+          "full_galleria": [
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/sacchi/Foto_interno_camera_doppia_Sacchi.jpg?itok=L3fMlD0k",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/sacchi/Foto_stanza_singola_Sacchi.jpg?itok=z5nLbrVj",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/sacchi/Foto_stanza_Sacchi.jpg?itok=dVKaU14_",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/sacchi/Foto_stanza_doppia_Sacchi_3.jpg?itok=g3W2l2S7",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/sacchi/Foto_stanza_doppia_Sacchi.jpg?itok=q0vFbJua",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/sacchi/Foto_stanza_doopia_Sacchi_2.jpg?itok=pRJPdRMQ",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/sacchi/Foto_scrivania_Sacchi.jpg?itok=keIVHXl7",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/sacchi/Foto_letto_singolo_Sacchi.jpg?itok=kEJKWPCc",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/sacchi/Foto_interno_stanza_singola_Sacchi.jpg?itok=wGR_uB2z",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/sacchi/Foto_cucina_Sacchi_2.jpg?itok=ZHizsDMi",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/sacchi/Foto_cucina_Sacchi.jpg?itok=vBoV0g__",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/sacchi/Foto_bagno_Sacchi_2.jpg?itok=XM9VAdDR",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/sacchi/Foto_bagno_Sacchi.jpg?itok=2V67Xh0M",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/sacchi/Foto_bagni_Sacchi_4.jpg?itok=QZxglRbQ",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/sacchi/Foto_bagni_Sacchi_3.jpg?itok=UqIl9tc3",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/sacchi/Foto_bagni_Sacchi_2.jpg?itok=D-y8UVT4",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/sacchi/Corridoio_Sacchi.jpg?itok=RxCgn3JL"
+          ]
+        },
+        "items_count": 5,
+        "items": [
+          {
+            "titolo": "Indirizzo e numero di telefono",
+            "indirizzo": "Via Sacchi, 55\n10125 Torino TO\nItalia",
+            "telefono": "-",
+            "orari_reception": "Reception dal lunedì al venerdì dalle ore 8:30 alle ore 20:30 e il sabato dalle ore 9:00 alle ore 18:00.\nPeriodo di Chiusura: Agosto",
+            "periodo_di_chiusura": "Agosto"
+          },
+          {
+            "titolo": "Struttura",
+            "contenuto": "La Residenza Sacchi sita in Via Sacchi n. 55 a Torino si presenta completamente ristrutturata e in ottime condizioni generali. L’accesso all’edificio è ben visibile e facilmente individuabile ed è inoltre dotato di un montacarichi, che consente l’eventuale accesso alle persone con disabilità. Si sviluppa complessivamente su cinque piani: un piano interrato, destinato principalmente agli spazi e ai servizi comuni, e da quattro piani fuori terra, nei quali sono collocati gli alloggi"
+          },
+          {
+            "titolo": "Camere",
+            "contenuto": [
+              "14 singole",
+              "8 doppie"
+            ]
+          },
+          {
+            "titolo": "Dotazioni camere",
+            "contenuto": [
+              "Cucina",
+              "Frigorifero",
+              "Wi-Fi"
+            ]
+          },
+          {
+            "titolo": "Servizi",
+            "contenuto": [
+              "Lavatrici/asciugatrici (a pagamento)",
+              "Manutenzione ordinaria e straordinaria",
+              "Portineria e reception diurna",
+              "Pulizia giornaliera delle aree comuni",
+              "Sala studio e conversazione/TV e Sala giochi"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "rank": 37,
+      "name": "Residenza Appartamenti Residenza Universitaria Farini 24",
+      "url": "https://www.edisu.piemonte.it/sedi/university-residence/appartamenti-residenza-universitaria-farini-24",
+      "address": "Corso Carlo Luigi Farini, 24\n10153 Torino TO\nItalia",
+      "phone": "In aggiornamento - Updating",
+      "notes": "",
+      "originalPayload": {
+        "url": "https://www.edisu.piemonte.it/sedi/university-residence/appartamenti-residenza-universitaria-farini-24",
+        "status": "success",
+        "images": {
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/schede-informative-sedi-residenza-universitaria-immagini/farini-24/copertinafariniconlogo.png.webp?itok=TXA_QJBH",
+          "full_galleria": [
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/farini-24/Farini_esterno_2.jpg?itok=MTKCvQvX",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/farini-24/Cortile_interno_facciata.jpeg?itok=DgVZ6Bg6",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/farini-24/Ballatoio_esterno.jpeg?itok=vS3SOf9P",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/farini-24/Interno_1.jpeg?itok=pS1vD31p",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/farini-24/Scale_edificio.jpeg?itok=4yPIUrKN",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/farini-24/Bagno_1.jpeg?itok=aIDFYqNn",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/farini-24/Bagno_2.jpeg?itok=KY4SHtWs",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/farini-24/Cucina_1.jpeg?itok=S2syuNQH",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/farini-24/Cucina_2.jpeg?itok=Gmier2wI",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/farini-24/Interno_2.jpeg?itok=J981EifF",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/farini-24/Interno_appartamento_1.jpeg?itok=ssFMjhVv",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/farini-24/Interno_appartamento_2.jpeg?itok=XC7m62LK"
+          ]
+        },
+        "items_count": 5,
+        "items": [
+          {
+            "titolo": "Indirizzo e numero di telefono",
+            "indirizzo": "Corso Carlo Luigi Farini, 24\n10153 Torino TO\nItalia",
+            "telefono": "In aggiornamento - Updating",
+            "orari_reception": "Reception: assente - servizio in definizione\nPeriodo di chiusura: Agosto",
+            "periodo_di_chiusura": "Agosto"
+          },
+          {
+            "titolo": "Struttura",
+            "contenuto": "Gli appartamenti sono ubicati nel quartiere Vanchiglia nella Circoscrizione 7 di Torino, in un’area a ridosso del fiume Dora Riparia. Il contesto è caratterizzato da un tessuto prevalentemente studentesco, l’area è relativamente vicina al centro cittadino e consente di raggiungere le principali zone universitarie e centrali attraverso il trasporto pubblico e la mobilità ciclabile. Nelle vicinanze la mensa universitaria Olimpia, presso l'area del Campus Luigi Einaudi raggiungibile a piedi o con mobilità ciclabile."
+          },
+          {
+            "titolo": "Camere",
+            "contenuto": [
+              "3 singole in appartamento",
+              "6 doppie in appartamento"
+            ]
+          },
+          {
+            "titolo": "Dotazioni camere",
+            "contenuto": [
+              "Cucine dotate di piani ad induzione",
+              "Forni elettrici",
+              "Lavastoviglie",
+              "Frigoriferi con freezer",
+              "Wi-fi presente in ciascun appartamento"
+            ]
+          },
+          {
+            "titolo": "Servizi",
+            "contenuto": [
+              "Locale con Lavatrici ed asciugatrici a pagamento",
+              "Lavastoviglie e frigoriferi con freezer in ogni appartamento",
+              "Servizio internet wifi presente in ciascun appartamento"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "rank": 38,
+      "name": "Residenza Cappel Verde",
+      "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-cappel-verde",
+      "address": "Via Cappel Verde, 5\n10122 Torino TO\nItalia",
+      "phone": "+ 39 011 6531430",
+      "notes": "",
+      "originalPayload": {
+        "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-cappel-verde",
+        "status": "success",
+        "images": {
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/sedi-residenza-universitaria-immagini/cappel-verde/EDISU_ResidenzaCappelVerde_001.jpg.webp?itok=BSi6t11g",
+          "full_galleria": [
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/cappel-verde/cappelverde_foto_edificio.jpg?itok=xdz54bvU",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/cappel-verde/cappelverdecomune.jpg?itok=G-blCf3Y",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/cappel-verde/cappelverde.jpg?itok=YfU5Ywtp",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/cappel-verde/capp.jpg?itok=3UiuQyaE",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/cappel-verde/EDISU_ResidenzaCappelVerde_021.jpg?itok=VZip6p8L",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/cappel-verde/EDISU_ResidenzaCappelVerde_022.jpg?itok=Be-n4Lqr",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/cappel-verde/EDISU_ResidenzaCappelVerde_023.jpg?itok=F4MZqrXY",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/cappel-verde/cappelverde_foto_bagno.jpg?itok=C43i5_61"
+          ]
+        },
+        "items_count": 5,
+        "items": [
+          {
+            "titolo": "Indirizzo e numero di telefono",
+            "indirizzo": "Via Cappel Verde, 5\n10122 Torino TO\nItalia",
+            "telefono": "+ 39 011 6531430",
+            "orari_reception": "Portineria e reception aperta 24h/24h, 7 giorni su 7\nCheck - In: ore 14.00\nCheck - Out: entro le ore 11.00\nPeriodo di chiusura: Agosto",
+            "periodo_di_chiusura": "Agosto"
+          },
+          {
+            "titolo": "Struttura",
+            "contenuto": "Situata nel cuore del centro storico di Torino, a pochi passi da Piazza Castello, la Residenza Cappel Verde è formata da due edifici adiacenti che si inseriscono armoniosamente nel contesto urbano. La posizione centrale permette di raggiungere rapidamente musei, servizi e sedi universitarie, offrendo un ambiente ricco di storia e cultura. Dotata di camere singole doppie, di spazi interni comuni moderni e accoglienti, garantiscono un soggiorno confortevole in una delle zone più prestigiose e vivaci della città."
+          },
+          {
+            "titolo": "Camere",
+            "contenuto": [
+              "83 singole (di cui 1 attrezzata per persone con disabilità)",
+              "32 doppie"
+            ]
+          },
+          {
+            "titolo": "Dotazioni camere",
+            "contenuto": [
+              "Bagno",
+              "Wi-Fi",
+              "Tv",
+              "Frigorifero"
+            ]
+          },
+          {
+            "titolo": "Servizi",
+            "contenuto": [
+              "Distributori di bevande e snack",
+              "Servizio di foresteria",
+              "Fornitura e cambio periodico dotazione biancheria",
+              "Fotocopiatrice (a pagamento)",
+              "Locale con lavatrici, asciugatrici e zona stiro (a pagamento)",
+              "Sala conversazione/ Tv e sala giochi",
+              "Locali cucina",
+              "Palestra (a pagamento)",
+              "Parcheggio biciclette",
+              "Reception diurna e notturna",
+              "Sale studio",
+              "Pulizia giornaliera delle aree comuni",
+              "Manutenzione ordinaria e straordinaria"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "rank": 39,
+      "name": "Residenza Turin Queen",
+      "url": "https://www.edisu.piemonte.it/sedi/university-residence/residenza-universitaria-turin-queen",
+      "address": "Corso Regina Margherita, 215\n10144 Torino TO\nItalia",
+      "phone": "+39 011 1883 8890",
+      "notes": "",
+      "originalPayload": {
+        "url": "https://www.edisu.piemonte.it/sedi/university-residence/residenza-universitaria-turin-queen",
+        "status": "success",
+        "images": {
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/schede-informative-sedi-residenza-universitaria-immagini/turin-queen/copertinaturinqueenconlogo.png.webp?itok=qrXw-epY",
+          "full_galleria": [
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/turin-queen/Turin_Queen_2.jpeg?itok=bwiwtj9A",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/turin-queen/Torino_Queen_3.jpeg?itok=ppCmNg2f",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/turin-queen/Torino_Queen_4.jpeg?itok=IVDyCiik",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/turin-queen/Corridoio_esterno_residenza_Queen.png?itok=4DdbPKkR",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/turin-queen/Lavandino_bagno_residenza_Queen.png?itok=XH2VPEXx",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/turin-queen/Interno_stanza_Residenza_Queen.png?itok=gpKlqLzn",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/turin-queen/Facciata_residenza_Queen.png?itok=7utGZgxI",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/turin-queen/Esterno_residenza_Queen_3.png?itok=srUVZf9h",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/turin-queen/Esterno_residenza_Queen_2.png?itok=ngHb-QRe",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/turin-queen/Esterno_residenza_Queen.png?itok=L43S7aPN",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/turin-queen/Doccia_residenza_Queen.png?itok=5z6T0Vbz",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/turin-queen/Cucina_stanza_residenza_Queen_2.jpeg?itok=hsz_nf_b",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/turin-queen/Cucina_stanza_residenza_Queen.png?itok=mhUKuTx_",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/turin-queen/Cortile_interno_residenza_Queen_2.png?itok=GM8uTUsz",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/turin-queen/Cortile_interno_residenza_Queen.png?itok=cxA743lI",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/turin-queen/Camera_singola_residenza_Queen_2.png?itok=my9Shd3g",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/turin-queen/Camera_singola_residenza_Queen.png?itok=bPEL0NvF",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/turin-queen/Camera_doppia_residenza_Queen.png?itok=fxMYf_Zu",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/turin-queen/Balconi_residenza_Queen.png?itok=aYIOcZ-y",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/turin-queen/Bagno_residenza_Queen_3.png?itok=z0yhqBKL",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/turin-queen/Bagno_residenza_Queen_2.png?itok=LVjEd9nt",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/turin-queen/Bagno_residenza_Queen.png?itok=B8kxTqHA",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/turin-queen/Bagno_finestrato_residenza_Queen.png?itok=B3bbxWKQ"
+          ]
+        },
+        "items_count": 5,
+        "items": [
+          {
+            "titolo": "Indirizzo e numero di telefono",
+            "indirizzo": "Corso Regina Margherita, 215\n10144 Torino TO\nItalia",
+            "telefono": "+39 011 1883 8890",
+            "orari_reception": "Portineria e reception\nDalle ore 8:00 alle ore 12:00 e dalle ore 15:00 alle ore 19:00.\nPeriodo di chiusura: Agosto",
+            "periodo_di_chiusura": "Agosto"
+          },
+          {
+            "titolo": "Struttura",
+            "contenuto": "La residenza universitaria Turin Queen è situata in un edificio storico di metà Ottocento interamente riqualificato. L'edificio, completamente privo di barriere architettoniche, si sviluppa su 5 piani. All'interno è presente una corte pavimentata di 240 mq, pensata come spazio di socialità, con aiuole e fontana. Gli spazi comuni e privati sono impreziositi da un percorso artistico emotivo al fine di stimolare l'introspezione e la creatività. Al piano terra, oltre alle aree studio, si trova un ristorante accessibile anche dall'esterno."
+          },
+          {
+            "titolo": "Camere",
+            "contenuto": [
+              "3 singole",
+              "8 doppie",
+              "1 posto letto in camera doppia"
+            ]
+          },
+          {
+            "titolo": "Dotazioni camere",
+            "contenuto": [
+              "Angolo cottura",
+              "Connessione Wi-Fi",
+              "Antenna TV centralizzata",
+              "Impianto centralizzato di riscaldamento e raffrescamento"
+            ]
+          },
+          {
+            "titolo": "Servizi",
+            "contenuto": [
+              "Accesso con badge",
+              "Area esterna relax",
+              "Area raccolta rifiuti",
+              "Aree studio comune",
+              "Deposito biciclette coperto",
+              "Distributori di bevande",
+              "Lavatrici e asciugatrici a pagamento",
+              "Pulizia periodica delle aree comuni",
+              "Reperibilità tecnica h24",
+              "Schermature solari automatizzate",
+              "Videosorveglianza"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "rank": 40,
+      "name": "Residenza Huniri",
+      "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-huniri",
+      "address": "Piazza Risorgimento, 24\n10143 Torino TO\nItalia",
+      "phone": "+ 39 352 0005843",
+      "notes": "",
+      "originalPayload": {
+        "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-huniri",
+        "status": "success",
+        "images": {
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/schede-informative-sedi-residenza-universitaria-immagini/huniri/copertinahuniriconlogo.png.webp?itok=UsWBLfQT",
+          "full_galleria": [
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/huniri/Huniri_immagine_stanza_doppia.jpg?itok=znpY1p11",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/huniri/Huniri_immagine_stanza_singola_2.jpg?itok=fB4z2Iag",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/huniri/Huniri_immagine_stanza_singola.jpg?itok=SMUo-pcV",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/huniri/Huniri_immagine_stanza_relax_2.jpg?itok=gOHDhKSQ",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/huniri/Huniri_immagine_stanza_relax.jpg?itok=my1841Px",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/huniri/Huniri_immagine_stanza_doppia_7.jpg?itok=6AgAfMW5",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/huniri/Huniri_immagine_stanza_doppia_5.jpg?itok=NnZHtVLw",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/huniri/Huniri_immagine_stanza_doppia_4.jpg?itok=OQuaG2Vj",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/huniri/Huniri_immagine_stanza_doppia_3.jpg?itok=gDOYEX7c",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/huniri/Huniri_immagine_stanza_doppia_2.jpg?itok=rLXydk9l",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/huniri/Huniri_immagine_stanza_comune.jpg?itok=Y_ZOMqF_",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/huniri/Huniri_immagine_lavanderia_comune_2.jpg?itok=XD2nlbo6",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/huniri/Huniri_immagine_lavanderia_comune.jpg?itok=lcS3W2A1",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/huniri/Huniri_immagine_interno_stanza.jpg?itok=Edjm6niR",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/huniri/Huniri_immagine_ingresso.jpg?itok=zAxETQjC",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/huniri/Huniri_immagine_cucina_2.jpg?itok=tKm_W4Dh",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/huniri/Huniri_immagine_cucina.jpg?itok=1THUJlsw",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/huniri/Huniri_immagine_balcone.jpg?itok=5K6sWa9j"
+          ]
+        },
+        "items_count": 5,
+        "items": [
+          {
+            "titolo": "Indirizzo e numero di telefono",
+            "indirizzo": "Piazza Risorgimento, 24\n10143 Torino TO\nItalia",
+            "telefono": "+ 39 352 0005843",
+            "orari_reception": "Portineria e reception: Da definire\nPeriodo di chiusura: Agosto",
+            "periodo_di_chiusura": "Agosto"
+          },
+          {
+            "titolo": "Struttura",
+            "contenuto": "La residenza Huniri nasce all’interno di un’intera palazzina completamente rinnovata pensata per offrire agli studenti un ambiente moderno, confortevole e funzionale. Situata in un quartiere vivace, non lontana dal Politecnico di Torino dispone di appartamenti pensati per garantire a ogni studente privacy e autonomia, favorendo la socialità e la condivisione degli spazi e delle esperienze universitarie."
+          },
+          {
+            "titolo": "Camere",
+            "contenuto": [
+              "2 singole in appartamento con bagno condiviso",
+              "14 doppie in appartamento con bagno condiviso"
+            ]
+          },
+          {
+            "titolo": "Dotazioni camere",
+            "contenuto": [
+              "Angolo cottura (alcune camere)",
+              "Connessione Wi-Fi",
+              "Frigorifero",
+              "Impianto centralizzato di raffrescamento"
+            ]
+          },
+          {
+            "titolo": "Servizi",
+            "contenuto": [
+              "Area esterna terrazzata relax",
+              "Cucine comuni ai piani",
+              "Impianto centralizzato di raffrescamento.",
+              "Lavatrici e asciugatrici a pagamento",
+              "Sala studio"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "rank": 41,
+      "name": "Residenza Cstudio",
+      "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-cstudio",
+      "address": "Via Ludovico Ariosto, 9\n10152 Torino TO\nItalia",
+      "phone": "011 0252920",
+      "notes": "",
+      "originalPayload": {
+        "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-cstudio",
+        "status": "success",
+        "images": {
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/sedi-residenza-universitaria/immagini/cstudio_ariosto.jpeg.webp?itok=azED-Vda",
+          "full_galleria": [
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/cstudio/CSTUDIO_Vista%20alto.jpg?itok=XEb_e99A",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/cstudio/Camera%20doppia%20standard.webp?itok=JpJDJjng",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/cstudio/16.png?itok=A45hzvAH",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/cstudio/17.png?itok=VYTKaAlU",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/cstudio/18.png?itok=7u4ZtmLQ"
+          ]
+        },
+        "items_count": 5,
+        "items": [
+          {
+            "titolo": "Indirizzo e numero di telefono",
+            "indirizzo": "Via Ludovico Ariosto, 9\n10152 Torino TO\nItalia",
+            "telefono": "011 0252920",
+            "orari_reception": "Reception aperta 24h/24h, 7 giorni su 7.\nPeriodo di chiusura: agosto",
+            "periodo_di_chiusura": "agosto"
+          },
+          {
+            "titolo": "Struttura",
+            "contenuto": "La residenza Universitaria CStudio, si trova accanto al Quadrilatero romano di Torino, in via Ariosto n.9, in posizione centrale, facilmente raggiungibile con i mezzi pubblici e comoda alla stazione di Porta Susa. Facilmente raggiungibili le sedi universitarie del campus Einaudi e di Palazzo Nuovo.\nCStudio offre aule dedicate allo studio individuale o collettivo, una palestra per la cura del benessere fisico e aree comuni dove trascorrere il proprio tempo libero. Completano i servizi di CStudio la presenza della lavanderia, il parcheggio bici e una reception attiva h24."
+          },
+          {
+            "titolo": "Camere",
+            "contenuto": [
+              "33 doppie"
+            ]
+          },
+          {
+            "titolo": "Dotazioni camere",
+            "contenuto": [
+              "Bagno",
+              "Frigorifero"
+            ]
+          },
+          {
+            "titolo": "Servizi",
+            "contenuto": [
+              "Wi-Fi",
+              "3 Locali cucine comuni dotate di forno e microonde",
+              "5 Sale studio",
+              "Locale lavanderia/stireria",
+              "Palestra attrezzata",
+              "Posteggi biciclette",
+              "Deposito bagagli"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "rank": 42,
+      "name": "Residenza Cavour",
+      "url": "https://www.edisu.piemonte.it/sedi/university-residence/residenza-universitaria-cavour",
+      "address": "Piazza Cavour, 5\n10123 Torino TO\nItalia",
+      "phone": "+39 011 6531500",
+      "notes": "",
+      "originalPayload": {
+        "url": "https://www.edisu.piemonte.it/sedi/university-residence/residenza-universitaria-cavour",
+        "status": "success",
+        "images": {
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/sedi-residenza-universitaria-immagini/cavour/cavouresterno.jpg.webp?itok=4AS0dP2h",
+          "full_galleria": [
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/cavour/aulemacchinette1.jpeg?itok=uV-KAWLM",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/cavour/reception2.jpeg?itok=VJlpsw2v",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/cavour/reception1_0.jpeg?itok=069qwJBi",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/cavour/aulastudio_0.jpeg?itok=YIE1961V",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/cavour/stanza.jpeg?itok=zApz2y23",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/cavour/ingresso1_0.jpeg?itok=cmXHV0qL",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/cavour/cavour_rialzo.jpg?itok=-6kAt9f9",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/cavour/cavour_sala_giochi.jpg?itok=m800eF1M",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/cavour/cavour_stanza_doppia.jpg?itok=_CskQNjP",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/cavour/cavour_stanza_tripla.jpg?itok=8agewIhk",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/cavour/cavour-tv.jpg?itok=ZVzBplr1",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/cavour/Cavour_int_1.png?itok=4oUK2iuy",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/cavour/Cavour_int_2.png?itok=k8hOpRvk"
+          ]
+        },
+        "items_count": 5,
+        "items": [
+          {
+            "titolo": "Indirizzo e numero di telefono",
+            "indirizzo": "Piazza Cavour, 5\n10123 Torino TO\nItalia",
+            "telefono": "+39 011 6531500",
+            "orari_reception": "Portineria e reception aperta 24h/24h, 7 giorni su 7.\nCheck - In: ore 14.00\nCheck - Out: entro le ore 10.00\nPeriodo di chiusura: Agosto",
+            "periodo_di_chiusura": "Agosto"
+          },
+          {
+            "titolo": "Struttura",
+            "contenuto": "La Residenza Cavour si colloca in una posizione strategica, a ridosso del Castello del Valentino, polo universitario dell’Architettura del Politecnico di Torino, dell’Accademia delle Belle Arti, e di Scienze della Vita e Biologia dei Sistemi dell’Università di Torino. È Inoltre vicino all’area verde del Parco del Valentino e nei pressi della elegante piazzetta Maria Teresa. Ospitata in un edificio ottocentesco, ex convento delle suore sacramentine, con i suoi soffitti interni alti più di 4 metri con camere singole, doppie e triple con bagno privato, cucine comuni, palestra ed aula magna combina il fascino dell’architettura storica con ambienti funzionali progettati per offrire un’esperienza abitativa confortevole e di qualità. La vicinanza ai principali poli universitari e culturali della città la rende una scelta ideale per chi desidera vivere appieno la vita accademica torinese.\nNelle vicinanze la Ristoreria River Canteen dell’EDISU di Lungo Po 22 (Murazzi) e la Mensa di Via Principe Amedo 48."
+          },
+          {
+            "titolo": "Camere",
+            "contenuto": [
+              "31 singole (di cui 4 attrezzate per persone con disabilità)",
+              "38 doppie",
+              "11 triple"
+            ]
+          },
+          {
+            "titolo": "Dotazioni camere",
+            "contenuto": [
+              "Bagno",
+              "Wi-Fi",
+              "Frigorifero"
+            ]
+          },
+          {
+            "titolo": "Servizi",
+            "contenuto": [
+              "Asciugacapelli (su richiesta alla reception)",
+              "Aula magna",
+              "Cucina comune",
+              "Distributori di bevande e snacks",
+              "Fotocopiatrice (a pagamento)",
+              "Lavatrici/asciugatrici (a pagamento)",
+              "Locale Stiro",
+              "Manutenzione ordinaria e straordinaria",
+              "Palestra (tessera obbligatoria a pagamento)",
+              "Parcheggio interno biciclette",
+              "Portineria e reception diurna e notturna",
+              "Pulizia giornaliera delle aree comuni",
+              "Pulizia camera su richiesta (a pagamento)",
+              "Rete Wi-Fi in tutta la struttura",
+              "Sala studio e conversazione/TV e Sala giochi",
+              "Servizio di foresteria"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "rank": 43,
+      "name": "Residenza Verdi",
+      "url": "https://www.edisu.piemonte.it/sedi/university-residence/residenza-universitaria-verdi",
+      "address": "Via Giuseppe Verdi, 15\n10124 Torino TO\nItalia",
+      "phone": "+39 011 6531300",
+      "notes": "",
+      "originalPayload": {
+        "url": "https://www.edisu.piemonte.it/sedi/university-residence/residenza-universitaria-verdi",
+        "status": "success",
+        "images": {
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/sedi-residenza-universitaria-immagini/verdi/verdi_cortile.jpg.webp?itok=es7h_XFS",
+          "full_galleria": [
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/verdi/verdi_stanza.jpg?itok=6LmgxX3y",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/verdi/verdi_bagno.jpg?itok=avI1E0uk",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/verdi/EDISU_ResidenzaVerdi_010.jpg?itok=7vbjBMq6",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/verdi/EDISU_ResidenzaVerdi_016.jpg?itok=bl4LDCXY",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/verdi/EDISU_ResidenzaVerdi_005.jpg?itok=n6daM6wq"
+          ]
+        },
+        "items_count": 5,
+        "items": [
+          {
+            "titolo": "Indirizzo e numero di telefono",
+            "indirizzo": "Via Giuseppe Verdi, 15\n10124 Torino TO\nItalia",
+            "telefono": "+39 011 6531300",
+            "orari_reception": "Portineria e reception aperta 24h/24h, 7 giorni su 7.\nCheck - In: ore 14.00\nCheck - Out: entro le ore 11.00\nPeriodo di chiusura: Agosto",
+            "periodo_di_chiusura": "Agosto"
+          },
+          {
+            "titolo": "Struttura",
+            "contenuto": "La Residenza Verdi che ha sede negli spazi di un antico palazzo storico seicentesco è un elegante complesso residenziale universitario di cinque piani fuori terra, con cortile interno e terrazza panoramica con vista sulla Mole Antonelliana, simbolo della città di Torino. Composta da camere singole e doppie tutte dotate di servizi in camera e spazi di aggregazione comuni si distingue per il suo design elegante e funzionale conservato nella recente ristrutturazione che ha mantenuto un legame con l’architettura tradizionale torinese e che le conferisce un'atmosfera di classe e contemporaneità. Offre un’ottima qualità abitativa e una posizione strategica nel cuore della città, essendo poco distante del Rettorato, dalle principali sedi dei dipartimenti umanistici dell’Università degli Studi di Torino e a pochi passi dal Teatro Regio e da Piazza Castello.\nNelle vicinanze la Ristoreria River Canteen dell’EDISU di Lungo Po 22 (Murazzi) e la Mensa di Via Principe Amedo 48."
+          },
+          {
+            "titolo": "Camere",
+            "contenuto": [
+              "126 singole",
+              "25 doppie"
+            ]
+          },
+          {
+            "titolo": "Dotazioni camere",
+            "contenuto": [
+              "Bagno",
+              "Frigorifero",
+              "Wi-Fi"
+            ]
+          },
+          {
+            "titolo": "Servizi",
+            "contenuto": [
+              "Asciugacapelli (su richiesta alla reception)",
+              "Cucine comuni ai piani",
+              "Distributori di bevande e snacks",
+              "Fornitura e cambio periodico dotazione biancheria",
+              "Fotocopiatrice (a pagamento)",
+              "Lavatrici/asciugatrici (a pagamento)",
+              "Locale Stiro",
+              "Manutenzione ordinaria e straordinaria",
+              "Parcheggio interno biciclette",
+              "Portineria e reception diurna e notturna",
+              "Pulizia giornaliera delle aree comuni",
+              "Pulizia camera su richiesta (a pagamento)",
+              "Rete Wi-Fi in tutta la struttura",
+              "Sala studio e conversazione/TV e Sala giochi",
+              "Servizio di foresteria",
+              "Telefoni per chiamate di emergenza nei corridoi comuni"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "rank": 44,
+      "name": "Residenza Liborio",
+      "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-liborio",
+      "address": "Via San Domenico, 10\n10122 Torino TO\nItalia",
+      "phone": "+39 011 6531410",
+      "notes": "",
+      "originalPayload": {
+        "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-liborio",
+        "status": "success",
+        "images": {
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/sedi-residenza-universitaria-immagini/san-liborio/liborioes.jpg.webp?itok=3VlC5qT_",
+          "full_galleria": [
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/san-liborio/liborio_esterno.jpg?itok=EVeFFXrg",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/san-liborio/liborio_cortile.jpg?itok=OvwBYmaZ",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/san-liborio/liborioest.jpg?itok=H6nrugca",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/san-liborio/EDISU_ResidenzaSanLiborio_025.jpg?itok=OXG-4adY",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/san-liborio/liboriointerno.JPG?itok=PkPDXiZM",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/san-liborio/EDISU_ResidenzaSanLiborio_028.jpg?itok=Pdxu8bys",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/san-liborio/EDISU_ResidenzaSanLiborio_030.jpg?itok=QXhNVOJX",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/san-liborio/EDISU_ResidenzaSanLiborio_034.jpg?itok=f7XeFoWP",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/san-liborio/EDISU_ResidenzaSanLiborio_036.jpg?itok=r3mo3Czr",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/san-liborio/liborio_macchinette.jpg?itok=WeVPa9JV",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/san-liborio/liborio_sala_studio.jpg?itok=xi57Xe9g"
+          ]
+        },
+        "items_count": 5,
+        "items": [
+          {
+            "titolo": "Indirizzo e numero di telefono",
+            "indirizzo": "Via San Domenico, 10\n10122 Torino TO\nItalia",
+            "telefono": "+39 011 6531410",
+            "orari_reception": "Portineria e reception aperta 24h/24h, 7 giorni su 7.\nCheck - In: ore 14.00\nCheck - Out: entro le ore 11.00\nPeriodo di chiusura: Agosto",
+            "periodo_di_chiusura": "Agosto"
+          },
+          {
+            "titolo": "Struttura",
+            "contenuto": "La Residenza Liborio situata in Via Bellezia all’interno del perimetro del quadrilatero dell’impianto romano di Torino, nell’isolato compreso tra le vie Santa Chiara, San Domenico e via Milano sorge nel pieno centro storico della città. L'intervento di ristrutturazione urbanistica dell'isolato di San Liborio ha permesso di ricavare alloggi e camere singole e doppie adeguate agli standard internazionali di ospitalità universitaria. Facilmente accessibile sia agli studenti dell’Università degli Studi di Torino sia a quelli del Politecnico, grazie alla sua collocazione urbana, offre un’ampia disponibilità di servizi, collegamenti e opportunità culturali, rendendola un punto di partenza ideale per vivere la città in modo dinamico e vivace."
+          },
+          {
+            "titolo": "Camere",
+            "contenuto": [
+              "80 singole",
+              "9 doppie"
+            ]
+          },
+          {
+            "titolo": "Dotazioni camere",
+            "contenuto": [
+              "Bagno",
+              "Wi-Fi",
+              "Frigorifero"
+            ]
+          },
+          {
+            "titolo": "Servizi",
+            "contenuto": [
+              "Distributori di bevande e snacks",
+              "Forni nelle cucine comuni, forni a microonde nelle cucine degli appartamenti",
+              "Fotocopiatrice (a pagamento)",
+              "Foresteria universitaria",
+              "Lavanderia/stireria (a pagamento)",
+              "Locali cucine",
+              "Palestra (Residenza Cappel Verde)",
+              "Parcheggio biciclette",
+              "Sala conversazione e sala giochi",
+              "Pulizia giornaliera delle aree comuni",
+              "Manutenzione ordinaria e straordinaria"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "rank": 45,
+      "name": "Residenza Palazzo Degli Stemmi",
+      "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-palazzo-degli-stemmi",
+      "address": "Via Montebello, 1\n10124 Torino TO\nItalia",
+      "phone": "+39 011 6531300",
+      "notes": "",
+      "originalPayload": {
+        "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-palazzo-degli-stemmi",
+        "status": "success",
+        "images": {
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/sedi-residenza-universitaria-immagini/palazzo-stemmi/EDISU_ResidenzaPalazzoDegliStemmi_006_0.jpg.webp?itok=aXGJcY26",
+          "full_galleria": [
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/palazzo-stemmi/EDISU_ResidenzaPalazzoDegliStemmi_001.jpg?itok=WDKyEJCl",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/palazzo-stemmi/EDISU_ResidenzaPalazzoDegliStemmi_013.jpg?itok=aedxwsxI",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/palazzo-stemmi/palazzodeglistemmi_bagno.jpg?itok=WF3zMd1h",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/palazzo-stemmi/EDISU_ResidenzaPalazzoDegliStemmi_011.jpg?itok=cQ65LPiF",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/palazzo-stemmi/EDISU_ResidenzaPalazzoDegliStemmi_007.jpg?itok=UeEvDXX6"
+          ]
+        },
+        "items_count": 5,
+        "items": [
+          {
+            "titolo": "Indirizzo e numero di telefono",
+            "indirizzo": "Via Montebello, 1\n10124 Torino TO\nItalia",
+            "telefono": "+39 011 6531300",
+            "orari_reception": "Portineria e reception presso residenza universitaria Verdi\naperta 24h/24h, 7 giorni su 7\nPeriodo di chiusura: Agosto",
+            "periodo_di_chiusura": "Agosto"
+          },
+          {
+            "titolo": "Struttura",
+            "contenuto": "La Residenza Palazzo degli Stemmi sorge in una posizione privilegiata nel cuore di Torino, a pochi passi da Via Po, da Piazza Vittorio Veneto e dal Museo del Cinema, risultando ideale per gli studenti dell’Università e dell’Accademia di Belle Arti grazie alla sua immediata vicinanza alle sedi universitarie. Posta all’interno di un affascinante edificio storico un tempo appartenente al complesso dell’Ospedale di Carità, progettato dall’architetto ed ingegnere Amedeo di Castellamonte nel XVII secolo, la residenza unisce lo splendore del passato a soluzioni abitative moderne in camere singole e doppie con bagno privato estremamente confortevoli. Idealmente situata per vivere pienamente la città, la residenza offre agli studenti un luogo accogliente, funzionale e ricco di fascino.\nNelle vicinanze la Ristoreria River Canteen dell’EDISU di Lungo Po 22 (Murazzi) e la Mensa di Via Principe Amedo 48."
+          },
+          {
+            "titolo": "Camere",
+            "contenuto": [
+              "17 singole",
+              "19 doppie"
+            ]
+          },
+          {
+            "titolo": "Dotazioni camere",
+            "contenuto": [
+              "Angolo cottura (alcune camere)",
+              "Bagno",
+              "Cavo LAN (no Wi-Fi)",
+              "Frigorifero"
+            ]
+          },
+          {
+            "titolo": "Servizi",
+            "contenuto": [
+              "Cucine comuni ai piani",
+              "Fotocopiatrice (a pagamento)",
+              "Lavatrici/asciugatrici (a pagamento)",
+              "Locale Stiro",
+              "Manutenzione ordinaria e straordinaria",
+              "Palestra (tessera obbligatoria a pagamento) presso residenza Verdi",
+              "Parcheggio interno biciclette",
+              "Portineria e reception diurna e notturna presso residenza Verdi",
+              "Pulizia giornaliera delle aree comuni",
+              "Rete Wi-Fi in tutta la struttura",
+              "Sala studio e conversazione/TV (non disponibile attualmente)",
+              "Pulsante di segnalazione emergenza presente in ogni camera collegato con reception Verdi)"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "rank": 46,
+      "name": "Residenza Paoli",
+      "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-paoli",
+      "address": "Via Rosario di Santa Fè, 18\n10134 Torino TO\nItalia",
+      "phone": "+39 351 6373117",
+      "notes": "",
+      "originalPayload": {
+        "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-paoli",
+        "status": "success",
+        "images": {
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/sedi-residenza-universitaria-immagini/paoli/residenza_paoli_esterno.jpg.webp?itok=x4gTS7u5",
+          "full_galleria": [
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/paoli/paoli_entrata.jpg?itok=xvChbHfT",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/paoli/EDISU_ResidenzaPaoli_001.jpg?itok=9m4fsoXP",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/paoli/EDISU_ResidenzaPaoli_020.jpg?itok=KDP0me9i",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/paoli/paoli_bagno.jpg?itok=ws4Z2V-E",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/paoli/EDISU_ResidenzaPaoli_025.jpg?itok=F8teK5OR",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/paoli/EDISU_ResidenzaPaoli_032.jpg?itok=cN_Eggs3",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/paoli/EDISU_ResidenzaPaoli_029.jpg?itok=y3izx1k9",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/sedi-residenza-universitaria-immagini/paoli/paoli_cucina.jpg?itok=EAftqDBG"
+          ]
+        },
+        "items_count": 5,
+        "items": [
+          {
+            "titolo": "Indirizzo e numero di telefono",
+            "indirizzo": "Via Rosario di Santa Fè, 18\n10134 Torino TO\nItalia",
+            "telefono": "+39 351 6373117",
+            "orari_reception": "Portineria e reception aperta 24h/24h, 7 giorni su 7.\nCheck - In: ore 14.00\nCheck - Out: entro le ore 11.00\nPeriodo di chiusura: Agosto",
+            "periodo_di_chiusura": "Agosto"
+          },
+          {
+            "titolo": "Struttura",
+            "contenuto": "La Residenza Paoli si trova a breve distanza dalla Facoltà di Economia dell’Università di Torino, in una zona ben servita e facilmente raggiungibile con i mezzi pubblici. Situata nelle vicinanze del Pala Alpitour e del Parco di Piazza d'Armi, offre un contesto piacevole e ricco di spazi verdi, ideale per lo studio e il tempo libero. Grazie alla presenza di ambienti pratici e funzionali della struttura, accoglie con i suoi 129 posti letto, studenti universitari, professori universitari e ospiti accademici rappresentando una soluzione comoda e accogliente per la vita universitaria."
+          },
+          {
+            "titolo": "Camere",
+            "contenuto": [
+              "51 camere singole con bagno condiviso (di cui 1 attrezzata per persone con disabilità)",
+              "34 camere doppie con bagno condiviso",
+              "5 camere doppie con bagno interno"
+            ]
+          },
+          {
+            "titolo": "Dotazioni camere",
+            "contenuto": [
+              "Bagno",
+              "Wi-Fi",
+              "Frigorifero"
+            ]
+          },
+          {
+            "titolo": "Servizi",
+            "contenuto": [
+              "Asciugacapelli (su richiesta alla reception)",
+              "Cucine comuni ai piani",
+              "Distributori di bevande e snacks",
+              "Fotocopiatrice (a pagamento)",
+              "Lavatrici/asciugatrici (a pagamento)",
+              "Locale Stiro",
+              "Manutenzione ordinaria e straordinaria",
+              "Palestra (tessera obbligatoria a pagamento)",
+              "Parcheggio biciclette con stazione di ricarica bici e monopattini elettrici",
+              "Portineria e reception diurna e notturna",
+              "Pulizia giornaliera delle aree comuni",
+              "Pulizia camera su richiesta (a pagamento)",
+              "Rete Wi-Fi in tutta la struttura",
+              "Sala studio e conversazione/TV e Sala giochi",
+              "Servizio di foresteria"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "rank": 47,
+      "name": "Residenza Galvani 33",
+      "url": "https://www.edisu.piemonte.it/sedi/university-residence/residenza-universitaria-galvani-33",
+      "address": "Via Galvani, 33\n10144 Torino TO\nItalia",
+      "phone": "+39 011 1883 8890",
+      "notes": "",
+      "originalPayload": {
+        "url": "https://www.edisu.piemonte.it/sedi/university-residence/residenza-universitaria-galvani-33",
+        "status": "success",
+        "images": {
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/schede-informative-sedi-residenza-universitaria-immagini/galvani33/copertinagalvani33conlogo.png.webp?itok=gZ4WvOjW",
+          "full_galleria": []
+        },
+        "items_count": 5,
+        "items": [
+          {
+            "titolo": "Indirizzo e numero di telefono",
+            "indirizzo": "Via Galvani, 33\n10144 Torino TO\nItalia",
+            "telefono": "+39 011 1883 8890",
+            "orari_reception": "Portineria e reception (Residenza  universitaria Turin Queen)\nDalle ore 8:00 alle ore 12:00 e dalle ore 15:00 alle ore 19:00.\nPeriodo di chiusura: Agosto",
+            "periodo_di_chiusura": "Agosto"
+          },
+          {
+            "titolo": "Struttura",
+            "contenuto": "La Residenza, con accesso principale da Via Galvani 33, è inserita all’interno del medesimo fabbricato che ospita la Residenza Turin Queen, con la quale condivide le principali dotazioni e gli spazi comuni. Gli ospiti di Galvani 33 potranno pertanto usufruire delle strutture, delle dotazioni e delle opportunità messe a disposizione dalla Residenza Turin Queen, beneficiando di un’offerta integrata all’interno dello stesso complesso.\nLa struttura Galvani 33  si articola in diverse unità immobiliari, ciascuna dotata di angolo cottura e servizio privato."
+          },
+          {
+            "titolo": "Camere",
+            "contenuto": [
+              "1 camera singola in appartamento",
+              "4 camere doppie in appartamento"
+            ]
+          },
+          {
+            "titolo": "Dotazioni camere",
+            "contenuto": [
+              "Cucine comuni",
+              "WiFi"
+            ]
+          },
+          {
+            "titolo": "Servizi",
+            "contenuto": [
+              "Area esterna relax",
+              "Area raccolta rifiuti",
+              "Aree studio comune",
+              "Deposito biciclette coperto",
+              "Distributori di bevande",
+              "Lavatrici e asciugatrici a pagamento",
+              "Pulizia periodica delle aree comuni",
+              "Reperibilità tecnica h24",
+              "Schermature solari automatizzate"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "rank": 48,
+      "name": "Residenza Rivarolo",
+      "url": "https://www.edisu.piemonte.it/sedi/university-residence/residenza-universitaria-rivarolo",
+      "address": "Via Rivarolo, 3\n10152 Torino TO\nItalia",
+      "phone": "In aggiornamento - Updating",
+      "notes": "",
+      "originalPayload": {
+        "url": "https://www.edisu.piemonte.it/sedi/university-residence/residenza-universitaria-rivarolo",
+        "status": "success",
+        "images": {
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/schede-informative-sedi-residenza-universitaria-immagini/rivarolo-3/copertinarivarolo3conlogo.png.webp?itok=O6tqggtY",
+          "full_galleria": []
+        },
+        "items_count": 5,
+        "items": [
+          {
+            "titolo": "Indirizzo e numero di telefono",
+            "indirizzo": "Via Rivarolo, 3\n10152 Torino TO\nItalia",
+            "telefono": "In aggiornamento - Updating",
+            "orari_reception": "La struttura dispone di reception\nPeriodo di chiusura: Agosto",
+            "periodo_di_chiusura": "Agosto"
+          },
+          {
+            "titolo": "Struttura",
+            "contenuto": "La residenza si trova nel quartiere Porta Palazzo/Aurora. Il contesto è caratterizzato da un tessuto urbano consolidato, con una significativa presenza di attività commerciali e servizi di quartiere. La posizione è funzionale per una residenza universitaria: l’area è relativamente vicina al centro cittadino e consente di raggiungere le principali zone universitarie e centrali attraverso il trasporto pubblico e la mobilità ciclabile."
+          },
+          {
+            "titolo": "Camere",
+            "contenuto": [
+              "1 singola con bagno condiviso",
+              "6 doppie con bagno condiviso"
+            ]
+          },
+          {
+            "titolo": "Dotazioni camere",
+            "contenuto": [
+              "Aria condizionata (a pagamento)",
+              "WiFi"
+            ]
+          },
+          {
+            "titolo": "Servizi",
+            "contenuto": [
+              "Cucina in comune",
+              "Collegamenti WiFi",
+              "Lavanderia",
+              "Sala studio",
+              "Sala TV"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "rank": 49,
+      "name": "Residenza Campus Cimarosa",
+      "url": "https://www.edisu.piemonte.it/sedi/university-residence/residenza-universitaria-campus-cimarosa",
+      "address": "Via Giorgio Ghedini, 2\n10154 Torino TO\nItalia",
+      "phone": "+39 338 9286709",
+      "notes": "",
+      "originalPayload": {
+        "url": "https://www.edisu.piemonte.it/sedi/university-residence/residenza-universitaria-campus-cimarosa",
+        "status": "success",
+        "images": {
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/schede-informative-sedi-residenza-universitaria-immagini/campus-cimarosa/copertinacimarosaconlogo.png.webp?itok=5HPXLBA-",
+          "full_galleria": [
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/campus-cimarosa/Campus_Cimarosa_sala_gioco.jpg?itok=XR4dWaQj",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/campus-cimarosa/Campus_Cimarosa_camera.jpg?itok=oj3kPRBv",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/campus-cimarosa/Campus_Cimarosa_camera_bagno.jpg?itok=ig5lY9Ob",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/campus-cimarosa/Accesso_camere_Cimarosa.jpg?itok=txnppweW",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/campus-cimarosa/Aula_studio_Cimarosa.jpg?itok=HJvg1kD1",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/campus-cimarosa/Aula_studio_Cimarosa_2.jpg?itok=ViyMrtQP",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/campus-cimarosa/Cucina_Cimarosa.jpg?itok=ckfO6zXn",
+            "https://www.edisu.piemonte.it/sites/default/files/styles/full_galleria/public/schede-informative-sedi-residenza-universitaria-immagini/campus-cimarosa/Facciata_interna_Cimarosa.jpg?itok=a_6StVeH"
+          ]
+        },
+        "items_count": 5,
+        "items": [
+          {
+            "titolo": "Indirizzo e numero di telefono",
+            "indirizzo": "Via Giorgio Ghedini, 2\n10154 Torino TO\nItalia",
+            "telefono": "+39 338 9286709",
+            "orari_reception": "Reception: dal lunedì al venerdì dalle 09:00 alle 12:00; presidio permanente e assistenza per le emergenze 24 ore su 24\nPeriodo di chiusura: agosto",
+            "periodo_di_chiusura": "agosto"
+          },
+          {
+            "titolo": "Struttura",
+            "contenuto": "Campus Cimarosa è una residenza universitaria situata in Via Giorgio Ghedini 2 a Torino, all'interno dell'Ex Istituto Cimarosa, edificio di proprietà della Città di Torino che ospita anche housing sociale, accoglienza temporanea e servizi per il territorio."
+          },
+          {
+            "titolo": "Camere",
+            "contenuto": [
+              "12 camere doppie"
+            ]
+          },
+          {
+            "titolo": "Dotazioni camere",
+            "contenuto": [
+              "Frigorifero",
+              "Connessione internet via WiFi e via cavo"
+            ]
+          },
+          {
+            "titolo": "Servizi",
+            "contenuto": [
+              "Aule studio (dalle 09:00 alle 02:00)",
+              "Aula computer",
+              "Cucine comuni con piani di cottura elettrici, lavelli e armadietti",
+              "Sala ricreativa e area relax",
+              "Lavatrici e asciugatrici (a pagamento, disponibili dalle 06:00 alle 24:00)",
+              "Deposito biciclette e micromobilità (previa registrazione presso la reception)",
+              "Pulizia degli spazi comuni"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "rank": 50,
+      "name": "Residenza Giulio Cesare 6 Student Housing",
+      "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-giulio-cesare-6-student-housing",
+      "address": "Corso Giulio Cesare, 6\n10152 Torino TO\nItalia",
+      "phone": "In aggiornamento - Updating",
+      "notes": "",
+      "originalPayload": {
+        "url": "https://www.edisu.piemonte.it/sedi/residenza-universitaria/residenza-universitaria-giulio-cesare-6-student-housing",
+        "status": "success",
+        "images": {
+          "subheader_image": "https://www.edisu.piemonte.it/sites/default/files/styles/subheader_image/public/schede-informative-sedi-residenza-universitaria-immagini/corso-giulio-6/copertinagiuliocesare6conlogo.png.webp?itok=B_PdyBe0",
+          "full_galleria": []
+        },
+        "items_count": 5,
+        "items": [
+          {
+            "titolo": "Indirizzo e numero di telefono",
+            "indirizzo": "Corso Giulio Cesare, 6\n10152 Torino TO\nItalia",
+            "telefono": "In aggiornamento - Updating",
+            "orari_reception": "La struttura dispone di reception\nPeriodo di chiusura: Agosto",
+            "periodo_di_chiusura": "Agosto"
+          },
+          {
+            "titolo": "Struttura",
+            "contenuto": "La residenza si trova nel quartiere Porta Palazzo/Aurora. Il contesto è caratterizzato da un tessuto urbano consolidato, con una significativa presenza di attività commerciali e servizi di quartiere. La posizione è funzionale per una residenza universitaria: l’area è relativamente vicina al centro cittadino e consente di raggiungere le principali zone universitarie e centrali attraverso il trasporto pubblico e la mobilità ciclabile."
+          },
+          {
+            "titolo": "Camere",
+            "contenuto": [
+              "5 singole con bagno condiviso",
+              "5 doppie con bagno condiviso"
+            ]
+          },
+          {
+            "titolo": "Dotazioni camere",
+            "contenuto": [
+              "WiFi"
+            ]
+          },
+          {
+            "titolo": "Servizi",
+            "contenuto": [
+              "Cucina in comune",
+              "Collegamenti WiFi",
+              "Lavanderia",
+              "Sala studio"
+            ]
           }
         ]
       }
