@@ -3822,7 +3822,6 @@
       if (state.listings.length === 0) return;
       if (confirm("Clear all listings and reset rankings? All data will be emptied.")) {
         localStorage.removeItem(STORAGE_KEY);
-        localStorage.removeItem('edisu_last_auto_json');
         state.listings = [];
         state.notes = {};
         state.activeUrl = null;
@@ -3867,15 +3866,18 @@
        11. INITIALIZATION & AUTO-IMPORT
        ========================================================================== */
     async function autoImportLocalRankingJson() {
+      // Do not autoload if user already has saved data or has imported data
+      if ((state.listings && state.listings.length > 0) || localStorage.getItem(STORAGE_KEY)) {
+        return;
+      }
+
       try {
         const response = await fetch('./ranking.json', { cache: 'no-cache' });
         if (!response.ok) return;
         const text = await response.text();
         if (!text || !text.trim()) return;
 
-        const lastAutoImport = localStorage.getItem('edisu_last_auto_json');
-        if (state.listings.length === 0 || lastAutoImport !== text) {
-          localStorage.setItem('edisu_last_auto_json', text);
+        if (state.listings.length === 0) {
           processIncomingData(text);
         }
       } catch (err) {
