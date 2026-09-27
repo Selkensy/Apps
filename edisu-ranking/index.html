@@ -2091,7 +2091,7 @@
   <!-- ========================================================================
        MODAL: INSPECT / LIGHTBOX / GALLERY
        ======================================================================== -->
-  <div class="modal-overlay" id="lightboxOverlay">
+  <div class="modal-overlay" id="lightboxOverlay" onclick="if (event.target === this) closeLightbox()">
     <div class="lightbox-modal">
       <div class="gallery-stage">
         <div class="gallery-main-view">
@@ -2204,7 +2204,7 @@
   <!-- ========================================================================
        MODAL: TACTILE QUICK RANK PICKER (BOTTOM SHEET ON MOBILE)
        ======================================================================== -->
-  <div class="modal-overlay" id="rankPickerOverlay">
+  <div class="modal-overlay" id="rankPickerOverlay" onclick="if (event.target === this) closeRankPicker()">
     <div class="generic-modal rank-picker-modal" id="rankPickerModal">
       <div class="sheet-handle-bar"></div>
       <div class="rank-picker-header">
@@ -2273,7 +2273,7 @@
   <!-- ========================================================================
        MODAL: PASTE RAW JSON
        ======================================================================== -->
-  <div class="modal-overlay" id="pasteModalOverlay">
+  <div class="modal-overlay" id="pasteModalOverlay" onclick="if (event.target === this) closePasteModal()">
     <div class="generic-modal">
       <div style="display:flex; justify-content:space-between; align-items:center;">
         <h3 style="font-size:14px; font-weight:600;">Import Scraped JSON Payload</h3>
@@ -2336,9 +2336,29 @@
       '<svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="800" height="500" fill="#18191C"/><line x1="0" y1="0" x2="800" y2="500" stroke="#25272E" stroke-width="1.5"/><line x1="800" y1="0" x2="0" y2="500" stroke="#25272E" stroke-width="1.5"/><rect x="340" y="210" width="120" height="80" rx="4" fill="#202227" stroke="#333742" stroke-width="1"/><circle cx="375" cy="240" r="10" fill="#E28448" opacity="0.85"/><path d="M350 280 L380 250 L410 275 L430 260 L450 280 Z" fill="#2E323D"/><text x="400" y="325" fill="#727885" font-family="ui-monospace, monospace" font-size="11" text-anchor="middle" letter-spacing="1">NO MEDIA PREVIEW</text></svg>'
     );
 
+    function stripRankKeys(obj) {
+      if (!obj || typeof obj !== 'object') return obj;
+      const clone = Array.isArray(obj) ? [...obj] : { ...obj };
+      delete clone.rank;
+      delete clone.Rank;
+      delete clone.ranking;
+      delete clone.posizione;
+      delete clone.ordine;
+      delete clone.originalPayload;
+      return clone;
+    }
+
     function syncListingRanks() {
       state.listings.forEach((item, idx) => {
         item.rank = idx + 1;
+        if (item.rawPayload && typeof item.rawPayload === 'object') {
+          delete item.rawPayload.rank;
+          delete item.rawPayload.Rank;
+          delete item.rawPayload.ranking;
+          delete item.rawPayload.posizione;
+          delete item.rawPayload.ordine;
+          delete item.rawPayload.originalPayload;
+        }
       });
     }
 
@@ -2369,6 +2389,7 @@
     }
 
     function saveState() {
+      syncListingRanks();
       state.lastUpdated = Date.now();
       const payload = {
         listings: state.listings,
@@ -2479,7 +2500,7 @@
         rooms: rooms.length > 0 ? rooms : ['Camere per studenti (Bando EDISU)'],
         amenities: amenities.length > 0 ? amenities : ['Wi-Fi', 'Servizio Portineria'],
         description: description || 'Complesso residenziale per studenti universitari EDISU Piemonte.',
-        rawPayload: raw
+        rawPayload: stripRankKeys(raw)
       };
     }
 
@@ -3069,6 +3090,12 @@
     const lbThumbStrip = document.getElementById('lightboxThumbStrip');
     const lbNotes = document.getElementById('lbNotes');
 
+    lightboxOverlay.addEventListener('click', (e) => {
+      if (e.target === lightboxOverlay) {
+        closeLightbox();
+      }
+    });
+
     function openLightbox(url) {
       const res = state.listings.find(l => l.url === url);
       if (!res) return;
@@ -3239,11 +3266,39 @@
       }
     }
 
+    function updateCardNotePreview(url, noteText) {
+      const card = feedContainer.querySelector(`[data-url="${url}"]`);
+      if (!card) return;
+      const content = card.querySelector('.card-content');
+      if (!content) return;
+
+      let preview = content.querySelector('.card-note-preview');
+      const cleanNote = (noteText || '').trim();
+
+      if (cleanNote) {
+        if (!preview) {
+          preview = document.createElement('div');
+          preview.className = 'card-note-preview';
+          const headerBlock = content.querySelector('.card-header-block');
+          if (headerBlock && headerBlock.nextSibling) {
+            content.insertBefore(preview, headerBlock.nextSibling);
+          } else {
+            content.prepend(preview);
+          }
+        }
+        preview.title = cleanNote;
+        preview.innerHTML = `
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span>${escapeHtml(cleanNote)}</span>
+        `;
+      } else if (preview) {
+        preview.remove();
+      }
+    }
+
     function closeLightbox() {
       closeZoomGallery();
-      if (currentLightboxResidence && lbNotes.value.trim() !== (state.notes[currentLightboxResidence.url] || '')) {
-        saveCurrentNote();
-      }
+      saveCurrentNote();
       lightboxOverlay.classList.remove('active');
       currentLightboxResidence = null;
     }
@@ -3251,19 +3306,27 @@
     function saveCurrentNote() {
       if (!currentLightboxResidence) return;
       const note = lbNotes.value.trim();
+      const url = currentLightboxResidence.url;
       if (note) {
-        state.notes[currentLightboxResidence.url] = note;
+        state.notes[url] = note;
       } else {
-        delete state.notes[currentLightboxResidence.url];
+        delete state.notes[url];
       }
       saveState();
-      renderFeed();
+      updateCardNotePreview(url, note);
     }
 
     let noteDebounceTimer = null;
     lbNotes.addEventListener('input', () => {
       if (!currentLightboxResidence) return;
-      state.notes[currentLightboxResidence.url] = lbNotes.value;
+      const url = currentLightboxResidence.url;
+      const note = lbNotes.value.trim();
+      if (note) {
+        state.notes[url] = lbNotes.value;
+      } else {
+        delete state.notes[url];
+      }
+      updateCardNotePreview(url, note);
       clearTimeout(noteDebounceTimer);
       noteDebounceTimer = setTimeout(() => {
         saveState();
@@ -3349,7 +3412,7 @@
             address: item.address,
             phone: item.phone,
             notes: state.notes[item.url] || '',
-            originalPayload: item.rawPayload
+            originalPayload: stripRankKeys(item.rawPayload)
           }));
 
           const exportBundle = {
@@ -3412,13 +3475,13 @@
         return false;
       }
 
-      // Unpack wrapped payloads while preserving rank & notes
+      // Unpack wrapped payloads while preserving rank & notes and stripping duplicate nested ranks
       itemsToIngest = itemsToIngest.map(r => {
         if (r && typeof r === 'object') {
           const rank = getRawRank(r);
           if (r.originalPayload && typeof r.originalPayload === 'object') {
-            const merged = { ...r.originalPayload };
-            if (rank !== null && getRawRank(merged) === null) {
+            const merged = stripRankKeys(r.originalPayload);
+            if (rank !== null) {
               merged.rank = rank;
             }
             if (r.notes && r.url) state.notes[r.url] = r.notes;
